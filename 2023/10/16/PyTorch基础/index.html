@@ -6,15 +6,15 @@
   
   <title>PyTorch基础 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="PyTorch由4个主要包组成包组成，具体如下。  torch：类似于NumPy的通用数组库，可将张量类型转换为torch.cuda.TensorFloat，并在GPU上进行计算。torch.autograd：用于构建计算图形并自动获取梯度的包。torch.nn：具有共享层和损失函数的神经网络库。torch.optim：具有通用优化算法（如SGD，Adam等）的优化包。 torch.autogra">
+  <meta name="description" content="PyTorch基础PyTorch由4个主要包组成包组成，具体如下。  torch：类似于NumPy的通用数组库，可将张量类型转换为torch.cuda.TensorFloat，并在GPU上进行计算。torch.autograd：用于构建计算图形并自动获取梯度的包。torch.nn：具有共享层和损失函数的神经网络库。torch.optim：具有通用优化算法（如SGD，Adam等）的优化包。 torc">
 <meta property="og:type" content="article">
 <meta property="og:title" content="PyTorch基础">
 <meta property="og:url" content="http://example.com/2023/10/16/PyTorch%E5%9F%BA%E7%A1%80/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="PyTorch由4个主要包组成包组成，具体如下。  torch：类似于NumPy的通用数组库，可将张量类型转换为torch.cuda.TensorFloat，并在GPU上进行计算。torch.autograd：用于构建计算图形并自动获取梯度的包。torch.nn：具有共享层和损失函数的神经网络库。torch.optim：具有通用优化算法（如SGD，Adam等）的优化包。 torch.autogra">
+<meta property="og:description" content="PyTorch基础PyTorch由4个主要包组成包组成，具体如下。  torch：类似于NumPy的通用数组库，可将张量类型转换为torch.cuda.TensorFloat，并在GPU上进行计算。torch.autograd：用于构建计算图形并自动获取梯度的包。torch.nn：具有共享层和损失函数的神经网络库。torch.optim：具有通用优化算法（如SGD，Adam等）的优化包。 torc">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2023-10-16T11:53:44.000Z">
-<meta property="article:modified_time" content="2023-10-16T12:07:32.514Z">
+<meta property="article:modified_time" content="2023-10-16T12:15:39.415Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
   
@@ -97,7 +97,7 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>PyTorch由4个主要包组成包组成，具体如下。</p>
+        <h1 id="PyTorch基础"><a href="#PyTorch基础" class="headerlink" title="PyTorch基础"></a>PyTorch基础</h1><p>PyTorch由4个主要包组成包组成，具体如下。</p>
 <ul>
 <li>torch：类似于NumPy的通用数组库，可将张量类型转换为torch.cuda.TensorFloat，并在GPU上进行计算。<br>torch.autograd：用于构建计算图形并自动获取梯度的包。<br>torch.nn：具有共享层和损失函数的神经网络库。<br>torch.optim：具有通用优化算法（如SGD，Adam等）的优化包。</li>
 <li>torch.autograd：用于构建计算图形并自动获取梯度的包。</li>
@@ -108,6 +108,7 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">x=torch.tensor([<span class="number">1</span>,<span class="number">2</span>])</span><br><span class="line">y=torch.tensor([<span class="number">3</span>,<span class="number">4</span>])</span><br><span class="line">z=x.add(y)</span><br><span class="line"><span class="built_in">print</span>(z)</span><br><span class="line"><span class="built_in">print</span>(x)</span><br><span class="line">x.add_(y)</span><br><span class="line"><span class="built_in">print</span>(x)</span><br></pre></td></tr></table></figure>
 
 <p>运行结果如下：<br>tensor([4, 6])<br>tensor([1, 2])<br>tensor([4, 6])</p>
+<hr>
 
       
     </div>
