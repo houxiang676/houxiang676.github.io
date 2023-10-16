@@ -95,7 +95,14 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        
+        <h2 id="学习笔记"><a href="#学习笔记" class="headerlink" title="学习笔记"></a>学习笔记</h2><h3 id="梯度"><a href="#梯度" class="headerlink" title="梯度"></a>梯度</h3><p>深度神经网络训练的时候，采用的是反向传播方式，该方式背后其实是链式求导，计算每层梯度的时候会涉及一些连乘操作，因此如果网络过深，那么如果连乘的因子大部分小于1，最后乘积的结果可能趋于0，也就是梯度消失，后面的网络层的参数不发生变化，后面的层学不到东西，那么如果连乘的因子大部分大于1，最后乘积可能趋于无穷，这就是梯度爆炸<br>模型训练中梯度方向是函数变化率最快的方向，用于快速的降低损失，这是用于优化模型的一个重要原因。但是梯度方向为什么是函数变化率最快的方向？</p>
+<p>梯度是一个向量求导的导数：f的梯度是包含所有偏导数的向量。向量的导数还是一个向量，所以梯度既是导数又是向量。<br>梯度的方向：与这个函数在该点增长最快的方向一致。梯度的大小：|梯度|&#x3D;max(方向导数)</p>
+<p><a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95&spm=1001.2101.3001.7020">梯度下降法</a>作用：求损失函数（loss function） 最小值</p>
+<p><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20231008214801556.png" alt="image-20231008214801556"></p>
+<p><code>torch.nn.DataParallel</code>是一个PyTorch模块，用于并行化训练。这意味着该模型可以在多个GPU上运行以加速训练。</p>
+<p>用法？</p>
+<p><img src="F:\typora文件\图片\image-20231008214801556.png" alt="image-20231008214801556"></p>
+
       
     </div>
     <footer class="article-footer">
