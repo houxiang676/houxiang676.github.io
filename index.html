@@ -73,6 +73,131 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Pandas基础" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/10/16/Pandas%E5%9F%BA%E7%A1%80/" class="article-date">
+  <time class="dt-published" datetime="2023-10-16T11:59:53.000Z" itemprop="datePublished">2023-10-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2023/10/16/Pandas%E5%9F%BA%E7%A1%80/">Pandas基础</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/10/16/Pandas%E5%9F%BA%E7%A1%80/" data-id="clnsurcbe0001ucr5dm4pg5iv" data-title="Pandas基础" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-NumPy基础" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/10/16/NumPy%E5%9F%BA%E7%A1%80/" class="article-date">
+  <time class="dt-published" datetime="2023-10-16T11:59:43.000Z" itemprop="datePublished">2023-10-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2023/10/16/NumPy%E5%9F%BA%E7%A1%80/">NumPy基础</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/10/16/NumPy%E5%9F%BA%E7%A1%80/" data-id="clnsurcba0000ucr50msp3l0j" data-title="NumPy基础" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-PyTorch基础" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/10/16/PyTorch%E5%9F%BA%E7%A1%80/" class="article-date">
+  <time class="dt-published" datetime="2023-10-16T11:53:44.000Z" itemprop="datePublished">2023-10-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2023/10/16/PyTorch%E5%9F%BA%E7%A1%80/">PyTorch基础</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>PyTorch由4个主要包组成包组成，具体如下。</p>
+<ul>
+<li>torch：类似于NumPy的通用数组库，可将张量类型转换为torch.cuda.TensorFloat，并在GPU上进行计算。<br>torch.autograd：用于构建计算图形并自动获取梯度的包。<br>torch.nn：具有共享层和损失函数的神经网络库。<br>torch.optim：具有通用优化算法（如SGD，Adam等）的优化包。</li>
+<li>torch.autograd：用于构建计算图形并自动获取梯度的包。</li>
+<li>torch.nn：具有共享层和损失函数的神经网络库。</li>
+<li>torch.optim：具有通用优化算法（如SGD，Adam等）的优化包。</li>
+</ul>
+<h2 id="TenSor"><a href="#TenSor" class="headerlink" title="TenSor"></a>TenSor</h2><p>对Tensor的操作很多，从接口的角度来划分，可以分为两类：<br>1）torch.function，如torch.sum、torch.add等，<br>2）tensor.function，如tensor.view、tensor.add等。<br>这些操作对大部分Tensor都是等价的，如torch.add(x,y)与x.add(y)等价。在实际使用时，可以根据个人爱好选择。<br>如果从修改方式的角度，可以分为以下两类。<br>1）不修改自身数据，如x.add(y),x的数据不变，返回一个新的tensor。<br>2）修改自身数据，如x.add_(y)（运行符带下划线后缀），运算结果存在x中，x被修改。<br>以下代码说明add与add_的区别。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">x=torch.tensor([<span class="number">1</span>,<span class="number">2</span>])</span><br><span class="line">y=torch.tensor([<span class="number">3</span>,<span class="number">4</span>])</span><br><span class="line">z=x.add(y)</span><br><span class="line"><span class="built_in">print</span>(z)</span><br><span class="line"><span class="built_in">print</span>(x)</span><br><span class="line">x.add_(y)</span><br><span class="line"><span class="built_in">print</span>(x)</span><br></pre></td></tr></table></figure>
+
+<p>运行结果如下：<br>tensor([4, 6])<br>tensor([1, 2])<br>tensor([4, 6])</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/10/16/PyTorch%E5%9F%BA%E7%A1%80/" data-id="clnsurcbg0002ucr50dru6m5v" data-title="PyTorch基础" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-my-first-blog" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2023/10/16/my-first-blog/" class="article-date">
@@ -101,42 +226,6 @@
     </div>
     <footer class="article-footer">
       <a data-url="http://example.com/2023/10/16/my-first-blog/" data-id="clnsn9s4s0000lor579ks4502" data-title="my_first_blog" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-学习笔记" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2023/10/16/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="article-date">
-  <time class="dt-published" datetime="2023-10-16T08:35:38.383Z" itemprop="datePublished">2023-10-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>title: note<br>date: 2023-10-16 16:39:24<br>tags:<strong>书上学来终觉浅，绝知此事要躬行，每天进步一点点</strong></p>
-<h2 id="学习笔记"><a href="#学习笔记" class="headerlink" title="学习笔记"></a>学习笔记</h2><h3 id="梯度"><a href="#梯度" class="headerlink" title="梯度"></a>梯度</h3><p>深度神经网络训练的时候，采用的是反向传播方式，该方式背后其实是链式求导，计算每层梯度的时候会涉及一些连乘操作，因此如果网络过深，那么如果连乘的因子大部分小于1，最后乘积的结果可能趋于0，也就是梯度消失，后面的网络层的参数不发生变化，后面的层学不到东西，那么如果连乘的因子大部分大于1，最后乘积可能趋于无穷，这就是梯度爆炸<br>模型训练中梯度方向是函数变化率最快的方向，用于快速的降低损失，这是用于优化模型的一个重要原因。但是梯度方向为什么是函数变化率最快的方向？</p>
-<p>梯度是一个向量求导的导数：f的梯度是包含所有偏导数的向量。向量的导数还是一个向量，所以梯度既是导数又是向量。<br>梯度的方向：与这个函数在该点增长最快的方向一致。梯度的大小：|梯度|&#x3D;max(方向导数)</p>
-<p><a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95&spm=1001.2101.3001.7020">梯度下降法</a>作用：求损失函数（loss function） 最小值</p>
-<p><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20231008214801556.png" alt="image-20231008214801556"></p>
-<p><code>torch.nn.DataParallel</code>是一个PyTorch模块，用于并行化训练。这意味着该模型可以在多个GPU上运行以加速训练。</p>
-<p>用法？</p>
-<p><img src="F:\typora文件\图片\image-20231008214801556.png" alt="image-20231008214801556"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2023/10/16/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" data-id="clnsn60tt0000h8r58ibw7trr" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -230,11 +319,19 @@
       <ul>
         
           <li>
-            <a href="/2023/10/16/my-first-blog/">my_first_blog</a>
+            <a href="/2023/10/16/Pandas%E5%9F%BA%E7%A1%80/">Pandas基础</a>
           </li>
         
           <li>
-            <a href="/2023/10/16/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">(no title)</a>
+            <a href="/2023/10/16/NumPy%E5%9F%BA%E7%A1%80/">NumPy基础</a>
+          </li>
+        
+          <li>
+            <a href="/2023/10/16/PyTorch%E5%9F%BA%E7%A1%80/">PyTorch基础</a>
+          </li>
+        
+          <li>
+            <a href="/2023/10/16/my-first-blog/">my_first_blog</a>
           </li>
         
           <li>
