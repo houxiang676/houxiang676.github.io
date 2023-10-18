@@ -6,6 +6,34 @@
     <content><![CDATA[]]></content>
   </entry>
   <entry>
+    <title>Pandas基础</title>
+    <url>/2023/10/16/Pandas%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>PyTorch基础</title>
+    <url>/2023/10/16/PyTorch%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<h1 id="PyTorch基础"><a href="#PyTorch基础" class="headerlink" title="PyTorch基础"></a>PyTorch基础</h1><p>PyTorch由4个主要包组成包组成，具体如下。</p>
+<ul>
+<li>torch：类似于NumPy的通用数组库，可将张量类型转换为torch.cuda.TensorFloat，并在GPU上进行计算。<br>torch.autograd：用于构建计算图形并自动获取梯度的包。<br>torch.nn：具有共享层和损失函数的神经网络库。<br>torch.optim：具有通用优化算法（如SGD，Adam等）的优化包。</li>
+<li>torch.autograd：用于构建计算图形并自动获取梯度的包。</li>
+<li>torch.nn：具有共享层和损失函数的神经网络库。</li>
+<li>torch.optim：具有通用优化算法（如SGD，Adam等）的优化包。</li>
+</ul>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">#cuda是否可用；</span><br><span class="line">torch.cuda.is_available()</span><br><span class="line"># 返回gpu数量；</span><br><span class="line">torch.cuda.device_count()</span><br><span class="line"># 返回gpu名字，设备索引默认从0开始</span><br><span class="line">torch.cuda.get_device_name(index)  # index 是索引, 默认从 0 开始</span><br><span class="line"># 返回当前设备索引；</span><br><span class="line">torch.cuda.current_device()</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="指定GPU"><a href="#指定GPU" class="headerlink" title="指定GPU"></a>指定GPU</h2><h3 id="代码中指定"><a href="#代码中指定" class="headerlink" title="代码中指定"></a>代码中指定</h3><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">import os</span><br><span class="line">os.environ[&quot;CUDA_VISIBLE_DEVICES&quot;] = &quot;1&quot;</span><br><span class="line"># 可以同时指定多个设备（设备是真实存在的，不要指定不存在的设备）</span><br><span class="line"></span><br><span class="line">os.environ[&quot;CUDA_VISIBLE_DEVICES&quot;] = &quot;0, 1, 2, 3&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+
+
+<h2 id="TenSor"><a href="#TenSor" class="headerlink" title="TenSor"></a>TenSor</h2><p>对Tensor的操作很多，从接口的角度来划分，可以分为两类：<br>1）torch.function，如torch.sum、torch.add等，<br>2）tensor.function，如tensor.view、tensor.add等。<br>这些操作对大部分Tensor都是等价的，如torch.add(x,y)与x.add(y)等价。在实际使用时，可以根据个人爱好选择。<br>如果从修改方式的角度，可以分为以下两类。<br>1）不修改自身数据，如x.add(y),x的数据不变，返回一个新的tensor。<br>2）修改自身数据，如x.add_(y)（运行符带下划线后缀），运算结果存在x中，x被修改。<br>以下代码说明add与add_的区别。</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">x=torch.tensor([<span class="number">1</span>,<span class="number">2</span>])</span><br><span class="line">y=torch.tensor([<span class="number">3</span>,<span class="number">4</span>])</span><br><span class="line">z=x.add(y)</span><br><span class="line"><span class="built_in">print</span>(z)</span><br><span class="line"><span class="built_in">print</span>(x)</span><br><span class="line">x.add_(y)</span><br><span class="line"><span class="built_in">print</span>(x)</span><br></pre></td></tr></table></figure></div>
+
+<p>运行结果如下：<br>tensor([4, 6])<br>tensor([1, 2])<br>tensor([4, 6])</p>
+<hr>
+]]></content>
+  </entry>
+  <entry>
     <title>Hello World</title>
     <url>/2023/10/16/hello-world/</url>
     <content><![CDATA[<p>Welcome to <a class="link"   href="https://hexo.io/" >Hexo <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>! This is your very first post. Check <a class="link"   href="https://hexo.io/docs/" >documentation <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> for more info. If you get any problems when using Hexo, you can find the answer in <a class="link"   href="https://hexo.io/docs/troubleshooting.html" >troubleshooting <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> or you can ask me on <a class="link"   href="https://github.com/hexojs/hexo/issues" >GitHub <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>.</p>
@@ -22,11 +50,6 @@
 
 <p>More info: <a class="link"   href="https://hexo.io/docs/one-command-deployment.html" >Deployment <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
 ]]></content>
-  </entry>
-  <entry>
-    <title>Pandas基础</title>
-    <url>/2023/10/16/Pandas%E5%9F%BA%E7%A1%80/</url>
-    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>my_first_blog</title>
@@ -102,29 +125,6 @@
                      data-src="/%E5%9B%BE%E7%89%87%E7%9A%84%E9%93%BE%E6%8E%A5"
                       alt="图片描述"
                 ></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>PyTorch基础</title>
-    <url>/2023/10/16/PyTorch%E5%9F%BA%E7%A1%80/</url>
-    <content><![CDATA[<h1 id="PyTorch基础"><a href="#PyTorch基础" class="headerlink" title="PyTorch基础"></a>PyTorch基础</h1><p>PyTorch由4个主要包组成包组成，具体如下。</p>
-<ul>
-<li>torch：类似于NumPy的通用数组库，可将张量类型转换为torch.cuda.TensorFloat，并在GPU上进行计算。<br>torch.autograd：用于构建计算图形并自动获取梯度的包。<br>torch.nn：具有共享层和损失函数的神经网络库。<br>torch.optim：具有通用优化算法（如SGD，Adam等）的优化包。</li>
-<li>torch.autograd：用于构建计算图形并自动获取梯度的包。</li>
-<li>torch.nn：具有共享层和损失函数的神经网络库。</li>
-<li>torch.optim：具有通用优化算法（如SGD，Adam等）的优化包。</li>
-</ul>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">#cuda是否可用；</span><br><span class="line">torch.cuda.is_available()</span><br><span class="line"># 返回gpu数量；</span><br><span class="line">torch.cuda.device_count()</span><br><span class="line"># 返回gpu名字，设备索引默认从0开始</span><br><span class="line">torch.cuda.get_device_name(index)  # index 是索引, 默认从 0 开始</span><br><span class="line"># 返回当前设备索引；</span><br><span class="line">torch.cuda.current_device()</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="指定GPU"><a href="#指定GPU" class="headerlink" title="指定GPU"></a>指定GPU</h2><h3 id="代码中指定"><a href="#代码中指定" class="headerlink" title="代码中指定"></a>代码中指定</h3><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">import os</span><br><span class="line">os.environ[&quot;CUDA_VISIBLE_DEVICES&quot;] = &quot;1&quot;</span><br><span class="line"># 可以同时指定多个设备（设备是真实存在的，不要指定不存在的设备）</span><br><span class="line"></span><br><span class="line">os.environ[&quot;CUDA_VISIBLE_DEVICES&quot;] = &quot;0, 1, 2, 3&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-
-
-<h2 id="TenSor"><a href="#TenSor" class="headerlink" title="TenSor"></a>TenSor</h2><p>对Tensor的操作很多，从接口的角度来划分，可以分为两类：<br>1）torch.function，如torch.sum、torch.add等，<br>2）tensor.function，如tensor.view、tensor.add等。<br>这些操作对大部分Tensor都是等价的，如torch.add(x,y)与x.add(y)等价。在实际使用时，可以根据个人爱好选择。<br>如果从修改方式的角度，可以分为以下两类。<br>1）不修改自身数据，如x.add(y),x的数据不变，返回一个新的tensor。<br>2）修改自身数据，如x.add_(y)（运行符带下划线后缀），运算结果存在x中，x被修改。<br>以下代码说明add与add_的区别。</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">x=torch.tensor([<span class="number">1</span>,<span class="number">2</span>])</span><br><span class="line">y=torch.tensor([<span class="number">3</span>,<span class="number">4</span>])</span><br><span class="line">z=x.add(y)</span><br><span class="line"><span class="built_in">print</span>(z)</span><br><span class="line"><span class="built_in">print</span>(x)</span><br><span class="line">x.add_(y)</span><br><span class="line"><span class="built_in">print</span>(x)</span><br></pre></td></tr></table></figure></div>
-
-<p>运行结果如下：<br>tensor([4, 6])<br>tensor([1, 2])<br>tensor([4, 6])</p>
-<hr>
 ]]></content>
   </entry>
 </search>
