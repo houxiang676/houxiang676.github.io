@@ -1,110 +1,82 @@
-$(function(){
+/* main function */
+import initUtils from "./utils.js";
+import initTyped from "./plugins/typed.js";
+import initModeToggle from "./tools/lightDarkSwitch.js";
+import initLazyLoad from "./layouts/lazyload.js";
+import initScrollTopBottom from "./tools/scrollTopBottom.js";
+import initLocalSearch from "./tools/localSearch.js";
+import initCopyCode from "./tools/codeBlock.js";
 
-  /* Drop-down menu */
-  $('#menu-nav-icon').click(function(){
-    $('#main-nav').slideToggle()
-  })
-  $(window).on('resize', function (){
-    if ($(window).width() > 768){
-        $('#main-nav').show();
-    }else{
-        $('#main-nav').hide();
-    }
-  });
-
-  /* Share */
-  var shares = $("#social-share").children();
-  var url = shares.first().attr('data-url');
-  var encodedUrl = encodeURIComponent(url)
-
-  shares.each(function(){
-     this.href += encodedUrl;
-  })
-
-  /* Gallery Display */
-  // Get a list of gallery ids
-  var slideIndices = {};
-  var galleries = $('.gallery');
-  //console.log(galleries);
-  //console.log(galleries[0]);
-
-  $('.gallery').each(function(index){
-    //console.log( index + ": " + $( this ).attr("id") );
-    slideIndices[$(this).attr("id")] = 1;
-  });
-  //console.log(slideIndices);
-
-  galleries.each(function(){
-    showSlides($(this).attr("id"), 1);
-  })
-
-
-  function showSlides(id, n) {
-    galleries.each(function(){
-      var that = $(this);
-      if(that.attr("id") == id){
-        var slides = that.find('.mySlides');
-        var dots = that.find('.demo');
-        var captionText = that.find('.caption');
-        console.log("Slide length is " + slides.length);
-        if (n > slides.length){
-          slideIndices[id] = 1;
-          n = 1;
-        }
-        if (n < 1){
-          slideIndices[id] = slides.length;
-          n = slides.length;
-        }
-        console.log("n is "+ n);
-        slides.each(function(index){
-          if(index == (n-1)){
-            console.log("here");
-            $(this).css({"display": "block"});
-          }else{
-            $(this).css({"display": "none"});
-          }
-        })
-        dots.each(function(index){
-          if(index == (n-1)){
-            $(this).addClass("display");
-          }else{
-            $(this).removeClass("display");
-          }
-        })
-        var capText = $(dots[slideIndices[id]]).attr("alt");
-        try{
-          capText = capText.split('/').pop().replace(/\.[^/.]+$/, "");
-        }catch(e){
-          capText = $(dots[slideIndices[id]]).attr("alt");
-        }
-        captionText.html(capText);
+export const main = {
+  themeInfo: {
+    theme: `Redefine v${theme.version}`,
+    author: "EvanNotFound",
+    repository: "https://github.com/EvanNotFound/hexo-theme-redefine",
+  },
+  localStorageKey: "REDEFINE-THEME-STATUS",
+  styleStatus: {
+    isExpandPageWidth: false,
+    isDark: false,
+    fontSizeLevel: 0,
+    isOpenPageAside: true,
+  },
+  printThemeInfo: () => {
+    console.log(
+      `      ______ __  __  ______  __    __  ______                       \r\n     \/\\__  _\/\\ \\_\\ \\\/\\  ___\\\/\\ \"-.\/  \\\/\\  ___\\                      \r\n     \\\/_\/\\ \\\\ \\  __ \\ \\  __\\\\ \\ \\-.\/\\ \\ \\  __\\                      \r\n        \\ \\_\\\\ \\_\\ \\_\\ \\_____\\ \\_\\ \\ \\_\\ \\_____\\                    \r\n         \\\/_\/ \\\/_\/\\\/_\/\\\/_____\/\\\/_\/  \\\/_\/\\\/_____\/                    \r\n                                                               \r\n ______  ______  _____   ______  ______ __  __   __  ______    \r\n\/\\  == \\\/\\  ___\\\/\\  __-.\/\\  ___\\\/\\  ___\/\\ \\\/\\ \"-.\\ \\\/\\  ___\\   \r\n\\ \\  __<\\ \\  __\\\\ \\ \\\/\\ \\ \\  __\\\\ \\  __\\ \\ \\ \\ \\-.  \\ \\  __\\   \r\n \\ \\_\\ \\_\\ \\_____\\ \\____-\\ \\_____\\ \\_\\  \\ \\_\\ \\_\\\\\"\\_\\ \\_____\\ \r\n  \\\/_\/ \/_\/\\\/_____\/\\\/____\/ \\\/_____\/\\\/_\/   \\\/_\/\\\/_\/ \\\/_\/\\\/_____\/\r\n                                                               \r\n  Github: https:\/\/github.com\/EvanNotFound\/hexo-theme-redefine`,
+    ); // console log message
+  },
+  setStyleStatus: () => {
+    localStorage.setItem(
+      main.localStorageKey,
+      JSON.stringify(main.styleStatus),
+    );
+  },
+  getStyleStatus: () => {
+    let temp = localStorage.getItem(main.localStorageKey);
+    if (temp) {
+      temp = JSON.parse(temp);
+      for (let key in main.styleStatus) {
+        main.styleStatus[key] = temp[key];
       }
-    })
-  }
+      return temp;
+    } else {
+      return null;
+    }
+  },
+  refresh: () => {
+    initUtils();
+    initModeToggle();
+    initScrollTopBottom();
+    if (
+      theme.home_banner.subtitle.text.length !== 0 &&
+      location.pathname === config.root
+    ) {
+      initTyped("subtitle");
+    }
 
-   /* install event function */
-   $(".gallery .columns .column img").each(function(){
-     $(this).click(function(){
-       var key = $(this).attr("data-id");
-       var num = $(this).attr("data-num");
-       showSlides(key, slideIndices[key] = num);
-     })
-   });
+    if (theme.navbar.search.enable === true) {
+      initLocalSearch();
+    }
 
-   galleries.each(function(){
-     $(this).find(".prev").click(function(){
-       var key = $(this).attr("data-id");
-       slideIndices[key] -=1;
-       console.log("Index is " +  slideIndices[key]);
-       showSlides(key, slideIndices[key]);
-     })
-   })
-   galleries.each(function(){
-     $(this).find(".next").click(function(){
-       var key = $(this).attr("data-id");
-       slideIndices[key] +=1;
-       console.log("Index is " +  slideIndices[key]);
-       showSlides(key, slideIndices[key]);
-     })
-   })
-})
+    if (theme.articles.code_block.copy === true) {
+      initCopyCode();
+    }
+
+    if (theme.articles.lazyload === true) {
+      initLazyLoad();
+    }
+  },
+};
+
+export function initMain() {
+  main.printThemeInfo();
+  main.refresh();
+}
+
+document.addEventListener("DOMContentLoaded", initMain);
+
+try {
+  swup.hooks.on("page:view", () => {
+    main.refresh();
+  });
+} catch (e) {}
