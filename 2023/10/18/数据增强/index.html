@@ -13,20 +13,27 @@
     
     <!--- Seo Part-->
     
-    <link rel="canonical" href="http://example.com/2023/10/16/pandas基础/"/>
+    <link rel="canonical" href="http://example.com/2023/10/18/数据增强/"/>
     <meta name="robots" content="index,follow">
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta property="og:type" content="article">
-<meta property="og:title" content="Pandas基础">
-<meta property="og:url" content="http://example.com/2023/10/16/Pandas%E5%9F%BA%E7%A1%80/index.html">
+        <meta name="description" content="数据预处理、数据增强1. 数据增强数据增强可以增加训练集的样本数量，缓解过拟合，并提高模型的泛化能力，从而有效提升算法的性能。  2. 数据预处理1）将图像转换成 tensor 的数据格式 2）将图像的 像素值范围 由 0～255 转换到 0～1 3）(height, width, channel) &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&gt;&gt;&gt; (chann">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据的读取与处理">
+<meta property="og:url" content="http://example.com/2023/10/18/%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA/index.html">
 <meta property="og:site_name" content="深情小小侯的博客">
+<meta property="og:description" content="数据预处理、数据增强1. 数据增强数据增强可以增加训练集的样本数量，缓解过拟合，并提高模型的泛化能力，从而有效提升算法的性能。  2. 数据预处理1）将图像转换成 tensor 的数据格式 2）将图像的 像素值范围 由 0～255 转换到 0～1 3）(height, width, channel) &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&gt;&gt;&gt; (chann">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-10-16T11:59:53.000Z">
-<meta property="article:modified_time" content="2023-10-16T11:59:53.802Z">
+<meta property="og:image" content="https://p.ipic.vip/a161sy.png">
+<meta property="og:image" content="https://p.ipic.vip/iiqcob.png">
+<meta property="og:image" content="https://p.ipic.vip/xksmgr.png">
+<meta property="og:image" content="https://p.ipic.vip/wh6b5i.png">
+<meta property="article:published_time" content="2023-10-18T03:59:25.000Z">
+<meta property="article:modified_time" content="2023-10-19T02:56:03.580Z">
 <meta property="article:author" content="深情小小侯">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://p.ipic.vip/a161sy.png">
     
     
     <!--- Icon Part-->
@@ -38,7 +45,7 @@
     
     <title>
         
-            Pandas基础 -
+            数据的读取与处理 -
         
         深情小小侯的博客
     </title>
@@ -291,7 +298,7 @@
 
         <div class="article-title">
             
-                <h1 class="article-title-regular">Pandas基础</h1>
+                <h1 class="article-title-regular">数据的读取与处理</h1>
             
             </div>
             
@@ -313,15 +320,15 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fa-regular fa-pen-fancy"></i>&nbsp;
-        <span class="desktop">2023-10-16 19:59:53</span>
-        <span class="mobile">2023-10-16 19:59:53</span>
+        <span class="desktop">2023-10-18 11:59:25</span>
+        <span class="mobile">2023-10-18 11:59:25</span>
         <span class="hover-info">创建</span>
     </span>
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2023-10-16 19:59:53</span>
-            <span class="mobile">2023-10-16 19:59:53</span>
+            <span class="desktop">2023-10-19 10:56:03</span>
+            <span class="mobile">2023-10-19 10:56:03</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -348,25 +355,100 @@
 
 
         <div class="article-content markdown-body">
-            
+            <h1 id="数据预处理、数据增强"><a href="#数据预处理、数据增强" class="headerlink" title="数据预处理、数据增强"></a>数据预处理、数据增强</h1><h2 id="1-数据增强"><a href="#1-数据增强" class="headerlink" title="1. 数据增强"></a>1. 数据增强</h2><p>数据增强可以增加训练集的样本数量，缓解过拟合，并提高模型的泛化能力，从而有效提升算法的性能。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://p.ipic.vip/a161sy.png"
+                      alt="数据增强"
+                ></p>
+<h2 id="2-数据预处理"><a href="#2-数据预处理" class="headerlink" title="2. 数据预处理"></a>2. 数据预处理</h2><p>1）将图像转换成 tensor 的数据格式</p>
+<p>2）将图像的 像素值范围 由 0～255 转换到 0～1</p>
+<p>3）(height, width, channel) &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&gt;&gt;&gt; (channel, height, width)</p>
+<p>4）归一化图像</p>
+<h2 id="3-使用节点"><a href="#3-使用节点" class="headerlink" title="3. 使用节点"></a>3. 使用节点</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">trans = transforms.Compose([transforms.RandomResizedCrop((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.RandomHorizontalFlip(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ColorJitter(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
+
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://p.ipic.vip/iiqcob.png"
+                     
+                ></p>
+<h1 id="torchvision-transforms-的使用"><a href="#torchvision-transforms-的使用" class="headerlink" title="torchvision.transforms 的使用"></a>torchvision.transforms 的使用</h1><p>官方文档地址： <a class="link"   target="_blank" rel="noopener" href="https://pytorch.org/vision/stable/transforms.html" >https://pytorch.org/vision/stable/transforms.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h2 id="1-torchvision-transforms-ToTensor"><a href="#1-torchvision-transforms-ToTensor" class="headerlink" title="1. torchvision.transforms.ToTensor()"></a>1. torchvision.transforms.ToTensor()</h2><p><code>torchvision.transforms.ToTensor()</code> 做了三件事：</p>
+<p> 1）将图像的数据格式由 nump.ndarray 或 PIL.Image 转为 tensor，数据类型为 torch.FloatTensor</p>
+<p> 2）将像素值范围从 0-255 转换到 0-1之间， 处理方式 ：直接除以255</p>
+<p> 3）将 shape&#x3D;(H,W, C) 转换为 shape&#x3D; (C, H, W)</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://p.ipic.vip/xksmgr.png"
+                     
+                ></p>
+<h2 id="2-torchvision-transforms-Normalize"><a href="#2-torchvision-transforms-Normalize" class="headerlink" title="2. torchvision.transforms.Normalize()"></a>2. torchvision.transforms.Normalize()</h2><p>作用：用均值和标准差对张量图像进行归一化，一般在 <code>torchvision.transforms.ToTensor()</code> 之后使用</p>
+<p>在使用 <code>torchvision.transforms.ToTensor()</code> 之后，像素值取值范围会被转换到 [0, 1]之间，再使用 <code>transforms.Normalize(mean, std)</code> 进行归一化后，原像素值就被分布到了 [-1, 1] 之间：</p>
+<p>公式：</p>
+<ul>
+<li>原来的 0~1 最小值 0 则变成 (0 - mean) &#x2F; std &#x3D; -1</li>
+</ul>
+<ul>
+<li>最大值1则变成 (1 - mean) &#x2F; std &#x3D; 1</li>
+</ul>
+<p>一般 mean 和 std 会分别指定3个值，代表图像3个通道的均值和方差，比如<code>torchvision.transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])</code></p>
+<p>如果是<strong>单通道的灰度图</strong>，均值为0.5，方差为0.5，可以写成 <code>transforms.Normalize(mean=[0.5], std=[0.5])</code></p>
+<p>因为 ImageNet数据集 是一个大型数据集，由一个大型数据集统计出来的均值和方差，基本符合所有数据集的像素值分布，所以，一般直接使用 <code>mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]</code></p>
+<h2 id="3-transforms-Compose"><a href="#3-transforms-Compose" class="headerlink" title="3.transforms.Compose()"></a>3.transforms.Compose()</h2><p><strong>训练阶段</strong></p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">trans = transforms.Compose([transforms.RandomResizedCrop((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.RandomHorizontalFlip(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ColorJitter(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
+
+
+
+<p><strong>推理阶段(test)</strong></p>
+<p>推理阶段不会再对数据进行增强，只会做基础的预处理，比如：将尺寸处理到固定尺寸 ；使用 ToTensor 处理数据； Normalize 归一化</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">trans = transforms.Compose([transforms.RE((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h2 id="4-transforms-RandomResizedCrop随机尺寸裁剪"><a href="#4-transforms-RandomResizedCrop随机尺寸裁剪" class="headerlink" title="4.transforms.RandomResizedCrop随机尺寸裁剪"></a>4.transforms.RandomResizedCrop随机尺寸裁剪</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">resized_crop = transforms.RandomResizedCrop(size=(<span class="number">224</span>, <span class="number">224</span>),</span><br><span class="line">                                            scale=(<span class="number">0.08</span>, <span class="number">1.0</span>), </span><br><span class="line">                                            ratio=(<span class="number">0.75</span>, <span class="number">1.3333333333333333</span>), </span><br><span class="line">                                            interpolation=transforms.InterpolationMode.BILINEAR)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">上方代码解释：</span></span><br><span class="line"><span class="string"> 1、将图像进行随机裁剪，裁剪满足以下条件:</span></span><br><span class="line"><span class="string"> 裁剪后的图像 面积 与原图像的面积的比例 在 0.08 ～ 1</span></span><br><span class="line"><span class="string"> 裁剪后的图像高宽比范围在 0.75 ～ 1.33之间</span></span><br><span class="line"><span class="string"> 2、按照指定的插值方式， 将图像尺寸缩放到 （224， 224）</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure></div>
+
+<p>参数：</p>
+<ul>
+<li>size：期望的输出图像尺寸， 可以是 int值，也可可以是元组（H, W）</li>
+<li>scale ：在调整大小之前指定裁剪的随机区域的下界和上界。尺度是根据原始图像的面积来定义的。</li>
+<li>ratio：在调整大小之前，裁剪的随机纵横比的下限和上限。</li>
+<li>InterpolationMode ： 插值方式<ul>
+<li>InterpolationMode.NEAREST：最近邻插值。</li>
+<li>InterpolationMode.BILINEAR：双线性插值 (默认)</li>
+<li>InterpolationMode.BICUBIC：双三次插值。</li>
+</ul>
+</li>
+</ul>
+<h2 id="5-水平翻转与垂直翻转"><a href="#5-水平翻转与垂直翻转" class="headerlink" title="5.水平翻转与垂直翻转"></a>5.水平翻转与垂直翻转</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">horizontal_flip = transforms. RandomHorizontalFlip(<span class="number">0.5</span>)</span><br><span class="line">vertical_flip = transforms. RandomVerticalFlip(<span class="number">0.5</span>)</span><br></pre></td></tr></table></figure></div>
+
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://p.ipic.vip/wh6b5i.png"
+                     
+                ></p>
+<h2 id="6-ColorJitter"><a href="#6-ColorJitter" class="headerlink" title="6. ColorJitter"></a>6. ColorJitter</h2>
         </div>
 
         
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li><strong>标题:</strong> Pandas基础</li>
+        <li><strong>标题:</strong> 数据的读取与处理</li>
         <li><strong>作者:</strong> 深情小小侯</li>
         <li><strong>创建于
-                :</strong> 2023-10-16 19:59:53</li>
+                :</strong> 2023-10-18 11:59:25</li>
         
             <li>
                 <strong>更新于
-                    :</strong> 2023-10-16 19:59:53
+                    :</strong> 2023-10-19 10:56:03
             </li>
         
         <li>
-            <strong>链接:</strong> https://redefine.ohevan.com/2023/10/16/Pandas基础/
+            <strong>链接:</strong> https://redefine.ohevan.com/2023/10/18/数据增强/
         </li>
         <li>
             <strong>
@@ -390,14 +472,29 @@
         
             <div class="article-nav">
                 
+                    <div class="article-prev">
+                        <a class="prev"
+                        rel="prev"
+                        href="/2023/10/19/arg%E7%9A%84%E7%94%A8%E6%B3%95/"
+                        >
+                            <span class="left arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">arg的用法</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
                 
                     <div class="article-next">
                         <a class="next"
                         rel="next"
-                        href="/2023/10/16/NumPy%E5%9F%BA%E7%A1%80/"
+                        href="/2023/10/16/PyTorch%E5%9F%BA%E7%A1%80/"
                         >
                             <span class="title flex justify-center items-center">
-                                <span class="post-nav-title-item">NumPy基础</span>
+                                <span class="post-nav-title-item">PyTorch学习笔记（一）</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex justify-center items-center">
@@ -462,8 +559,8 @@
             <div class="post-toc-wrap">
     <div class="post-toc">
         <div class="toc-title">此页目录</div>
-        <div class="page-title">Pandas基础</div>
-        
+        <div class="page-title">数据的读取与处理</div>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86%E3%80%81%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA"><span class="nav-number">1.</span> <span class="nav-text">数据预处理、数据增强</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA"><span class="nav-number">1.1.</span> <span class="nav-text">1. 数据增强</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86"><span class="nav-number">1.2.</span> <span class="nav-text">2. 数据预处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E4%BD%BF%E7%94%A8%E8%8A%82%E7%82%B9"><span class="nav-number">1.3.</span> <span class="nav-text">3. 使用节点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#torchvision-transforms-%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">torchvision.transforms 的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-torchvision-transforms-ToTensor"><span class="nav-number">2.1.</span> <span class="nav-text">1. torchvision.transforms.ToTensor()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-torchvision-transforms-Normalize"><span class="nav-number">2.2.</span> <span class="nav-text">2. torchvision.transforms.Normalize()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-transforms-Compose"><span class="nav-number">2.3.</span> <span class="nav-text">3.transforms.Compose()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-transforms-RandomResizedCrop%E9%9A%8F%E6%9C%BA%E5%B0%BA%E5%AF%B8%E8%A3%81%E5%89%AA"><span class="nav-number">2.4.</span> <span class="nav-text">4.transforms.RandomResizedCrop随机尺寸裁剪</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%B0%B4%E5%B9%B3%E7%BF%BB%E8%BD%AC%E4%B8%8E%E5%9E%82%E7%9B%B4%E7%BF%BB%E8%BD%AC"><span class="nav-number">2.5.</span> <span class="nav-text">5.水平翻转与垂直翻转</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-ColorJitter"><span class="nav-number">2.6.</span> <span class="nav-text">6. ColorJitter</span></a></li></ol></li></ol>
 
     </div>
 </div>

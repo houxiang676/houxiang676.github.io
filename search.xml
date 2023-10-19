@@ -1,32 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>NumPy基础</title>
-    <url>/2023/10/16/NumPy%E5%9F%BA%E7%A1%80/</url>
+    <title>arg的用法</title>
+    <url>/2023/10/19/arg%E7%9A%84%E7%94%A8%E6%B3%95/</url>
     <content><![CDATA[]]></content>
   </entry>
   <entry>
-    <title>Hello World</title>
-    <url>/2023/10/16/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a class="link"   href="https://hexo.io/" >Hexo <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>! This is your very first post. Check <a class="link"   href="https://hexo.io/docs/" >documentation <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> for more info. If you get any problems when using Hexo, you can find the answer in <a class="link"   href="https://hexo.io/docs/troubleshooting.html" >troubleshooting <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> or you can ask me on <a class="link"   href="https://github.com/hexojs/hexo/issues" >GitHub <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure></div>
-
-<p>More info: <a class="link"   href="https://hexo.io/docs/writing.html" >Writing <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure></div>
-
-<p>More info: <a class="link"   href="https://hexo.io/docs/server.html" >Server <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure></div>
-
-<p>More info: <a class="link"   href="https://hexo.io/docs/generating.html" >Generating <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure></div>
-
-<p>More info: <a class="link"   href="https://hexo.io/docs/one-command-deployment.html" >Deployment <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>PyTorch基础</title>
+    <title>PyTorch学习笔记（一）</title>
     <url>/2023/10/16/PyTorch%E5%9F%BA%E7%A1%80/</url>
-    <content><![CDATA[<h1 id="PyTorch基础"><a href="#PyTorch基础" class="headerlink" title="PyTorch基础"></a>PyTorch基础</h1><p>PyTorch由4个主要包组成包组成，具体如下。</p>
+    <content><![CDATA[<h1 id="PyTorch学习笔记"><a href="#PyTorch学习笔记" class="headerlink" title="PyTorch学习笔记"></a>PyTorch学习笔记</h1><p>PyTorch由4个主要包组成包组成，具体如下。</p>
 <ul>
 <li>torch：类似于NumPy的通用数组库，可将张量类型转换为torch.cuda.TensorFloat，并在GPU上进行计算。<br>torch.autograd：用于构建计算图形并自动获取梯度的包。<br>torch.nn：具有共享层和损失函数的神经网络库。<br>torch.optim：具有通用优化算法（如SGD，Adam等）的优化包。</li>
 <li>torch.autograd：用于构建计算图形并自动获取梯度的包。</li>
@@ -37,18 +19,34 @@
 
 <h2 id="指定GPU"><a href="#指定GPU" class="headerlink" title="指定GPU"></a>指定GPU</h2><h3 id="代码中指定"><a href="#代码中指定" class="headerlink" title="代码中指定"></a>代码中指定</h3><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">import os</span><br><span class="line">os.environ[&quot;CUDA_VISIBLE_DEVICES&quot;] = &quot;1&quot;</span><br><span class="line"># 可以同时指定多个设备（设备是真实存在的，不要指定不存在的设备）</span><br><span class="line"></span><br><span class="line">os.environ[&quot;CUDA_VISIBLE_DEVICES&quot;] = &quot;0, 1, 2, 3&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
 
+<hr>
+<h1 id="nn-Sequential、nn-Module、nn-List-ModuleDict"><a href="#nn-Sequential、nn-Module、nn-List-ModuleDict" class="headerlink" title="nn.Sequential、nn.Module、nn.List_ModuleDict"></a>nn.Sequential、nn.Module、nn.List_ModuleDict</h1><h2 id="1-简介"><a href="#1-简介" class="headerlink" title="1.简介"></a>1.简介</h2><p>1）nn.Sequential、nn.ModuleList、nn.ModuleDict 类都继承自 Module 类。</p>
+<p>2）nn.Sequential、nn.ModuleList、nn.ModuleDict 语法，类似如下：</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">net = nn.Sequential(nn.Linear(<span class="number">32</span>, <span class="number">64</span>), nn.ReLU())</span><br><span class="line"></span><br><span class="line">net = nn.ModuleList([nn.Linear(<span class="number">32</span>, <span class="number">6</span>)<span class="number">4</span>, nn.ReLU()])</span><br><span class="line"></span><br><span class="line">net = nn.ModuleDict(&#123;<span class="string">&#x27;linear&#x27;</span>: nn.Linear(<span class="number">32</span>, <span class="number">64</span>), <span class="string">&#x27;act&#x27;</span>: nn.ReLU()&#125;)</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="2、nn-Sequential、nn-Module、nn-List-ModuleDict-区别"><a href="#2、nn-Sequential、nn-Module、nn-List-ModuleDict-区别" class="headerlink" title="2、nn.Sequential、nn.Module、nn.List_ModuleDict 区别"></a>2、nn.Sequential、nn.Module、nn.List_ModuleDict 区别</h2><p>1）<code>nn.ModuleList</code> 仅仅是一个储存各种模块的列表，这些模块之间没有联系也没有顺序（所以不用保证相邻层的输入输出维度匹配），而且没有实现 forward 功能需要自己实现</p>
+<p>2）和<code>nn.ModuleList</code> 一样， <code>nn.ModuleDict</code> 实例仅仅是存放了一些模块的字典，并没有定义 forward 函数需要自己定义</p>
+<p>3）而 <code>nn.Sequential</code> 内的模块需要按照顺序排列，要保证相邻层的输入输出大小相匹配；<code>nn.sequential</code> 内部 forward 功能已经实现，直接调用的，不需要再写 forward</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line">net1 = nn.Sequential(nn.Linear(<span class="number">32</span>, <span class="number">64</span>), nn.ReLU())</span><br><span class="line">net2 = nn.ModuleList([nn.Linear(<span class="number">32</span>, <span class="number">64</span>), nn.ReLU()])</span><br><span class="line">net3 = nn.ModuleDict(&#123;<span class="string">&#x27;linear&#x27;</span>: nn.Linear(<span class="number">32</span>, <span class="number">64</span>), <span class="string">&#x27;act&#x27;</span>: nn.ReLU()&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment"># print(net1)</span></span><br><span class="line"><span class="comment"># print(net2)</span></span><br><span class="line"><span class="comment"># print(net3)</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">Sequential(</span></span><br><span class="line"><span class="string">  (0): Linear(in_features=32, out_features=64, bias=True)</span></span><br><span class="line"><span class="string">  (1): ReLU()</span></span><br><span class="line"><span class="string">)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">x = torch.randn(<span class="number">8</span>, <span class="number">3</span>, <span class="number">32</span>)</span><br><span class="line"><span class="built_in">print</span>(net1(x).shape)     <span class="comment">#torch.Size([8, 3, 64])</span></span><br><span class="line"><span class="comment"># print(net2(x).shape)  # 会报错，提示缺少forward</span></span><br><span class="line"><span class="comment"># print(net3(x).shape)   # 会报错，提示缺少forward</span></span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<p>为 nn.ModuleList 写 forward 函数</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">My_Model</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(My_Model, self).__init__()</span><br><span class="line">        self.layers = nn.ModuleList([nn.Linear(<span class="number">32</span>, <span class="number">64</span>),nn.ReLU()])</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="keyword">for</span> layer <span class="keyword">in</span> self.layers:</span><br><span class="line">            x = layer(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line">net = My_Model()</span><br><span class="line"></span><br><span class="line">x = torch.randn(<span class="number">8</span>, <span class="number">3</span>, <span class="number">32</span>)</span><br><span class="line">out = net(x)</span><br><span class="line"><span class="built_in">print</span>(out.shape)</span><br><span class="line"><span class="comment">#torch.Size([8, 3, 64])</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<p>将 nn.ModuleList 转换成 nn.Sequential</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line">module_list = nn.ModuleList([nn.Linear(<span class="number">32</span>, <span class="number">64</span>), nn.ReLU()])</span><br><span class="line">net = nn.Sequential(*module_list)</span><br><span class="line">x = torch.randn(<span class="number">8</span>, <span class="number">3</span>, <span class="number">32</span>)</span><br><span class="line"><span class="built_in">print</span>(net(x).shape)</span><br></pre></td></tr></table></figure></div>
+
+<p>将 nn.ModuleDict 转换成 nn.Sequential</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line">module_dict = nn.ModuleDict(&#123;<span class="string">&#x27;linear&#x27;</span>: nn.Linear(<span class="number">32</span>, <span class="number">64</span>), <span class="string">&#x27;act&#x27;</span>: nn.ReLU()&#125;)</span><br><span class="line">net = nn.Sequential(*module_dict.values())</span><br><span class="line">x = torch.randn(<span class="number">8</span>, <span class="number">3</span>, <span class="number">32</span>)</span><br><span class="line"><span class="built_in">print</span>(net(x).shape)</span><br></pre></td></tr></table></figure></div>
 
 
-<h2 id="TenSor"><a href="#TenSor" class="headerlink" title="TenSor"></a>TenSor</h2><p>对Tensor的操作很多，从接口的角度来划分，可以分为两类：<br>1）torch.function，如torch.sum、torch.add等，<br>2）tensor.function，如tensor.view、tensor.add等。<br>这些操作对大部分Tensor都是等价的，如torch.add(x,y)与x.add(y)等价。在实际使用时，可以根据个人爱好选择。<br>如果从修改方式的角度，可以分为以下两类。<br>1）不修改自身数据，如x.add(y),x的数据不变，返回一个新的tensor。<br>2）修改自身数据，如x.add_(y)（运行符带下划线后缀），运算结果存在x中，x被修改。<br>以下代码说明add与add_的区别。</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">x=torch.tensor([<span class="number">1</span>,<span class="number">2</span>])</span><br><span class="line">y=torch.tensor([<span class="number">3</span>,<span class="number">4</span>])</span><br><span class="line">z=x.add(y)</span><br><span class="line"><span class="built_in">print</span>(z)</span><br><span class="line"><span class="built_in">print</span>(x)</span><br><span class="line">x.add_(y)</span><br><span class="line"><span class="built_in">print</span>(x)</span><br></pre></td></tr></table></figure></div>
 
-<p>运行结果如下：<br>tensor([4, 6])<br>tensor([1, 2])<br>tensor([4, 6])</p>
 <hr>
 ]]></content>
   </entry>
   <entry>
-    <title>Pandas基础</title>
-    <url>/2023/10/16/Pandas%E5%9F%BA%E7%A1%80/</url>
+    <title>优化器与学习率</title>
+    <url>/2023/10/19/%E4%BC%98%E5%8C%96%E5%99%A8%E4%B8%8E%E5%AD%A6%E4%B9%A0%E7%8E%87/</url>
     <content><![CDATA[]]></content>
   </entry>
   <entry>
@@ -126,5 +124,85 @@
                       alt="图片描述"
                 ></p>
 ]]></content>
+  </entry>
+  <entry>
+    <title>数据的读取与处理</title>
+    <url>/2023/10/18/%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA/</url>
+    <content><![CDATA[<h1 id="数据预处理、数据增强"><a href="#数据预处理、数据增强" class="headerlink" title="数据预处理、数据增强"></a>数据预处理、数据增强</h1><h2 id="1-数据增强"><a href="#1-数据增强" class="headerlink" title="1. 数据增强"></a>1. 数据增强</h2><p>数据增强可以增加训练集的样本数量，缓解过拟合，并提高模型的泛化能力，从而有效提升算法的性能。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://p.ipic.vip/a161sy.png"
+                      alt="数据增强"
+                ></p>
+<h2 id="2-数据预处理"><a href="#2-数据预处理" class="headerlink" title="2. 数据预处理"></a>2. 数据预处理</h2><p>1）将图像转换成 tensor 的数据格式</p>
+<p>2）将图像的 像素值范围 由 0～255 转换到 0～1</p>
+<p>3）(height, width, channel) &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&gt;&gt;&gt; (channel, height, width)</p>
+<p>4）归一化图像</p>
+<h2 id="3-使用节点"><a href="#3-使用节点" class="headerlink" title="3. 使用节点"></a>3. 使用节点</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">trans = transforms.Compose([transforms.RandomResizedCrop((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.RandomHorizontalFlip(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ColorJitter(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
+
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://p.ipic.vip/iiqcob.png"
+                     
+                ></p>
+<h1 id="torchvision-transforms-的使用"><a href="#torchvision-transforms-的使用" class="headerlink" title="torchvision.transforms 的使用"></a>torchvision.transforms 的使用</h1><p>官方文档地址： <a class="link"   href="https://pytorch.org/vision/stable/transforms.html" >https://pytorch.org/vision/stable/transforms.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h2 id="1-torchvision-transforms-ToTensor"><a href="#1-torchvision-transforms-ToTensor" class="headerlink" title="1. torchvision.transforms.ToTensor()"></a>1. torchvision.transforms.ToTensor()</h2><p><code>torchvision.transforms.ToTensor()</code> 做了三件事：</p>
+<p> 1）将图像的数据格式由 nump.ndarray 或 PIL.Image 转为 tensor，数据类型为 torch.FloatTensor</p>
+<p> 2）将像素值范围从 0-255 转换到 0-1之间， 处理方式 ：直接除以255</p>
+<p> 3）将 shape&#x3D;(H,W, C) 转换为 shape&#x3D; (C, H, W)</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://p.ipic.vip/xksmgr.png"
+                     
+                ></p>
+<h2 id="2-torchvision-transforms-Normalize"><a href="#2-torchvision-transforms-Normalize" class="headerlink" title="2. torchvision.transforms.Normalize()"></a>2. torchvision.transforms.Normalize()</h2><p>作用：用均值和标准差对张量图像进行归一化，一般在 <code>torchvision.transforms.ToTensor()</code> 之后使用</p>
+<p>在使用 <code>torchvision.transforms.ToTensor()</code> 之后，像素值取值范围会被转换到 [0, 1]之间，再使用 <code>transforms.Normalize(mean, std)</code> 进行归一化后，原像素值就被分布到了 [-1, 1] 之间：</p>
+<p>公式：</p>
+<ul>
+<li>原来的 0~1 最小值 0 则变成 (0 - mean) &#x2F; std &#x3D; -1</li>
+</ul>
+<ul>
+<li>最大值1则变成 (1 - mean) &#x2F; std &#x3D; 1</li>
+</ul>
+<p>一般 mean 和 std 会分别指定3个值，代表图像3个通道的均值和方差，比如<code>torchvision.transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])</code></p>
+<p>如果是<strong>单通道的灰度图</strong>，均值为0.5，方差为0.5，可以写成 <code>transforms.Normalize(mean=[0.5], std=[0.5])</code></p>
+<p>因为 ImageNet数据集 是一个大型数据集，由一个大型数据集统计出来的均值和方差，基本符合所有数据集的像素值分布，所以，一般直接使用 <code>mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]</code></p>
+<h2 id="3-transforms-Compose"><a href="#3-transforms-Compose" class="headerlink" title="3.transforms.Compose()"></a>3.transforms.Compose()</h2><p><strong>训练阶段</strong></p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">trans = transforms.Compose([transforms.RandomResizedCrop((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.RandomHorizontalFlip(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ColorJitter(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
+
+
+
+<p><strong>推理阶段(test)</strong></p>
+<p>推理阶段不会再对数据进行增强，只会做基础的预处理，比如：将尺寸处理到固定尺寸 ；使用 ToTensor 处理数据； Normalize 归一化</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">trans = transforms.Compose([transforms.RE((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h2 id="4-transforms-RandomResizedCrop随机尺寸裁剪"><a href="#4-transforms-RandomResizedCrop随机尺寸裁剪" class="headerlink" title="4.transforms.RandomResizedCrop随机尺寸裁剪"></a>4.transforms.RandomResizedCrop随机尺寸裁剪</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">resized_crop = transforms.RandomResizedCrop(size=(<span class="number">224</span>, <span class="number">224</span>),</span><br><span class="line">                                            scale=(<span class="number">0.08</span>, <span class="number">1.0</span>), </span><br><span class="line">                                            ratio=(<span class="number">0.75</span>, <span class="number">1.3333333333333333</span>), </span><br><span class="line">                                            interpolation=transforms.InterpolationMode.BILINEAR)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">上方代码解释：</span></span><br><span class="line"><span class="string"> 1、将图像进行随机裁剪，裁剪满足以下条件:</span></span><br><span class="line"><span class="string"> 裁剪后的图像 面积 与原图像的面积的比例 在 0.08 ～ 1</span></span><br><span class="line"><span class="string"> 裁剪后的图像高宽比范围在 0.75 ～ 1.33之间</span></span><br><span class="line"><span class="string"> 2、按照指定的插值方式， 将图像尺寸缩放到 （224， 224）</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure></div>
+
+<p>参数：</p>
+<ul>
+<li>size：期望的输出图像尺寸， 可以是 int值，也可可以是元组（H, W）</li>
+<li>scale ：在调整大小之前指定裁剪的随机区域的下界和上界。尺度是根据原始图像的面积来定义的。</li>
+<li>ratio：在调整大小之前，裁剪的随机纵横比的下限和上限。</li>
+<li>InterpolationMode ： 插值方式<ul>
+<li>InterpolationMode.NEAREST：最近邻插值。</li>
+<li>InterpolationMode.BILINEAR：双线性插值 (默认)</li>
+<li>InterpolationMode.BICUBIC：双三次插值。</li>
+</ul>
+</li>
+</ul>
+<h2 id="5-水平翻转与垂直翻转"><a href="#5-水平翻转与垂直翻转" class="headerlink" title="5.水平翻转与垂直翻转"></a>5.水平翻转与垂直翻转</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">horizontal_flip = transforms. RandomHorizontalFlip(<span class="number">0.5</span>)</span><br><span class="line">vertical_flip = transforms. RandomVerticalFlip(<span class="number">0.5</span>)</span><br></pre></td></tr></table></figure></div>
+
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://p.ipic.vip/wh6b5i.png"
+                     
+                ></p>
+<h2 id="6-ColorJitter"><a href="#6-ColorJitter" class="headerlink" title="6. ColorJitter"></a>6. ColorJitter</h2>]]></content>
   </entry>
 </search>

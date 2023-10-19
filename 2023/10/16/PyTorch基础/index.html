@@ -18,15 +18,15 @@
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta name="description" content="PyTorch基础PyTorch由4个主要包组成包组成，具体如下。  torch：类似于NumPy的通用数组库，可将张量类型转换为torch.cuda.TensorFloat，并在GPU上进行计算。torch.autograd：用于构建计算图形并自动获取梯度的包。torch.nn：具有共享层和损失函数的神经网络库。torch.optim：具有通用优化算法（如SGD，Adam等）的优化包。 torc">
+        <meta name="description" content="PyTorch学习笔记PyTorch由4个主要包组成包组成，具体如下。  torch：类似于NumPy的通用数组库，可将张量类型转换为torch.cuda.TensorFloat，并在GPU上进行计算。torch.autograd：用于构建计算图形并自动获取梯度的包。torch.nn：具有共享层和损失函数的神经网络库。torch.optim：具有通用优化算法（如SGD，Adam等）的优化包。 to">
 <meta property="og:type" content="article">
-<meta property="og:title" content="PyTorch基础">
+<meta property="og:title" content="PyTorch学习笔记（一）">
 <meta property="og:url" content="http://example.com/2023/10/16/PyTorch%E5%9F%BA%E7%A1%80/index.html">
 <meta property="og:site_name" content="深情小小侯的博客">
-<meta property="og:description" content="PyTorch基础PyTorch由4个主要包组成包组成，具体如下。  torch：类似于NumPy的通用数组库，可将张量类型转换为torch.cuda.TensorFloat，并在GPU上进行计算。torch.autograd：用于构建计算图形并自动获取梯度的包。torch.nn：具有共享层和损失函数的神经网络库。torch.optim：具有通用优化算法（如SGD，Adam等）的优化包。 torc">
+<meta property="og:description" content="PyTorch学习笔记PyTorch由4个主要包组成包组成，具体如下。  torch：类似于NumPy的通用数组库，可将张量类型转换为torch.cuda.TensorFloat，并在GPU上进行计算。torch.autograd：用于构建计算图形并自动获取梯度的包。torch.nn：具有共享层和损失函数的神经网络库。torch.optim：具有通用优化算法（如SGD，Adam等）的优化包。 to">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-16T11:53:44.000Z">
-<meta property="article:modified_time" content="2023-10-16T12:58:31.815Z">
+<meta property="article:modified_time" content="2023-10-19T02:25:44.851Z">
 <meta property="article:author" content="深情小小侯">
 <meta name="twitter:card" content="summary">
     
@@ -40,7 +40,7 @@
     
     <title>
         
-            PyTorch基础 -
+            PyTorch学习笔记（一） -
         
         深情小小侯的博客
     </title>
@@ -293,7 +293,7 @@
 
         <div class="article-title">
             
-                <h1 class="article-title-regular">PyTorch基础</h1>
+                <h1 class="article-title-regular">PyTorch学习笔记（一）</h1>
             
             </div>
             
@@ -322,8 +322,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2023-10-16 20:58:31</span>
-            <span class="mobile">2023-10-16 20:58:31</span>
+            <span class="desktop">2023-10-19 10:25:44</span>
+            <span class="mobile">2023-10-19 10:25:44</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -350,7 +350,7 @@
 
 
         <div class="article-content markdown-body">
-            <h1 id="PyTorch基础"><a href="#PyTorch基础" class="headerlink" title="PyTorch基础"></a>PyTorch基础</h1><p>PyTorch由4个主要包组成包组成，具体如下。</p>
+            <h1 id="PyTorch学习笔记"><a href="#PyTorch学习笔记" class="headerlink" title="PyTorch学习笔记"></a>PyTorch学习笔记</h1><p>PyTorch由4个主要包组成包组成，具体如下。</p>
 <ul>
 <li>torch：类似于NumPy的通用数组库，可将张量类型转换为torch.cuda.TensorFloat，并在GPU上进行计算。<br>torch.autograd：用于构建计算图形并自动获取梯度的包。<br>torch.nn：具有共享层和损失函数的神经网络库。<br>torch.optim：具有通用优化算法（如SGD，Adam等）的优化包。</li>
 <li>torch.autograd：用于构建计算图形并自动获取梯度的包。</li>
@@ -361,12 +361,28 @@
 
 <h2 id="指定GPU"><a href="#指定GPU" class="headerlink" title="指定GPU"></a>指定GPU</h2><h3 id="代码中指定"><a href="#代码中指定" class="headerlink" title="代码中指定"></a>代码中指定</h3><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">import os</span><br><span class="line">os.environ[&quot;CUDA_VISIBLE_DEVICES&quot;] = &quot;1&quot;</span><br><span class="line"># 可以同时指定多个设备（设备是真实存在的，不要指定不存在的设备）</span><br><span class="line"></span><br><span class="line">os.environ[&quot;CUDA_VISIBLE_DEVICES&quot;] = &quot;0, 1, 2, 3&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
 
+<hr>
+<h1 id="nn-Sequential、nn-Module、nn-List-ModuleDict"><a href="#nn-Sequential、nn-Module、nn-List-ModuleDict" class="headerlink" title="nn.Sequential、nn.Module、nn.List_ModuleDict"></a>nn.Sequential、nn.Module、nn.List_ModuleDict</h1><h2 id="1-简介"><a href="#1-简介" class="headerlink" title="1.简介"></a>1.简介</h2><p>1）nn.Sequential、nn.ModuleList、nn.ModuleDict 类都继承自 Module 类。</p>
+<p>2）nn.Sequential、nn.ModuleList、nn.ModuleDict 语法，类似如下：</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">net = nn.Sequential(nn.Linear(<span class="number">32</span>, <span class="number">64</span>), nn.ReLU())</span><br><span class="line"></span><br><span class="line">net = nn.ModuleList([nn.Linear(<span class="number">32</span>, <span class="number">6</span>)<span class="number">4</span>, nn.ReLU()])</span><br><span class="line"></span><br><span class="line">net = nn.ModuleDict(&#123;<span class="string">&#x27;linear&#x27;</span>: nn.Linear(<span class="number">32</span>, <span class="number">64</span>), <span class="string">&#x27;act&#x27;</span>: nn.ReLU()&#125;)</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="2、nn-Sequential、nn-Module、nn-List-ModuleDict-区别"><a href="#2、nn-Sequential、nn-Module、nn-List-ModuleDict-区别" class="headerlink" title="2、nn.Sequential、nn.Module、nn.List_ModuleDict 区别"></a>2、nn.Sequential、nn.Module、nn.List_ModuleDict 区别</h2><p>1）<code>nn.ModuleList</code> 仅仅是一个储存各种模块的列表，这些模块之间没有联系也没有顺序（所以不用保证相邻层的输入输出维度匹配），而且没有实现 forward 功能需要自己实现</p>
+<p>2）和<code>nn.ModuleList</code> 一样， <code>nn.ModuleDict</code> 实例仅仅是存放了一些模块的字典，并没有定义 forward 函数需要自己定义</p>
+<p>3）而 <code>nn.Sequential</code> 内的模块需要按照顺序排列，要保证相邻层的输入输出大小相匹配；<code>nn.sequential</code> 内部 forward 功能已经实现，直接调用的，不需要再写 forward</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line">net1 = nn.Sequential(nn.Linear(<span class="number">32</span>, <span class="number">64</span>), nn.ReLU())</span><br><span class="line">net2 = nn.ModuleList([nn.Linear(<span class="number">32</span>, <span class="number">64</span>), nn.ReLU()])</span><br><span class="line">net3 = nn.ModuleDict(&#123;<span class="string">&#x27;linear&#x27;</span>: nn.Linear(<span class="number">32</span>, <span class="number">64</span>), <span class="string">&#x27;act&#x27;</span>: nn.ReLU()&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment"># print(net1)</span></span><br><span class="line"><span class="comment"># print(net2)</span></span><br><span class="line"><span class="comment"># print(net3)</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">Sequential(</span></span><br><span class="line"><span class="string">  (0): Linear(in_features=32, out_features=64, bias=True)</span></span><br><span class="line"><span class="string">  (1): ReLU()</span></span><br><span class="line"><span class="string">)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">x = torch.randn(<span class="number">8</span>, <span class="number">3</span>, <span class="number">32</span>)</span><br><span class="line"><span class="built_in">print</span>(net1(x).shape)     <span class="comment">#torch.Size([8, 3, 64])</span></span><br><span class="line"><span class="comment"># print(net2(x).shape)  # 会报错，提示缺少forward</span></span><br><span class="line"><span class="comment"># print(net3(x).shape)   # 会报错，提示缺少forward</span></span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<p>为 nn.ModuleList 写 forward 函数</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">My_Model</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(My_Model, self).__init__()</span><br><span class="line">        self.layers = nn.ModuleList([nn.Linear(<span class="number">32</span>, <span class="number">64</span>),nn.ReLU()])</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="keyword">for</span> layer <span class="keyword">in</span> self.layers:</span><br><span class="line">            x = layer(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line">net = My_Model()</span><br><span class="line"></span><br><span class="line">x = torch.randn(<span class="number">8</span>, <span class="number">3</span>, <span class="number">32</span>)</span><br><span class="line">out = net(x)</span><br><span class="line"><span class="built_in">print</span>(out.shape)</span><br><span class="line"><span class="comment">#torch.Size([8, 3, 64])</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<p>将 nn.ModuleList 转换成 nn.Sequential</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line">module_list = nn.ModuleList([nn.Linear(<span class="number">32</span>, <span class="number">64</span>), nn.ReLU()])</span><br><span class="line">net = nn.Sequential(*module_list)</span><br><span class="line">x = torch.randn(<span class="number">8</span>, <span class="number">3</span>, <span class="number">32</span>)</span><br><span class="line"><span class="built_in">print</span>(net(x).shape)</span><br></pre></td></tr></table></figure></div>
+
+<p>将 nn.ModuleDict 转换成 nn.Sequential</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line">module_dict = nn.ModuleDict(&#123;<span class="string">&#x27;linear&#x27;</span>: nn.Linear(<span class="number">32</span>, <span class="number">64</span>), <span class="string">&#x27;act&#x27;</span>: nn.ReLU()&#125;)</span><br><span class="line">net = nn.Sequential(*module_dict.values())</span><br><span class="line">x = torch.randn(<span class="number">8</span>, <span class="number">3</span>, <span class="number">32</span>)</span><br><span class="line"><span class="built_in">print</span>(net(x).shape)</span><br></pre></td></tr></table></figure></div>
 
 
-<h2 id="TenSor"><a href="#TenSor" class="headerlink" title="TenSor"></a>TenSor</h2><p>对Tensor的操作很多，从接口的角度来划分，可以分为两类：<br>1）torch.function，如torch.sum、torch.add等，<br>2）tensor.function，如tensor.view、tensor.add等。<br>这些操作对大部分Tensor都是等价的，如torch.add(x,y)与x.add(y)等价。在实际使用时，可以根据个人爱好选择。<br>如果从修改方式的角度，可以分为以下两类。<br>1）不修改自身数据，如x.add(y),x的数据不变，返回一个新的tensor。<br>2）修改自身数据，如x.add_(y)（运行符带下划线后缀），运算结果存在x中，x被修改。<br>以下代码说明add与add_的区别。</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">x=torch.tensor([<span class="number">1</span>,<span class="number">2</span>])</span><br><span class="line">y=torch.tensor([<span class="number">3</span>,<span class="number">4</span>])</span><br><span class="line">z=x.add(y)</span><br><span class="line"><span class="built_in">print</span>(z)</span><br><span class="line"><span class="built_in">print</span>(x)</span><br><span class="line">x.add_(y)</span><br><span class="line"><span class="built_in">print</span>(x)</span><br></pre></td></tr></table></figure></div>
 
-<p>运行结果如下：<br>tensor([4, 6])<br>tensor([1, 2])<br>tensor([4, 6])</p>
 <hr>
 
         </div>
@@ -375,14 +391,14 @@
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li><strong>标题:</strong> PyTorch基础</li>
+        <li><strong>标题:</strong> PyTorch学习笔记（一）</li>
         <li><strong>作者:</strong> 深情小小侯</li>
         <li><strong>创建于
                 :</strong> 2023-10-16 19:53:44</li>
         
             <li>
                 <strong>更新于
-                    :</strong> 2023-10-16 20:58:31
+                    :</strong> 2023-10-19 10:25:44
             </li>
         
         <li>
@@ -413,13 +429,13 @@
                     <div class="article-prev">
                         <a class="prev"
                         rel="prev"
-                        href="/2023/10/16/NumPy%E5%9F%BA%E7%A1%80/"
+                        href="/2023/10/18/%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA/"
                         >
                             <span class="left arrow-icon flex justify-center items-center">
                                 <i class="fa-solid fa-chevron-left"></i>
                             </span>
                             <span class="title flex justify-center items-center">
-                                <span class="post-nav-title-item">NumPy基础</span>
+                                <span class="post-nav-title-item">数据的读取与处理</span>
                                 <span class="post-nav-item">上一篇</span>
                             </span>
                         </a>
@@ -497,8 +513,8 @@
             <div class="post-toc-wrap">
     <div class="post-toc">
         <div class="toc-title">此页目录</div>
-        <div class="page-title">PyTorch基础</div>
-        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#PyTorch%E5%9F%BA%E7%A1%80"><span class="nav-number">1.</span> <span class="nav-text">PyTorch基础</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E5%AE%9AGPU"><span class="nav-number">1.1.</span> <span class="nav-text">指定GPU</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E4%B8%AD%E6%8C%87%E5%AE%9A"><span class="nav-number">1.1.1.</span> <span class="nav-text">代码中指定</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TenSor"><span class="nav-number">1.2.</span> <span class="nav-text">TenSor</span></a></li></ol></li></ol>
+        <div class="page-title">PyTorch学习笔记（一）</div>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#PyTorch%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0"><span class="nav-number">1.</span> <span class="nav-text">PyTorch学习笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E5%AE%9AGPU"><span class="nav-number">1.1.</span> <span class="nav-text">指定GPU</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E4%B8%AD%E6%8C%87%E5%AE%9A"><span class="nav-number">1.1.1.</span> <span class="nav-text">代码中指定</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#nn-Sequential%E3%80%81nn-Module%E3%80%81nn-List-ModuleDict"><span class="nav-number">2.</span> <span class="nav-text">nn.Sequential、nn.Module、nn.List_ModuleDict</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E7%AE%80%E4%BB%8B"><span class="nav-number">2.1.</span> <span class="nav-text">1.简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%E3%80%81nn-Sequential%E3%80%81nn-Module%E3%80%81nn-List-ModuleDict-%E5%8C%BA%E5%88%AB"><span class="nav-number">2.2.</span> <span class="nav-text">2、nn.Sequential、nn.Module、nn.List_ModuleDict 区别</span></a></li></ol></li></ol>
 
     </div>
 </div>
