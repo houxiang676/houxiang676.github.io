@@ -152,6 +152,8 @@
 <p> 1）将图像的数据格式由 nump.ndarray 或 PIL.Image 转为 tensor，数据类型为 torch.FloatTensor</p>
 <p> 2）将像素值范围从 0-255 转换到 0-1之间， 处理方式 ：直接除以255</p>
 <p> 3）将 shape&#x3D;(H,W, C) 转换为 shape&#x3D; (C, H, W)</p>
+<p>🌼原始的data的shape为（5，5，3），则其表示有5个（5 ， 3）的二维数组，即我们把最外层的[]去掉就得到了5个五行三列的数据。</p>
+<p>🌼同样的，变换后data的shape为（3，5，5），则其表示有3个（5 ， 5）的二维数组，即我们把最外层的[]去掉就得到了3个五行五列的数据。</p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"

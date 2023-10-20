@@ -30,7 +30,7 @@
 <meta property="og:image" content="https://p.ipic.vip/xksmgr.png">
 <meta property="og:image" content="https://p.ipic.vip/wh6b5i.png">
 <meta property="article:published_time" content="2023-10-18T03:59:25.000Z">
-<meta property="article:modified_time" content="2023-10-19T02:56:03.580Z">
+<meta property="article:modified_time" content="2023-10-19T03:35:41.699Z">
 <meta property="article:author" content="深情小小侯">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://p.ipic.vip/a161sy.png">
@@ -327,8 +327,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2023-10-19 10:56:03</span>
-            <span class="mobile">2023-10-19 10:56:03</span>
+            <span class="desktop">2023-10-19 11:35:41</span>
+            <span class="mobile">2023-10-19 11:35:41</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -379,6 +379,8 @@
 <p> 1）将图像的数据格式由 nump.ndarray 或 PIL.Image 转为 tensor，数据类型为 torch.FloatTensor</p>
 <p> 2）将像素值范围从 0-255 转换到 0-1之间， 处理方式 ：直接除以255</p>
 <p> 3）将 shape&#x3D;(H,W, C) 转换为 shape&#x3D; (C, H, W)</p>
+<p>🌼原始的data的shape为（5，5，3），则其表示有5个（5 ， 3）的二维数组，即我们把最外层的[]去掉就得到了5个五行三列的数据。</p>
+<p>🌼同样的，变换后data的shape为（3，5，5），则其表示有3个（5 ， 5）的二维数组，即我们把最外层的[]去掉就得到了3个五行五列的数据。</p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
@@ -444,7 +446,7 @@
         
             <li>
                 <strong>更新于
-                    :</strong> 2023-10-19 10:56:03
+                    :</strong> 2023-10-19 11:35:41
             </li>
         
         <li>
