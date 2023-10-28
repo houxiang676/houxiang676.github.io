@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>优化器与学习率</title>
-    <url>/2023/10/19/%E4%BC%98%E5%8C%96%E5%99%A8%E4%B8%8E%E5%AD%A6%E4%B9%A0%E7%8E%87/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
     <title>arg的用法</title>
     <url>/2023/10/19/arg%E7%9A%84%E7%94%A8%E6%B3%95/</url>
     <content><![CDATA[]]></content>
@@ -206,5 +201,315 @@
                      
                 ></p>
 <h2 id="6-ColorJitter"><a href="#6-ColorJitter" class="headerlink" title="6. ColorJitter"></a>6. ColorJitter</h2>]]></content>
+  </entry>
+  <entry>
+    <title>差分隐私</title>
+    <url>/2023/10/20/%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>transformer-注意力机制</title>
+    <url>/2023/10/23/transformer-%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>联邦学习实战</title>
+    <url>/2023/10/21/%E8%81%94%E9%82%A6%E5%AD%A6%E4%B9%A0%E5%AE%9E%E6%88%98/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>图神经网络(二)</title>
+    <url>/2023/10/23/%E5%9B%BE%E8%81%94%E9%82%A6/</url>
+    <content><![CDATA[<h1 id="图神经网络"><a href="#图神经网络" class="headerlink" title="图神经网络"></a>图神经网络</h1><h2 id="什么是图"><a href="#什么是图" class="headerlink" title="什么是图"></a>什么是图</h2><h3 id="图基本模块定义"><a href="#图基本模块定义" class="headerlink" title="图基本模块定义"></a>图基本模块定义</h3><p><strong>V</strong>：点，每个点都有自己的特征向量（特征举例：邻居点数量、一阶二阶相似度）<br><strong>E</strong>：边，每个边都有自己的特征向量（特征举例：边的权重值、边的定义）<br><strong>U</strong>：整个图，每个图都有自己的特征向量（特征举例：节点数量、图直径）</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://s2.loli.net/2023/10/23/N3L9b5XmxqAulwQ.png"
+                      alt="image.png" style="zoom:50%;" 
+                >
+
+<h3 id="图神经网络要做的事情"><a href="#图神经网络要做的事情" class="headerlink" title="图神经网络要做的事情"></a>图神经网络要做的事情</h3><ul>
+<li>为每个节点整合特征向量，根据其对节点做分类或者回归</li>
+<li>为每条边整合特征向量，根据其对边做分类或者回归</li>
+<li>为每张图整合特征向量，根据其对图做分类或者回归</li>
+</ul>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://s2.loli.net/2023/10/23/WkdzsvblxDIr6KP.png"
+                      alt="image.png" style="zoom:50%;" 
+                >
+
+<p>每个顶点、边和整张图都可以用一个向量来表示，在这个例子中，顶点的向量有六个值，柱体的高矮就表示该值的大小，每条边用一个长为8的向量来表示，全局用一个长为5的向量来表示</p>
+<p>图分为两种，一种是有向图，一种是无向图。有向图就是单边关系图，比如A暗恋B，而B并没有暗恋A，这就是一个单边关系；无向图就是互为这种关系，比如说情侣，双方互相喜欢。</p>
+<h2 id="怎么把一些内容表示成图"><a href="#怎么把一些内容表示成图" class="headerlink" title="怎么把一些内容表示成图"></a>怎么把一些内容表示成图</h2><p>比如说一张图片可以表示为一个244*244*3的tensor，244*244个像素，3个rgb通道。就可以像下图这样表示，点表示的是像素，边表示的是像素间的邻接关系，<a class="link"   href="https://distill.pub/2021/gnn-intro/" >建议大家去博客看一看 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，可以互动，更为直观。用数组（如 244x244x3 浮点数）表示。另一种将图像视为具有规则结构的图的方法是，每个像素代表一个节点，并通过边与相邻像素相连。每个无边框的像素正好有 8 个邻居，每个节点存储的信息是一个三维向量，代表像素的 RGB 值。</p>
+<p>通过邻接矩阵可以直观地了解图形的连通性。我们对节点进行排序、</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://s2.loli.net/2023/10/23/faQOMBTdotEG6ei.png"
+                      alt="image.png" style="zoom:50%;" 
+                >
+
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20231023092312097.png"
+                      alt="image-20231023092312097" style="zoom:50%;" 
+                >
+
+<h3 id="将一句话表示成图"><a href="#将一句话表示成图" class="headerlink" title="将一句话表示成图"></a>将一句话表示成图</h3><p>句子中的每个单词可以表示成一个节点，有向边表示这些单词的链接关系.</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://s2.loli.net/2023/10/23/J2dtcVfqBuk14Zv.png"
+                      alt="image.png" style="zoom:50%;" 
+                >
+
+<h3 id="其他可以表示成图的信息"><a href="#其他可以表示成图的信息" class="headerlink" title="其他可以表示成图的信息"></a>其他可以表示成图的信息</h3><h2 id="哪些类型的问题有图结构数据-图形结构化数据有哪些类型的问题"><a href="#哪些类型的问题有图结构数据-图形结构化数据有哪些类型的问题" class="headerlink" title="哪些类型的问题有图结构数据,图形结构化数据有哪些类型的问题"></a>哪些类型的问题有图结构数据,图形结构化数据有哪些类型的问题</h2><p>图上的预测任务一般有三种类型：图级、节点级和边。</p>
+<p>在图层面的任务中，我们预测整个图的单一属性。在节点级任务中，我们要预测图中每个节点的某些属性。在边缘级任务中，我们要预测图中边缘的属性或存在。</p>
+<h3 id="图层面的任务"><a href="#图层面的任务" class="headerlink" title="图层面的任务"></a>图层面的任务</h3><p>基于整个图，做分类和回归。<br>例如，给定一个分子结构图，判断它里面存在几个环 或者 判断该分子结构属于哪一类</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://s2.loli.net/2023/10/23/5dVB2bUvL8PytH4.png"
+                      alt="判断有两个环" style="zoom:50%;" 
+                >
+
+<p>这类似于 MNIST 和 CIFAR10 的图像分类问题，我们希望将标签与整幅图像关联起来。对于文本，类似的问题是情感分析，我们希望一次性识别整个句子的情绪或情感。</p>
+<h3 id="Node与Edge级别任务"><a href="#Node与Edge级别任务" class="headerlink" title="Node与Edge级别任务"></a>Node与Edge级别任务</h3><p>预测图中每个节点的身份或角色，即预测点<br>预测两个点之间的关系（是打架关系还是观看关系），即预测边</p>
+<p>根据图像类比，节点级预测问题类似于图像分割，我们试图标记图像中每个像素的角色。对于文本，类似的任务是预测句子中每个单词的语音部分（如名词、动词、副词等）</p>
+<p>边级别推理的一个例子是图像场景理解。除了识别图像中的物体，深度学习模型还可用于预测它们之间的关系。我们可以将其表述为边缘级分类：给定代表图像中物体的节点，我们希望预测这些节点中哪些共享一条边缘，或者这条边缘的值是多少。如果我们希望发现实体之间的联系，我们可以考虑完全连接的图，并根据预测值修剪边，从而得到一个稀疏的图。</p>
+<h2 id="在机器学习中使用图的挑战"><a href="#在机器学习中使用图的挑战" class="headerlink" title="在机器学习中使用图的挑战"></a>在机器学习中使用图的挑战</h2><p>核心问题是怎样表示图才能是和神经网络是兼容的。图上有四种信息：顶点的属性，边的属性，全局信息以及连接性（即为每条边连接的是哪两个顶点）。前三个信息都能用向量来表示，怎么表示连接性呢？</p>
+<p>我们可以用邻接矩阵来表示，该矩阵会是一个方阵，但是有一些问题。这个矩阵可能会非常大而且很稀疏，在空间上效率低下，并且计算比较困难。另外将邻接矩阵的行或列的顺序进行交换不会改变其属性的。比如下面两张图都是前面“Othello”的人物关系图，看着不一样只是因为行和列的顺序不同，但是表示的信息是一样的。这就意味着如果你设计一个神经网络，无论你用下面两张图中的哪一张，都要保证得到的结果是一样的。</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://s2.loli.net/2023/10/23/TZfvUw9h6DnXkRa.png"
+                      alt="image.png" style="zoom:50%;" 
+                >
+
+<p>之前学过，邻接矩阵的大小为N*N，当节点很多的时候，邻接矩阵的大小也会特别大</p>
+<p> 如果既想高效的存储邻接矩阵，又想这个顺序不会影响神经网络的结果，就可以用邻接链表的方式来表示邻接矩阵。</p>
+<p>比如下方这个，顶点，边和全局信息都用标量来表示，也可以用向量，连接性用邻接链表来表示，邻接链表的数量和边的数量是一致的，第i项表示的是第i条边连接的两个顶点；这样表示就很高效，而且不会受到顺序的影响。博客里面是可以改变数值和边的数量的，建议自己去博客玩一下。</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://s2.loli.net/2023/10/23/uO61Bq4l3NcgoaV.png"
+                      alt="image.png" style="zoom:50%;" 
+                >
+
+<p><strong>汇总 &#x3D; 自身的信息 + 所有邻居点的信息</strong></p>
+<p><strong>所有邻居点信息的表达有几种：</strong></p>
+<ul>
+<li><strong>求解Sum</strong></li>
+<li><strong>求平均Mean</strong></li>
+<li><strong>求最大Max</strong></li>
+<li><strong>求最小Min</strong></li>
+</ul>
+<h1 id="Graph-Neural-Networks图神经网络"><a href="#Graph-Neural-Networks图神经网络" class="headerlink" title="Graph Neural Networks图神经网络"></a>Graph Neural Networks图神经网络</h1><p><strong>A GNN is an optimizable transformation on all attributes of the graph (nodes, edges, global-context) that preserves graph symmetries (permutation invariances).</strong></p>
+<p>GNN是对保持图对称性(排列不变性)的图的所有属性(节点、边、全局上下文)的可优化转换。对称信息指的是把这个顶点进行另外一个排序后，整个结果是不会变的。</p>
+<p>这篇博客的GNN是用“信息传递神经网络”框架来搭建的，GNN的输入是一个图，输出也是一个图，它会对你的图的属性（点，边，全局信息）进行变换，但不会改变图的连接性，就是哪条边连接哪条顶点，这个信息是不会改变的</p>
+<h3 id="最简单的GNN层"><a href="#最简单的GNN层" class="headerlink" title="最简单的GNN层"></a>最简单的GNN层</h3><p>对顶点向量、边向量和全局向量分别构造一个多层感知机（MLP），输入的大小和输出的大小是相同的，这三个MLP就组成了一个GNN的层，输入是一个图，输出也是一个图，并且连接性不变。</p>
+<p>满足了上文中对GNN的第一个要求，只对属性进行变换，并不改变图的结构；并且MLP是对每个向量独自作用，对样本前后顺序没有要求，所以也就满足了图的排列不变性，满足了第二个要求。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://s2.loli.net/2023/10/23/XvRps8DfrwK7iTH.png"
+                      alt="image.png"
+                ></p>
+<h3 id="通过池化信息对GNN预测"><a href="#通过池化信息对GNN预测" class="headerlink" title="通过池化信息对GNN预测"></a>通过<a class="link"   href="https://so.csdn.net/so/search?q=%E6%B1%A0%E5%8C%96&spm=1001.2101.3001.7020" >池化 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>信息对GNN预测</h3>]]></content>
+  </entry>
+  <entry>
+    <title>图神经网络</title>
+    <url>/2023/10/19/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C(%E4%BA%8C)/</url>
+    <content><![CDATA[<p>[TOC] </p>
+<ul>
+<li><a href="#%E5%A6%82%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C">一级标题</a><ul>
+<li><a href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C">标题 1-1</a></li>
+<li>[标题 1-2](#二级标题 1-2)</li>
+</ul>
+</li>
+<li><a href="#%E4%BA%8C%E7%BA%A7%E6%A0%87%E9%A2%98">二级标题</a><ul>
+<li>[标题 2-1](#二级标题 2-1)</li>
+<li>[标题 2-2](#二级标题 2-2)</li>
+</ul>
+</li>
+<li><a href="#%E4%B8%80%E7%BA%A7%E6%A0%87%E9%A2%98">一级标题</a><ul>
+<li>[标题 1-1](#二级标题 1-1)</li>
+<li>[标题 1-2](#二级标题 1-2)</li>
+</ul>
+</li>
+<li><a href="#%E4%BA%8C%E7%BA%A7%E6%A0%87%E9%A2%98">二级标题</a><ul>
+<li>[标题 2-1](#二级标题 2-1)</li>
+<li>[标题 2-2](#二级标题 2-2)</li>
+</ul>
+</li>
+</ul>
+<h1 id="图神经网络"><a href="#图神经网络" class="headerlink" title="图神经网络"></a>图神经网络</h1><p>图神经网络（GNN）是一种处理图结构数据的深度学习方法。本教程将详细介绍图神经网络的基本概念、主要模型、应用场景以及代码实现。</p>
+<h2 id="什么是图神经网络"><a href="#什么是图神经网络" class="headerlink" title="什么是图神经网络"></a>什么是图神经网络</h2><p>图神经网络（Graph Neural Networks, GNN）是一类用于处理图结构数据的神经网络模型，与传统的神经网络（例如卷积神经网络、循环神经网络等）处理规则数据结构（如图像、时间序列）不同，图神经网络专门处理不规则的图结构数据，如社交网络、知识图谱等。图结构数据是一种由节点和边组成的复杂关系网络，其中节点代表实体，边代表实体之间的关系。与传统的神经网络不同，图神经网络需要考虑节点之间的关系，因此需要一种新的方式来表示节点和边。</p>
+<p>图神经网络的核心思想是将每个节点的特征与其周围节点的特征进行聚合，形成新的节点表示。这个过程可以通过消息传递来实现，每个节点接收来自其邻居节点的消息，并将这些消息聚合成一个新的节点表示。这种方法可以反复迭代多次，以获取更全面的图结构信息。</p>
+<p>图神经网络的结构通常由多个层组成，每个层都包含节点嵌入、消息传递和池化等操作。在节点嵌入操作中，每个节点的特征被转换为低维向量表示，以便于神经网络进行学习和处理。在消息传递操作中，每个节点接收其邻居节点的信息，并将这些信息聚合成一个新的节点表示。在池化操作中，节点表示被合并为整个图的表示，以便于进行图级任务的预测。</p>
+<p>目前，图神经网络已经广泛应用于许多领域，例如社交网络分析、药物发现、推荐系统等。同时，也出现了许多变种的图神经网络模型，例如图卷积网络（Graph Convolutional Network, GCN）、图注意力网络（Graph Attention Network, GAT）等，以适应不同的任务和数据类型。</p>
+<p>图卷积网络（Graph Convolution Networks，GCN）<br>图注意力网络（Graph Attention Networks）<br>图自编码器（ Graph Autoencoders）<br>图生成网络（ Graph Generative Networks）<br>图时空网络（Graph Spatial-temporal Networks）<br>图神经网络把以往的传统神经网络道路基本又走了一遍，很多思想都是想通，所谓万法归一，道法自然吧，其实从来都没啥无中生有，有的只是发现而已。下面重点介绍下图卷积神经网络DCN吧，后续的待后面系列再介绍</p>
+<h2 id="图神经网络的基本概念"><a href="#图神经网络的基本概念" class="headerlink" title="图神经网络的基本概念"></a>图神经网络的基本概念</h2><p>好的，我来对每个部分进行补充。</p>
+<ol>
+<li><h3 id="图（Graph）"><a href="#图（Graph）" class="headerlink" title="图（Graph）"></a>图（Graph）</h3></li>
+</ol>
+<p>  图是一种用顶点（Vertex）和边（Edge）表示实体及其关系的数学结构。一个图可以表示为 G &#x3D; (V, E)，其中 V 是顶点集合，E 是边集合。在图中，顶点表示实体，边表示实体之间的关系。例如，在社交网络中，顶点可以表示用户，边可以表示用户之间的关注或好友关系。</p>
+<p>图可以分为有向图和无向图两种类型。在无向图中，边没有方向；在有向图中，边有方向。此外，图还可以带有权重，表示实体之间的关系强度。有权重的图通常被称为带权图。</p>
+<ol start="2">
+<li><h3 id="邻接矩阵（Adjacency-Matrix）"><a href="#邻接矩阵（Adjacency-Matrix）" class="headerlink" title="邻接矩阵（Adjacency Matrix）"></a>邻接矩阵（Adjacency Matrix）</h3></li>
+</ol>
+<p>  邻接矩阵 A 是一种表示图中顶点间关系的矩阵。设 V 为顶点集合，A 的大小为 |V|×|V|。对于无向图，A 的元素 A(i, j) &#x3D; 1表示顶点 i 和顶点 j 相邻，即存在一条边；A(i, j) &#x3D; 0 表示顶点 i 和顶点 j 不相邻。有向图的邻接矩阵表示有方向的边。</p>
+<p>邻接矩阵可以用于表示图结构，同时也可以用于进行图算法的实现。通过邻接矩阵，我们可以快速地查询两个顶点之间是否存在边，以及边的类型和权重等信息。</p>
+<p>另外，邻接矩阵可以被视为图的一种表示形式，与其他表示方式（如邻接表、边列表等）相比，邻接矩阵可以用于描述稠密图，具有空间利用率高、查询效率高的优点。</p>
+<ol start="3">
+<li><h3 id="图信号（Graph-Signal）"><a href="#图信号（Graph-Signal）" class="headerlink" title="图信号（Graph Signal）"></a>图信号（Graph Signal）</h3></li>
+</ol>
+<p>  图信号是定义在图顶点上的信号，可以看作是顶点的特征。对于顶点集合 V，我们可以将图信号表示为一个 |V|×d 的矩阵 X，其中 d 是特征维度。</p>
+<p>图信号可以表示顶点的属性或特征，例如在社交网络中，每个顶点可以表示为一个包含用户属性的向量，如性别、年龄、职业等。在化学分子中，每个原子可以表示为一个包含化学性质的向量，如电子亲和力、电荷等。</p>
+<p>图信号可以用于图结构数据的分析和处理，例如对图进行分类、聚类、预测等任务。通常情况下，我们需要将图信号与图上的拓扑结构相结合，从而更好地利用图结构数据的特点。例如，在图卷积神经网络中，我们可以通过图信号和邻接矩阵的卷积操作来提取节点的特征表示。</p>
+<ol start="4">
+<li><h3 id="图卷积（Graph-Convolution）"><a href="#图卷积（Graph-Convolution）" class="headerlink" title="图卷积（Graph Convolution）"></a>图卷积（Graph Convolution）</h3></li>
+</ol>
+<p>  图卷积是一种操作，将传统卷积的概念扩展到图结构数据。图卷积通常表示为邻接矩阵 A 和图信号 X 之间的一个函数：f(A, X)。通过这个函数，可以在图上实现信息传递和特征提取。与传统卷积不同的是，图卷积考虑了节点在图上的拓扑结构，因此可以捕捉节点之间的关系和依赖关系。</p>
+<p>图卷积的实现方式有多种，其中最常见的是基于谱域的方法和基于空域的方法。基于谱域的方法利用图的拉普拉斯矩阵的特征值和特征向量来定义卷积操作。基于空域的方法则利用邻接矩阵和节点特征来进行卷积操作。</p>
+<p>图卷积可以用于许多图结构数据的任务，例如节点分类、图分类、链接预测等。在图神经网络中，图卷积是一种核心操作，可以帮助提取图结构数据中的特征表示，从而实现更高效和准确的图结构数据分析和处理。</p>
+<h2 id="主要图神经网络模型"><a href="#主要图神经网络模型" class="headerlink" title="主要图神经网络模型"></a>主要图神经网络模型</h2><h3 id="GCN（Graph-Convolutional-Networks）"><a href="#GCN（Graph-Convolutional-Networks）" class="headerlink" title="GCN（Graph Convolutional Networks）"></a>GCN（Graph Convolutional Networks）</h3><ul>
+<li>对每个节点计算特征</li>
+<li>然后合成每个节点的特征</li>
+<li>将合成的特征传入全连接网络进行分类</li>
+</ul>
+<p>GCN 是一种基于谱域（Spectral Domain）的图卷积方法。它利用图的拉普拉斯矩阵，通过对特征向量进行卷积操作实现信息传递和特征提取。GCN 的核心思想是通过邻接矩阵 A 和图信号 X 的乘积来实现信息传递。</p>
+<p>在 GCN 中，每个节点的特征向量会与其邻居节点的特征向量进行加权平均。权重由邻接矩阵 A 中的值确定。具体来说，GCN 的卷积操作可以表示为：</p>
+<p>$$<br>Z &#x3D; f(X,A) &#x3D; softmax(\hat{A}\quad ReLU(AXW^{(0)})W^{(1)}）<br>$$<br>其中，D 是 A 的度矩阵，W 是可学习的权重矩阵。</p>
+<p>GCN 已被广泛应用于节点分类、图分类、链接预测等任务，并取得了很好的效果。但是，GCN 的局限性在于其卷积操作仅考虑一阶邻居节点，无法捕捉更长程的关系和全局信息。因此，后续的研究提出了许多改进版本的图卷积网络，如下面所介绍的 GAT 和 GraphSAGE。</p>
+<h3 id="GAT（Graph-Attention-Networks）"><a href="#GAT（Graph-Attention-Networks）" class="headerlink" title="GAT（Graph Attention Networks）"></a>GAT（Graph Attention Networks）</h3><p>GAT 是一种基于空域（Spatial Domain）的图卷积方法。GAT 引入了注意力机制，使得模型可以为不同的边赋予不同的权重，从而更好地捕捉节点之间的关系。在 GAT 中，每个节点的特征向量会与其邻居节点的特征向量进行加权平均，权重由注意力机制计算得到。</p>
+<p>具体来说，GAT 的卷积操作可以表示为：</p>
+<p>Z &#x3D; f(A, X) &#x3D; CONCAT(ATTENTION(A, X)W)</p>
+<p>其中，ATTENTION 是计算注意力权重的函数，CONCAT 是连接操作。ATTENTION 函数通常包括两个步骤：首先计算每个邻居节点与当前节点的相似度，然后利用 softmax 函数将相似度转化为权重。这样，每个邻居节点的权重就可以不同，从而更好地表达节点之间的关系。</p>
+<p>GAT 的注意力机制使得模型能够更好地适应不同的图结构和任务，并在许多图分类、节点分类、链接预测等任务中取得了很好的效果。</p>
+<h3 id="GraphSAGE（Graph-Sample-and-AggregatE）"><a href="#GraphSAGE（Graph-Sample-and-AggregatE）" class="headerlink" title="GraphSAGE（Graph Sample and AggregatE）"></a>GraphSAGE（Graph Sample and AggregatE）</h3><p>GraphSAGE 是一种基于空域（Spatial Domain）的图卷积方法，提出了一种邻居采样和聚合策略，使得模型能够处理大规模的图数据。在 GraphSAGE 中，每个节点的特征向量会与其邻居节点的特征向量进行聚合。不同于 GCN 和 GAT，GraphSAGE 不是对所有邻居节点进行平均或加权平均，而是采用一定的邻居采样策略，只考虑一个节点的一阶或 k 阶邻居节点进行聚合，从而减少计算复杂度。</p>
+<p>具体来说，GraphSAGE 的卷积操作可以表示为：</p>
+<p>Z &#x3D; f(A, X) &#x3D; AGGREGATE(NEIGHBORS(A, X)) W</p>
+<p>其中，NEIGHBORS 是邻居采样函数，用于从一个节点的邻居中随机采样一些节点作为聚合的输入；AGGREGATE 是聚合函数，用于聚合邻居节点的特征向量，如均值、最大值等；W 是可学习的权重矩阵。</p>
+<p>GraphSAGE 可以处理大规模的图数据，并在节点分类、图分类、链接预测等任务中取得了很好的效果。它的邻居采样和聚合策略也被许多后续的图卷积网络所借鉴和改进。</p>
+<h2 id="图神经网络的应用场景"><a href="#图神经网络的应用场景" class="headerlink" title="图神经网络的应用场景"></a>图神经网络的应用场景</h2><p>图神经网络在许多领域都有广泛的应用，主要包括：</p>
+<p>节点分类（Node Classification）：预测图中节点的类别，如在社交网络中预测用户的兴趣标签。<br>链接预测（Link Prediction）：预测图中节点之间是否存在边，如在知识图谱中预测实体间的关系。<br>图分类（Graph Classification）：预测整个图的类别，如在生物分子网络中预测分子的活性。<br>图生成（Graph Generation）：生成具有某些特性的图，如生成满足特定拓扑特征的网络。</p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>以下是使用Cora数据集训练图卷积神经网络的示例代码，使用PyTorch Geometric库实现：</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">from</span> torch_geometric.datasets <span class="keyword">import</span> Planetoid</span><br><span class="line"><span class="keyword">from</span> torch_geometric.nn <span class="keyword">import</span> GCNConv</span><br><span class="line"></span><br><span class="line"><span class="comment"># 判断是否有可用的GPU，如果有就使用GPU，否则使用CPU</span></span><br><span class="line">device = torch.device(<span class="string">&#x27;cuda&#x27;</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">&#x27;cpu&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载Cora数据集</span></span><br><span class="line">dataset = Planetoid(root=<span class="string">&#x27;data/Cora&#x27;</span>, name=<span class="string">&#x27;Cora&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义一个GCN模型</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">GCN</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, input_dim, hidden_dim, output_dim</span>):</span><br><span class="line">        <span class="built_in">super</span>(GCN, self).__init__()</span><br><span class="line">        <span class="comment"># 第一个图卷积层</span></span><br><span class="line">        self.conv1 = GCNConv(input_dim, hidden_dim)</span><br><span class="line">        <span class="comment"># 第二个图卷积层</span></span><br><span class="line">        self.conv2 = GCNConv(hidden_dim, output_dim)</span><br><span class="line">        <span class="comment"># 全连接层</span></span><br><span class="line">        self.fc = nn.Linear(output_dim, dataset.num_classes)</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x, edge_index</span>):</span><br><span class="line">        <span class="comment"># 第一次图卷积，使用ReLU激活函数</span></span><br><span class="line">        x = F.relu(self.conv1(x, edge_index))</span><br><span class="line">        <span class="comment"># 第二次图卷积</span></span><br><span class="line">        x = self.conv2(x, edge_index))</span><br><span class="line">        <span class="comment"># Dropout操作，防止过拟合</span></span><br><span class="line">        x = F.dropout(x, training=self.training)</span><br><span class="line">        <span class="comment"># 全连接层</span></span><br><span class="line">        x = self.fc(x)</span><br><span class="line">        <span class="comment"># 使用log_softmax进行分类</span></span><br><span class="line">        <span class="keyword">return</span> F.log_softmax(x, dim=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建GCN模型实例，并将模型移动到设备上（GPU或CPU）</span></span><br><span class="line">model = GCN(dataset.num_features, <span class="number">16</span>, dataset.num_classes).to(device)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义优化器和损失函数</span></span><br><span class="line">optimizer = optim.Adam(model.parameters(), lr=<span class="number">0.01</span>)</span><br><span class="line">criterion = nn.NLLLoss()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义训练函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">train</span>(<span class="params">model, optimizer, criterion, data</span>):</span><br><span class="line">    model.train()</span><br><span class="line">    optimizer.zero_grad()</span><br><span class="line">    out = model(data.x.to(device), data.edge_index.to(device))</span><br><span class="line">    loss = criterion(out[data.train_mask], data.y[data.train_mask].to(device))</span><br><span class="line">    loss.backward()</span><br><span class="line">    optimizer.step()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义测试函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test</span>(<span class="params">model, data</span>):</span><br><span class="line">    model.<span class="built_in">eval</span>()</span><br><span class="line">    out = model(data.x.to(device), data.edge_index.to(device))</span><br><span class="line">    pred = out.argmax(dim=<span class="number">1</span>)</span><br><span class="line">    acc = pred[data.test_mask].eq(data.y[data.test_mask].to(device)).<span class="built_in">sum</span>().item() / data.test_mask.<span class="built_in">sum</span>().item()</span><br><span class="line">    <span class="keyword">return</span> acc</span><br><span class="line"></span><br><span class="line"><span class="comment"># 进行模型训练和测试，并输出测试集准确率</span></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">200</span>):</span><br><span class="line">    train(model, optimizer, criterion, dataset[<span class="number">0</span>])</span><br><span class="line">    test_acc = test(model, dataset[<span class="number">0</span>])</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;Epoch: &#123;:03d&#125;, Test Acc: &#123;:.4f&#125;&#x27;</span>.<span class="built_in">format</span>(epoch, test_acc))</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+]]></content>
+  </entry>
+  <entry>
+    <title>图神经网络实战</title>
+    <url>/2023/10/23/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%AE%9E%E6%88%98/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>论文笔记Towards Personalized Federated Learning</title>
+    <url>/2023/10/25/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0Towards-Personalized-Federated-Learning/</url>
+    <content><![CDATA[<h2 id="为什么需要联邦学习"><a href="#为什么需要联邦学习" class="headerlink" title="为什么需要联邦学习"></a>为什么需要联邦学习</h2><p>在这个数字时代，公司和机构正在使用大数据和人工智能(AI)来优化他们的流程和性能。虽然丰富的数据为人工智能应用提供了巨大的机会，但这些<strong>数据</strong>中的大多数本质上都是<strong>高度敏感</strong>的，它们以<strong>孤立</strong>的形式存在。这在医疗保健行业尤其如此，<strong>因为医疗数据高度敏感，而且它们通常被收集并驻留在不同的医疗机构</strong>。这种情况给人工智能的应用带来了巨大的挑战，因为传统的人工智能方法不能很好地解决数据隐私问题。随着最近出台的<strong>数据隐私保护法律</strong>，如通用数据保护条例(GDPR)，为了遵从法律需求，对隐私保护的人工智能的需求越来越大。</p>
+<h2 id="为什么需要个性化联邦学习"><a href="#为什么需要个性化联邦学习" class="headerlink" title="为什么需要个性化联邦学习"></a>为什么需要个性化联邦学习</h2><p>一般的FL方法面临几个基本挑战：</p>
+<ol>
+<li>在高度异构的数据上收敛性差；</li>
+<li>缺乏解决方案个性化。</li>
+</ol>
+<p><strong>1. 在高度异质性的数据上收敛性差。</strong>当在非独立同分布（non I.I.D.）的数据上学习时，FedAvg的准确性会大大降低。这种性能下降归因于客户端漂移（client drift）的现象，因为在非IID的本地数据分布上进行了多轮本地训练和同步。下图2显示了客户端漂移对IID和非IID数据的影响。在FedAvg中，服务器模型参数的更新向客户端模型参数的平均值移动。当数据为IID时，平均模型接近于全局最优值 �∗ ，因为它与局部最优值 和 �2∗ 的距离相等。然而，当数据为非IID时，全局最优的�∗与局部最优的距离并不相等。在这个例子中，�∗更接近�2∗。因此，平均后的模型��+1将远离全局最优�∗，全局模型不会收敛到真正的全局最优。由于FedAvg算法在非IID数据上遇到收敛问题，需要仔细调整超参数（例如，学习率衰减）以提高学习稳定性。</p>
+<p><strong>缺乏个性化的解决方案。</strong>在原始联邦学习的设定中，一个单一的全局共享模型被训练来适应 “平均化的客户端”。在各客户端的数据分布存在明显差异的情形下，单一全局模型难以应对与全局分布截然不同的局部分布情况。对于经常面临非独立同分布本地数据集的实际应用，仅有一个单一的模型往往是不够的。以为移动键盘开发语言模型为例，来自不同人群的用户可能会因为不同的代际、语言和文化上的细微差别而有不同的使用模式，比如，某些单词或表情符号可能会被特定的用户群体所使用。在这种情况下，需要对每个用户进行更有针对性的预测，将使词语的建议更有意义。</p>
+<h2 id="Contributions"><a href="#Contributions" class="headerlink" title="Contributions"></a><strong>Contributions</strong></h2><p>我们的调查聚焦于PFL，它研究在FL设置下学习个性化模型以处理统计异质性的问题。缺乏对PFL的全面调查，为新的研究人员提供了关于这一重要课题的系统视角。在本文中，我们弥补了当前FL文献中的这一空白。我们的主要贡献总结如下。</p>
+<ol>
+<li>我们简要概述了FL及其分类。本文还详细分析了当前外语学习环境下外语学习的关键动机。</li>
+<li>我们确定了个性化策略来解决关键的FL挑战，并提供了一个独特的基于数据、基于模型、基于架构和基于相似性的视角来指导PFL文献的审查。基于这一视角，我们提出了一个层次分类法来展示现有的关于PFL的工作，突出了他们面临的挑战，他们的主要想法，以及他们提出的可能引入潜在局限性的假设。</li>
+<li>我们讨论了当前文献中用于PFL基准测试的常用公共数据集和评估指标，并提出了增强PFL实验评估技术的建议。</li>
+</ol>
+<h2 id="个性化联邦学习的两种策略"><a href="#个性化联邦学习的两种策略" class="headerlink" title="个性化联邦学习的两种策略"></a>个性化联邦学习的两种策略</h2><h3 id="策略一：全局模型个性化，意在提升在异质数据上联邦训练的全局共享模型的性能。"><a href="#策略一：全局模型个性化，意在提升在异质数据上联邦训练的全局共享模型的性能。" class="headerlink" title="策略一：全局模型个性化，意在提升在异质数据上联邦训练的全局共享模型的性能。"></a>策略一：<strong>全局模型个性化，意在提升在异质数据上联邦训练的全局共享模型的性能</strong>。</h3><p>训练好全局FL模型，然后通过本地适应步骤为每个FL客户端进行个性化处理（包括在每个本地数据集上进行额外的训练）。这种两步走的 <strong>“联邦训练+本地适应 “方法（FL training + local adaptation）</strong>是一种重要的联邦个性化策略。由于个性化性能直接取决于全局模型的泛化性能，许多PFL方法旨在先提高全局模型在数据异质性下的性能，以提高随后在本地数据上的个性化性能。</p>
+<p>这一类的个性化技术被分为基于数据和基于模型的方法。<strong>基于数据的方法旨在通过减少客户数据集之间的统计异质性来缓解客户漂移问题，而基于模型的方法旨在学习一个强大的全局模型，以便在未来对单个客户进行个性化定制或提高本地模型的适应性</strong>.</p>
+<h3 id="策略二：学习个性化的模型，意在提供个性化解决方案。"><a href="#策略二：学习个性化的模型，意在提供个性化解决方案。" class="headerlink" title="策略二：学习个性化的模型，意在提供个性化解决方案。"></a>策略二：学习个性化的模型，意在提供个性化解决方案。</h3><p>与训练单一全局模型的全局模型个性化策略不同，这类的方法在每个客户端上<strong>训练单个的个性化模型</strong>。其目标是通过修改FL模型的聚合过程来建立个性化的模型。这是通过在FL环境中应用不同的学习范式实现的。</p>
+<p><strong>个性化技术被分为基于架构和基于相似性的方法。基于架构的方法旨在为每个客户提供量身定制的个性化模型架构，而基于相似性的方法旨在利用客户关系来提高个性化模型的性能，即为相关客户建立类似的个性化模型。</strong></p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://pic2.zhimg.com/80/v2-aa0e4e1b0311cad2eedca3c18aed3a4d_1440w.webp"
+                      alt="图片" style="zoom:50%;" 
+                >
+
+<p>这篇论文将个性化联邦学习分为前述两种策略，然后又在策略之下介绍了四大类十小类解决方案。</p>
+<h2 id="Ⅲ-策略一：全局模型个性化"><a href="#Ⅲ-策略一：全局模型个性化" class="headerlink" title="Ⅲ.策略一：全局模型个性化"></a>Ⅲ.策略一：全局模型个性化</h2><p>在这一部分，我们回顾了遵循全局模型个性化策略的PFL方法。这些方法的主要设置和配置如图3所示。基于我们提出的分类方法，它们被分为基于数据的方法和基于模型的方法。</p>
+<h3 id="基于数据的方法"><a href="#基于数据的方法" class="headerlink" title="基于数据的方法"></a>基于数据的方法</h3><p>受异质数据上的联合训练所产生的客户端漂移问题的启发，<strong>基于数据的方法旨在减少客户端数据分布的统计异质性。</strong></p>
+<p><strong>数据增强 Data Augmentation</strong></p>
+<p>由于训练数据的IID属性是统计学习理论中的一个基本假设，因此在机器学习领域中已经广泛地研究了提高数据统计同质性的数据扩充方法。涉及协同数据生成的过采样技术（如SMOTE和ADASYN）和欠采样技术（如Tomek links）已被提出，以减少数据的不平衡。但用于传统机器学习场景的数据增强方法不能直接用于联邦学习场景。</p>
+<p><strong>联邦学习场景下通常需要某种形式的数据共享，或者需要获取依赖于代表整体数据分布的代理数据集。</strong></p>
+<blockquote>
+<p>Zhao等人提出了一种数据共享策略，将少量的全局数据按类别平衡分配给每个客户端。他们的实验表明，在增加少量数据的情况下，有可能获得显著的准确性提高（30%∼）。<br>Jeong等人提出了FAug，一种联合增强方法，在FL服务器中训练生成对抗网络（GAN）模型。一些少数群体的数据样本被上传至服务器以训练GAN模型。然后，训练好的GAN模型被分发到每个客户端，以产生更多的数据来增加其本地数据，从而产生一个IID数据集。<br>Duan等人提出了Astraea，一个自我平衡的FL框架，通过使用基于Z-score的数据增强和本地数据的下采样来处理类不平衡。FLserver需要关于客户本地数据分布的统计信息（例如，类大小、平均值和标准差值）。<br>Wu等人提出了FedHome算法，该算法使用FL训练生成卷积自动编码器（GCAE）模型。在FL程序结束时，每个客户在一个本地增强的类平衡数据集上执行进一步的个性化操作。这个数据集是通过在基于本地数据的编码网络的低维特征上执行SMOTE算法而产生的。</p>
+</blockquote>
+<p> <strong>挑选客户端 Client Selection</strong></p>
+<p><strong>数据增强方法是将异质数据变得更加均质</strong>，挑选客户端的方法希望<strong>在优化过程中基于一些准则挑选客户端，以便得到更均匀的数据分布，提高模型的泛化性能。</strong></p>
+<blockquote>
+<p>Wang等人提出了FAVOR，为每轮训练选择一个参与客户的子集，以减轻非IID数据带来的偏差。他们设计了一个用于客户选择的深度Q-learning公式，目的是在最小化通信轮数的同时实现最大的准确性。<br>另有人提出了一个基于多臂老虎机公式的客户选择算法，以选择具有最小类别不平衡的客户子集。通过比较提交给FL服务器的本地梯度更新与驻留在服务器上的平衡代理数据集推断出的梯度之间的相似性来估计本地类分布。对于跨设备的FL，在计算和通信能力方面，硬件能力往往有很大的差异。数据中也存在异质性，即数据的数量和分布在客户之间存在差异。<br>Chai等人提出了一个基于层级的FL系统（TiFL），该系统根据训练性能将客户分成不同的层级，该算法通过优化准确性和训练时间从同一层级中选择参与训练的客户。这有助于缓解由数据和资源异质性造成的性能问题。<br>Li等人提出了FedSAE，一个自适应的FL系统，在每个训练场中自适应地选择局部训练损失较大的客户，以加速全局模型的收敛。还提出了一个预测每个客户可承受的工作量的机制，以便动态调整每个客户的局部训练纪元的数量，以提高设备的可靠性。</p>
+</blockquote>
+<h3 id="基于模型的方法"><a href="#基于模型的方法" class="headerlink" title="基于模型的方法"></a>基于模型的方法</h3><p>尽管<strong>基于数据的方法</strong>通过缓解客户漂移问题改善了全局FL模型的收敛性，但它们<strong>通常需要修改局部数据分布</strong>。这可能会导致与客户行为的固有多样性相关的宝贵信息的损失。这些信息对于为每个客户建立个性化的全局模型非常有用。</p>
+<p><strong>基于模型的全局模型个性化</strong>的FL方法，其目的是<strong>学习一个强大的全局FL模型，以便将来对每个客户进行个性化处理，或者提高局部模型的适应性</strong>。</p>
+<p><strong>1.2.1 增加模型局部损失正则项 Regularized Local Loss</strong></p>
+<p>模型正则化是一种常见的策略，用于防止机器学习模型训练时的过度拟合和提高一致性。在FL中，正则化技术可以被用来限制局部更新的影响。这提高了收敛的稳定性和全局模型的概括性，反过来，它可以被用来产生更好的个性化模型。</p>
+<p><strong>全局和局部模型之间比较。</strong>有几项工作在全局和局部模型之间实现了正则化，以解决FL中由于统计数据的异质性而普遍存在的客户端漂移问题。</p>
+<blockquote>
+<p>FedProx为本地子问题引入了一个近似项，考虑到全局FL模型和本地模型之间的不相似性来调整本地更新的影响。<br>FedCL进一步考虑了使用持续学习领域的弹性权重整合（EWC）的正则化局部损失函数中的参数重要性。然后，它们被转移到客户端，在那里进行惩罚步骤，以防止全局模型的重要参数在适应全局模型和客户的本地数据时被改变。这样做可以减轻本地和全局模型之间的权重差异，同时保留全局模型的知识以提高泛化能力。</p>
+</blockquote>
+<p><strong>历史局部模型快照之间比较。</strong>基于对比学习的FL-MOON被提出，MOON的目标是减少由局部模型和全局模型学习的表征之间的距离（即减轻权重分歧），并增加一个给定的局部模型和它的前一个局部模型之间学习的表征之间的距离（即加快融合）。这种新兴的方法使每个客户都能学习到接近全局模型的表征，以尽量减少局部模型的分歧。它还通过鼓励本地模型在前一版本的基础上进行改进来加速学习。</p>
+<p><strong>元学习 Meta-learning</strong></p>
+<p>元学习俗称 “学会学习”，元学习的目的是通过接触各种任务（即数据集）来改进学习算法。基于优化的元学习算法，如模型无关的元学习（MAML）和Reptile，因其在新的异质任务上的良好泛化和快速适应而闻名。它们也是模型不可知的，可以应用于任何基于梯度下降的方法，使其能够应用于监督学习和强化学习。</p>
+<p>元学习算法的运行分为两个阶段：元训练和元测试。</p>
+<blockquote>
+<p>Jiang等作者将MAML中的元训练步骤映射到FL全局模型训练过程中，将元测试步骤映射到FL个性化过程中，其中在局部适应过程中对局部数据进行了几步梯度下降。他们还表明，FedAvg与Reptile算法类似，当所有客户拥有同等数量的本地数据时，实际上是等价的。鉴于元学习和FL算法表述的相似性，元学习技术可以应用于改善全局FL模型，同时在客户端上实现快速个性化.</p>
+</blockquote>
+<p>**</p>
+<p> 迁移学习 Transfer learning**</p>
+<p>迁移学习通常用于非联邦环境中的模型个性化。它的目的是将知识从源域转移到目标域，而这两个域往往是不同的，但又是相关的。TL是一种高效的方法，它利用了来自训练过的模型的知识转移，从而避免了从头建立模型的需要。</p>
+<blockquote>
+<p>FedMD是一个基于TL和知识转移（KD）的FL框架，供客户使用他们自己的私人数据设计独立的模型。在FL训练和KD阶段之前，首先使用一个在公共数据集上预训练的模型进行TL。然后，每个客户在其私人数据上微调该模型。</p>
+</blockquote>
+<p>为了实现PFL，通常采用领域适应性TL技术。这些技术旨在减少训练好的全局FL模型（即源域）和给定的局部模型（即目标域）之间的域差异，以提高个性化程度。在FL领域有几项研究，在医疗领域使用TL进行模型个性化（例如FedHealth和FedSteg）。</p>
+<p><strong>训练过程一般包括三个步骤。1）通过FL训练全局模型；2）通过在本地数据上适应全局模型来训练本地模型；3）通过TL使用全局模型完善本地模型来训练个性化模型</strong>。为了实现领域适应性，通常<strong>在softmax层之前添加一个对齐层</strong>，如相关对齐（CORAL）层，以适应源域和目标域的二阶统计数据。</p>
+<h3 id="基于架构的方法"><a href="#基于架构的方法" class="headerlink" title="基于架构的方法"></a>基于架构的方法</h3><p>基于架构的方法旨在通过为每个客户定制模型设计来实现个性化。</p>
+<p>参数解耦方法为每个客户实现了每个个性化层，而知识蒸馏方法为每个客户支持个性化的模型架构。</p>
+<p><strong>2.1.1 参数解耦</strong></p>
+<p><strong>参数解耦的目的是通过将本地私有模型参数与全局FL模型参数解耦来实现PFL。私有参数在客户机上进行训练，不与FL服务器共享。这使得特定任务的表征可以被学习，以加强个性化。</strong></p>
+<p>通常有两种配置用于深度学习的参数解耦。</p>
+<p>第一种是**”基础层+个性化层**”设计。在这种设置中，个性化的深层被客户保留在本地训练中，以学习个性化的特定任务表征，而基础层则与FL客户端共享，以学习低层次的通用特征。</p>
+<p>第二种设计考虑了<strong>每个客户端的个性化数据特征表征</strong>。</p>
+<blockquote>
+<p>局部全局联合训练（LG-FedAvg）被提出来结合局部表征学习和全局联合训练。学习低维的局部表征可以提高联合全球模型训练的通信和计算效率。它还提供了灵活性，因为可以根据源数据的模式（如图像和文本）设计专门的编码器。作者还展示了如何通过将对抗性学习纳入FL模型训练来学习对受保护属性（如种族和性别）不变的公平和无偏见的表征。</p>
+</blockquote>
+<p>参数解耦与另一种分布式和私有的机器学习范式——分割学习（SL, split learning）有一些相似之处。</p>
+<p>在SL中，深度网络在服务器和客户端之间被分层。与参数解耦不同，SL中的服务器模型不会被转移到客户端进行模型训练。相反，在前向传播过程中，只有客户端模型分割层的权重是共享的，在反向传播过程中，分割层的梯度与客户端共享。因此，SL比FL有隐私优势，因为服务器和客户端不能完全访问全球和本地模型。然而，由于客户端的顺序训练过程，训练的效率较低。SL在非IID数据上的表现也比FL差，并且有更高的通信开销。</p>
+<p><strong>2.1.2 知识蒸馏</strong></p>
+<p>知识蒸馏。在基于服务器的横向联邦中，FL服务器和FL客户端都采用相同的模型结构。其基本假设是，客户有足够的通信带宽和计算能力。然而，对于有大量边缘设备作为FL客户端的实际应用，它们往往受到资源的限制。客户端也可能因为不同的训练目标而选择不同的模型架构。FL中知识蒸馏的关键动机是其具有更大的灵活性，以适应客户的个性化模型架构。同时，它还试图通过减少资源需求来解决通信和计算能力的挑战。</p>
+<p>神经网络的知识蒸馏是一种将知识从教师模型集合转移到轻量级学生模型的准范式。在现有的蒸馏方法中，知识通常表示为类分数或Logit输出。一般来说，<strong>基于蒸馏的FL架构有四种主要类型。1）将知识蒸馏到每个FL客户端以学习更强的个人化模型；2）将知识蒸馏到FL服务器以学习更强的服务器模型；3）双向蒸馏到FL客户端和FL服务器；4）客户端之间的蒸馏。</strong></p>
+<h3 id="2-2-基于相似性的方法"><a href="#2-2-基于相似性的方法" class="headerlink" title="2.2 基于相似性的方法"></a>2.2 基于相似性的方法</h3><p>基于相似性的方法旨在通过对客户关系建模来实现个性化。为每个客户学习一个个性化的模型，相似的客户学习类似的模型。</p>
+<p>多任务学习（MTL）和模型插值考虑的是成对的客户关系，而聚类考虑的是群组级别客户关系。</p>
+<p><strong>2.2.1 多任务学习 Multitask learning (MTL)</strong></p>
+<p>多任务学习的目标是训练一个联合执行几个相关任务的模型。这可以通过利用特定领域的知识来提高学习任务的泛化性。在MTL中，通过将每个FL客户视为一个任务，有可能学习和捕捉客户之间由其异质的本地数据表现出来的关系。</p>
+<blockquote>
+<p>MOCHA算法将分布式MTL扩展到FL环境中。MOCHA使用原始-对偶公式来优化所学模型。该算法解决了FL中普遍存在的通信和系统挑战，而这些挑战在MTL领域是没有考虑的。与传统的FL设计不同，MOCHA学习的是单一的全局模型，它为每个FL客户端学习了一个个性化的模型。虽然MOCHA提高了个性化程度，但它并不适合于跨设备的FL应用，因为所有的客户端都需要参与每一轮的FL模型训练。MOCHA的另一个缺点是，它只适用于凸模型，因此不适合深度学习。<br>FedCurv使用EWC来防止在学习任务之间移动时出现灾难性的遗忘。参数的重要性用Fisher信息矩阵来估计，并进行惩罚步骤以保留重要的参数。在每个通信回合结束时，每个客户端将其更新的本地参数和Fisher信息矩阵的对角线发送给服务器。这些参数将在所有客户端之间共享，以便在下一轮中进行本地训练。</p>
+</blockquote>
+<p><strong>2.2.2 模型插值 model interpolation</strong></p>
+<p>模型插值。</p>
+<blockquote>
+<p>filip等人提出使用全局和局部模型的混合来学习个性化的模型，以平衡泛化和个性化。每个FL客户学习一个单独的本地模型。惩罚参数λ被用来阻止局部模型与平均模型太不相似。当λ被设置为零时，发生纯局部模型学习。这相当完全PFL设置，其中每个客户端在本地训练自己的模型，而不与其他客户端进行任何通信。随着λ的增加，出现了混合模型学习，局部模型变得越来越相似。设置近似全局模型学习，当λ趋于无穷大时，强制所有局部模型相同。通过这种方式，可以控制个性化的程度。此外，作者还提出了一种沟通效率高的SGD变体，称为无环局部梯度下降(L2GD)。通过确定是执行局部GD步骤还是执行模型聚合步骤的概率框架，显著减少了通信轮数。<br>Deng等人提出了APFL算法，目标是以通信高效的方式找到全局和局部模型的最优组合。他们为每个客户端引入一个混合参数，该参数在FL训练过程中自适应学习，以控制全局和局部模型的权重。如果局部和全局数据分布不是网格对齐的，则特定局部模型上的权重因子预计会更大，反之亦然。mansour等人提出了一种类似的公式，涉及局部和全局模型的联合优化以确定最优插值权重。<br>Diao等人提出了基于单一全局模型的HeteroFL框架，该框架训练具有不同计算复杂性的局部模型。通过根据每个客户端的计算和通信能力自适应地分配不同复杂程度的本地模型，实现了PFL，以解决边缘计算场景中的系统异构性。</p>
+</blockquote>
+<p><strong>2.2.3 聚类 clustering</strong></p>
+<p>对于客户端之间存在固有分区或数据分布明显不同的应用，采用“客户端-服务器”FL架构来训练一个共享的全局模型并不是最佳选择。一个多模型的方法，即<strong>为每个同质的客户群训练一个FL模型</strong>，是比较合适的。最近的一些工作集中在FL个性化的聚类上。<strong>基于聚类的FL的基本假设是存在一个基于其本地数据分布的客户自然分组</strong>。</p>
+<hr>
+<ol>
+<li>在分类法的第一层，按照论文作者的说明，他们为了解决数据异质性提出了将全局模型进行个性化适应的策略，为了解决个性化方案提出了在客户端上学习个性化模型的方法。但小鱼觉得这个地方有些别扭，好像并不能这样一一对应。</li>
+<li>在分类法的第二层，两种策略和四大类解决方案的对应关系我也觉得有些奇怪。</li>
+<li>在分类法的第三层，针对基于模型的方法，这里论文正式版的分级方法是：</li>
+</ol>
+<blockquote>
+<p>\1) Regularized Local Loss<br>\2) Between Global and Local Model<br>\3) Between Historical Local Model Snapshots a) Meta-learning b) Transfer learning</p>
+</blockquote>
+]]></content>
   </entry>
 </search>

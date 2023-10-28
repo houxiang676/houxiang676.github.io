@@ -13,27 +13,32 @@
     
     <!--- Seo Part-->
     
-    <link rel="canonical" href="http://example.com/2023/10/18/数据增强/"/>
+    <link rel="canonical" href="http://example.com/2023/10/23/图联邦/"/>
     <meta name="robots" content="index,follow">
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta name="description" content="数据预处理、数据增强1. 数据增强数据增强可以增加训练集的样本数量，缓解过拟合，并提高模型的泛化能力，从而有效提升算法的性能。  2. 数据预处理1）将图像转换成 tensor 的数据格式 2）将图像的 像素值范围 由 0～255 转换到 0～1 3）(height, width, channel) &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&gt;&gt;&gt; (chann">
+        <meta name="description" content="图神经网络什么是图图基本模块定义V：点，每个点都有自己的特征向量（特征举例：邻居点数量、一阶二阶相似度）E：边，每个边都有自己的特征向量（特征举例：边的权重值、边的定义）U：整个图，每个图都有自己的特征向量（特征举例：节点数量、图直径）   图神经网络要做的事情 为每个节点整合特征向量，根据其对节点做分类或者回归 为每条边整合特征向量，根据其对边做分类或者回归 为每张图整合特征向量，根据其对图做分">
 <meta property="og:type" content="article">
-<meta property="og:title" content="数据的读取与处理">
-<meta property="og:url" content="http://example.com/2023/10/18/%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA/index.html">
+<meta property="og:title" content="图神经网络(二)">
+<meta property="og:url" content="http://example.com/2023/10/23/%E5%9B%BE%E8%81%94%E9%82%A6/index.html">
 <meta property="og:site_name" content="深情小小侯的博客">
-<meta property="og:description" content="数据预处理、数据增强1. 数据增强数据增强可以增加训练集的样本数量，缓解过拟合，并提高模型的泛化能力，从而有效提升算法的性能。  2. 数据预处理1）将图像转换成 tensor 的数据格式 2）将图像的 像素值范围 由 0～255 转换到 0～1 3）(height, width, channel) &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&gt;&gt;&gt; (chann">
+<meta property="og:description" content="图神经网络什么是图图基本模块定义V：点，每个点都有自己的特征向量（特征举例：邻居点数量、一阶二阶相似度）E：边，每个边都有自己的特征向量（特征举例：边的权重值、边的定义）U：整个图，每个图都有自己的特征向量（特征举例：节点数量、图直径）   图神经网络要做的事情 为每个节点整合特征向量，根据其对节点做分类或者回归 为每条边整合特征向量，根据其对边做分类或者回归 为每张图整合特征向量，根据其对图做分">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://p.ipic.vip/a161sy.png">
-<meta property="og:image" content="https://p.ipic.vip/iiqcob.png">
-<meta property="og:image" content="https://p.ipic.vip/xksmgr.png">
-<meta property="og:image" content="https://p.ipic.vip/wh6b5i.png">
-<meta property="article:published_time" content="2023-10-18T03:59:25.000Z">
-<meta property="article:modified_time" content="2023-10-19T03:35:41.699Z">
+<meta property="og:image" content="https://s2.loli.net/2023/10/23/N3L9b5XmxqAulwQ.png">
+<meta property="og:image" content="https://s2.loli.net/2023/10/23/WkdzsvblxDIr6KP.png">
+<meta property="og:image" content="https://s2.loli.net/2023/10/23/faQOMBTdotEG6ei.png">
+<meta property="og:image" content="c:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20231023092312097.png">
+<meta property="og:image" content="https://s2.loli.net/2023/10/23/J2dtcVfqBuk14Zv.png">
+<meta property="og:image" content="https://s2.loli.net/2023/10/23/5dVB2bUvL8PytH4.png">
+<meta property="og:image" content="https://s2.loli.net/2023/10/23/TZfvUw9h6DnXkRa.png">
+<meta property="og:image" content="https://s2.loli.net/2023/10/23/uO61Bq4l3NcgoaV.png">
+<meta property="og:image" content="https://s2.loli.net/2023/10/23/XvRps8DfrwK7iTH.png">
+<meta property="article:published_time" content="2023-10-23T01:03:10.000Z">
+<meta property="article:modified_time" content="2023-10-23T02:14:58.852Z">
 <meta property="article:author" content="深情小小侯">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://p.ipic.vip/a161sy.png">
+<meta name="twitter:image" content="https://s2.loli.net/2023/10/23/N3L9b5XmxqAulwQ.png">
     
     
     <!--- Icon Part-->
@@ -45,7 +50,7 @@
     
     <title>
         
-            数据的读取与处理 -
+            图神经网络(二) -
         
         深情小小侯的博客
     </title>
@@ -298,7 +303,7 @@
 
         <div class="article-title">
             
-                <h1 class="article-title-regular">数据的读取与处理</h1>
+                <h1 class="article-title-regular">图神经网络(二)</h1>
             
             </div>
             
@@ -320,15 +325,15 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fa-regular fa-pen-fancy"></i>&nbsp;
-        <span class="desktop">2023-10-18 11:59:25</span>
-        <span class="mobile">2023-10-18 11:59:25</span>
+        <span class="desktop">2023-10-23 09:03:10</span>
+        <span class="mobile">2023-10-23 09:03:10</span>
         <span class="hover-info">创建</span>
     </span>
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2023-10-19 11:35:41</span>
-            <span class="mobile">2023-10-19 11:35:41</span>
+            <span class="desktop">2023-10-23 10:14:58</span>
+            <span class="mobile">2023-10-23 10:14:58</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -355,102 +360,123 @@
 
 
         <div class="article-content markdown-body">
-            <h1 id="数据预处理、数据增强"><a href="#数据预处理、数据增强" class="headerlink" title="数据预处理、数据增强"></a>数据预处理、数据增强</h1><h2 id="1-数据增强"><a href="#1-数据增强" class="headerlink" title="1. 数据增强"></a>1. 数据增强</h2><p>数据增强可以增加训练集的样本数量，缓解过拟合，并提高模型的泛化能力，从而有效提升算法的性能。</p>
-<p><img  
+            <h1 id="图神经网络"><a href="#图神经网络" class="headerlink" title="图神经网络"></a>图神经网络</h1><h2 id="什么是图"><a href="#什么是图" class="headerlink" title="什么是图"></a>什么是图</h2><h3 id="图基本模块定义"><a href="#图基本模块定义" class="headerlink" title="图基本模块定义"></a>图基本模块定义</h3><p><strong>V</strong>：点，每个点都有自己的特征向量（特征举例：邻居点数量、一阶二阶相似度）<br><strong>E</strong>：边，每个边都有自己的特征向量（特征举例：边的权重值、边的定义）<br><strong>U</strong>：整个图，每个图都有自己的特征向量（特征举例：节点数量、图直径）</p>
+<img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="https://p.ipic.vip/a161sy.png"
-                      alt="数据增强"
-                ></p>
-<h2 id="2-数据预处理"><a href="#2-数据预处理" class="headerlink" title="2. 数据预处理"></a>2. 数据预处理</h2><p>1）将图像转换成 tensor 的数据格式</p>
-<p>2）将图像的 像素值范围 由 0～255 转换到 0～1</p>
-<p>3）(height, width, channel) &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&gt;&gt;&gt; (channel, height, width)</p>
-<p>4）归一化图像</p>
-<h2 id="3-使用节点"><a href="#3-使用节点" class="headerlink" title="3. 使用节点"></a>3. 使用节点</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">trans = transforms.Compose([transforms.RandomResizedCrop((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.RandomHorizontalFlip(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ColorJitter(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
+                     data-src="https://s2.loli.net/2023/10/23/N3L9b5XmxqAulwQ.png"
+                      alt="image.png" style="zoom:50%;" 
+                >
 
-<p><img  
+<h3 id="图神经网络要做的事情"><a href="#图神经网络要做的事情" class="headerlink" title="图神经网络要做的事情"></a>图神经网络要做的事情</h3><ul>
+<li>为每个节点整合特征向量，根据其对节点做分类或者回归</li>
+<li>为每条边整合特征向量，根据其对边做分类或者回归</li>
+<li>为每张图整合特征向量，根据其对图做分类或者回归</li>
+</ul>
+<img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="https://p.ipic.vip/iiqcob.png"
-                     
-                ></p>
-<h1 id="torchvision-transforms-的使用"><a href="#torchvision-transforms-的使用" class="headerlink" title="torchvision.transforms 的使用"></a>torchvision.transforms 的使用</h1><p>官方文档地址： <a class="link"   target="_blank" rel="noopener" href="https://pytorch.org/vision/stable/transforms.html" >https://pytorch.org/vision/stable/transforms.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<h2 id="1-torchvision-transforms-ToTensor"><a href="#1-torchvision-transforms-ToTensor" class="headerlink" title="1. torchvision.transforms.ToTensor()"></a>1. torchvision.transforms.ToTensor()</h2><p><code>torchvision.transforms.ToTensor()</code> 做了三件事：</p>
-<p> 1）将图像的数据格式由 nump.ndarray 或 PIL.Image 转为 tensor，数据类型为 torch.FloatTensor</p>
-<p> 2）将像素值范围从 0-255 转换到 0-1之间， 处理方式 ：直接除以255</p>
-<p> 3）将 shape&#x3D;(H,W, C) 转换为 shape&#x3D; (C, H, W)</p>
-<p>🌼原始的data的shape为（5，5，3），则其表示有5个（5 ， 3）的二维数组，即我们把最外层的[]去掉就得到了5个五行三列的数据。</p>
-<p>🌼同样的，变换后data的shape为（3，5，5），则其表示有3个（5 ， 5）的二维数组，即我们把最外层的[]去掉就得到了3个五行五列的数据。</p>
-<p><img  
+                     data-src="https://s2.loli.net/2023/10/23/WkdzsvblxDIr6KP.png"
+                      alt="image.png" style="zoom:50%;" 
+                >
+
+<p>每个顶点、边和整张图都可以用一个向量来表示，在这个例子中，顶点的向量有六个值，柱体的高矮就表示该值的大小，每条边用一个长为8的向量来表示，全局用一个长为5的向量来表示</p>
+<p>图分为两种，一种是有向图，一种是无向图。有向图就是单边关系图，比如A暗恋B，而B并没有暗恋A，这就是一个单边关系；无向图就是互为这种关系，比如说情侣，双方互相喜欢。</p>
+<h2 id="怎么把一些内容表示成图"><a href="#怎么把一些内容表示成图" class="headerlink" title="怎么把一些内容表示成图"></a>怎么把一些内容表示成图</h2><p>比如说一张图片可以表示为一个244*244*3的tensor，244*244个像素，3个rgb通道。就可以像下图这样表示，点表示的是像素，边表示的是像素间的邻接关系，<a class="link"   target="_blank" rel="noopener" href="https://distill.pub/2021/gnn-intro/" >建议大家去博客看一看 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，可以互动，更为直观。用数组（如 244x244x3 浮点数）表示。另一种将图像视为具有规则结构的图的方法是，每个像素代表一个节点，并通过边与相邻像素相连。每个无边框的像素正好有 8 个邻居，每个节点存储的信息是一个三维向量，代表像素的 RGB 值。</p>
+<p>通过邻接矩阵可以直观地了解图形的连通性。我们对节点进行排序、</p>
+<img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="https://p.ipic.vip/xksmgr.png"
-                     
-                ></p>
-<h2 id="2-torchvision-transforms-Normalize"><a href="#2-torchvision-transforms-Normalize" class="headerlink" title="2. torchvision.transforms.Normalize()"></a>2. torchvision.transforms.Normalize()</h2><p>作用：用均值和标准差对张量图像进行归一化，一般在 <code>torchvision.transforms.ToTensor()</code> 之后使用</p>
-<p>在使用 <code>torchvision.transforms.ToTensor()</code> 之后，像素值取值范围会被转换到 [0, 1]之间，再使用 <code>transforms.Normalize(mean, std)</code> 进行归一化后，原像素值就被分布到了 [-1, 1] 之间：</p>
-<p>公式：</p>
+                     data-src="https://s2.loli.net/2023/10/23/faQOMBTdotEG6ei.png"
+                      alt="image.png" style="zoom:50%;" 
+                >
+
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20231023092312097.png"
+                      alt="image-20231023092312097" style="zoom:50%;" 
+                >
+
+<h3 id="将一句话表示成图"><a href="#将一句话表示成图" class="headerlink" title="将一句话表示成图"></a>将一句话表示成图</h3><p>句子中的每个单词可以表示成一个节点，有向边表示这些单词的链接关系.</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://s2.loli.net/2023/10/23/J2dtcVfqBuk14Zv.png"
+                      alt="image.png" style="zoom:50%;" 
+                >
+
+<h3 id="其他可以表示成图的信息"><a href="#其他可以表示成图的信息" class="headerlink" title="其他可以表示成图的信息"></a>其他可以表示成图的信息</h3><h2 id="哪些类型的问题有图结构数据-图形结构化数据有哪些类型的问题"><a href="#哪些类型的问题有图结构数据-图形结构化数据有哪些类型的问题" class="headerlink" title="哪些类型的问题有图结构数据,图形结构化数据有哪些类型的问题"></a>哪些类型的问题有图结构数据,图形结构化数据有哪些类型的问题</h2><p>图上的预测任务一般有三种类型：图级、节点级和边。</p>
+<p>在图层面的任务中，我们预测整个图的单一属性。在节点级任务中，我们要预测图中每个节点的某些属性。在边缘级任务中，我们要预测图中边缘的属性或存在。</p>
+<h3 id="图层面的任务"><a href="#图层面的任务" class="headerlink" title="图层面的任务"></a>图层面的任务</h3><p>基于整个图，做分类和回归。<br>例如，给定一个分子结构图，判断它里面存在几个环 或者 判断该分子结构属于哪一类</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://s2.loli.net/2023/10/23/5dVB2bUvL8PytH4.png"
+                      alt="判断有两个环" style="zoom:50%;" 
+                >
+
+<p>这类似于 MNIST 和 CIFAR10 的图像分类问题，我们希望将标签与整幅图像关联起来。对于文本，类似的问题是情感分析，我们希望一次性识别整个句子的情绪或情感。</p>
+<h3 id="Node与Edge级别任务"><a href="#Node与Edge级别任务" class="headerlink" title="Node与Edge级别任务"></a>Node与Edge级别任务</h3><p>预测图中每个节点的身份或角色，即预测点<br>预测两个点之间的关系（是打架关系还是观看关系），即预测边</p>
+<p>根据图像类比，节点级预测问题类似于图像分割，我们试图标记图像中每个像素的角色。对于文本，类似的任务是预测句子中每个单词的语音部分（如名词、动词、副词等）</p>
+<p>边级别推理的一个例子是图像场景理解。除了识别图像中的物体，深度学习模型还可用于预测它们之间的关系。我们可以将其表述为边缘级分类：给定代表图像中物体的节点，我们希望预测这些节点中哪些共享一条边缘，或者这条边缘的值是多少。如果我们希望发现实体之间的联系，我们可以考虑完全连接的图，并根据预测值修剪边，从而得到一个稀疏的图。</p>
+<h2 id="在机器学习中使用图的挑战"><a href="#在机器学习中使用图的挑战" class="headerlink" title="在机器学习中使用图的挑战"></a>在机器学习中使用图的挑战</h2><p>核心问题是怎样表示图才能是和神经网络是兼容的。图上有四种信息：顶点的属性，边的属性，全局信息以及连接性（即为每条边连接的是哪两个顶点）。前三个信息都能用向量来表示，怎么表示连接性呢？</p>
+<p>我们可以用邻接矩阵来表示，该矩阵会是一个方阵，但是有一些问题。这个矩阵可能会非常大而且很稀疏，在空间上效率低下，并且计算比较困难。另外将邻接矩阵的行或列的顺序进行交换不会改变其属性的。比如下面两张图都是前面“Othello”的人物关系图，看着不一样只是因为行和列的顺序不同，但是表示的信息是一样的。这就意味着如果你设计一个神经网络，无论你用下面两张图中的哪一张，都要保证得到的结果是一样的。</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://s2.loli.net/2023/10/23/TZfvUw9h6DnXkRa.png"
+                      alt="image.png" style="zoom:50%;" 
+                >
+
+<p>之前学过，邻接矩阵的大小为N*N，当节点很多的时候，邻接矩阵的大小也会特别大</p>
+<p> 如果既想高效的存储邻接矩阵，又想这个顺序不会影响神经网络的结果，就可以用邻接链表的方式来表示邻接矩阵。</p>
+<p>比如下方这个，顶点，边和全局信息都用标量来表示，也可以用向量，连接性用邻接链表来表示，邻接链表的数量和边的数量是一致的，第i项表示的是第i条边连接的两个顶点；这样表示就很高效，而且不会受到顺序的影响。博客里面是可以改变数值和边的数量的，建议自己去博客玩一下。</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://s2.loli.net/2023/10/23/uO61Bq4l3NcgoaV.png"
+                      alt="image.png" style="zoom:50%;" 
+                >
+
+<p><strong>汇总 &#x3D; 自身的信息 + 所有邻居点的信息</strong></p>
+<p><strong>所有邻居点信息的表达有几种：</strong></p>
 <ul>
-<li>原来的 0~1 最小值 0 则变成 (0 - mean) &#x2F; std &#x3D; -1</li>
+<li><strong>求解Sum</strong></li>
+<li><strong>求平均Mean</strong></li>
+<li><strong>求最大Max</strong></li>
+<li><strong>求最小Min</strong></li>
 </ul>
-<ul>
-<li>最大值1则变成 (1 - mean) &#x2F; std &#x3D; 1</li>
-</ul>
-<p>一般 mean 和 std 会分别指定3个值，代表图像3个通道的均值和方差，比如<code>torchvision.transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])</code></p>
-<p>如果是<strong>单通道的灰度图</strong>，均值为0.5，方差为0.5，可以写成 <code>transforms.Normalize(mean=[0.5], std=[0.5])</code></p>
-<p>因为 ImageNet数据集 是一个大型数据集，由一个大型数据集统计出来的均值和方差，基本符合所有数据集的像素值分布，所以，一般直接使用 <code>mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]</code></p>
-<h2 id="3-transforms-Compose"><a href="#3-transforms-Compose" class="headerlink" title="3.transforms.Compose()"></a>3.transforms.Compose()</h2><p><strong>训练阶段</strong></p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">trans = transforms.Compose([transforms.RandomResizedCrop((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.RandomHorizontalFlip(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ColorJitter(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
-
-
-
-<p><strong>推理阶段(test)</strong></p>
-<p>推理阶段不会再对数据进行增强，只会做基础的预处理，比如：将尺寸处理到固定尺寸 ；使用 ToTensor 处理数据； Normalize 归一化</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">trans = transforms.Compose([transforms.RE((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
-
-
-
-<h2 id="4-transforms-RandomResizedCrop随机尺寸裁剪"><a href="#4-transforms-RandomResizedCrop随机尺寸裁剪" class="headerlink" title="4.transforms.RandomResizedCrop随机尺寸裁剪"></a>4.transforms.RandomResizedCrop随机尺寸裁剪</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">resized_crop = transforms.RandomResizedCrop(size=(<span class="number">224</span>, <span class="number">224</span>),</span><br><span class="line">                                            scale=(<span class="number">0.08</span>, <span class="number">1.0</span>), </span><br><span class="line">                                            ratio=(<span class="number">0.75</span>, <span class="number">1.3333333333333333</span>), </span><br><span class="line">                                            interpolation=transforms.InterpolationMode.BILINEAR)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">上方代码解释：</span></span><br><span class="line"><span class="string"> 1、将图像进行随机裁剪，裁剪满足以下条件:</span></span><br><span class="line"><span class="string"> 裁剪后的图像 面积 与原图像的面积的比例 在 0.08 ～ 1</span></span><br><span class="line"><span class="string"> 裁剪后的图像高宽比范围在 0.75 ～ 1.33之间</span></span><br><span class="line"><span class="string"> 2、按照指定的插值方式， 将图像尺寸缩放到 （224， 224）</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure></div>
-
-<p>参数：</p>
-<ul>
-<li>size：期望的输出图像尺寸， 可以是 int值，也可可以是元组（H, W）</li>
-<li>scale ：在调整大小之前指定裁剪的随机区域的下界和上界。尺度是根据原始图像的面积来定义的。</li>
-<li>ratio：在调整大小之前，裁剪的随机纵横比的下限和上限。</li>
-<li>InterpolationMode ： 插值方式<ul>
-<li>InterpolationMode.NEAREST：最近邻插值。</li>
-<li>InterpolationMode.BILINEAR：双线性插值 (默认)</li>
-<li>InterpolationMode.BICUBIC：双三次插值。</li>
-</ul>
-</li>
-</ul>
-<h2 id="5-水平翻转与垂直翻转"><a href="#5-水平翻转与垂直翻转" class="headerlink" title="5.水平翻转与垂直翻转"></a>5.水平翻转与垂直翻转</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">horizontal_flip = transforms. RandomHorizontalFlip(<span class="number">0.5</span>)</span><br><span class="line">vertical_flip = transforms. RandomVerticalFlip(<span class="number">0.5</span>)</span><br></pre></td></tr></table></figure></div>
-
+<h1 id="Graph-Neural-Networks图神经网络"><a href="#Graph-Neural-Networks图神经网络" class="headerlink" title="Graph Neural Networks图神经网络"></a>Graph Neural Networks图神经网络</h1><p><strong>A GNN is an optimizable transformation on all attributes of the graph (nodes, edges, global-context) that preserves graph symmetries (permutation invariances).</strong></p>
+<p>GNN是对保持图对称性(排列不变性)的图的所有属性(节点、边、全局上下文)的可优化转换。对称信息指的是把这个顶点进行另外一个排序后，整个结果是不会变的。</p>
+<p>这篇博客的GNN是用“信息传递神经网络”框架来搭建的，GNN的输入是一个图，输出也是一个图，它会对你的图的属性（点，边，全局信息）进行变换，但不会改变图的连接性，就是哪条边连接哪条顶点，这个信息是不会改变的</p>
+<h3 id="最简单的GNN层"><a href="#最简单的GNN层" class="headerlink" title="最简单的GNN层"></a>最简单的GNN层</h3><p>对顶点向量、边向量和全局向量分别构造一个多层感知机（MLP），输入的大小和输出的大小是相同的，这三个MLP就组成了一个GNN的层，输入是一个图，输出也是一个图，并且连接性不变。</p>
+<p>满足了上文中对GNN的第一个要求，只对属性进行变换，并不改变图的结构；并且MLP是对每个向量独自作用，对样本前后顺序没有要求，所以也就满足了图的排列不变性，满足了第二个要求。</p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="https://p.ipic.vip/wh6b5i.png"
-                     
+                     data-src="https://s2.loli.net/2023/10/23/XvRps8DfrwK7iTH.png"
+                      alt="image.png"
                 ></p>
-<h2 id="6-ColorJitter"><a href="#6-ColorJitter" class="headerlink" title="6. ColorJitter"></a>6. ColorJitter</h2>
+<h3 id="通过池化信息对GNN预测"><a href="#通过池化信息对GNN预测" class="headerlink" title="通过池化信息对GNN预测"></a>通过<a class="link"   target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E6%B1%A0%E5%8C%96&spm=1001.2101.3001.7020" >池化 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>信息对GNN预测</h3>
         </div>
 
         
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li><strong>标题:</strong> 数据的读取与处理</li>
+        <li><strong>标题:</strong> 图神经网络(二)</li>
         <li><strong>作者:</strong> 深情小小侯</li>
         <li><strong>创建于
-                :</strong> 2023-10-18 11:59:25</li>
+                :</strong> 2023-10-23 09:03:10</li>
         
             <li>
                 <strong>更新于
-                    :</strong> 2023-10-19 11:35:41
+                    :</strong> 2023-10-23 10:14:58
             </li>
         
         <li>
-            <strong>链接:</strong> https://redefine.ohevan.com/2023/10/18/数据增强/
+            <strong>链接:</strong> https://redefine.ohevan.com/2023/10/23/图联邦/
         </li>
         <li>
             <strong>
@@ -477,13 +503,13 @@
                     <div class="article-prev">
                         <a class="prev"
                         rel="prev"
-                        href="/2023/10/19/arg%E7%9A%84%E7%94%A8%E6%B3%95/"
+                        href="/2023/10/23/transformer-%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/"
                         >
                             <span class="left arrow-icon flex justify-center items-center">
                                 <i class="fa-solid fa-chevron-left"></i>
                             </span>
                             <span class="title flex justify-center items-center">
-                                <span class="post-nav-title-item">arg的用法</span>
+                                <span class="post-nav-title-item">transformer-注意力机制</span>
                                 <span class="post-nav-item">上一篇</span>
                             </span>
                         </a>
@@ -493,10 +519,10 @@
                     <div class="article-next">
                         <a class="next"
                         rel="next"
-                        href="/2023/10/16/PyTorch%E5%9F%BA%E7%A1%80/"
+                        href="/2023/10/21/%E8%81%94%E9%82%A6%E5%AD%A6%E4%B9%A0%E5%AE%9E%E6%88%98/"
                         >
                             <span class="title flex justify-center items-center">
-                                <span class="post-nav-title-item">PyTorch学习笔记（一）</span>
+                                <span class="post-nav-title-item">联邦学习实战</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex justify-center items-center">
@@ -561,8 +587,8 @@
             <div class="post-toc-wrap">
     <div class="post-toc">
         <div class="toc-title">此页目录</div>
-        <div class="page-title">数据的读取与处理</div>
-        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86%E3%80%81%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA"><span class="nav-number">1.</span> <span class="nav-text">数据预处理、数据增强</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA"><span class="nav-number">1.1.</span> <span class="nav-text">1. 数据增强</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86"><span class="nav-number">1.2.</span> <span class="nav-text">2. 数据预处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E4%BD%BF%E7%94%A8%E8%8A%82%E7%82%B9"><span class="nav-number">1.3.</span> <span class="nav-text">3. 使用节点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#torchvision-transforms-%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">torchvision.transforms 的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-torchvision-transforms-ToTensor"><span class="nav-number">2.1.</span> <span class="nav-text">1. torchvision.transforms.ToTensor()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-torchvision-transforms-Normalize"><span class="nav-number">2.2.</span> <span class="nav-text">2. torchvision.transforms.Normalize()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-transforms-Compose"><span class="nav-number">2.3.</span> <span class="nav-text">3.transforms.Compose()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-transforms-RandomResizedCrop%E9%9A%8F%E6%9C%BA%E5%B0%BA%E5%AF%B8%E8%A3%81%E5%89%AA"><span class="nav-number">2.4.</span> <span class="nav-text">4.transforms.RandomResizedCrop随机尺寸裁剪</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%B0%B4%E5%B9%B3%E7%BF%BB%E8%BD%AC%E4%B8%8E%E5%9E%82%E7%9B%B4%E7%BF%BB%E8%BD%AC"><span class="nav-number">2.5.</span> <span class="nav-text">5.水平翻转与垂直翻转</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-ColorJitter"><span class="nav-number">2.6.</span> <span class="nav-text">6. ColorJitter</span></a></li></ol></li></ol>
+        <div class="page-title">图神经网络(二)</div>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="nav-number">1.</span> <span class="nav-text">图神经网络</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%9B%BE"><span class="nav-number">1.1.</span> <span class="nav-text">什么是图</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BE%E5%9F%BA%E6%9C%AC%E6%A8%A1%E5%9D%97%E5%AE%9A%E4%B9%89"><span class="nav-number">1.1.1.</span> <span class="nav-text">图基本模块定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E8%A6%81%E5%81%9A%E7%9A%84%E4%BA%8B%E6%83%85"><span class="nav-number">1.1.2.</span> <span class="nav-text">图神经网络要做的事情</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E6%8A%8A%E4%B8%80%E4%BA%9B%E5%86%85%E5%AE%B9%E8%A1%A8%E7%A4%BA%E6%88%90%E5%9B%BE"><span class="nav-number">1.2.</span> <span class="nav-text">怎么把一些内容表示成图</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%86%E4%B8%80%E5%8F%A5%E8%AF%9D%E8%A1%A8%E7%A4%BA%E6%88%90%E5%9B%BE"><span class="nav-number">1.2.1.</span> <span class="nav-text">将一句话表示成图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%8F%AF%E4%BB%A5%E8%A1%A8%E7%A4%BA%E6%88%90%E5%9B%BE%E7%9A%84%E4%BF%A1%E6%81%AF"><span class="nav-number">1.2.2.</span> <span class="nav-text">其他可以表示成图的信息</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%93%AA%E4%BA%9B%E7%B1%BB%E5%9E%8B%E7%9A%84%E9%97%AE%E9%A2%98%E6%9C%89%E5%9B%BE%E7%BB%93%E6%9E%84%E6%95%B0%E6%8D%AE-%E5%9B%BE%E5%BD%A2%E7%BB%93%E6%9E%84%E5%8C%96%E6%95%B0%E6%8D%AE%E6%9C%89%E5%93%AA%E4%BA%9B%E7%B1%BB%E5%9E%8B%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.3.</span> <span class="nav-text">哪些类型的问题有图结构数据,图形结构化数据有哪些类型的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BE%E5%B1%82%E9%9D%A2%E7%9A%84%E4%BB%BB%E5%8A%A1"><span class="nav-number">1.3.1.</span> <span class="nav-text">图层面的任务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Node%E4%B8%8EEdge%E7%BA%A7%E5%88%AB%E4%BB%BB%E5%8A%A1"><span class="nav-number">1.3.2.</span> <span class="nav-text">Node与Edge级别任务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%AD%E4%BD%BF%E7%94%A8%E5%9B%BE%E7%9A%84%E6%8C%91%E6%88%98"><span class="nav-number">1.4.</span> <span class="nav-text">在机器学习中使用图的挑战</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Graph-Neural-Networks%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="nav-number">2.</span> <span class="nav-text">Graph Neural Networks图神经网络</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84GNN%E5%B1%82"><span class="nav-number">2.0.1.</span> <span class="nav-text">最简单的GNN层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E6%B1%A0%E5%8C%96%E4%BF%A1%E6%81%AF%E5%AF%B9GNN%E9%A2%84%E6%B5%8B"><span class="nav-number">2.0.2.</span> <span class="nav-text">通过池化 信息对GNN预测</span></a></li></ol></li></ol></li></ol>
 
     </div>
 </div>
