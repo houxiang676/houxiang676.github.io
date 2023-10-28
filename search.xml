@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>arg的用法</title>
-    <url>/2023/10/19/arg%E7%9A%84%E7%94%A8%E6%B3%95/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
     <title>PyTorch学习笔记（一）</title>
     <url>/2023/10/16/PyTorch%E5%9F%BA%E7%A1%80/</url>
     <content><![CDATA[<h1 id="PyTorch学习笔记"><a href="#PyTorch学习笔记" class="headerlink" title="PyTorch学习笔记"></a>PyTorch学习笔记</h1><p>PyTorch由4个主要包组成包组成，具体如下。</p>
@@ -43,6 +38,16 @@
 
 <hr>
 ]]></content>
+  </entry>
+  <entry>
+    <title>LSTM时序预测</title>
+    <url>/2023/10/28/LSTM%E6%97%B6%E5%BA%8F%E9%A2%84%E6%B5%8B/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>arg的用法</title>
+    <url>/2023/10/19/arg%E7%9A%84%E7%94%A8%E6%B3%95/</url>
+    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>my_first_blog</title>
@@ -121,86 +126,91 @@
 ]]></content>
   </entry>
   <entry>
-    <title>数据的读取与处理</title>
-    <url>/2023/10/18/%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA/</url>
-    <content><![CDATA[<h1 id="数据预处理、数据增强"><a href="#数据预处理、数据增强" class="headerlink" title="数据预处理、数据增强"></a>数据预处理、数据增强</h1><h2 id="1-数据增强"><a href="#1-数据增强" class="headerlink" title="1. 数据增强"></a>1. 数据增强</h2><p>数据增强可以增加训练集的样本数量，缓解过拟合，并提高模型的泛化能力，从而有效提升算法的性能。</p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://p.ipic.vip/a161sy.png"
-                      alt="数据增强"
-                ></p>
-<h2 id="2-数据预处理"><a href="#2-数据预处理" class="headerlink" title="2. 数据预处理"></a>2. 数据预处理</h2><p>1）将图像转换成 tensor 的数据格式</p>
-<p>2）将图像的 像素值范围 由 0～255 转换到 0～1</p>
-<p>3）(height, width, channel) &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&gt;&gt;&gt; (channel, height, width)</p>
-<p>4）归一化图像</p>
-<h2 id="3-使用节点"><a href="#3-使用节点" class="headerlink" title="3. 使用节点"></a>3. 使用节点</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">trans = transforms.Compose([transforms.RandomResizedCrop((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.RandomHorizontalFlip(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ColorJitter(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
-
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://p.ipic.vip/iiqcob.png"
-                     
-                ></p>
-<h1 id="torchvision-transforms-的使用"><a href="#torchvision-transforms-的使用" class="headerlink" title="torchvision.transforms 的使用"></a>torchvision.transforms 的使用</h1><p>官方文档地址： <a class="link"   href="https://pytorch.org/vision/stable/transforms.html" >https://pytorch.org/vision/stable/transforms.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<h2 id="1-torchvision-transforms-ToTensor"><a href="#1-torchvision-transforms-ToTensor" class="headerlink" title="1. torchvision.transforms.ToTensor()"></a>1. torchvision.transforms.ToTensor()</h2><p><code>torchvision.transforms.ToTensor()</code> 做了三件事：</p>
-<p> 1）将图像的数据格式由 nump.ndarray 或 PIL.Image 转为 tensor，数据类型为 torch.FloatTensor</p>
-<p> 2）将像素值范围从 0-255 转换到 0-1之间， 处理方式 ：直接除以255</p>
-<p> 3）将 shape&#x3D;(H,W, C) 转换为 shape&#x3D; (C, H, W)</p>
-<p>🌼原始的data的shape为（5，5，3），则其表示有5个（5 ， 3）的二维数组，即我们把最外层的[]去掉就得到了5个五行三列的数据。</p>
-<p>🌼同样的，变换后data的shape为（3，5，5），则其表示有3个（5 ， 5）的二维数组，即我们把最外层的[]去掉就得到了3个五行五列的数据。</p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://p.ipic.vip/xksmgr.png"
-                     
-                ></p>
-<h2 id="2-torchvision-transforms-Normalize"><a href="#2-torchvision-transforms-Normalize" class="headerlink" title="2. torchvision.transforms.Normalize()"></a>2. torchvision.transforms.Normalize()</h2><p>作用：用均值和标准差对张量图像进行归一化，一般在 <code>torchvision.transforms.ToTensor()</code> 之后使用</p>
-<p>在使用 <code>torchvision.transforms.ToTensor()</code> 之后，像素值取值范围会被转换到 [0, 1]之间，再使用 <code>transforms.Normalize(mean, std)</code> 进行归一化后，原像素值就被分布到了 [-1, 1] 之间：</p>
-<p>公式：</p>
+    <title>transformer-注意力机制</title>
+    <url>/2023/10/23/transformer-%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>图神经网络</title>
+    <url>/2023/10/19/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C(%E4%BA%8C)/</url>
+    <content><![CDATA[<p>[TOC] </p>
 <ul>
-<li>原来的 0~1 最小值 0 则变成 (0 - mean) &#x2F; std &#x3D; -1</li>
+<li><a href="#%E5%A6%82%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C">一级标题</a><ul>
+<li><a href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C">标题 1-1</a></li>
+<li>[标题 1-2](#二级标题 1-2)</li>
 </ul>
-<ul>
-<li>最大值1则变成 (1 - mean) &#x2F; std &#x3D; 1</li>
+</li>
+<li><a href="#%E4%BA%8C%E7%BA%A7%E6%A0%87%E9%A2%98">二级标题</a><ul>
+<li>[标题 2-1](#二级标题 2-1)</li>
+<li>[标题 2-2](#二级标题 2-2)</li>
 </ul>
-<p>一般 mean 和 std 会分别指定3个值，代表图像3个通道的均值和方差，比如<code>torchvision.transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])</code></p>
-<p>如果是<strong>单通道的灰度图</strong>，均值为0.5，方差为0.5，可以写成 <code>transforms.Normalize(mean=[0.5], std=[0.5])</code></p>
-<p>因为 ImageNet数据集 是一个大型数据集，由一个大型数据集统计出来的均值和方差，基本符合所有数据集的像素值分布，所以，一般直接使用 <code>mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]</code></p>
-<h2 id="3-transforms-Compose"><a href="#3-transforms-Compose" class="headerlink" title="3.transforms.Compose()"></a>3.transforms.Compose()</h2><p><strong>训练阶段</strong></p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">trans = transforms.Compose([transforms.RandomResizedCrop((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.RandomHorizontalFlip(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ColorJitter(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
-
-
-
-<p><strong>推理阶段(test)</strong></p>
-<p>推理阶段不会再对数据进行增强，只会做基础的预处理，比如：将尺寸处理到固定尺寸 ；使用 ToTensor 处理数据； Normalize 归一化</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">trans = transforms.Compose([transforms.RE((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
-
-
-
-<h2 id="4-transforms-RandomResizedCrop随机尺寸裁剪"><a href="#4-transforms-RandomResizedCrop随机尺寸裁剪" class="headerlink" title="4.transforms.RandomResizedCrop随机尺寸裁剪"></a>4.transforms.RandomResizedCrop随机尺寸裁剪</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">resized_crop = transforms.RandomResizedCrop(size=(<span class="number">224</span>, <span class="number">224</span>),</span><br><span class="line">                                            scale=(<span class="number">0.08</span>, <span class="number">1.0</span>), </span><br><span class="line">                                            ratio=(<span class="number">0.75</span>, <span class="number">1.3333333333333333</span>), </span><br><span class="line">                                            interpolation=transforms.InterpolationMode.BILINEAR)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">上方代码解释：</span></span><br><span class="line"><span class="string"> 1、将图像进行随机裁剪，裁剪满足以下条件:</span></span><br><span class="line"><span class="string"> 裁剪后的图像 面积 与原图像的面积的比例 在 0.08 ～ 1</span></span><br><span class="line"><span class="string"> 裁剪后的图像高宽比范围在 0.75 ～ 1.33之间</span></span><br><span class="line"><span class="string"> 2、按照指定的插值方式， 将图像尺寸缩放到 （224， 224）</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure></div>
-
-<p>参数：</p>
-<ul>
-<li>size：期望的输出图像尺寸， 可以是 int值，也可可以是元组（H, W）</li>
-<li>scale ：在调整大小之前指定裁剪的随机区域的下界和上界。尺度是根据原始图像的面积来定义的。</li>
-<li>ratio：在调整大小之前，裁剪的随机纵横比的下限和上限。</li>
-<li>InterpolationMode ： 插值方式<ul>
-<li>InterpolationMode.NEAREST：最近邻插值。</li>
-<li>InterpolationMode.BILINEAR：双线性插值 (默认)</li>
-<li>InterpolationMode.BICUBIC：双三次插值。</li>
+</li>
+<li><a href="#%E4%B8%80%E7%BA%A7%E6%A0%87%E9%A2%98">一级标题</a><ul>
+<li>[标题 1-1](#二级标题 1-1)</li>
+<li>[标题 1-2](#二级标题 1-2)</li>
+</ul>
+</li>
+<li><a href="#%E4%BA%8C%E7%BA%A7%E6%A0%87%E9%A2%98">二级标题</a><ul>
+<li>[标题 2-1](#二级标题 2-1)</li>
+<li>[标题 2-2](#二级标题 2-2)</li>
 </ul>
 </li>
 </ul>
-<h2 id="5-水平翻转与垂直翻转"><a href="#5-水平翻转与垂直翻转" class="headerlink" title="5.水平翻转与垂直翻转"></a>5.水平翻转与垂直翻转</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">horizontal_flip = transforms. RandomHorizontalFlip(<span class="number">0.5</span>)</span><br><span class="line">vertical_flip = transforms. RandomVerticalFlip(<span class="number">0.5</span>)</span><br></pre></td></tr></table></figure></div>
+<h1 id="图神经网络"><a href="#图神经网络" class="headerlink" title="图神经网络"></a>图神经网络</h1><p>图神经网络（GNN）是一种处理图结构数据的深度学习方法。本教程将详细介绍图神经网络的基本概念、主要模型、应用场景以及代码实现。</p>
+<h2 id="什么是图神经网络"><a href="#什么是图神经网络" class="headerlink" title="什么是图神经网络"></a>什么是图神经网络</h2><p>图神经网络（Graph Neural Networks, GNN）是一类用于处理图结构数据的神经网络模型，与传统的神经网络（例如卷积神经网络、循环神经网络等）处理规则数据结构（如图像、时间序列）不同，图神经网络专门处理不规则的图结构数据，如社交网络、知识图谱等。图结构数据是一种由节点和边组成的复杂关系网络，其中节点代表实体，边代表实体之间的关系。与传统的神经网络不同，图神经网络需要考虑节点之间的关系，因此需要一种新的方式来表示节点和边。</p>
+<p>图神经网络的核心思想是将每个节点的特征与其周围节点的特征进行聚合，形成新的节点表示。这个过程可以通过消息传递来实现，每个节点接收来自其邻居节点的消息，并将这些消息聚合成一个新的节点表示。这种方法可以反复迭代多次，以获取更全面的图结构信息。</p>
+<p>图神经网络的结构通常由多个层组成，每个层都包含节点嵌入、消息传递和池化等操作。在节点嵌入操作中，每个节点的特征被转换为低维向量表示，以便于神经网络进行学习和处理。在消息传递操作中，每个节点接收其邻居节点的信息，并将这些信息聚合成一个新的节点表示。在池化操作中，节点表示被合并为整个图的表示，以便于进行图级任务的预测。</p>
+<p>目前，图神经网络已经广泛应用于许多领域，例如社交网络分析、药物发现、推荐系统等。同时，也出现了许多变种的图神经网络模型，例如图卷积网络（Graph Convolutional Network, GCN）、图注意力网络（Graph Attention Network, GAT）等，以适应不同的任务和数据类型。</p>
+<p>图卷积网络（Graph Convolution Networks，GCN）<br>图注意力网络（Graph Attention Networks）<br>图自编码器（ Graph Autoencoders）<br>图生成网络（ Graph Generative Networks）<br>图时空网络（Graph Spatial-temporal Networks）<br>图神经网络把以往的传统神经网络道路基本又走了一遍，很多思想都是想通，所谓万法归一，道法自然吧，其实从来都没啥无中生有，有的只是发现而已。下面重点介绍下图卷积神经网络DCN吧，后续的待后面系列再介绍</p>
+<h2 id="图神经网络的基本概念"><a href="#图神经网络的基本概念" class="headerlink" title="图神经网络的基本概念"></a>图神经网络的基本概念</h2><p>好的，我来对每个部分进行补充。</p>
+<ol>
+<li><h3 id="图（Graph）"><a href="#图（Graph）" class="headerlink" title="图（Graph）"></a>图（Graph）</h3></li>
+</ol>
+<p>  图是一种用顶点（Vertex）和边（Edge）表示实体及其关系的数学结构。一个图可以表示为 G &#x3D; (V, E)，其中 V 是顶点集合，E 是边集合。在图中，顶点表示实体，边表示实体之间的关系。例如，在社交网络中，顶点可以表示用户，边可以表示用户之间的关注或好友关系。</p>
+<p>图可以分为有向图和无向图两种类型。在无向图中，边没有方向；在有向图中，边有方向。此外，图还可以带有权重，表示实体之间的关系强度。有权重的图通常被称为带权图。</p>
+<ol start="2">
+<li><h3 id="邻接矩阵（Adjacency-Matrix）"><a href="#邻接矩阵（Adjacency-Matrix）" class="headerlink" title="邻接矩阵（Adjacency Matrix）"></a>邻接矩阵（Adjacency Matrix）</h3></li>
+</ol>
+<p>  邻接矩阵 A 是一种表示图中顶点间关系的矩阵。设 V 为顶点集合，A 的大小为 |V|×|V|。对于无向图，A 的元素 A(i, j) &#x3D; 1表示顶点 i 和顶点 j 相邻，即存在一条边；A(i, j) &#x3D; 0 表示顶点 i 和顶点 j 不相邻。有向图的邻接矩阵表示有方向的边。</p>
+<p>邻接矩阵可以用于表示图结构，同时也可以用于进行图算法的实现。通过邻接矩阵，我们可以快速地查询两个顶点之间是否存在边，以及边的类型和权重等信息。</p>
+<p>另外，邻接矩阵可以被视为图的一种表示形式，与其他表示方式（如邻接表、边列表等）相比，邻接矩阵可以用于描述稠密图，具有空间利用率高、查询效率高的优点。</p>
+<ol start="3">
+<li><h3 id="图信号（Graph-Signal）"><a href="#图信号（Graph-Signal）" class="headerlink" title="图信号（Graph Signal）"></a>图信号（Graph Signal）</h3></li>
+</ol>
+<p>  图信号是定义在图顶点上的信号，可以看作是顶点的特征。对于顶点集合 V，我们可以将图信号表示为一个 |V|×d 的矩阵 X，其中 d 是特征维度。</p>
+<p>图信号可以表示顶点的属性或特征，例如在社交网络中，每个顶点可以表示为一个包含用户属性的向量，如性别、年龄、职业等。在化学分子中，每个原子可以表示为一个包含化学性质的向量，如电子亲和力、电荷等。</p>
+<p>图信号可以用于图结构数据的分析和处理，例如对图进行分类、聚类、预测等任务。通常情况下，我们需要将图信号与图上的拓扑结构相结合，从而更好地利用图结构数据的特点。例如，在图卷积神经网络中，我们可以通过图信号和邻接矩阵的卷积操作来提取节点的特征表示。</p>
+<ol start="4">
+<li><h3 id="图卷积（Graph-Convolution）"><a href="#图卷积（Graph-Convolution）" class="headerlink" title="图卷积（Graph Convolution）"></a>图卷积（Graph Convolution）</h3></li>
+</ol>
+<p>  图卷积是一种操作，将传统卷积的概念扩展到图结构数据。图卷积通常表示为邻接矩阵 A 和图信号 X 之间的一个函数：f(A, X)。通过这个函数，可以在图上实现信息传递和特征提取。与传统卷积不同的是，图卷积考虑了节点在图上的拓扑结构，因此可以捕捉节点之间的关系和依赖关系。</p>
+<p>图卷积的实现方式有多种，其中最常见的是基于谱域的方法和基于空域的方法。基于谱域的方法利用图的拉普拉斯矩阵的特征值和特征向量来定义卷积操作。基于空域的方法则利用邻接矩阵和节点特征来进行卷积操作。</p>
+<p>图卷积可以用于许多图结构数据的任务，例如节点分类、图分类、链接预测等。在图神经网络中，图卷积是一种核心操作，可以帮助提取图结构数据中的特征表示，从而实现更高效和准确的图结构数据分析和处理。</p>
+<h2 id="主要图神经网络模型"><a href="#主要图神经网络模型" class="headerlink" title="主要图神经网络模型"></a>主要图神经网络模型</h2><h3 id="GCN（Graph-Convolutional-Networks）"><a href="#GCN（Graph-Convolutional-Networks）" class="headerlink" title="GCN（Graph Convolutional Networks）"></a>GCN（Graph Convolutional Networks）</h3><ul>
+<li>对每个节点计算特征</li>
+<li>然后合成每个节点的特征</li>
+<li>将合成的特征传入全连接网络进行分类</li>
+</ul>
+<p>GCN 是一种基于谱域（Spectral Domain）的图卷积方法。它利用图的拉普拉斯矩阵，通过对特征向量进行卷积操作实现信息传递和特征提取。GCN 的核心思想是通过邻接矩阵 A 和图信号 X 的乘积来实现信息传递。</p>
+<p>在 GCN 中，每个节点的特征向量会与其邻居节点的特征向量进行加权平均。权重由邻接矩阵 A 中的值确定。具体来说，GCN 的卷积操作可以表示为：</p>
+<p>$$<br>Z &#x3D; f(X,A) &#x3D; softmax(\hat{A}\quad ReLU(AXW^{(0)})W^{(1)}）<br>$$<br>其中，D 是 A 的度矩阵，W 是可学习的权重矩阵。</p>
+<p>GCN 已被广泛应用于节点分类、图分类、链接预测等任务，并取得了很好的效果。但是，GCN 的局限性在于其卷积操作仅考虑一阶邻居节点，无法捕捉更长程的关系和全局信息。因此，后续的研究提出了许多改进版本的图卷积网络，如下面所介绍的 GAT 和 GraphSAGE。</p>
+<h3 id="GAT（Graph-Attention-Networks）"><a href="#GAT（Graph-Attention-Networks）" class="headerlink" title="GAT（Graph Attention Networks）"></a>GAT（Graph Attention Networks）</h3><p>GAT 是一种基于空域（Spatial Domain）的图卷积方法。GAT 引入了注意力机制，使得模型可以为不同的边赋予不同的权重，从而更好地捕捉节点之间的关系。在 GAT 中，每个节点的特征向量会与其邻居节点的特征向量进行加权平均，权重由注意力机制计算得到。</p>
+<p>具体来说，GAT 的卷积操作可以表示为：</p>
+<p>Z &#x3D; f(A, X) &#x3D; CONCAT(ATTENTION(A, X)W)</p>
+<p>其中，ATTENTION 是计算注意力权重的函数，CONCAT 是连接操作。ATTENTION 函数通常包括两个步骤：首先计算每个邻居节点与当前节点的相似度，然后利用 softmax 函数将相似度转化为权重。这样，每个邻居节点的权重就可以不同，从而更好地表达节点之间的关系。</p>
+<p>GAT 的注意力机制使得模型能够更好地适应不同的图结构和任务，并在许多图分类、节点分类、链接预测等任务中取得了很好的效果。</p>
+<h3 id="GraphSAGE（Graph-Sample-and-AggregatE）"><a href="#GraphSAGE（Graph-Sample-and-AggregatE）" class="headerlink" title="GraphSAGE（Graph Sample and AggregatE）"></a>GraphSAGE（Graph Sample and AggregatE）</h3><p>GraphSAGE 是一种基于空域（Spatial Domain）的图卷积方法，提出了一种邻居采样和聚合策略，使得模型能够处理大规模的图数据。在 GraphSAGE 中，每个节点的特征向量会与其邻居节点的特征向量进行聚合。不同于 GCN 和 GAT，GraphSAGE 不是对所有邻居节点进行平均或加权平均，而是采用一定的邻居采样策略，只考虑一个节点的一阶或 k 阶邻居节点进行聚合，从而减少计算复杂度。</p>
+<p>具体来说，GraphSAGE 的卷积操作可以表示为：</p>
+<p>Z &#x3D; f(A, X) &#x3D; AGGREGATE(NEIGHBORS(A, X)) W</p>
+<p>其中，NEIGHBORS 是邻居采样函数，用于从一个节点的邻居中随机采样一些节点作为聚合的输入；AGGREGATE 是聚合函数，用于聚合邻居节点的特征向量，如均值、最大值等；W 是可学习的权重矩阵。</p>
+<p>GraphSAGE 可以处理大规模的图数据，并在节点分类、图分类、链接预测等任务中取得了很好的效果。它的邻居采样和聚合策略也被许多后续的图卷积网络所借鉴和改进。</p>
+<h2 id="图神经网络的应用场景"><a href="#图神经网络的应用场景" class="headerlink" title="图神经网络的应用场景"></a>图神经网络的应用场景</h2><p>图神经网络在许多领域都有广泛的应用，主要包括：</p>
+<p>节点分类（Node Classification）：预测图中节点的类别，如在社交网络中预测用户的兴趣标签。<br>链接预测（Link Prediction）：预测图中节点之间是否存在边，如在知识图谱中预测实体间的关系。<br>图分类（Graph Classification）：预测整个图的类别，如在生物分子网络中预测分子的活性。<br>图生成（Graph Generation）：生成具有某些特性的图，如生成满足特定拓扑特征的网络。</p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>以下是使用Cora数据集训练图卷积神经网络的示例代码，使用PyTorch Geometric库实现：</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">from</span> torch_geometric.datasets <span class="keyword">import</span> Planetoid</span><br><span class="line"><span class="keyword">from</span> torch_geometric.nn <span class="keyword">import</span> GCNConv</span><br><span class="line"></span><br><span class="line"><span class="comment"># 判断是否有可用的GPU，如果有就使用GPU，否则使用CPU</span></span><br><span class="line">device = torch.device(<span class="string">&#x27;cuda&#x27;</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">&#x27;cpu&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载Cora数据集</span></span><br><span class="line">dataset = Planetoid(root=<span class="string">&#x27;data/Cora&#x27;</span>, name=<span class="string">&#x27;Cora&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义一个GCN模型</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">GCN</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, input_dim, hidden_dim, output_dim</span>):</span><br><span class="line">        <span class="built_in">super</span>(GCN, self).__init__()</span><br><span class="line">        <span class="comment"># 第一个图卷积层</span></span><br><span class="line">        self.conv1 = GCNConv(input_dim, hidden_dim)</span><br><span class="line">        <span class="comment"># 第二个图卷积层</span></span><br><span class="line">        self.conv2 = GCNConv(hidden_dim, output_dim)</span><br><span class="line">        <span class="comment"># 全连接层</span></span><br><span class="line">        self.fc = nn.Linear(output_dim, dataset.num_classes)</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x, edge_index</span>):</span><br><span class="line">        <span class="comment"># 第一次图卷积，使用ReLU激活函数</span></span><br><span class="line">        x = F.relu(self.conv1(x, edge_index))</span><br><span class="line">        <span class="comment"># 第二次图卷积</span></span><br><span class="line">        x = self.conv2(x, edge_index))</span><br><span class="line">        <span class="comment"># Dropout操作，防止过拟合</span></span><br><span class="line">        x = F.dropout(x, training=self.training)</span><br><span class="line">        <span class="comment"># 全连接层</span></span><br><span class="line">        x = self.fc(x)</span><br><span class="line">        <span class="comment"># 使用log_softmax进行分类</span></span><br><span class="line">        <span class="keyword">return</span> F.log_softmax(x, dim=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建GCN模型实例，并将模型移动到设备上（GPU或CPU）</span></span><br><span class="line">model = GCN(dataset.num_features, <span class="number">16</span>, dataset.num_classes).to(device)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义优化器和损失函数</span></span><br><span class="line">optimizer = optim.Adam(model.parameters(), lr=<span class="number">0.01</span>)</span><br><span class="line">criterion = nn.NLLLoss()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义训练函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">train</span>(<span class="params">model, optimizer, criterion, data</span>):</span><br><span class="line">    model.train()</span><br><span class="line">    optimizer.zero_grad()</span><br><span class="line">    out = model(data.x.to(device), data.edge_index.to(device))</span><br><span class="line">    loss = criterion(out[data.train_mask], data.y[data.train_mask].to(device))</span><br><span class="line">    loss.backward()</span><br><span class="line">    optimizer.step()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义测试函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test</span>(<span class="params">model, data</span>):</span><br><span class="line">    model.<span class="built_in">eval</span>()</span><br><span class="line">    out = model(data.x.to(device), data.edge_index.to(device))</span><br><span class="line">    pred = out.argmax(dim=<span class="number">1</span>)</span><br><span class="line">    acc = pred[data.test_mask].eq(data.y[data.test_mask].to(device)).<span class="built_in">sum</span>().item() / data.test_mask.<span class="built_in">sum</span>().item()</span><br><span class="line">    <span class="keyword">return</span> acc</span><br><span class="line"></span><br><span class="line"><span class="comment"># 进行模型训练和测试，并输出测试集准确率</span></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">200</span>):</span><br><span class="line">    train(model, optimizer, criterion, dataset[<span class="number">0</span>])</span><br><span class="line">    test_acc = test(model, dataset[<span class="number">0</span>])</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;Epoch: &#123;:03d&#125;, Test Acc: &#123;:.4f&#125;&#x27;</span>.<span class="built_in">format</span>(epoch, test_acc))</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
 
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://p.ipic.vip/wh6b5i.png"
-                     
-                ></p>
-<h2 id="6-ColorJitter"><a href="#6-ColorJitter" class="headerlink" title="6. ColorJitter"></a>6. ColorJitter</h2>]]></content>
+]]></content>
   </entry>
   <entry>
     <title>差分隐私</title>
@@ -208,13 +218,8 @@
     <content><![CDATA[]]></content>
   </entry>
   <entry>
-    <title>transformer-注意力机制</title>
-    <url>/2023/10/23/transformer-%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
-    <title>联邦学习实战</title>
-    <url>/2023/10/21/%E8%81%94%E9%82%A6%E5%AD%A6%E4%B9%A0%E5%AE%9E%E6%88%98/</url>
+    <title>图神经网络实战</title>
+    <url>/2023/10/23/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%AE%9E%E6%88%98/</url>
     <content><![CDATA[]]></content>
   </entry>
   <entry>
@@ -321,90 +326,90 @@
 <h3 id="通过池化信息对GNN预测"><a href="#通过池化信息对GNN预测" class="headerlink" title="通过池化信息对GNN预测"></a>通过<a class="link"   href="https://so.csdn.net/so/search?q=%E6%B1%A0%E5%8C%96&spm=1001.2101.3001.7020" >池化 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>信息对GNN预测</h3>]]></content>
   </entry>
   <entry>
-    <title>图神经网络</title>
-    <url>/2023/10/19/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C(%E4%BA%8C)/</url>
-    <content><![CDATA[<p>[TOC] </p>
-<ul>
-<li><a href="#%E5%A6%82%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C">一级标题</a><ul>
-<li><a href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C">标题 1-1</a></li>
-<li>[标题 1-2](#二级标题 1-2)</li>
-</ul>
-</li>
-<li><a href="#%E4%BA%8C%E7%BA%A7%E6%A0%87%E9%A2%98">二级标题</a><ul>
-<li>[标题 2-1](#二级标题 2-1)</li>
-<li>[标题 2-2](#二级标题 2-2)</li>
-</ul>
-</li>
-<li><a href="#%E4%B8%80%E7%BA%A7%E6%A0%87%E9%A2%98">一级标题</a><ul>
-<li>[标题 1-1](#二级标题 1-1)</li>
-<li>[标题 1-2](#二级标题 1-2)</li>
-</ul>
-</li>
-<li><a href="#%E4%BA%8C%E7%BA%A7%E6%A0%87%E9%A2%98">二级标题</a><ul>
-<li>[标题 2-1](#二级标题 2-1)</li>
-<li>[标题 2-2](#二级标题 2-2)</li>
-</ul>
-</li>
-</ul>
-<h1 id="图神经网络"><a href="#图神经网络" class="headerlink" title="图神经网络"></a>图神经网络</h1><p>图神经网络（GNN）是一种处理图结构数据的深度学习方法。本教程将详细介绍图神经网络的基本概念、主要模型、应用场景以及代码实现。</p>
-<h2 id="什么是图神经网络"><a href="#什么是图神经网络" class="headerlink" title="什么是图神经网络"></a>什么是图神经网络</h2><p>图神经网络（Graph Neural Networks, GNN）是一类用于处理图结构数据的神经网络模型，与传统的神经网络（例如卷积神经网络、循环神经网络等）处理规则数据结构（如图像、时间序列）不同，图神经网络专门处理不规则的图结构数据，如社交网络、知识图谱等。图结构数据是一种由节点和边组成的复杂关系网络，其中节点代表实体，边代表实体之间的关系。与传统的神经网络不同，图神经网络需要考虑节点之间的关系，因此需要一种新的方式来表示节点和边。</p>
-<p>图神经网络的核心思想是将每个节点的特征与其周围节点的特征进行聚合，形成新的节点表示。这个过程可以通过消息传递来实现，每个节点接收来自其邻居节点的消息，并将这些消息聚合成一个新的节点表示。这种方法可以反复迭代多次，以获取更全面的图结构信息。</p>
-<p>图神经网络的结构通常由多个层组成，每个层都包含节点嵌入、消息传递和池化等操作。在节点嵌入操作中，每个节点的特征被转换为低维向量表示，以便于神经网络进行学习和处理。在消息传递操作中，每个节点接收其邻居节点的信息，并将这些信息聚合成一个新的节点表示。在池化操作中，节点表示被合并为整个图的表示，以便于进行图级任务的预测。</p>
-<p>目前，图神经网络已经广泛应用于许多领域，例如社交网络分析、药物发现、推荐系统等。同时，也出现了许多变种的图神经网络模型，例如图卷积网络（Graph Convolutional Network, GCN）、图注意力网络（Graph Attention Network, GAT）等，以适应不同的任务和数据类型。</p>
-<p>图卷积网络（Graph Convolution Networks，GCN）<br>图注意力网络（Graph Attention Networks）<br>图自编码器（ Graph Autoencoders）<br>图生成网络（ Graph Generative Networks）<br>图时空网络（Graph Spatial-temporal Networks）<br>图神经网络把以往的传统神经网络道路基本又走了一遍，很多思想都是想通，所谓万法归一，道法自然吧，其实从来都没啥无中生有，有的只是发现而已。下面重点介绍下图卷积神经网络DCN吧，后续的待后面系列再介绍</p>
-<h2 id="图神经网络的基本概念"><a href="#图神经网络的基本概念" class="headerlink" title="图神经网络的基本概念"></a>图神经网络的基本概念</h2><p>好的，我来对每个部分进行补充。</p>
-<ol>
-<li><h3 id="图（Graph）"><a href="#图（Graph）" class="headerlink" title="图（Graph）"></a>图（Graph）</h3></li>
-</ol>
-<p>  图是一种用顶点（Vertex）和边（Edge）表示实体及其关系的数学结构。一个图可以表示为 G &#x3D; (V, E)，其中 V 是顶点集合，E 是边集合。在图中，顶点表示实体，边表示实体之间的关系。例如，在社交网络中，顶点可以表示用户，边可以表示用户之间的关注或好友关系。</p>
-<p>图可以分为有向图和无向图两种类型。在无向图中，边没有方向；在有向图中，边有方向。此外，图还可以带有权重，表示实体之间的关系强度。有权重的图通常被称为带权图。</p>
-<ol start="2">
-<li><h3 id="邻接矩阵（Adjacency-Matrix）"><a href="#邻接矩阵（Adjacency-Matrix）" class="headerlink" title="邻接矩阵（Adjacency Matrix）"></a>邻接矩阵（Adjacency Matrix）</h3></li>
-</ol>
-<p>  邻接矩阵 A 是一种表示图中顶点间关系的矩阵。设 V 为顶点集合，A 的大小为 |V|×|V|。对于无向图，A 的元素 A(i, j) &#x3D; 1表示顶点 i 和顶点 j 相邻，即存在一条边；A(i, j) &#x3D; 0 表示顶点 i 和顶点 j 不相邻。有向图的邻接矩阵表示有方向的边。</p>
-<p>邻接矩阵可以用于表示图结构，同时也可以用于进行图算法的实现。通过邻接矩阵，我们可以快速地查询两个顶点之间是否存在边，以及边的类型和权重等信息。</p>
-<p>另外，邻接矩阵可以被视为图的一种表示形式，与其他表示方式（如邻接表、边列表等）相比，邻接矩阵可以用于描述稠密图，具有空间利用率高、查询效率高的优点。</p>
-<ol start="3">
-<li><h3 id="图信号（Graph-Signal）"><a href="#图信号（Graph-Signal）" class="headerlink" title="图信号（Graph Signal）"></a>图信号（Graph Signal）</h3></li>
-</ol>
-<p>  图信号是定义在图顶点上的信号，可以看作是顶点的特征。对于顶点集合 V，我们可以将图信号表示为一个 |V|×d 的矩阵 X，其中 d 是特征维度。</p>
-<p>图信号可以表示顶点的属性或特征，例如在社交网络中，每个顶点可以表示为一个包含用户属性的向量，如性别、年龄、职业等。在化学分子中，每个原子可以表示为一个包含化学性质的向量，如电子亲和力、电荷等。</p>
-<p>图信号可以用于图结构数据的分析和处理，例如对图进行分类、聚类、预测等任务。通常情况下，我们需要将图信号与图上的拓扑结构相结合，从而更好地利用图结构数据的特点。例如，在图卷积神经网络中，我们可以通过图信号和邻接矩阵的卷积操作来提取节点的特征表示。</p>
-<ol start="4">
-<li><h3 id="图卷积（Graph-Convolution）"><a href="#图卷积（Graph-Convolution）" class="headerlink" title="图卷积（Graph Convolution）"></a>图卷积（Graph Convolution）</h3></li>
-</ol>
-<p>  图卷积是一种操作，将传统卷积的概念扩展到图结构数据。图卷积通常表示为邻接矩阵 A 和图信号 X 之间的一个函数：f(A, X)。通过这个函数，可以在图上实现信息传递和特征提取。与传统卷积不同的是，图卷积考虑了节点在图上的拓扑结构，因此可以捕捉节点之间的关系和依赖关系。</p>
-<p>图卷积的实现方式有多种，其中最常见的是基于谱域的方法和基于空域的方法。基于谱域的方法利用图的拉普拉斯矩阵的特征值和特征向量来定义卷积操作。基于空域的方法则利用邻接矩阵和节点特征来进行卷积操作。</p>
-<p>图卷积可以用于许多图结构数据的任务，例如节点分类、图分类、链接预测等。在图神经网络中，图卷积是一种核心操作，可以帮助提取图结构数据中的特征表示，从而实现更高效和准确的图结构数据分析和处理。</p>
-<h2 id="主要图神经网络模型"><a href="#主要图神经网络模型" class="headerlink" title="主要图神经网络模型"></a>主要图神经网络模型</h2><h3 id="GCN（Graph-Convolutional-Networks）"><a href="#GCN（Graph-Convolutional-Networks）" class="headerlink" title="GCN（Graph Convolutional Networks）"></a>GCN（Graph Convolutional Networks）</h3><ul>
-<li>对每个节点计算特征</li>
-<li>然后合成每个节点的特征</li>
-<li>将合成的特征传入全连接网络进行分类</li>
-</ul>
-<p>GCN 是一种基于谱域（Spectral Domain）的图卷积方法。它利用图的拉普拉斯矩阵，通过对特征向量进行卷积操作实现信息传递和特征提取。GCN 的核心思想是通过邻接矩阵 A 和图信号 X 的乘积来实现信息传递。</p>
-<p>在 GCN 中，每个节点的特征向量会与其邻居节点的特征向量进行加权平均。权重由邻接矩阵 A 中的值确定。具体来说，GCN 的卷积操作可以表示为：</p>
-<p>$$<br>Z &#x3D; f(X,A) &#x3D; softmax(\hat{A}\quad ReLU(AXW^{(0)})W^{(1)}）<br>$$<br>其中，D 是 A 的度矩阵，W 是可学习的权重矩阵。</p>
-<p>GCN 已被广泛应用于节点分类、图分类、链接预测等任务，并取得了很好的效果。但是，GCN 的局限性在于其卷积操作仅考虑一阶邻居节点，无法捕捉更长程的关系和全局信息。因此，后续的研究提出了许多改进版本的图卷积网络，如下面所介绍的 GAT 和 GraphSAGE。</p>
-<h3 id="GAT（Graph-Attention-Networks）"><a href="#GAT（Graph-Attention-Networks）" class="headerlink" title="GAT（Graph Attention Networks）"></a>GAT（Graph Attention Networks）</h3><p>GAT 是一种基于空域（Spatial Domain）的图卷积方法。GAT 引入了注意力机制，使得模型可以为不同的边赋予不同的权重，从而更好地捕捉节点之间的关系。在 GAT 中，每个节点的特征向量会与其邻居节点的特征向量进行加权平均，权重由注意力机制计算得到。</p>
-<p>具体来说，GAT 的卷积操作可以表示为：</p>
-<p>Z &#x3D; f(A, X) &#x3D; CONCAT(ATTENTION(A, X)W)</p>
-<p>其中，ATTENTION 是计算注意力权重的函数，CONCAT 是连接操作。ATTENTION 函数通常包括两个步骤：首先计算每个邻居节点与当前节点的相似度，然后利用 softmax 函数将相似度转化为权重。这样，每个邻居节点的权重就可以不同，从而更好地表达节点之间的关系。</p>
-<p>GAT 的注意力机制使得模型能够更好地适应不同的图结构和任务，并在许多图分类、节点分类、链接预测等任务中取得了很好的效果。</p>
-<h3 id="GraphSAGE（Graph-Sample-and-AggregatE）"><a href="#GraphSAGE（Graph-Sample-and-AggregatE）" class="headerlink" title="GraphSAGE（Graph Sample and AggregatE）"></a>GraphSAGE（Graph Sample and AggregatE）</h3><p>GraphSAGE 是一种基于空域（Spatial Domain）的图卷积方法，提出了一种邻居采样和聚合策略，使得模型能够处理大规模的图数据。在 GraphSAGE 中，每个节点的特征向量会与其邻居节点的特征向量进行聚合。不同于 GCN 和 GAT，GraphSAGE 不是对所有邻居节点进行平均或加权平均，而是采用一定的邻居采样策略，只考虑一个节点的一阶或 k 阶邻居节点进行聚合，从而减少计算复杂度。</p>
-<p>具体来说，GraphSAGE 的卷积操作可以表示为：</p>
-<p>Z &#x3D; f(A, X) &#x3D; AGGREGATE(NEIGHBORS(A, X)) W</p>
-<p>其中，NEIGHBORS 是邻居采样函数，用于从一个节点的邻居中随机采样一些节点作为聚合的输入；AGGREGATE 是聚合函数，用于聚合邻居节点的特征向量，如均值、最大值等；W 是可学习的权重矩阵。</p>
-<p>GraphSAGE 可以处理大规模的图数据，并在节点分类、图分类、链接预测等任务中取得了很好的效果。它的邻居采样和聚合策略也被许多后续的图卷积网络所借鉴和改进。</p>
-<h2 id="图神经网络的应用场景"><a href="#图神经网络的应用场景" class="headerlink" title="图神经网络的应用场景"></a>图神经网络的应用场景</h2><p>图神经网络在许多领域都有广泛的应用，主要包括：</p>
-<p>节点分类（Node Classification）：预测图中节点的类别，如在社交网络中预测用户的兴趣标签。<br>链接预测（Link Prediction）：预测图中节点之间是否存在边，如在知识图谱中预测实体间的关系。<br>图分类（Graph Classification）：预测整个图的类别，如在生物分子网络中预测分子的活性。<br>图生成（Graph Generation）：生成具有某些特性的图，如生成满足特定拓扑特征的网络。</p>
-<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>以下是使用Cora数据集训练图卷积神经网络的示例代码，使用PyTorch Geometric库实现：</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">from</span> torch_geometric.datasets <span class="keyword">import</span> Planetoid</span><br><span class="line"><span class="keyword">from</span> torch_geometric.nn <span class="keyword">import</span> GCNConv</span><br><span class="line"></span><br><span class="line"><span class="comment"># 判断是否有可用的GPU，如果有就使用GPU，否则使用CPU</span></span><br><span class="line">device = torch.device(<span class="string">&#x27;cuda&#x27;</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">&#x27;cpu&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载Cora数据集</span></span><br><span class="line">dataset = Planetoid(root=<span class="string">&#x27;data/Cora&#x27;</span>, name=<span class="string">&#x27;Cora&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义一个GCN模型</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">GCN</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, input_dim, hidden_dim, output_dim</span>):</span><br><span class="line">        <span class="built_in">super</span>(GCN, self).__init__()</span><br><span class="line">        <span class="comment"># 第一个图卷积层</span></span><br><span class="line">        self.conv1 = GCNConv(input_dim, hidden_dim)</span><br><span class="line">        <span class="comment"># 第二个图卷积层</span></span><br><span class="line">        self.conv2 = GCNConv(hidden_dim, output_dim)</span><br><span class="line">        <span class="comment"># 全连接层</span></span><br><span class="line">        self.fc = nn.Linear(output_dim, dataset.num_classes)</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x, edge_index</span>):</span><br><span class="line">        <span class="comment"># 第一次图卷积，使用ReLU激活函数</span></span><br><span class="line">        x = F.relu(self.conv1(x, edge_index))</span><br><span class="line">        <span class="comment"># 第二次图卷积</span></span><br><span class="line">        x = self.conv2(x, edge_index))</span><br><span class="line">        <span class="comment"># Dropout操作，防止过拟合</span></span><br><span class="line">        x = F.dropout(x, training=self.training)</span><br><span class="line">        <span class="comment"># 全连接层</span></span><br><span class="line">        x = self.fc(x)</span><br><span class="line">        <span class="comment"># 使用log_softmax进行分类</span></span><br><span class="line">        <span class="keyword">return</span> F.log_softmax(x, dim=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建GCN模型实例，并将模型移动到设备上（GPU或CPU）</span></span><br><span class="line">model = GCN(dataset.num_features, <span class="number">16</span>, dataset.num_classes).to(device)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义优化器和损失函数</span></span><br><span class="line">optimizer = optim.Adam(model.parameters(), lr=<span class="number">0.01</span>)</span><br><span class="line">criterion = nn.NLLLoss()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义训练函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">train</span>(<span class="params">model, optimizer, criterion, data</span>):</span><br><span class="line">    model.train()</span><br><span class="line">    optimizer.zero_grad()</span><br><span class="line">    out = model(data.x.to(device), data.edge_index.to(device))</span><br><span class="line">    loss = criterion(out[data.train_mask], data.y[data.train_mask].to(device))</span><br><span class="line">    loss.backward()</span><br><span class="line">    optimizer.step()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义测试函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test</span>(<span class="params">model, data</span>):</span><br><span class="line">    model.<span class="built_in">eval</span>()</span><br><span class="line">    out = model(data.x.to(device), data.edge_index.to(device))</span><br><span class="line">    pred = out.argmax(dim=<span class="number">1</span>)</span><br><span class="line">    acc = pred[data.test_mask].eq(data.y[data.test_mask].to(device)).<span class="built_in">sum</span>().item() / data.test_mask.<span class="built_in">sum</span>().item()</span><br><span class="line">    <span class="keyword">return</span> acc</span><br><span class="line"></span><br><span class="line"><span class="comment"># 进行模型训练和测试，并输出测试集准确率</span></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">200</span>):</span><br><span class="line">    train(model, optimizer, criterion, dataset[<span class="number">0</span>])</span><br><span class="line">    test_acc = test(model, dataset[<span class="number">0</span>])</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;Epoch: &#123;:03d&#125;, Test Acc: &#123;:.4f&#125;&#x27;</span>.<span class="built_in">format</span>(epoch, test_acc))</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+    <title>数据的读取与处理</title>
+    <url>/2023/10/18/%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA/</url>
+    <content><![CDATA[<h1 id="数据预处理、数据增强"><a href="#数据预处理、数据增强" class="headerlink" title="数据预处理、数据增强"></a>数据预处理、数据增强</h1><h2 id="1-数据增强"><a href="#1-数据增强" class="headerlink" title="1. 数据增强"></a>1. 数据增强</h2><p>数据增强可以增加训练集的样本数量，缓解过拟合，并提高模型的泛化能力，从而有效提升算法的性能。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://p.ipic.vip/a161sy.png"
+                      alt="数据增强"
+                ></p>
+<h2 id="2-数据预处理"><a href="#2-数据预处理" class="headerlink" title="2. 数据预处理"></a>2. 数据预处理</h2><p>1）将图像转换成 tensor 的数据格式</p>
+<p>2）将图像的 像素值范围 由 0～255 转换到 0～1</p>
+<p>3）(height, width, channel) &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&gt;&gt;&gt; (channel, height, width)</p>
+<p>4）归一化图像</p>
+<h2 id="3-使用节点"><a href="#3-使用节点" class="headerlink" title="3. 使用节点"></a>3. 使用节点</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">trans = transforms.Compose([transforms.RandomResizedCrop((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.RandomHorizontalFlip(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ColorJitter(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
 
-]]></content>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://p.ipic.vip/iiqcob.png"
+                     
+                ></p>
+<h1 id="torchvision-transforms-的使用"><a href="#torchvision-transforms-的使用" class="headerlink" title="torchvision.transforms 的使用"></a>torchvision.transforms 的使用</h1><p>官方文档地址： <a class="link"   href="https://pytorch.org/vision/stable/transforms.html" >https://pytorch.org/vision/stable/transforms.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h2 id="1-torchvision-transforms-ToTensor"><a href="#1-torchvision-transforms-ToTensor" class="headerlink" title="1. torchvision.transforms.ToTensor()"></a>1. torchvision.transforms.ToTensor()</h2><p><code>torchvision.transforms.ToTensor()</code> 做了三件事：</p>
+<p> 1）将图像的数据格式由 nump.ndarray 或 PIL.Image 转为 tensor，数据类型为 torch.FloatTensor</p>
+<p> 2）将像素值范围从 0-255 转换到 0-1之间， 处理方式 ：直接除以255</p>
+<p> 3）将 shape&#x3D;(H,W, C) 转换为 shape&#x3D; (C, H, W)</p>
+<p>🌼原始的data的shape为（5，5，3），则其表示有5个（5 ， 3）的二维数组，即我们把最外层的[]去掉就得到了5个五行三列的数据。</p>
+<p>🌼同样的，变换后data的shape为（3，5，5），则其表示有3个（5 ， 5）的二维数组，即我们把最外层的[]去掉就得到了3个五行五列的数据。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://p.ipic.vip/xksmgr.png"
+                     
+                ></p>
+<h2 id="2-torchvision-transforms-Normalize"><a href="#2-torchvision-transforms-Normalize" class="headerlink" title="2. torchvision.transforms.Normalize()"></a>2. torchvision.transforms.Normalize()</h2><p>作用：用均值和标准差对张量图像进行归一化，一般在 <code>torchvision.transforms.ToTensor()</code> 之后使用</p>
+<p>在使用 <code>torchvision.transforms.ToTensor()</code> 之后，像素值取值范围会被转换到 [0, 1]之间，再使用 <code>transforms.Normalize(mean, std)</code> 进行归一化后，原像素值就被分布到了 [-1, 1] 之间：</p>
+<p>公式：</p>
+<ul>
+<li>原来的 0~1 最小值 0 则变成 (0 - mean) &#x2F; std &#x3D; -1</li>
+</ul>
+<ul>
+<li>最大值1则变成 (1 - mean) &#x2F; std &#x3D; 1</li>
+</ul>
+<p>一般 mean 和 std 会分别指定3个值，代表图像3个通道的均值和方差，比如<code>torchvision.transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])</code></p>
+<p>如果是<strong>单通道的灰度图</strong>，均值为0.5，方差为0.5，可以写成 <code>transforms.Normalize(mean=[0.5], std=[0.5])</code></p>
+<p>因为 ImageNet数据集 是一个大型数据集，由一个大型数据集统计出来的均值和方差，基本符合所有数据集的像素值分布，所以，一般直接使用 <code>mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]</code></p>
+<h2 id="3-transforms-Compose"><a href="#3-transforms-Compose" class="headerlink" title="3.transforms.Compose()"></a>3.transforms.Compose()</h2><p><strong>训练阶段</strong></p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">trans = transforms.Compose([transforms.RandomResizedCrop((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.RandomHorizontalFlip(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ColorJitter(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
+
+
+
+<p><strong>推理阶段(test)</strong></p>
+<p>推理阶段不会再对数据进行增强，只会做基础的预处理，比如：将尺寸处理到固定尺寸 ；使用 ToTensor 处理数据； Normalize 归一化</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">trans = transforms.Compose([transforms.RE((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h2 id="4-transforms-RandomResizedCrop随机尺寸裁剪"><a href="#4-transforms-RandomResizedCrop随机尺寸裁剪" class="headerlink" title="4.transforms.RandomResizedCrop随机尺寸裁剪"></a>4.transforms.RandomResizedCrop随机尺寸裁剪</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">resized_crop = transforms.RandomResizedCrop(size=(<span class="number">224</span>, <span class="number">224</span>),</span><br><span class="line">                                            scale=(<span class="number">0.08</span>, <span class="number">1.0</span>), </span><br><span class="line">                                            ratio=(<span class="number">0.75</span>, <span class="number">1.3333333333333333</span>), </span><br><span class="line">                                            interpolation=transforms.InterpolationMode.BILINEAR)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">上方代码解释：</span></span><br><span class="line"><span class="string"> 1、将图像进行随机裁剪，裁剪满足以下条件:</span></span><br><span class="line"><span class="string"> 裁剪后的图像 面积 与原图像的面积的比例 在 0.08 ～ 1</span></span><br><span class="line"><span class="string"> 裁剪后的图像高宽比范围在 0.75 ～ 1.33之间</span></span><br><span class="line"><span class="string"> 2、按照指定的插值方式， 将图像尺寸缩放到 （224， 224）</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure></div>
+
+<p>参数：</p>
+<ul>
+<li>size：期望的输出图像尺寸， 可以是 int值，也可可以是元组（H, W）</li>
+<li>scale ：在调整大小之前指定裁剪的随机区域的下界和上界。尺度是根据原始图像的面积来定义的。</li>
+<li>ratio：在调整大小之前，裁剪的随机纵横比的下限和上限。</li>
+<li>InterpolationMode ： 插值方式<ul>
+<li>InterpolationMode.NEAREST：最近邻插值。</li>
+<li>InterpolationMode.BILINEAR：双线性插值 (默认)</li>
+<li>InterpolationMode.BICUBIC：双三次插值。</li>
+</ul>
+</li>
+</ul>
+<h2 id="5-水平翻转与垂直翻转"><a href="#5-水平翻转与垂直翻转" class="headerlink" title="5.水平翻转与垂直翻转"></a>5.水平翻转与垂直翻转</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">horizontal_flip = transforms. RandomHorizontalFlip(<span class="number">0.5</span>)</span><br><span class="line">vertical_flip = transforms. RandomVerticalFlip(<span class="number">0.5</span>)</span><br></pre></td></tr></table></figure></div>
+
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://p.ipic.vip/wh6b5i.png"
+                     
+                ></p>
+<h2 id="6-ColorJitter"><a href="#6-ColorJitter" class="headerlink" title="6. ColorJitter"></a>6. ColorJitter</h2>]]></content>
   </entry>
   <entry>
-    <title>图神经网络实战</title>
-    <url>/2023/10/23/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%AE%9E%E6%88%98/</url>
+    <title>联邦学习实战</title>
+    <url>/2023/10/21/%E8%81%94%E9%82%A6%E5%AD%A6%E4%B9%A0%E5%AE%9E%E6%88%98/</url>
     <content><![CDATA[]]></content>
   </entry>
   <entry>
