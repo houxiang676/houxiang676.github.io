@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="深情小小侯">
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="http://example.com/2023/11/02/差分隐私（二）/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+        <meta name="description" content="阅读本章后，您将能够：  描述并实现梯度下降的基本算法 使用高斯机制实现差分私有梯度下降 裁剪梯度，为任意损失函数实施差分隐私 描述噪声对训练过程的影响  梯度下降的单步123456789101112# Prediction: take a model (theta) and a single example (xi) and return its predicted labeldef predi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="差分隐私（二）">
+<meta property="og:url" content="http://example.com/2023/11/02/%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81%EF%BC%88%E4%BA%8C%EF%BC%89/index.html">
+<meta property="og:site_name" content="深情小小侯的博客">
+<meta property="og:description" content="阅读本章后，您将能够：  描述并实现梯度下降的基本算法 使用高斯机制实现差分私有梯度下降 裁剪梯度，为任意损失函数实施差分隐私 描述噪声对训练过程的影响  梯度下降的单步123456789101112# Prediction: take a model (theta) and a single example (xi) and return its predicted labeldef predi">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/11/03/Nh9mJXlBAQb8vpV.png">
+<meta property="og:image" content="https://s2.loli.net/2023/11/03/ukLiGKXFNHDvjbO.png">
+<meta property="article:published_time" content="2023-11-02T09:59:13.000Z">
+<meta property="article:modified_time" content="2023-11-03T08:19:45.747Z">
+<meta property="article:author" content="深情小小侯">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/11/03/Nh9mJXlBAQb8vpV.png">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/redefine-favicon.svg" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/redefine-favicon.svg">
+    <meta name="theme-color" content="#A31F34">
+    <link rel="shortcut icon" href="/images/redefine-favicon.svg">
+    <!--- Page Info-->
+    
+    <title>
+        
+            差分隐私（二） -
+        
+        深情小小侯的博客
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/assets/build/styles.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/fonts.css">
+
+    
+<link rel="stylesheet" href="/fonts/Satoshi/satoshi.css">
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+
+    <!--- Inject Part-->
+    
+    <script id="hexo-configurations">
+    window.config = {"hostname":"example.com","root":"/","language":"zh-CN","path":"search.xml"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":true,"expand":true,"init_open":true},"copyright":true,"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"走得快走得慢不重要，走下去就是胜利","subtitle":{"text":[],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":false,"links":{"github":null,"instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.5.0","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"文档":{"path":"/archives","icon":"fa-regular fa-archive"},"相册":{"icon":"fa-solid fa-image","submenus":{"假日出行":"/masonry","小乖":"/gallery"}}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":"纸上得来终觉浅，绝知此事要躬行","links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"}}},"article_date_format":"auto","categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    window.data = {"masonry":true};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <span class="swup-progress-icon">
+            <i class="fa-solid fa-circle-notch fa-spin"></i>
+        </span>
+    
+</div>
+
+
+<main class="page-container" id="swup">
+
+    
+
+    <div class="main-content-container">
+
+
+        <div class="main-content-header">
+            <header class="navbar-container">
+    
+    <div class="navbar-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                
+                深情小小侯的博客
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="" 
+                                    href="/"  >
+                                    
+                                        
+                                            <i class="fa-regular fa-house"></i>
+                                        
+                                        首页
+                                    
+                                </a>
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="" 
+                                    href="/archives"  >
+                                    
+                                        
+                                            <i class="fa-regular fa-archive"></i>
+                                        
+                                        文档
+                                    
+                                </a>
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="has-dropdown" 
+                                    href="#" onClick="return false;">
+                                    
+                                        
+                                            <i class="fa-solid fa-image"></i>
+                                        
+                                        相册&nbsp;<i class="fa-solid fa-chevron-down"></i>
+                                    
+                                </a>
+                                <!-- Submenu -->
+                                
+                                    <ul class="sub-menu">
+                                    
+                                        <li>
+                                        <a href="/masonry">假日出行
+                                        </a>
+                                        </li>
+                                    
+                                        <li>
+                                        <a href="/gallery">小乖
+                                        </a>
+                                        </li>
+                                    
+                                    </ul>
+                                
+                            </li>
+                    
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile drawer -->
+    <div class="navbar-drawer w-full absolute top-0 left-0 bg-background-color">
+        <ul class="drawer-navbar-list flex flex-col justify-start items-center">
+            
+                
+                    <li class="drawer-navbar-item text-base my-1.5 flex justify-center items-center">
+                        <a class="rounded-3xl py-1.5 px-5 hover:border hover:!text-primary active:!text-primary group " 
+                        href="/"  >
+                             
+                                
+                                    <i class="fa-regular fa-house"></i>
+                                
+                                首页
+                            
+                        </a>
+                    </li>
+                    <!-- Submenu -->
+                    
+            
+                
+                    <li class="drawer-navbar-item text-base my-1.5 flex justify-center items-center">
+                        <a class="rounded-3xl py-1.5 px-5 hover:border hover:!text-primary active:!text-primary group " 
+                        href="/archives"  >
+                             
+                                
+                                    <i class="fa-regular fa-archive"></i>
+                                
+                                文档
+                            
+                        </a>
+                    </li>
+                    <!-- Submenu -->
+                    
+            
+                
+                    <li class="drawer-navbar-item text-base my-1.5 flex justify-center items-center">
+                        <a class="rounded-3xl py-1.5 px-5 hover:border hover:!text-primary active:!text-primary group has-dropdown" 
+                        href="#" onClick="return false;">
+                            
+                                
+                                    <i class="fa-solid fa-image"></i>
+                                
+                                相册&nbsp;<i class="group-hover:rotate-180 transition-transform fa-solid fa-chevron-down"></i>
+                            
+                        </a>
+                    </li>
+                    <!-- Submenu -->
+                              
+                        
+                            <li class="drawer-navbar-item text-base flex justify-center items-center hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                <a class="py-0.5" href="/masonry">假日出行</a>
+                            </li>
+                        
+                            <li class="drawer-navbar-item text-base flex justify-center items-center hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                <a class="py-0.5" href="/gallery">小乖</a>
+                            </li>
+                        
+                    
+            
+
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="main-content-body">
+
+            
+
+            <div class="main-content">
+
+                
+                    <div class="post-page-container">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            
+                <h1 class="article-title-regular">差分隐私（二）</h1>
+            
+            </div>
+            
+                    
+        
+        
+            <div class="article-header flex flex-row gap-2 items-center">
+                <div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+                    <img src="/images/redefine-avatar.svg">
+                </div>
+                <div class="info flex flex-col justify-between">
+                    <div class="author flex items-center">
+                        <span class="name text-default-text-color text-lg font-semibold">深情小小侯</span>
+                        
+                            <span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv2</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2023-11-02 17:59:13</span>
+        <span class="mobile">2023-11-02 17:59:13</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2023-11-03 16:19:45</span>
+            <span class="mobile">2023-11-03 16:19:45</span>
+            <span class="hover-info">更新</span>
+        </span>
+    
+
+    
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        
+
+
+        <div class="article-content markdown-body">
+            <p>阅读本章后，您将能够：</p>
+<ul>
+<li>描述并实现梯度下降的基本算法</li>
+<li>使用高斯机制实现差分私有梯度下降</li>
+<li>裁剪梯度，为任意损失函数实施差分隐私</li>
+<li>描述噪声对训练过程的影响</li>
+</ul>
+<h3 id="梯度下降的单步"><a href="#梯度下降的单步" class="headerlink" title="梯度下降的单步"></a>梯度下降的单步</h3><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Prediction: take a model (theta) and a single example (xi) and return its predicted label</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">predict</span>(<span class="params">xi, theta, bias=<span class="number">0</span></span>):</span><br><span class="line">    label = np.sign(xi @ theta + bias)</span><br><span class="line">    <span class="keyword">return</span> label</span><br><span class="line"></span><br><span class="line"><span class="comment"># This is the gradient of the logistic loss</span></span><br><span class="line"><span class="comment"># The gradient is a vector that indicates the rate of change of the loss in each direction</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gradient</span>(<span class="params">theta, xi, yi</span>):</span><br><span class="line">    exponent = yi * (xi.dot(theta))</span><br><span class="line">    <span class="keyword">return</span> - (yi*xi) / (<span class="number">1</span>+np.exp(exponent))</span><br><span class="line">    </span><br><span class="line">theta = theta - gradient(theta, X_train[<span class="number">0</span>], y_train[<span class="number">0</span>])</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h3 id="梯度下降算法"><a href="#梯度下降算法" class="headerlink" title="梯度下降算法"></a>梯度下降算法</h3><p>首先，我们上面的单个步骤仅使用了训练数据中的一个示例;我们希望在更新模型时考虑<em>整个</em>训练集，以便改进<em>所有</em>示例的模型。其次，我们需要执行多次迭代，以尽可能接近最小化损失。</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">avg_grad</span>(<span class="params">theta, X, y</span>):</span><br><span class="line">    grads = [gradient(theta, xi, yi) <span class="keyword">for</span> xi, yi <span class="keyword">in</span> <span class="built_in">zip</span>(X, y)]</span><br><span class="line">    <span class="keyword">return</span> np.mean(grads, axis=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">avg_grad(theta, X_train, y_train)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gradient_descent</span>(<span class="params">iterations</span>):</span><br><span class="line">    <span class="comment"># Start by &quot;guessing&quot; what the model should be (all zeros)</span></span><br><span class="line">    theta = np.zeros(X_train.shape[<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Perform `iterations` steps of gradient descent using training data</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iterations):</span><br><span class="line">        theta = theta - avg_grad(theta, X_train, y_train)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> theta</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h1 id="具有差分隐私的梯度下降"><a href="#具有差分隐私的梯度下降" class="headerlink" title="具有差分隐私的梯度下降"></a>具有差分隐私的梯度下降</h1><p>使用训练数据的算法的唯一部分是梯度计算。使算法具有差分隐私的一种方法是在每次迭代之前向梯度本身添加噪声，然后再更新模型。这种方法通常称为噪声梯<em>度下降</em>，因为我们直接向梯度添加噪声。</p>
+<p>我们的梯度函数是一个向量值函数，因此我们可以用<em>gaussian_mech_vec</em>来向其输出添加噪声</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">noisy_gradient_descent</span>(<span class="params">iterations, epsilon, delta</span>):</span><br><span class="line">    theta = np.zeros(X_train.shape[<span class="number">1</span>])</span><br><span class="line">    sensitivity = <span class="string">&#x27;???&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iterations):</span><br><span class="line">        grad = avg_grad(theta, X_train, y_train)</span><br><span class="line">        noisy_grad = gaussian_mech_vec(grad, sensitivity, epsilon, delta)</span><br><span class="line">        theta = theta - noisy_grad</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> theta</span><br></pre></td></tr></table></figure></div>
+
+<p>梯度函数的敏感性是什么？回答这个问题是使算法成功运行的核心难点。</p>
+<p>首先，梯度是一个平均查询的结果 - 它是许多单个样本梯度的平均值。正如我们之前所看到的，最好将这类查询拆分为求和查询和计数查询。这并不难做到 - 我们可以计算<strong>每个单个样本梯度的带噪声的求和，而不是它们的平均值，然后稍后再除以一个嘈杂计数</strong>。其次，<strong>我们需要限定每个单个样本梯度的敏感性</strong>。</p>
+<p>有两种基本方法可以做到这一点：我们可以分析梯度函数本身（就像我们之前处理其他查询一样）以确定其最坏情况下的全局敏感性，或者我们可以通过截断梯度函数的输出来强制实施敏感性（就像我们在采样和聚合中所做的那样）。</p>
+<p>我们将从第二种方法开始 - 通常称为梯度剪切 - 因为在概念上更简单，而且在应用中更具通用性。</p>
+<h3 id="Gradient-Clipping"><a href="#Gradient-Clipping" class="headerlink" title="Gradient Clipping"></a>Gradient Clipping</h3><p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://s2.loli.net/2023/11/03/Nh9mJXlBAQb8vpV.png"
+                      alt="image.png"
+                > </p>
+<p>我们可以使用相同的技巧来限制梯度函数的 L2 敏感性。我们需要定义一个函数，用于将一个向量“剪裁”，使其具有所需范围内的 L2 范数。我们可以通过对向量进行按元素除以其 L2 范数来实现这一目标，这样得到的向量将具有 L2 范数为1。如果我们希望定位到特定的剪裁参数 b，我们可以将缩放后的向量乘以 b，以将其重新缩放为具有 L2 范数 b。我们希望避免修改那些已经具有 L2 范数小于 b 的向量；在这种情况下，我们只返回原始向量。我们可以使用 <code>np.linalg.norm</code> 函数，参数 <code>ord=2</code>，来计算一个向量的 L2 范数。</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">L2_clip</span>(<span class="params">v, b</span>):</span><br><span class="line">    norm = np.linalg.norm(v, <span class="built_in">ord</span>=<span class="number">2</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> norm &gt; b:</span><br><span class="line">        <span class="keyword">return</span> b * (v / norm)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> v</span><br></pre></td></tr></table></figure></div>
+
+<p>现在，我们可以继续计算剪切梯度的和，并根据我们通过剪切所强制实施的 L2 敏感性 b 来添加噪声。        </p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">gradient_sum</span>(<span class="params">theta, X, y, b</span>):</span><br><span class="line">    gradients = [L2_clip(gradient(theta, x_i, y_i), b) <span class="keyword">for</span> x_i, y_i <span class="keyword">in</span> <span class="built_in">zip</span>(X,y)]<span class="comment">#####L2_clip裁剪</span></span><br><span class="line"><span class="comment"># sum query</span></span><br><span class="line"><span class="comment"># L2 sensitivity is b (by clipping performed above)</span></span><br><span class="line"><span class="keyword">return</span> np.<span class="built_in">sum</span>(gradients, axis=<span class="number">0</span>)</span><br></pre></td></tr></table></figure></div>
+
+<p>现在，我们已准备好完成嘈杂梯度下降算法。要计算噪声平均梯度，我们需要：</p>
+<ol>
+<li>根据灵敏度b将噪声添加到梯度总和中</li>
+<li>计算训练样本数的噪声计数（<strong>灵敏度 1</strong>）</li>
+<li>将 （1） 的噪声总和除以 （2） 的噪声计数</li>
+</ol>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">noisy_gradient_descent</span>(<span class="params">iterations, epsilon, delta</span>):</span><br><span class="line">    theta = np.zeros(X_train.shape[<span class="number">1</span>])</span><br><span class="line">    sensitivity = <span class="number">5.0</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">#Laplace</span></span><br><span class="line">    noisy_count = laplace_mech(X_train.shape[<span class="number">0</span>], <span class="number">1</span>, epsilon)  <span class="comment">####样本个数  灵敏度1</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iterations):</span><br><span class="line">        grad_sum        = gradient_sum(theta, X_train, y_train, sensitivity)</span><br><span class="line">        noisy_grad_sum  = gaussian_mech_vec(grad_sum, sensitivity, epsilon, delta)</span><br><span class="line">        noisy_avg_grad  = noisy_grad_sum / noisy_count</span><br><span class="line">        theta           = theta - noisy_avg_grad</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> theta	</span><br></pre></td></tr></table></figure></div>
+
+<p>该算法的每次迭代都满足 (ϵ, δ)-差分隐私，并且我们执行一次额外的查询来确定满足 ϵ-差分隐私的嘈杂计数。如果我们执行了 K 次迭代，那么根据序列组合，该算法满足 (kϵ, kδ)-差分隐私。我们还可以使用高级组合来分析总隐私成本；更好的是，我们可以将算法转化为 Rényi 差分隐私或零浓缩差分隐私，并获得有关组合的严格边界。</p>
+<h3 id="Sensitivity-of-the-Gradient"><a href="#Sensitivity-of-the-Gradient" class="headerlink" title="Sensitivity of the Gradient"></a>Sensitivity of the Gradient</h3><p>裁剪训练样本而不是梯度有两个优点。首先，估计训练数据的规模（从而选择一个好的裁剪参数）通常比估计训练期间计算的梯度的规模更容易。其次，它在计算效率更高：我们可以对训练样本进行一次裁剪，并在每次训练模型时重复使用裁剪后的训练数据;使用梯度裁剪时，我们需要在训练过程中裁剪每个梯度。此外，我们不再被迫计算每个样本的梯度，以便我们可以裁剪它们;相反，我们可以一次计算所有梯度，这可以非常有效地完成（这是机器学习中常用的技巧，但我们不会在这里讨论）</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://s2.loli.net/2023/11/03/ukLiGKXFNHDvjbO.png"
+                      alt="image.png"
+                ></p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">gradient_sum</span>(<span class="params">theta, X, y, b</span>):</span><br><span class="line">    gradients = [gradient(theta, x_i, y_i) <span class="keyword">for</span> x_i, y_i <span class="keyword">in</span> <span class="built_in">zip</span>(X,y)]   <span class="comment">#####不需要裁剪</span></span><br><span class="line">        </span><br><span class="line">    <span class="comment"># sum query</span></span><br><span class="line">    <span class="comment"># L2 sensitivity is b (by sensitivity of the gradient)</span></span><br><span class="line">    <span class="keyword">return</span> np.<span class="built_in">sum</span>(gradients, axis=<span class="number">0</span>)</span><br><span class="line">  </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">noisy_gradient_descent</span>(<span class="params">iterations, epsilon, delta</span>):</span><br><span class="line">    theta = np.zeros(X_train.shape[<span class="number">1</span>])</span><br><span class="line">    sensitivity = <span class="number">5.0</span></span><br><span class="line">    </span><br><span class="line">    noisy_count = laplace_mech(X_train.shape[<span class="number">0</span>], <span class="number">1</span>, epsilon)</span><br><span class="line">    clipped_X = [L2_clip(x_i, sensitivity) <span class="keyword">for</span> x_i <span class="keyword">in</span> X_train]    <span class="comment">#####裁剪样本</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iterations):</span><br><span class="line">        grad_sum        = gradient_sum(theta, clipped_X, y_train, sensitivity)</span><br><span class="line">        noisy_grad_sum  = gaussian_mech_vec(grad_sum, sensitivity, epsilon, delta)</span><br><span class="line">        noisy_avg_grad  = noisy_grad_sum / noisy_count   <span class="comment">####带噪声的总和除以带噪声的计数</span></span><br><span class="line">        theta           = theta - noisy_avg_grad</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> theta</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><h2 id="梯度裁剪"><a href="#梯度裁剪" class="headerlink" title="梯度裁剪"></a>梯度裁剪</h2><ol>
+<li>裁剪梯度，求和。</li>
+<li>根据灵敏度b来对和加噪          <em>noisy_grad_sum  &#x3D; gaussian_mech_vec(grad_sum, sensitivity, epsilon, delta)</em></li>
+<li>获取带噪声的数量<em>noisy_count &#x3D; laplace_mech(X_train.shape[0], 1, epsilon)</em>  </li>
+<li>差分隐私总和除以差分隐私计数，就是</li>
+</ol>
+<p>我们通过将查询拆分为两个查询来计算差分隐私均值：差分隐私总和（分子）和差分隐私计数（分母）。</p>
+<h2 id="裁剪训练样本"><a href="#裁剪训练样本" class="headerlink" title="裁剪训练样本"></a>裁剪训练样本</h2><ol>
+<li>首先，估计训练数据的规模（从而选择一个好的裁剪参数）通常比估计训练期间计算的梯度的规模更容易。</li>
+<li>其次，它在计算效率更高：我们可以对训练样本进行一次裁剪，并在每次训练模型时重复使用裁剪后的训练数据;使用梯度裁剪时，我们需要在训练过程中裁剪每个梯度。</li>
+<li>此外，我们不再被迫计算每个样本的梯度，以便我们可以裁剪它们;相反，我们可以一次计算所有梯度</li>
+</ol>
+<h2 id="Sensitivity-of-the-Gradient-1"><a href="#Sensitivity-of-the-Gradient-1" class="headerlink" title="Sensitivity of the Gradient"></a>Sensitivity of the Gradient</h2><p>样本的二范数小于b，那么那该样本的梯队也小于b，即灵敏度是   b</p>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>但是在一些代码中看到  ，裁剪的阀门是b，但是样本或者梯度的二范数可能是-b，灵敏度是2b？？？？？</p>
+<p>为什么这里这么写呢</p>
+<hr>
+<h1 id="本地化差分隐私"><a href="#本地化差分隐私" class="headerlink" title="本地化差分隐私"></a>本地化差分隐私</h1><p>与差分隐私的中心模型相对，另一种模型是差分隐私的本地模型，其中数据在离开数据主体的控制之前被使成差分隐私的状态。例如，您可以在将数据发送给数据管理员之前在您的设备上向数据添加噪声。在本地模型中，数据管理员不需要被信任，因为他们收集的数据已经满足差分隐私的要求。</p>
+<p>因此，本地模型相对于中心模型具有一个巨大的优势：数据主体不需要信任除了自己以外的任何人。这个优势使得它在实际部署中变得流行，包括谷歌和苹果等公司的应用。</p>
+<p>不幸的是，本地模型也有一个重要的缺点：在本地模型下，相同的隐私成本下，查询结果的准确性通常比中心差分隐私下的相同查询低几个数量级。这种巨大的准确性损失意味着只有少数查询类型适合本地差分隐私，即使对于这些查询类型，也需要大量的参与者。</p>
+<h2 id="Randomized-Response"><a href="#Randomized-Response" class="headerlink" title="Randomized Response"></a>Randomized Response</h2><p>随机响应（Randomized Response）是一种用于本地差分隐私的机制，最初由S. L. Warner于1965年提出。当时，这项技术旨在改进有关敏感问题的调查回答的偏见，最初并未提出作为差分隐私的机制（差分隐私在之后的40年才被发明）。之后，随着差分隐私的发展，统计学家们意识到这一现有技术已经满足了差分隐私的定义。</p>
+<p>Dwork和Roth提出了随机响应的一个变种，其中数据主体回答一个“是”或“否”的问题，方法如下：</p>
+<ol>
+<li>抛一枚硬币。</li>
+<li>如果硬币正面朝上，诚实回答问题。</li>
+<li>如果硬币是反面朝上，再抛一枚硬币。</li>
+<li>如果第二枚硬币正面朝上，回答“是”；如果是反面朝上，回答“否”。</li>
+</ol>
+<p>这种技术的核心思想是引入一定的不确定性，以便在不透露真实答案的情况下提供一定的信息。它在差分隐私的背景下被重新思考，并被认为是一种满足差分隐私定义的机制，用于保护数据主体的隐私。这种方法允许数据主体提供信息，同时保护其真实的、敏感的回答。</p>
+<p>这个算法中的随机性来自两次硬币抛掷。与所有其他差分隐私算法一样，这种随机性引入了对真实答案的不确定性，这是隐私的来源。</p>
+<p>事实证明，这个随机响应算法满足 <em>ϵ</em>-差分隐私，其中 <em>ϵ</em>&#x3D;log(3)&#x3D;1.09。   三种情况   取对数？</p>
+<p>让我们为一个简单的“是”或“否”的问题实现这个算法： “你的职业是‘销售’吗？” 在Python中，我们可以使用 <code>np.random.randint(0, 2)</code> 来抛掷硬币；结果要么是0，要么是1。</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">rand_resp_sales</span>(<span class="params">response</span>):</span><br><span class="line">    truthful_response = response == <span class="string">&#x27;Sales&#x27;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># first coin flip</span></span><br><span class="line">    <span class="keyword">if</span> np.random.randint(<span class="number">0</span>, <span class="number">2</span>) == <span class="number">0</span>:</span><br><span class="line">        <span class="comment"># answer truthfully</span></span><br><span class="line">        <span class="keyword">return</span> truthful_response</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="comment"># answer randomly (second coin flip)</span></span><br><span class="line">        <span class="keyword">return</span> np.random.randint(<span class="number">0</span>, <span class="number">2</span>) == <span class="number">0</span></span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#代码</span></span><br><span class="line">%matplotlib inline</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">plt.style.use(<span class="string">&#x27;seaborn-whitegrid&#x27;</span>)</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> defaultdict</span><br><span class="line"></span><br><span class="line"><span class="comment"># Some useful utilities</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">laplace_mech</span>(<span class="params">v, sensitivity, epsilon</span>):</span><br><span class="line">    <span class="keyword">return</span> v + np.random.laplace(loc=<span class="number">0</span>, scale=sensitivity / epsilon)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gaussian_mech</span>(<span class="params">v, sensitivity, epsilon, delta</span>):</span><br><span class="line">    <span class="keyword">return</span> v + np.random.normal(loc=<span class="number">0</span>, scale=sensitivity * np.sqrt(<span class="number">2</span>*np.log(<span class="number">1.25</span>/delta)) / epsilon)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gaussian_mech_vec</span>(<span class="params">v, sensitivity, epsilon, delta</span>):</span><br><span class="line">    <span class="keyword">return</span> v + np.random.normal(loc=<span class="number">0</span>, scale=sensitivity * np.sqrt(<span class="number">2</span>*np.log(<span class="number">1.25</span>/delta)) / epsilon, size=<span class="built_in">len</span>(v))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">pct_error</span>(<span class="params">orig, priv</span>):</span><br><span class="line">    <span class="keyword">return</span> np.<span class="built_in">abs</span>(orig - priv)/orig * <span class="number">100.0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">z_clip</span>(<span class="params">xs, b</span>):</span><br><span class="line">    <span class="keyword">return</span> [<span class="built_in">min</span>(x, b) <span class="keyword">for</span> x <span class="keyword">in</span> xs]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">g_clip</span>(<span class="params">v</span>):</span><br><span class="line">    n = np.linalg.norm(v, <span class="built_in">ord</span>=<span class="number">2</span>)</span><br><span class="line">    <span class="keyword">if</span> n &gt; <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> v / n</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> v</span><br><span class="line">    </span><br><span class="line">X = np.load(<span class="string">&#x27;./adult_processed_x.npy&#x27;</span>)</span><br><span class="line">y = np.load(<span class="string">&#x27;./adult_processed_y.npy&#x27;</span>)</span><br><span class="line">training_size = <span class="built_in">int</span>(X.shape[<span class="number">0</span>] * <span class="number">0.8</span>)</span><br><span class="line"></span><br><span class="line">X_train = X[:training_size]</span><br><span class="line">X_test = X[training_size:]</span><br><span class="line"></span><br><span class="line">y_train = y[:training_size]</span><br><span class="line">y_test = y[training_size:]</span><br><span class="line"></span><br><span class="line"><span class="comment"># The loss function measures how good our model is. The training goal is to minimize the loss.</span></span><br><span class="line"><span class="comment"># This is the logistic loss function.</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">loss</span>(<span class="params">theta, xi, yi</span>):</span><br><span class="line">    exponent = - yi * (xi.dot(theta))</span><br><span class="line">    <span class="keyword">return</span> np.log(<span class="number">1</span> + np.exp(exponent))</span><br><span class="line"></span><br><span class="line">theta = np.zeros(X_train.shape[<span class="number">1</span>])</span><br><span class="line">loss(theta, X_train[<span class="number">0</span>], y_train[<span class="number">0</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gradient</span>(<span class="params">theta, xi, yi</span>):</span><br><span class="line">    exponent = yi * (xi.dot(theta))</span><br><span class="line">    <span class="keyword">return</span> - (yi*xi) / (<span class="number">1</span>+np.exp(exponent))</span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#A Single Step of Gradient Descent</span></span><br><span class="line">theta = theta - gradient(theta, X_train[<span class="number">0</span>], y_train[<span class="number">0</span>])</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">accuracy</span>(<span class="params">theta</span>):</span><br><span class="line">    <span class="keyword">return</span> np.<span class="built_in">sum</span>(predict(X_test, theta) == y_test)/X_test.shape[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">accuracy(theta)</span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#A Gradient Descent Algorithm</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">avg_grad</span>(<span class="params">theta, X, y</span>):</span><br><span class="line">    grads = [gradient(theta, xi, yi) <span class="keyword">for</span> xi, yi <span class="keyword">in</span> <span class="built_in">zip</span>(X, y)]</span><br><span class="line">    <span class="keyword">return</span> np.mean(grads, axis=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">avg_grad(theta, X_train, y_train)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gradient_descent</span>(<span class="params">iterations</span>):</span><br><span class="line">    <span class="comment"># Start by &quot;guessing&quot; what the model should be (all zeros)</span></span><br><span class="line">    theta = np.zeros(X_train.shape[<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Perform `iterations` steps of gradient descent using training data</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iterations):</span><br><span class="line">        theta = theta - avg_grad(theta, X_train, y_train)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> theta</span><br><span class="line">theta = gradient_descent(<span class="number">10</span>)</span><br><span class="line">accuracy(theta)</span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#Gradient Descent with Differential Privacy</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;def noisy_gradient_descent(iterations, epsilon, delta):</span></span><br><span class="line"><span class="string">    theta = np.zeros(X_train.shape[1])</span></span><br><span class="line"><span class="string">    sensitivity = &#x27;???&#x27;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    for i in range(iterations):</span></span><br><span class="line"><span class="string">        grad = avg_grad(theta, X_train, y_train)</span></span><br><span class="line"><span class="string">        noisy_grad = gaussian_mech_vec(grad, sensitivity, epsilon, delta)</span></span><br><span class="line"><span class="string">        theta = theta - noisy_grad</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    return theta&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">##########Gradient Clipping</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">L2_clip</span>(<span class="params">v, b</span>):</span><br><span class="line">    norm = np.linalg.norm(v, <span class="built_in">ord</span>=<span class="number">2</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> norm &gt; b:</span><br><span class="line">        <span class="keyword">return</span> b * (v / norm)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> v</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gradient_sum</span>(<span class="params">theta, X, y, b</span>):</span><br><span class="line">    gradients = [L2_clip(gradient(theta, x_i, y_i), b) <span class="keyword">for</span> x_i, y_i <span class="keyword">in</span> <span class="built_in">zip</span>(X,y)]</span><br><span class="line">        </span><br><span class="line">    <span class="comment"># sum query</span></span><br><span class="line">    <span class="comment"># L2 sensitivity is b (by clipping performed above)</span></span><br><span class="line">    <span class="keyword">return</span> np.<span class="built_in">sum</span>(gradients, axis=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">noisy_gradient_descent</span>(<span class="params">iterations, epsilon, delta</span>):</span><br><span class="line">    theta = np.zeros(X_train.shape[<span class="number">1</span>])</span><br><span class="line">    sensitivity = <span class="number">5.0</span></span><br><span class="line">    </span><br><span class="line">    noisy_count = laplace_mech(X_train.shape[<span class="number">0</span>], <span class="number">1</span>, epsilon)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iterations):</span><br><span class="line">        grad_sum        = gradient_sum(theta, X_train, y_train, sensitivity)</span><br><span class="line">        noisy_grad_sum  = gaussian_mech_vec(grad_sum, sensitivity, epsilon, delta)</span><br><span class="line">        noisy_avg_grad  = noisy_grad_sum / noisy_count</span><br><span class="line">        theta           = theta - noisy_avg_grad</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> theta</span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#Sensitivity of the Gradient</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gradient_sum</span>(<span class="params">theta, X, y, b</span>):</span><br><span class="line">    gradients = [gradient(theta, x_i, y_i) <span class="keyword">for</span> x_i, y_i <span class="keyword">in</span> <span class="built_in">zip</span>(X,y)]</span><br><span class="line">        </span><br><span class="line">    <span class="comment"># sum query</span></span><br><span class="line">    <span class="comment"># L2 sensitivity is b (by sensitivity of the gradient)</span></span><br><span class="line">    <span class="keyword">return</span> np.<span class="built_in">sum</span>(gradients, axis=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">noisy_gradient_descent</span>(<span class="params">iterations, epsilon, delta</span>):</span><br><span class="line">    theta = np.zeros(X_train.shape[<span class="number">1</span>])</span><br><span class="line">    sensitivity = <span class="number">5.0</span></span><br><span class="line">    </span><br><span class="line">    noisy_count = laplace_mech(X_train.shape[<span class="number">0</span>], <span class="number">1</span>, epsilon)</span><br><span class="line">    clipped_X = [L2_clip(x_i, sensitivity) <span class="keyword">for</span> x_i <span class="keyword">in</span> X_train]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iterations):</span><br><span class="line">        grad_sum        = gradient_sum(theta, clipped_X, y_train, sensitivity)</span><br><span class="line">        noisy_grad_sum  = gaussian_mech_vec(grad_sum, sensitivity, epsilon, delta)</span><br><span class="line">        noisy_avg_grad  = noisy_grad_sum / noisy_count</span><br><span class="line">        theta           = theta - noisy_avg_grad</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> theta</span><br></pre></td></tr></table></figure></div>
+
+
+
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> 差分隐私（二）</li>
+        <li><strong>作者:</strong> 深情小小侯</li>
+        <li><strong>创建于
+                :</strong> 2023-11-02 17:59:13</li>
+        
+            <li>
+                <strong>更新于
+                    :</strong> 2023-11-03 16:19:45
+            </li>
+        
+        <li>
+            <strong>链接:</strong> https://redefine.ohevan.com/2023/11/02/差分隐私（二）/
+        </li>
+        <li>
+            <strong>
+                版权声明:
+            </strong>
+            
+            本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0</a> 进行许可。
+            
+
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+
+        
+
+        
+            <div class="article-nav">
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                        rel="next"
+                        href="/2023/10/28/LSTM%E6%97%B6%E5%BA%8F%E9%A2%84%E6%B5%8B/"
+                        >
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">LSTM时序预测</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+
+        
+            <div class="comment-container">
+                <div class="comments-container pjax">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fa-solid fa-comments"></i>&nbsp;评论
+    </div>
+    
+
+        
+            
+ 
+    <div id="waline"></div>
+    <script type="module"  data-swup-reload-script>
+        import { init } from '/js/libs/waline.mjs';
+
+        function loadWaline() {
+            init({
+                el: '#waline',
+                serverURL: 'https://example.example.com',
+                lang: 'zh-CN',
+                dark: 'body[class~="dark-mode"]',
+                requiredMeta: ['nick','mail'], // cannot customize by theme config, change it yourself
+            });
+        }
+
+        if ('true') {
+            const loadWalineTimeout = setTimeout(() => {
+                loadWaline();
+                clearTimeout(loadWalineTimeout);
+            }, 1000);
+        } else {
+            window.addEventListener('DOMContentLoaded', loadWaline);
+        }
+        
+    </script>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+
+    
+        <div class="toc-content-container">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <div class="toc-title">此页目录</div>
+        <div class="page-title">差分隐私（二）</div>
+        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E7%9A%84%E5%8D%95%E6%AD%A5"><span class="nav-number">1.</span> <span class="nav-text">梯度下降的单步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E7%AE%97%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">梯度下降算法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B7%E6%9C%89%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81%E7%9A%84%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D"><span class="nav-number"></span> <span class="nav-text">具有差分隐私的梯度下降</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Gradient-Clipping"><span class="nav-number">1.</span> <span class="nav-text">Gradient Clipping</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sensitivity-of-the-Gradient"><span class="nav-number">2.</span> <span class="nav-text">Sensitivity of the Gradient</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number"></span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6%E8%A3%81%E5%89%AA"><span class="nav-number"></span> <span class="nav-text">梯度裁剪</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A3%81%E5%89%AA%E8%AE%AD%E7%BB%83%E6%A0%B7%E6%9C%AC"><span class="nav-number"></span> <span class="nav-text">裁剪训练样本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sensitivity-of-the-Gradient-1"><span class="nav-number"></span> <span class="nav-text">Sensitivity of the Gradient</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number"></span> <span class="nav-text">问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E5%8C%96%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81"><span class="nav-number"></span> <span class="nav-text">本地化差分隐私</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Randomized-Response"><span class="nav-number"></span> <span class="nav-text">Randomized Response</span></a>
+
+    </div>
+</div>
+        </div>
+    
+</div>
+
+
+
+                
+
+            </div>
+
+            
+
+        </div>
+
+        <div class="main-content-footer">
+            <footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2022</span>
+              -
+            
+            2023&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">深情小小侯</a>
+        </div>
+        
+            <script data-swup-reload-script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">访问人数</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">总访问量</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a> 驱动</span>
+            <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.5.0</a></span>
+        </div>
+        
+        
+            <div>
+                博客已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="article-tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="right-bottom-tools page-aside-toggle">
+                <i class="fa-regular fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fa-regular fa-comments"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-side-tools-container">
+        <div class="side-tools-container">
+    <ul class="hidden-tools-list">
+        <li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-plus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-minus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+            <i class="fa-regular fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+            <i class="fa-regular fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="visible-tools-list">
+        <li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+            <i class="fa-regular fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+        
+    </ul>
+</div>
+
+    </div>
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+
+</main>
+
+
+    
+<script src="/js/libs/Swup.min.js"></script>
+
+<script src="/js/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+
+
+
+<script src="/js/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/utils.js" type="module"></script>
+
+<script src="/js/main.js" type="module"></script>
+
+<script src="/js/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/layouts/categoryList.js" type="module"></script>
+
+
+
+
+
+    
+<script src="/js/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/tools/runtime.js"></script>
+
+    
+<script src="/js/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+  
+<script src="/js/libs/Typed.min.js"></script>
+
+  
+<script src="/js/plugins/typed.js" type="module"></script>
+
+
+
+
+
+
+    
+<script src="/js/libs/minimasonry.min.js"></script>
+
+    
+<script src="/js/plugins/masonry.js" type="module"></script>
+
+
+
+
+<div class="post-scripts" data-swup-reload-script>
+    
+        
+<script src="/js/libs/anime.min.js"></script>
+
+        
+<script src="/js/tools/tocToggle.js" type="module"></script>
+
+<script src="/js/layouts/toc.js" type="module"></script>
+
+<script src="/js/plugins/tabs.js" type="module"></script>
+
+    
+</div>
+
+
+</body>
+</html>

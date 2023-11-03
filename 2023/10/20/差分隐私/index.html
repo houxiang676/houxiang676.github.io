@@ -20,7 +20,7 @@
     
         <meta name="description" content="非常非常有用的，学习差分隐私特别友好的网址  拉普拉斯机制（ϵ-DP）   12import numpy as npnoisy &#x3D; np.random.laplace(loc&#x3D;0, scale&#x3D;sensitivity&#x2F;epsilon)  差分隐私的特性 #Sequential Composition（顺序组合）#： 顺序组合指的是当多个隐私机制依次应用在同一数据上时，其隐私保护仍然有效。也就是说，">
 <meta property="og:type" content="article">
-<meta property="og:title" content="差分隐私">
+<meta property="og:title" content="差分隐私（一）">
 <meta property="og:url" content="http://example.com/2023/10/20/%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81/index.html">
 <meta property="og:site_name" content="深情小小侯的博客">
 <meta property="og:description" content="非常非常有用的，学习差分隐私特别友好的网址  拉普拉斯机制（ϵ-DP）   12import numpy as npnoisy &#x3D; np.random.laplace(loc&#x3D;0, scale&#x3D;sensitivity&#x2F;epsilon)  差分隐私的特性 #Sequential Composition（顺序组合）#： 顺序组合指的是当多个隐私机制依次应用在同一数据上时，其隐私保护仍然有效。也就是说，">
@@ -39,8 +39,9 @@
 <meta property="og:image" content="https://s2.loli.net/2023/11/02/pHthrVxofvZBny3.png">
 <meta property="og:image" content="https://s2.loli.net/2023/11/02/BjtDiQb6c3vhWUY.png">
 <meta property="og:image" content="https://s2.loli.net/2023/11/02/Qa2Zq1ktcrmobdM.png">
+<meta property="og:image" content="c:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20231102174428912.png">
 <meta property="article:published_time" content="2023-10-20T11:25:53.000Z">
-<meta property="article:modified_time" content="2023-11-02T08:54:17.603Z">
+<meta property="article:modified_time" content="2023-11-02T09:58:31.239Z">
 <meta property="article:author" content="深情小小侯">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://s2.loli.net/2023/10/31/UL95ArTPoyGMtb4.png">
@@ -55,7 +56,7 @@
     
     <title>
         
-            差分隐私 -
+            差分隐私（一） -
         
         深情小小侯的博客
     </title>
@@ -308,7 +309,7 @@
 
         <div class="article-title">
             
-                <h1 class="article-title-regular">差分隐私</h1>
+                <h1 class="article-title-regular">差分隐私（一）</h1>
             
             </div>
             
@@ -337,8 +338,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2023-11-02 16:54:17</span>
-            <span class="mobile">2023-11-02 16:54:17</span>
+            <span class="desktop">2023-11-02 17:58:31</span>
+            <span class="mobile">2023-11-02 17:58:31</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -542,6 +543,19 @@
 
 <p>对于给定水平的噪声，使用RDP的顺序组合来限制高斯机制的重复应用的隐私代价，然后转换为(ϵ，δ)-差分隐私，通常会产生比在(ϵ，δ)世界中直接执行组合（即使使用高级组合）更低的隐私代价</p>
 <h2 id="Zero-Concentrated-Differential-Privacy"><a href="#Zero-Concentrated-Differential-Privacy" class="headerlink" title="Zero-Concentrated Differential Privacy"></a>Zero-Concentrated Differential Privacy</h2><p>零集中差分隐私（Zero-Concentrated Differential Privacy，zCDP）是一种用于量化差分隐私中隐私级别的框架。它扩展了传统的差分隐私（DP），提供了更紧密的隐私保证，特别是在处理具有较小灵敏度的查询时。在传统的差分隐私中，隐私级别是通过限制两个相邻数据集导致查询结果显着不同的概率来衡量的。然而，在许多实际情况下，发生这种显着差异的可能性可能微乎其微。零集中差分隐私考虑到了这一点，并提供了更准确和细化的隐私保证。在zCDP中，隐私级别是通过分析围绕零点的隐私损失值的集中程度来量化的。它测量了小隐私损失值的可能性，这意味着当隐私损失接近零时，它提供了更准确的隐私界限。这个框架特别适用于处理具有低灵敏度的查询，例如涉及小规模个体群体或相对温和数据变换的查询。它有助于在传统的差分隐私可能会高估隐私风险的情况下提供更准确的隐私保证。总的来说，零集中差分隐私是一种更精确的隐私分析框架，确保隐私保证更符合特定情景中的实际风险。</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20231102174428912.png"
+                      alt="image-20231102174428912" style="zoom:67%;" 
+                > 
+
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">gaussian_mech_zCDP_vec</span>(<span class="params">vec, sensitivity, rho</span>):</span><br><span class="line">    sigma = np.sqrt((sensitivity**<span class="number">2</span>) / (<span class="number">2</span> * rho))</span><br><span class="line">    <span class="keyword">return</span> [v + np.random.normal(loc=<span class="number">0</span>, scale=sigma) <span class="keyword">for</span> v <span class="keyword">in</span> vec]</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="Composition-under-Variants-of-Differential-Privacy"><a href="#Composition-under-Variants-of-Differential-Privacy" class="headerlink" title="Composition under Variants of Differential Privacy"></a>Composition under Variants of Differential Privacy</h2><h1 id="The-Exponential-Mechanism-指数机制"><a href="#The-Exponential-Mechanism-指数机制" class="headerlink" title="The Exponential Mechanism-指数机制"></a>The Exponential Mechanism-指数机制</h1><p>指数机制是一种机制，它允许在不直接添加噪声到答案的情况下，返回一个“最佳”元素，同时仍保持差分隐私。这个机制通过评分函数来定义什么元素被认为是“最佳”的，该函数为集合中的每个元素分配一个分数，并定义要从中进行选择的元素集。机制的目标是近似返回具有最高分数的元素，同时满足差分隐私的要求。也就是说，为了保护隐私，指数机制有时会从集合中返回一个具有较低分数的元素，而不是最高分数的元素。这种机制在差分隐私领域中有很多应用，允许在保护隐私的同时提供有关数据的有用信息。</p>
+<hr>
+<p>待补充</p>
+<hr>
 
         </div>
 
@@ -549,14 +563,14 @@
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li><strong>标题:</strong> 差分隐私</li>
+        <li><strong>标题:</strong> 差分隐私（一）</li>
         <li><strong>作者:</strong> 深情小小侯</li>
         <li><strong>创建于
                 :</strong> 2023-10-20 19:25:53</li>
         
             <li>
                 <strong>更新于
-                    :</strong> 2023-11-02 16:54:17
+                    :</strong> 2023-11-02 17:58:31
             </li>
         
         <li>
@@ -671,8 +685,8 @@
             <div class="post-toc-wrap">
     <div class="post-toc">
         <div class="toc-title">此页目录</div>
-        <div class="page-title">差分隐私</div>
-        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8B%89%E6%99%AE%E6%8B%89%E6%96%AF%E6%9C%BA%E5%88%B6%EF%BC%88%CF%B5-DP%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">拉普拉斯机制（ϵ-DP）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81%E7%9A%84%E7%89%B9%E6%80%A7"><span class="nav-number">1.1.</span> <span class="nav-text">差分隐私的特性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A1%BA%E5%BA%8F%E7%BB%84%E5%90%88%EF%BC%88Sequential-Composition%EF%BC%89"><span class="nav-number">1.1.1.</span> <span class="nav-text">顺序组合（Sequential Composition）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E7%BB%84%E5%90%88%EF%BC%88Parallel-Composition%EF%BC%89"><span class="nav-number">1.1.2.</span> <span class="nav-text">并行组合（Parallel Composition）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8E%E5%A4%84%E7%90%86"><span class="nav-number">1.1.3.</span> <span class="nav-text">后处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.2.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%AB%98%E6%96%AF%E6%9C%BA%E5%88%B6-%E8%BF%91%E4%BC%BC%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81-%CF%B5%EF%BC%8C%CE%B4-DP"><span class="nav-number">2.</span> <span class="nav-text">高斯机制-(近似差分隐私(ϵ，δ)-DP)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E6%96%AF%E6%9C%BA%E5%88%B6"><span class="nav-number">2.1.</span> <span class="nav-text">高斯机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%91%E4%BC%BC%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81%E7%9A%84%E7%89%B9%E6%80%A7"><span class="nav-number">2.2.</span> <span class="nav-text">近似差分隐私的特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Advanced-Composition-%E9%AB%98%E7%BA%A7%E7%BB%84%E5%90%88"><span class="nav-number">2.3.</span> <span class="nav-text">Advanced Composition (高级组合)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93-1"><span class="nav-number">2.4.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#L1%E5%92%8CL2-Norm"><span class="nav-number">3.</span> <span class="nav-text">L1和L2-Norm</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#L1%E5%92%8CL2"><span class="nav-number">3.1.</span> <span class="nav-text">L1和L2</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%81%B5%E6%95%8F%E5%BA%A6"><span class="nav-number">4.</span> <span class="nav-text">灵敏度</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E7%81%B5%E6%95%8F%E5%BA%A6"><span class="nav-number">4.1.</span> <span class="nav-text">全局灵敏度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%80%E9%83%A8%E7%81%B5%E6%95%8F%E5%BA%A6"><span class="nav-number">4.2.</span> <span class="nav-text">局部灵敏度</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%80%E9%83%A8%E7%81%B5%E6%95%8F%E5%BA%A6%E7%9A%84%E5%9D%87%E5%80%BC"><span class="nav-number">4.2.1.</span> <span class="nav-text">局部灵敏度的均值</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E5%B1%80%E9%83%A8%E7%81%B5%E6%95%8F%E5%BA%A6%E5%AE%9E%E7%8E%B0%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81"><span class="nav-number">4.3.</span> <span class="nav-text">通过局部灵敏度实现差分隐私</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Propose-Test-Release"><span class="nav-number">4.3.1.</span> <span class="nav-text">Propose-Test-Release</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81%E7%9A%84%E5%8F%98%E4%BD%93"><span class="nav-number">5.</span> <span class="nav-text">差分隐私的变体</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Max-Divergence-and-Renyi-Divergence%EF%BC%88%E6%9C%80%E5%A4%A7%E6%95%A3%E5%BA%A6%E5%92%8C-Renyi-%E6%95%A3%E5%BA%A6%EF%BC%89"><span class="nav-number">5.1.</span> <span class="nav-text">Max Divergence and Rényi Divergence（最大散度和 Rényi 散度）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Renyi-Differential-Privacy"><span class="nav-number">5.2.</span> <span class="nav-text">Rényi Differential Privacy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Zero-Concentrated-Differential-Privacy"><span class="nav-number">5.3.</span> <span class="nav-text">Zero-Concentrated Differential Privacy</span></a></li></ol></li></ol>
+        <div class="page-title">差分隐私（一）</div>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8B%89%E6%99%AE%E6%8B%89%E6%96%AF%E6%9C%BA%E5%88%B6%EF%BC%88%CF%B5-DP%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">拉普拉斯机制（ϵ-DP）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81%E7%9A%84%E7%89%B9%E6%80%A7"><span class="nav-number">1.1.</span> <span class="nav-text">差分隐私的特性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A1%BA%E5%BA%8F%E7%BB%84%E5%90%88%EF%BC%88Sequential-Composition%EF%BC%89"><span class="nav-number">1.1.1.</span> <span class="nav-text">顺序组合（Sequential Composition）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E7%BB%84%E5%90%88%EF%BC%88Parallel-Composition%EF%BC%89"><span class="nav-number">1.1.2.</span> <span class="nav-text">并行组合（Parallel Composition）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8E%E5%A4%84%E7%90%86"><span class="nav-number">1.1.3.</span> <span class="nav-text">后处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.2.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%AB%98%E6%96%AF%E6%9C%BA%E5%88%B6-%E8%BF%91%E4%BC%BC%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81-%CF%B5%EF%BC%8C%CE%B4-DP"><span class="nav-number">2.</span> <span class="nav-text">高斯机制-(近似差分隐私(ϵ，δ)-DP)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E6%96%AF%E6%9C%BA%E5%88%B6"><span class="nav-number">2.1.</span> <span class="nav-text">高斯机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%91%E4%BC%BC%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81%E7%9A%84%E7%89%B9%E6%80%A7"><span class="nav-number">2.2.</span> <span class="nav-text">近似差分隐私的特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Advanced-Composition-%E9%AB%98%E7%BA%A7%E7%BB%84%E5%90%88"><span class="nav-number">2.3.</span> <span class="nav-text">Advanced Composition (高级组合)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93-1"><span class="nav-number">2.4.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#L1%E5%92%8CL2-Norm"><span class="nav-number">3.</span> <span class="nav-text">L1和L2-Norm</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#L1%E5%92%8CL2"><span class="nav-number">3.1.</span> <span class="nav-text">L1和L2</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%81%B5%E6%95%8F%E5%BA%A6"><span class="nav-number">4.</span> <span class="nav-text">灵敏度</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E7%81%B5%E6%95%8F%E5%BA%A6"><span class="nav-number">4.1.</span> <span class="nav-text">全局灵敏度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%80%E9%83%A8%E7%81%B5%E6%95%8F%E5%BA%A6"><span class="nav-number">4.2.</span> <span class="nav-text">局部灵敏度</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%80%E9%83%A8%E7%81%B5%E6%95%8F%E5%BA%A6%E7%9A%84%E5%9D%87%E5%80%BC"><span class="nav-number">4.2.1.</span> <span class="nav-text">局部灵敏度的均值</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E5%B1%80%E9%83%A8%E7%81%B5%E6%95%8F%E5%BA%A6%E5%AE%9E%E7%8E%B0%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81"><span class="nav-number">4.3.</span> <span class="nav-text">通过局部灵敏度实现差分隐私</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Propose-Test-Release"><span class="nav-number">4.3.1.</span> <span class="nav-text">Propose-Test-Release</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81%E7%9A%84%E5%8F%98%E4%BD%93"><span class="nav-number">5.</span> <span class="nav-text">差分隐私的变体</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Max-Divergence-and-Renyi-Divergence%EF%BC%88%E6%9C%80%E5%A4%A7%E6%95%A3%E5%BA%A6%E5%92%8C-Renyi-%E6%95%A3%E5%BA%A6%EF%BC%89"><span class="nav-number">5.1.</span> <span class="nav-text">Max Divergence and Rényi Divergence（最大散度和 Rényi 散度）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Renyi-Differential-Privacy"><span class="nav-number">5.2.</span> <span class="nav-text">Rényi Differential Privacy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Zero-Concentrated-Differential-Privacy"><span class="nav-number">5.3.</span> <span class="nav-text">Zero-Concentrated Differential Privacy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Composition-under-Variants-of-Differential-Privacy"><span class="nav-number">5.4.</span> <span class="nav-text">Composition under Variants of Differential Privacy</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#The-Exponential-Mechanism-%E6%8C%87%E6%95%B0%E6%9C%BA%E5%88%B6"><span class="nav-number">6.</span> <span class="nav-text">The Exponential Mechanism-指数机制</span></a></li></ol>
 
     </div>
 </div>
