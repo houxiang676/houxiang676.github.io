@@ -30,7 +30,7 @@
 <meta property="og:image" content="https://s2.loli.net/2023/10/19/P3eQMBrVFxZzJKu.png">
 <meta property="og:image" content="https://s2.loli.net/2023/10/19/ZzLRxfNe8bV9F4s.png">
 <meta property="og:image" content="https://s2.loli.net/2023/10/31/Gsl4MUJoHEZ3Dw2.png">
-<meta property="og:image" content="https://s2.loli.net/2023/10/19/bksjSfOE3n8AChT.png">
+<meta property="og:image" content="f:\typora%E6%96%87%E4%BB%B6\bksjSfOE3n8AChT.png">
 <meta property="og:image" content="https://s2.loli.net/2023/10/31/TeSIu37XHJFkRbA.png">
 <meta property="og:image" content="https://s2.loli.net/2023/10/31/wW8zNcxnGQCjrZt.png">
 <meta property="og:image" content="https://s2.loli.net/2023/10/31/YPwtVoKLEQpOxdZ.png">
@@ -41,7 +41,7 @@
 <meta property="og:image" content="https://s2.loli.net/2023/11/02/Qa2Zq1ktcrmobdM.png">
 <meta property="og:image" content="c:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20231102174428912.png">
 <meta property="article:published_time" content="2023-10-20T11:25:53.000Z">
-<meta property="article:modified_time" content="2023-11-02T09:58:31.239Z">
+<meta property="article:modified_time" content="2023-11-30T08:41:41.585Z">
 <meta property="article:author" content="深情小小侯">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://s2.loli.net/2023/10/31/UL95ArTPoyGMtb4.png">
@@ -324,7 +324,7 @@
                     <div class="author flex items-center">
                         <span class="name text-default-text-color text-lg font-semibold">深情小小侯</span>
                         
-                            <span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv2</span>
+                            <span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv3</span>
                         
                     </div>
                     <div class="meta-info">
@@ -338,8 +338,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2023-11-02 17:58:31</span>
-            <span class="mobile">2023-11-02 17:58:31</span>
+            <span class="desktop">2023-11-30 16:41:41</span>
+            <span class="mobile">2023-11-30 16:41:41</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -416,10 +416,10 @@
 <h2 id="高斯机制"><a href="#高斯机制" class="headerlink" title="高斯机制"></a>高斯机制</h2><p>高斯机制是拉普拉斯机制的替代方案，拉普拉斯机制增加了高斯噪声而不是拉普拉斯噪声。高斯机制不满足纯<em>ϵ</em>-差分隐私，但满足(<em>ϵ</em>-<em>δ</em>)差分隐私。<br><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="https://s2.loli.net/2023/10/19/bksjSfOE3n8AChT.png"
+                     data-src="F:\typora文件\bksjSfOE3n8AChT.png"
                       alt="image.png" style="zoom:50%;" 
                 >‘s’是’f’的灵敏度，N是高斯噪声分布</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">sigma = np.sqrt(<span class="number">2</span> * np.log(<span class="number">1.25</span> / delta)) * <span class="number">1</span> / epsilon</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">sigma = np.sqrt(<span class="number">2</span> * np.log(<span class="number">1.25</span> / delta)) * <span class="number">1</span> / epsilon   <span class="comment"># s = 1</span></span><br></pre></td></tr></table></figure></div>
 
 <h2 id="近似差分隐私的特性"><a href="#近似差分隐私的特性" class="headerlink" title="近似差分隐私的特性"></a>近似差分隐私的特性</h2><p>近似差分隐私与纯差分隐私具有相似的性质。它满足<strong>顺序组成</strong>（Sequential Composition）。</p>
 <p>Approximate differential privacy also satisfies post-processing and parallel composition.</p>
@@ -478,7 +478,8 @@
                      data-src="https://s2.loli.net/2023/10/19/tik3uWsMOgUDrwX.png"
                       alt="image.png" style="zoom:50%;" 
                 > </p>
-<h1 id="灵敏度"><a href="#灵敏度" class="headerlink" title="灵敏度"></a>灵敏度</h1><h2 id="全局灵敏度"><a href="#全局灵敏度" class="headerlink" title="全局灵敏度"></a>全局灵敏度</h2><h2 id="局部灵敏度"><a href="#局部灵敏度" class="headerlink" title="局部灵敏度"></a>局部灵敏度</h2><hr>
+<h1 id="灵敏度"><a href="#灵敏度" class="headerlink" title="灵敏度"></a>灵敏度</h1><h2 id="全局灵敏度"><a href="#全局灵敏度" class="headerlink" title="全局灵敏度"></a>全局灵敏度</h2><p>全局敏感度的定义是，对于<em>任意两个</em>相邻的数据集 和 ，和之间的差值最多为 。这种敏感度度量称为“全局”，因为它独立于所查询的实际数据集（<em>它适用于相邻</em>和 的任何选择）。另一种敏感度度量称为<em>局部敏感度</em>，它将其中一个数据集固定为被查询的数据集;我们将在后面的章节中讨论这项措施。目前，当我们说“敏感性”时，我们指的是全局敏感性</p>
+<h2 id="局部灵敏度"><a href="#局部灵敏度" class="headerlink" title="局部灵敏度"></a>局部灵敏度</h2><hr>
 <p>_____<em><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong>没看懂</strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></em></p>
 <hr>
 <p>这就是本地敏感性（local sensitivity）[8]的原始原理：将两个数据集中的一个固定为实际被查询的数据集，并考虑它的所有相邻数据集。在形式上，函数的本地敏感性可表示为：</p>
@@ -570,7 +571,7 @@
         
             <li>
                 <strong>更新于
-                    :</strong> 2023-11-02 17:58:31
+                    :</strong> 2023-11-30 16:41:41
             </li>
         
         <li>

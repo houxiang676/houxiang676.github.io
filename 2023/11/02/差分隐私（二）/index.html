@@ -28,7 +28,7 @@
 <meta property="og:image" content="https://s2.loli.net/2023/11/03/Nh9mJXlBAQb8vpV.png">
 <meta property="og:image" content="https://s2.loli.net/2023/11/03/ukLiGKXFNHDvjbO.png">
 <meta property="article:published_time" content="2023-11-02T09:59:13.000Z">
-<meta property="article:modified_time" content="2023-11-03T08:19:45.747Z">
+<meta property="article:modified_time" content="2023-11-30T09:50:09.467Z">
 <meta property="article:author" content="深情小小侯">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://s2.loli.net/2023/11/03/Nh9mJXlBAQb8vpV.png">
@@ -311,7 +311,7 @@
                     <div class="author flex items-center">
                         <span class="name text-default-text-color text-lg font-semibold">深情小小侯</span>
                         
-                            <span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv2</span>
+                            <span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv3</span>
                         
                     </div>
                     <div class="meta-info">
@@ -325,8 +325,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2023-11-03 16:19:45</span>
-            <span class="mobile">2023-11-03 16:19:45</span>
+            <span class="desktop">2023-11-30 17:50:09</span>
+            <span class="mobile">2023-11-30 17:50:09</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -395,7 +395,7 @@
 <li>计算训练样本数的噪声计数（<strong>灵敏度 1</strong>）</li>
 <li>将 （1） 的噪声总和除以 （2） 的噪声计数</li>
 </ol>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">noisy_gradient_descent</span>(<span class="params">iterations, epsilon, delta</span>):</span><br><span class="line">    theta = np.zeros(X_train.shape[<span class="number">1</span>])</span><br><span class="line">    sensitivity = <span class="number">5.0</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">#Laplace</span></span><br><span class="line">    noisy_count = laplace_mech(X_train.shape[<span class="number">0</span>], <span class="number">1</span>, epsilon)  <span class="comment">####样本个数  灵敏度1</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iterations):</span><br><span class="line">        grad_sum        = gradient_sum(theta, X_train, y_train, sensitivity)</span><br><span class="line">        noisy_grad_sum  = gaussian_mech_vec(grad_sum, sensitivity, epsilon, delta)</span><br><span class="line">        noisy_avg_grad  = noisy_grad_sum / noisy_count</span><br><span class="line">        theta           = theta - noisy_avg_grad</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> theta	</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">noisy_gradient_descent</span>(<span class="params">iterations, epsilon, delta</span>):</span><br><span class="line">    theta = np.zeros(X_train.shape[<span class="number">1</span>])</span><br><span class="line">    sensitivity = <span class="number">1.0</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">#Laplace</span></span><br><span class="line">    noisy_count = laplace_mech(X_train.shape[<span class="number">0</span>], <span class="number">1</span>, epsilon)  <span class="comment">####样本个数  灵敏度1</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iterations):</span><br><span class="line">        grad_sum        = gradient_sum(theta, X_train, y_train, sensitivity)</span><br><span class="line">        noisy_grad_sum  = gaussian_mech_vec(grad_sum, sensitivity, epsilon, delta)</span><br><span class="line">        noisy_avg_grad  = noisy_grad_sum / noisy_count</span><br><span class="line">        theta           = theta - noisy_avg_grad</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> theta	</span><br></pre></td></tr></table></figure></div>
 
 <p>该算法的每次迭代都满足 (ϵ, δ)-差分隐私，并且我们执行一次额外的查询来确定满足 ϵ-差分隐私的嘈杂计数。如果我们执行了 K 次迭代，那么根据序列组合，该算法满足 (kϵ, kδ)-差分隐私。我们还可以使用高级组合来分析总隐私成本；更好的是，我们可以将算法转化为 Rényi 差分隐私或零浓缩差分隐私，并获得有关组合的严格边界。</p>
 <h3 id="Sensitivity-of-the-Gradient"><a href="#Sensitivity-of-the-Gradient" class="headerlink" title="Sensitivity of the Gradient"></a>Sensitivity of the Gradient</h3><p>裁剪训练样本而不是梯度有两个优点。首先，估计训练数据的规模（从而选择一个好的裁剪参数）通常比估计训练期间计算的梯度的规模更容易。其次，它在计算效率更高：我们可以对训练样本进行一次裁剪，并在每次训练模型时重复使用裁剪后的训练数据;使用梯度裁剪时，我们需要在训练过程中裁剪每个梯度。此外，我们不再被迫计算每个样本的梯度，以便我们可以裁剪它们;相反，我们可以一次计算所有梯度，这可以非常有效地完成（这是机器学习中常用的技巧，但我们不会在这里讨论）</p>
@@ -460,7 +460,7 @@
         
             <li>
                 <strong>更新于
-                    :</strong> 2023-11-03 16:19:45
+                    :</strong> 2023-11-30 17:50:09
             </li>
         
         <li>
@@ -487,6 +487,21 @@
 
         
             <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                        rel="prev"
+                        href="/2023/11/20/%E8%99%9A%E6%8B%9F%E7%94%B5%E5%8E%82%E4%B8%8E%E8%81%94%E9%82%A6%E5%AD%A6%E4%B9%A0/"
+                        >
+                            <span class="left arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">虚拟电厂与联邦学习(一)</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
                 
                 
                     <div class="article-next">

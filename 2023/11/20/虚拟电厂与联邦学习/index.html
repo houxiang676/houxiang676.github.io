@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="深情小小侯">
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="http://example.com/2023/11/20/虚拟电厂与联邦学习/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+        <meta name="description" content="虚拟电厂虚拟电厂（Virtual power plant）是以电网云为基础的分散式电厂 ，可以聚集各种不同类型技术的电力 。主要目的是增强电力调度能力、以及促进电力自由市场 交易的活络。目前虚拟电厂在美国 、欧洲 和澳大利亚 均有相关案例。 虚拟电厂具有多样性、协同性、灵活性等技术特点，能够有效聚合多层级的分布式资源，满足新型电力系统绿色低碳、灵活高效、多元互动，高度市场化地运行需求，为实现“双碳">
+<meta property="og:type" content="article">
+<meta property="og:title" content="虚拟电厂与联邦学习(一)">
+<meta property="og:url" content="http://example.com/2023/11/20/%E8%99%9A%E6%8B%9F%E7%94%B5%E5%8E%82%E4%B8%8E%E8%81%94%E9%82%A6%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="深情小小侯的博客">
+<meta property="og:description" content="虚拟电厂虚拟电厂（Virtual power plant）是以电网云为基础的分散式电厂 ，可以聚集各种不同类型技术的电力 。主要目的是增强电力调度能力、以及促进电力自由市场 交易的活络。目前虚拟电厂在美国 、欧洲 和澳大利亚 均有相关案例。 虚拟电厂具有多样性、协同性、灵活性等技术特点，能够有效聚合多层级的分布式资源，满足新型电力系统绿色低碳、灵活高效、多元互动，高度市场化地运行需求，为实现“双碳">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic3.zhimg.com/v2-f7871f13da08720388cb39d7249a5aa6_r.jpg">
+<meta property="og:image" content="https://picx.zhimg.com/v2-7f3dc918818a8f1d6832045ea6c90c2b_r.jpg?source=1940ef5c">
+<meta property="og:image" content="https://pic3.zhimg.com/v2-10194a780386f46a2235c81b750de9c2_r.jpg">
+<meta property="article:published_time" content="2023-11-20T01:33:22.000Z">
+<meta property="article:modified_time" content="2023-11-30T01:27:39.431Z">
+<meta property="article:author" content="深情小小侯">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic3.zhimg.com/v2-f7871f13da08720388cb39d7249a5aa6_r.jpg">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/redefine-favicon.svg" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/redefine-favicon.svg">
+    <meta name="theme-color" content="#A31F34">
+    <link rel="shortcut icon" href="/images/redefine-favicon.svg">
+    <!--- Page Info-->
+    
+    <title>
+        
+            虚拟电厂与联邦学习(一) -
+        
+        深情小小侯的博客
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/assets/build/styles.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/fonts.css">
+
+    
+<link rel="stylesheet" href="/fonts/Satoshi/satoshi.css">
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+
+    <!--- Inject Part-->
+    
+    <script id="hexo-configurations">
+    window.config = {"hostname":"example.com","root":"/","language":"zh-CN","path":"search.xml"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":true,"expand":true,"init_open":true},"copyright":true,"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"走得快走得慢不重要，走下去就是胜利","subtitle":{"text":[],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":false,"links":{"github":null,"instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.5.0","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"文档":{"path":"/archives","icon":"fa-regular fa-archive"},"相册":{"icon":"fa-solid fa-image","submenus":{"假日出行":"/masonry","小乖":"/gallery"}}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":"纸上得来终觉浅，绝知此事要躬行","links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"}}},"article_date_format":"auto","categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    window.data = {"masonry":true};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <span class="swup-progress-icon">
+            <i class="fa-solid fa-circle-notch fa-spin"></i>
+        </span>
+    
+</div>
+
+
+<main class="page-container" id="swup">
+
+    
+
+    <div class="main-content-container">
+
+
+        <div class="main-content-header">
+            <header class="navbar-container">
+    
+    <div class="navbar-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                
+                深情小小侯的博客
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="" 
+                                    href="/"  >
+                                    
+                                        
+                                            <i class="fa-regular fa-house"></i>
+                                        
+                                        首页
+                                    
+                                </a>
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="" 
+                                    href="/archives"  >
+                                    
+                                        
+                                            <i class="fa-regular fa-archive"></i>
+                                        
+                                        文档
+                                    
+                                </a>
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="has-dropdown" 
+                                    href="#" onClick="return false;">
+                                    
+                                        
+                                            <i class="fa-solid fa-image"></i>
+                                        
+                                        相册&nbsp;<i class="fa-solid fa-chevron-down"></i>
+                                    
+                                </a>
+                                <!-- Submenu -->
+                                
+                                    <ul class="sub-menu">
+                                    
+                                        <li>
+                                        <a href="/masonry">假日出行
+                                        </a>
+                                        </li>
+                                    
+                                        <li>
+                                        <a href="/gallery">小乖
+                                        </a>
+                                        </li>
+                                    
+                                    </ul>
+                                
+                            </li>
+                    
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile drawer -->
+    <div class="navbar-drawer w-full absolute top-0 left-0 bg-background-color">
+        <ul class="drawer-navbar-list flex flex-col justify-start items-center">
+            
+                
+                    <li class="drawer-navbar-item text-base my-1.5 flex justify-center items-center">
+                        <a class="rounded-3xl py-1.5 px-5 hover:border hover:!text-primary active:!text-primary group " 
+                        href="/"  >
+                             
+                                
+                                    <i class="fa-regular fa-house"></i>
+                                
+                                首页
+                            
+                        </a>
+                    </li>
+                    <!-- Submenu -->
+                    
+            
+                
+                    <li class="drawer-navbar-item text-base my-1.5 flex justify-center items-center">
+                        <a class="rounded-3xl py-1.5 px-5 hover:border hover:!text-primary active:!text-primary group " 
+                        href="/archives"  >
+                             
+                                
+                                    <i class="fa-regular fa-archive"></i>
+                                
+                                文档
+                            
+                        </a>
+                    </li>
+                    <!-- Submenu -->
+                    
+            
+                
+                    <li class="drawer-navbar-item text-base my-1.5 flex justify-center items-center">
+                        <a class="rounded-3xl py-1.5 px-5 hover:border hover:!text-primary active:!text-primary group has-dropdown" 
+                        href="#" onClick="return false;">
+                            
+                                
+                                    <i class="fa-solid fa-image"></i>
+                                
+                                相册&nbsp;<i class="group-hover:rotate-180 transition-transform fa-solid fa-chevron-down"></i>
+                            
+                        </a>
+                    </li>
+                    <!-- Submenu -->
+                              
+                        
+                            <li class="drawer-navbar-item text-base flex justify-center items-center hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                <a class="py-0.5" href="/masonry">假日出行</a>
+                            </li>
+                        
+                            <li class="drawer-navbar-item text-base flex justify-center items-center hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                <a class="py-0.5" href="/gallery">小乖</a>
+                            </li>
+                        
+                    
+            
+
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="main-content-body">
+
+            
+
+            <div class="main-content">
+
+                
+                    <div class="post-page-container">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            
+                <h1 class="article-title-regular">虚拟电厂与联邦学习(一)</h1>
+            
+            </div>
+            
+                    
+        
+        
+            <div class="article-header flex flex-row gap-2 items-center">
+                <div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+                    <img src="/images/redefine-avatar.svg">
+                </div>
+                <div class="info flex flex-col justify-between">
+                    <div class="author flex items-center">
+                        <span class="name text-default-text-color text-lg font-semibold">深情小小侯</span>
+                        
+                            <span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv3</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2023-11-20 09:33:22</span>
+        <span class="mobile">2023-11-20 09:33:22</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2023-11-30 09:27:39</span>
+            <span class="mobile">2023-11-30 09:27:39</span>
+            <span class="hover-info">更新</span>
+        </span>
+    
+
+    
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        
+
+
+        <div class="article-content markdown-body">
+            <h1 id="虚拟电厂"><a href="#虚拟电厂" class="headerlink" title="虚拟电厂"></a>虚拟电厂</h1><p><strong>虚拟电厂</strong>（<strong>Virtual power plant</strong>）是以电网云为基础的<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%88%86%E6%95%A3%E5%BC%8F%E7%99%BC%E9%9B%BB" >分散式电厂 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，可以聚集各种不同类型技术的<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9B%BB%E5%8A%9B" >电力 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>。主要目的是增强电力调度能力、以及促进<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9B%BB%E5%8A%9B%E8%87%AA%E7%94%B1%E5%8C%96" >电力自由市场 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>交易的活络。目前虚拟电厂在<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%BE%8E%E5%9C%8B" >美国 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>、<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%AD%90%E6%B4%B2" >欧洲 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>和<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%BE%B3%E5%A4%A7%E5%88%A9%E4%BA%9E" >澳大利亚 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>均有相关案例。</p>
+<p>虚拟电厂具有多样性、协同性、灵活性等技术特点，能够有效聚合多层级的分布式资源，满足新型电力系统绿色低碳、灵活高效、多元互动，高度市场化地运行需求，为实现“双碳”目标提供重要的技术支撑。国家层面政策大力支持，地方层面山西等地重要政策推动行业实现突破。以《“十四五”现代能源体系规划》为代表的多个政策鼓励虚拟电厂发展，北京、山西等地也已经发布具体政策支持虚拟电厂发展。从政策中可以看出，政策不仅鼓励虚拟电厂发展，而且有望推动虚拟电厂在电力交易等方面发挥更大作用。2022年6月，山西能源局印发《虚拟电厂建设与运营管理实施方案》，其中提到“负荷类”虚拟电厂参与中长期、现货及辅助服务市场，“一体化”虚拟电厂参与现货及辅助服务市场。同时，东北能源监管局会同省有关单位组织起草了《辽宁省电力市场运营基本规则及六项配套规则(征求意见稿》，提出将现阶段逐步将储能企业、虚拟电厂、负荷聚合商等纳入电力交易市场主体范围。</p>
+<p><strong>虚拟电厂就是通过数字化手段将各类分散可调电源和负荷汇聚起来，等效于一个进行统一管理和调度的特殊电厂，同时作为主体参与电力市场。</strong></p>
+<p><strong>虚拟电厂</strong>（Virtual Power Plant，VPP）是将<strong>分布式发电机组、可控负荷和分布式储能</strong>设施有机结合，通过配套的<strong>调控技术、通信技术</strong>实现对各类分布式能源进行<strong>整合调控的载体</strong>，是可以作为一个<strong>特殊电厂</strong>参与电力市场和电网运行的协调管理系统。它既可以作为<strong>“正电厂”</strong>向 系统供电调峰，又可作为<strong>“负电厂”</strong>加大负荷消纳配合系统填谷</p>
+<h2 id="发电-编辑"><a href="#发电-编辑" class="headerlink" title="发电[编辑]"></a>发电[<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E8%99%9B%E6%93%AC%E9%9B%BB%E5%BB%A0&action=edit&section=1" >编辑 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>]</h2><p>虚拟电厂是一种汇集多种类型的电源，以提高电网可靠度的系统[<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%99%9B%E6%93%AC%E9%9B%BB%E5%BB%A0#cite_note-tudelft-1" >1] <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>。电力来源通常由不同类型、可调度和不可调度、可控制或灵活负载的分散式发电系统所组成的集合。这些系统由中央机构控制，并且可以包括微型<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%83%AD%E7%94%B5%E8%81%94%E4%BA%A7" >热电联产 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，天然气往复式发动机，小型<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%A2%A8%E5%8A%9B%E7%99%BC%E9%9B%BB%E5%BB%A0" >风力发电厂 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%A4%AA%E9%99%BD%E8%83%BD%E7%99%BC%E9%9B%BB" >太阳能发电 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，河道水力发电厂，<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%B0%8F%E5%9E%8B%E6%B0%B4%E5%8A%9B%E7%99%BC%E9%9B%BB" >小型水力发电 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%94%9F%E7%89%A9%E8%B3%AA%E8%83%BD" >生物质能 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，备用发电机和<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%82%A8%E8%83%BD%E6%8A%80%E6%9C%AF" >储能系统 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>等。</p>
+<p>虚拟电厂的优势包括能够在短时间内提供<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%B0%96%E5%B3%B0%E8%B2%A0%E8%BC%89%E7%99%BC%E9%9B%BB%E5%BB%A0" >尖峰负载电力 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>或跟随负载的发电。相对于传统的发电厂，虚拟电厂可提供更高的效率和更大的灵活性。更大的灵活性可使系统对波动做出更好的反应，但是其要求较佳的系统优化、控制和安全的通信[<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%99%9B%E6%93%AC%E9%9B%BB%E5%BB%A0#cite_note-ieeexplore-2" >2] <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>。</p>
+<p>根据Pike Research 2012年的报告，虚拟电厂容量从2011年到2017年增长65%，从全球的55.6GW增至91.7GW，2017年全球收入将从53亿美元增至65亿美元[<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%99%9B%E6%93%AC%E9%9B%BB%E5%BB%A0#cite_note-businesswire-3" >3] <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>。</p>
+<p>另外，虚拟电厂代表着“能源互聯網”。这些系统利用现有的<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%94%B5%E7%BD%91" >电网 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>来为客户量身定制电力供需服务。 虚拟电厂使用一套复杂的基于<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%BB%9F%E4%BB%B6" >软件 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>的系统，为最终用户和分配实用程序最大化价值。它们是动态的，可以实时提供价值，并且可以对不断变化的客户负载状况做出快速反应。</p>
+<p>从广义上来讲，虚拟电厂是需求侧响应的延伸。需求侧响应主要是削峰，主要针对用户负荷；虚拟电厂则是削峰和填谷兼顾，部分具有储能特征，源、网、荷、储都包括在内。与需求响应的调节方式相比，虚拟电厂由于接入了更多元化的用户，如储能、分布式发电、可控负荷等，在用户参与调节时，不仅负荷侧的用户可以调节自身用电增减，还可以召集储能测、电源侧的用户调节电能输出，具有丰富的调节方式和手段。</p>
+<p>虚拟电厂由可控机组、不可控机组（如风、光等分布式能源）、储能、可控负荷、电动汽车、通信设备等聚合而成，并进一步考虑需求响应、不确定性等要素，通过与控制中心、云中心、电力交易中心等进行信息通信，实现与大电网的能量互换。</p>
+<p>从本质讲，虚拟电厂就是虚拟化的发电厂，它并不具备实体发电厂的物理属性，而是一种管理模式或者是一套系统，通过配套的技术把分散在不同空间的小型太阳能、风能等新能源发电装置、储能电池和各类可控制、可调节的用电设备、负荷整合集成、协调控制，对外等效形成一个可控电源，辅助电力系统运行，并可参与电力市场交易，同时优化资源利用，维护区域内，甚至跨区域的用电稳定与用电安全。它既可以有计划地接受电力系统的电力，又可以向电力系统反向输出电力，更灵活高效地进行“削峰填谷”等作业，并获得客观的经济效益。</p>
+<h2 id="辅助服务-编辑"><a href="#辅助服务-编辑" class="headerlink" title="辅助服务[编辑]"></a>辅助服务[<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E8%99%9B%E6%93%AC%E9%9B%BB%E5%BB%A0&action=edit&section=2" >编辑 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>]</h2><p>虚拟电厂还可用于为电网运营商提供辅助服务，以帮助维护<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%94%B5%E7%BD%91" >电网 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>稳定性。辅助服务包括频率调节、负载追踪和提供操作储备。这些服务主要用于维持电力供需的瞬时平衡。提供辅助服务的电厂必须回应电网运营商传来的信号，以响应用户需求水平的变化，在几秒钟到几分钟的时间内增加或减少负荷。</p>
+<p>由于辅助服务通常由可控制的化石燃料发电机提供，因此，未来包含<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%A4%AA%E9%99%BD%E8%83%BD" >太阳能 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>和<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%A2%A8%E8%83%BD" >风能 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>比例很高的无碳电网必须依靠其他形式的可控制发电或消耗，<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%BB%8A%E8%BC%9B" >车辆 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>到<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%B6%B2%E6%A0%BC%E8%A8%88%E7%AE%97" >网格技术 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>就是其中最著名的例子。在这种情况下，连接到电网的分散式电动车辆可充当单个虚拟电厂。通过有选择地控制每辆车的充电速度，电网可以看到净注入或能量消耗，就好像大型电池正在提供这项服务一样。</p>
+<p>同样，目前已有厂商研究以<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%86%B1%E6%B3%B5" >热泵 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>或<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%A9%BA%E8%AA%BF" >空调 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>来提供电网提供辅助服务[<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%99%9B%E6%93%AC%E9%9B%BB%E5%BB%A0#cite_note-Sustainable_Buildings_and_Cities-4" >4] <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>。只要保持室内的舒适性，就可以选择性地关闭和打开分散式热泵，以改变其总功率消耗。</p>
+<p>由于虚拟发电厂可以并行运行，因此与发电厂相比，虚拟发电厂可以具有更高的<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%B4%A8%E5%AD%90%E6%9B%B2%E7%B7%9A" >鸭子曲线 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>（Duck Curve），这在早晨和傍晚有较高<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%B4%A8%E5%AD%90%E6%9B%B2%E7%B7%9A" >鸭子曲线 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>的电网中尤为重要。但是，分散式性质会产生通信和延迟问题，这可能需要诸如频率调节之类的快速服务。</p>
+<h2 id="能源交易-编辑"><a href="#能源交易-编辑" class="headerlink" title="能源交易[编辑]"></a>能源交易[<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E8%99%9B%E6%93%AC%E9%9B%BB%E5%BB%A0&action=edit&section=3" >编辑 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>]</h2><p>虚拟发电厂为基于电网云的中央或分散式控制中心，它利用<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%B3%87%E8%A8%8A%E5%8F%8A%E9%80%9A%E8%A8%8A%E7%A7%91%E6%8A%80" >资讯及通讯科技 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>（ICT）和<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%89%A9%E8%81%94%E7%BD%91" >物联网 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>（IoT）设备来整合异构分散式能源，目的是在趸售电力市场上进行能源交易，或为系统运营商提供辅助服务[<a class="link"   target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%99%9B%E6%93%AC%E9%9B%BB%E5%BB%A0#cite_note-VPP_FSD_2017-5" >5] <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>。</p>
+<p><strong>相较于传统能源发电，新能源发电具有随机性、波动性等特点，大规模的新能源并网，电力系统是否也将面临较大挑战？挑战主要体现在哪些方面？</strong></p>
+<p><strong>大规模性能源并网是否也将面临较大挑战？</strong></p>
+<p>是的</p>
+<p><strong>挑战主要体现在哪些方面？</strong></p>
+<p>1)风电、太阳能等发电形式将对电网出力端形成较大的冲击，影响到电力系统的稳定性维护。</p>
+<p>2)峰谷差问题催生的储能、分布式电源的大规模装机也增加了出力资源的数量，调度复杂度大幅提升。</p>
+<p>但是虚拟电厂能够有效聚合分布式电源和储能电站等资源，依靠物联网等技术，处理风电、光伏等出力端带来的不确定性，帮助电网实现协调优化控制，加强新型电力系统内部各单元间的协同，从而提升电力系统的灵活性与稳定性。</p>
+<p>三大业务板块：</p>
+<p><strong>“注源控流”业务板块</strong></p>
+<p>使分布式发电有组织、有规律地接入系统和服务平 台，进行统一协调运维管理，形成一定规模合力， 相对可调可控，最终实现并网运行。与此同时，控 制调节负荷侧的电力流向及流量。尽可能多地接入 可调节用电负荷，使其有序、有规律地按计划用电， 并提升综合能效管理，在最大限度地不影响生产生 活用电的情况下，综合考虑外部电网供电情况、内部自发电情况、各类用电成本、电网需求侧智能管 控等因素，科学合理并按最优经济性安排用电计划。</p>
+<p><strong>“电力储备”业务板块</strong></p>
+<p>多元化储能是实现“注源控流”的关键支撑。对分散的分布式小型新能源发电进行聚合，实现聚合多元化资源更 有力量、更易调控、更具操作空间。同时，聚合资源统一服从上级调令在聚合资源圈内配套需要的储能系统。对于“控流业务”同样需要配置配套的储能系统才能更灵活、便捷地制定最佳用电方案。</p>
+<p><strong>“商业”业务板块</strong></p>
+<p>在聚合多类资源后，最终要参与到电力市场中来才能 获得收益。商业模式主要有2种：1.电力交易，虚拟电厂作为售电企业与用户直接交易，或从火电厂购买发电权;2.辅助服务市场，虚拟电厂通过负荷低谷时减少出力或增加负荷、在负荷高峰时增加出力或削减负荷来参与调峰服务交易，以及类似参与调频等服务市场。</p>
+<p>在实际的运行中，虚拟电厂会从描述个分布式能源的参数组合中创建一个操作配置文件，这个文件也正是虚拟电厂的信息核心。换句话说，虚拟电厂参与了</p>
+<ol>
+<li><p>电力交易（例如在批发市场中签订合同）</p>
+</li>
+<li><p>分布式能源组合信息（用于向系统运营商提供管理与辅助服务）</p>
+</li>
+</ol>
+<p>这两种不同用途的配置文件也正是CVPP和TVPP运行的核心信息。</p>
+<p>在CVPP的实际运行中，每个分布式能源主体都需要上报其运行参数、边际成本等信息，一般可由CVPP安装在这些分布式能源处的终端装置完成信息采集，这些分布式能源的输入信息，市场分析、地方数据等其他输入信息一起汇集到单一的虚拟电厂中创建配置文件，每个配置文件都代表了一个分布式能源实时组合的运行描述。 随着CVPP有越来越多这样的配置文件，它会获得越来越多的市场信息，那么下一步他就可以完成在远期合同市场、期货市场、电能量市场及辅助服务市场的投资组合方案，并实时评估相关交易能力。</p>
+<p><strong>1.发电设备：</strong>屋顶光伏、燃料电池、发电机、热电联产系统、 可再生能源发电设备等。</p>
+<p>**2.储能设备:**家用蓄电池、车载蓄电池、电子热水器、固定式蓄电池、热泵、蓄热空调、电子热水机等。</p>
+<p>**3.节电设备:**空调、照明、通风设备、风扇、压缩机、冷却器等。</p>
+<hr>
+<p>这些功能有两个重要功能。首先，这些设备产生的数据量比以往任何时候都大得多。收集、处理、分析和使用这些数据来做出决策和确定行动需要带宽、足够的处理能力和速度。其次，设备是异构的。例如，对于在很短的距离内有效通信的物联网设备，蓝牙可能是可能的或有利的。但是对于跨越数公里进行通信的设备，必须使用蜂窝通信。有些设备可以通过互联网安全有效地连接和协调，而有些设备则不能，尤其是在涉及直接访问关键基础设施的情况下。，在虚拟电厂最雄心勃勃的情况下，虚拟电厂将涉及通过机器学习算法进行电网优化。随着 DER 和 VPP 集成到电力系统中，云和边缘的使用将成为安全性、弹性和处理速度的决定性特征之一。显然，系统将两者兼而有之;运营电力系统需要处理和操作大量分散的数据，随着分散式 DER 和 VPP 的数量增加到数十万，每个 DER 和 VPP 都与家庭物联网以及相互通信，哪些信息应该在本地处理，哪些可以发送到云端将成为新的考试问题。</p>
+<hr>
+<p><strong>虚拟电厂 + 需求响应：</strong>聚合分布式可控资源参与需求侧响应服务，获得经济收益。</p>
+<p><strong>虚拟电厂 + 辅助服务：</strong>聚合分布式可控资源参与调峰等电力辅助服务交易，获得经济收益。</p>
+<p><strong>虚拟电厂 + 风光电站运营服务：</strong>为风光电站提供运营服务，通过收取软件服务费及合同能源管理方式。</p>
+<p><strong>虚拟电厂 + 储能资源运营服务：</strong>为风光电站提供运营服务，通过收取软件服务费及合同能源管理方式。</p>
+<p><strong>虚拟电厂 + 增值服务：</strong>通过提供绿电、绿证、双碳等相关产品咨询及购买服务，获取经济收益。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://pic3.zhimg.com/v2-f7871f13da08720388cb39d7249a5aa6_r.jpg"
+                      alt="img"
+                ></p>
+<p>虚拟电厂的三个角色：虚拟电厂产品提供方，负责开发、建设、运营和管理各类虚拟资源，并且抽象成虚拟电厂产品组合；虚拟电厂产品购买方，主要是电网调度部门和营销部门，未来也可以包括地方政府、配电公司、售电公司、<a class="link"   target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=%E7%94%B5%E5%8A%9B%E7%94%A8%E6%88%B7&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra=%7B%22sourceType%22:%22answer%22,%22sourceId%22:3153493652%7D" >电力用户 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，甚至其他市场主体；虚拟电厂产品的<a class="link"   target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=%E4%BA%A4%E6%98%93%E5%B9%B3%E5%8F%B0&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra=%7B%22sourceType%22:%22answer%22,%22sourceId%22:3153493652%7D" >交易平台 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，这和交易模式有关，如果是双边交易，则可以不经过集中式交易平台，由购买方-提供方协商完成交易。</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://picx.zhimg.com/v2-7f3dc918818a8f1d6832045ea6c90c2b_r.jpg?source=1940ef5c"
+                      alt="img" style="zoom:50%;" 
+                >
+
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://pic3.zhimg.com/v2-10194a780386f46a2235c81b750de9c2_r.jpg"
+                      alt="img" style="zoom:50%;" 
+                >
+
+<hr>
+<p>什么是虚拟电厂</p>
+<p>可再生能源接入电力系统比例的大幅提升带来了新的问题，由于风电和光伏等新能源在出力特性上具有随机性、间歇性、周期性、波动性的特点，高比例新能源接入电力系统，使得发电侧的电能产出无法控制。同时，由于新能源汽车等高功率负荷的高速增长，也使得用电侧负荷变得难以预估。电源侧和负荷侧双重不确定造成难以实现电能生产量和需求量的严格匹配，对电力系统的稳定性构成严重威胁。</p>
+<p><strong>构建新型电力系统是实现“双碳”目标的重要手段，以新能源为主体是新型电力系统的主要特征，对高比例可再生能源的消纳和调控是新型电力系统的核心能力。</strong></p>
+<p>随着分布式新能源并网容量的迅速提升，各类分布式储能系统也被大量配置于分布式新能源发电侧、配电网侧、用户侧和微电网，用于提升新能源消纳比例、保障供电稳定性、提升电能质量、峰谷套利等。与此同时，近年来在国家一系列政策助力下，我国新能源汽车数量也大幅增长。<strong>这些数量庞大的分布式新能源、分布式储能系统、电动汽车共同构成了新型电力系统下的分布式资源。</strong></p>
+<p>然而，<strong>现阶段大量的分布式资源由于单体规模较小，无法独立满足电网的调度需求，发挥最大效益。</strong></p>
+<h5 id="首先，可缓解分布式发电的负面效应，提高电网运行稳定性。"><a href="#首先，可缓解分布式发电的负面效应，提高电网运行稳定性。" class="headerlink" title="首先，可缓解分布式发电的负面效应，提高电网运行稳定性。"></a>首先，可缓解分布式发电的负面效应，提高电网运行稳定性。</h5><p>虚拟电厂作为一种可视化的自组织模式，不仅能够通过组合多种分布式资源实现发电，同时也能够通过调节可控负荷、采用分时电价、可中断电价以及用户时段储能等措施，来实现节能储备。这种协调控制优化大大降低了分布式资源并网对电网所造成的冲击，从而降低了分布式资源增长所带来的调度难度，使得配电管理更加合理有序，进而提高了系统运行的稳定性。</p>
+<h5 id="其次，可高效利用和促进分布式能源发电。"><a href="#其次，可高效利用和促进分布式能源发电。" class="headerlink" title="其次，可高效利用和促进分布式能源发电。"></a>其次，可高效利用和促进分布式能源发电。</h5><p>随着我国分布式光伏和分散式风电等分布式能源增长迅速，其大规模、高比例接入给电力系统的平衡和电网安全运行带来了一系列挑战。如果这些分布式发电以虚拟电厂的形式参与电网的运行，通过内部的组合优化，可以消除其波动对电网的影响，从而实现高效利用。此外，虚拟电厂还能使分布式能源从电力市场中获取最大的经济效益，缩短成本回收周期，从而吸引和扩大此类投资，进而促进分布式能源的发展。</p>
+<h5 id="最后，可以以市场手段促进发电资源的优化配置。"><a href="#最后，可以以市场手段促进发电资源的优化配置。" class="headerlink" title="最后，可以以市场手段促进发电资源的优化配置。"></a>最后，可以以市场手段促进发电资源的优化配置。</h5><p>虚拟电厂表现为传统的可调度发电厂。由于拥有多样化的发电资源，虚拟电厂不仅可以参与主能量市场，也可以参与辅助服务市场，从而参与多种电力市场的运营模式及其调度框架，对发电资源的广泛优化配置起到了积极的促进作用。</p>
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> 虚拟电厂与联邦学习(一)</li>
+        <li><strong>作者:</strong> 深情小小侯</li>
+        <li><strong>创建于
+                :</strong> 2023-11-20 09:33:22</li>
+        
+            <li>
+                <strong>更新于
+                    :</strong> 2023-11-30 09:27:39
+            </li>
+        
+        <li>
+            <strong>链接:</strong> https://redefine.ohevan.com/2023/11/20/虚拟电厂与联邦学习/
+        </li>
+        <li>
+            <strong>
+                版权声明:
+            </strong>
+            
+            本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0</a> 进行许可。
+            
+
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                        rel="prev"
+                        href="/2023/12/04/%E8%81%94%E9%82%A6%E5%AD%A6%E4%B9%A0%E5%9C%A8%E7%94%B5%E5%8A%9B%E6%95%B0%E6%8D%AE%E4%B8%8B%E7%9A%84%E9%9A%90%E7%A7%81%E4%BF%9D%E6%8A%A4%E7%A0%94%E7%A9%B6/"
+                        >
+                            <span class="left arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">联邦学习在电力数据场景下的隐私保护研究</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                        rel="next"
+                        href="/2023/11/02/%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81%EF%BC%88%E4%BA%8C%EF%BC%89/"
+                        >
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">差分隐私（二）</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+
+        
+            <div class="comment-container">
+                <div class="comments-container pjax">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fa-solid fa-comments"></i>&nbsp;评论
+    </div>
+    
+
+        
+            
+ 
+    <div id="waline"></div>
+    <script type="module"  data-swup-reload-script>
+        import { init } from '/js/libs/waline.mjs';
+
+        function loadWaline() {
+            init({
+                el: '#waline',
+                serverURL: 'https://example.example.com',
+                lang: 'zh-CN',
+                dark: 'body[class~="dark-mode"]',
+                requiredMeta: ['nick','mail'], // cannot customize by theme config, change it yourself
+            });
+        }
+
+        if ('true') {
+            const loadWalineTimeout = setTimeout(() => {
+                loadWaline();
+                clearTimeout(loadWalineTimeout);
+            }, 1000);
+        } else {
+            window.addEventListener('DOMContentLoaded', loadWaline);
+        }
+        
+    </script>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+
+    
+        <div class="toc-content-container">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <div class="toc-title">此页目录</div>
+        <div class="page-title">虚拟电厂与联邦学习(一)</div>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E7%94%B5%E5%8E%82"><span class="nav-number">1.</span> <span class="nav-text">虚拟电厂</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%91%E7%94%B5-%E7%BC%96%E8%BE%91"><span class="nav-number">1.1.</span> <span class="nav-text">发电[编辑 ]</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%85%E5%8A%A9%E6%9C%8D%E5%8A%A1-%E7%BC%96%E8%BE%91"><span class="nav-number">1.2.</span> <span class="nav-text">辅助服务[编辑 ]</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%BD%E6%BA%90%E4%BA%A4%E6%98%93-%E7%BC%96%E8%BE%91"><span class="nav-number">1.3.</span> <span class="nav-text">能源交易[编辑 ]</span></a></li></ol></li></ol>
+
+    </div>
+</div>
+        </div>
+    
+</div>
+
+
+
+                
+
+            </div>
+
+            
+
+        </div>
+
+        <div class="main-content-footer">
+            <footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2022</span>
+              -
+            
+            2023&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">深情小小侯</a>
+        </div>
+        
+            <script data-swup-reload-script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">访问人数</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">总访问量</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a> 驱动</span>
+            <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.5.0</a></span>
+        </div>
+        
+        
+            <div>
+                博客已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="article-tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="right-bottom-tools page-aside-toggle">
+                <i class="fa-regular fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fa-regular fa-comments"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-side-tools-container">
+        <div class="side-tools-container">
+    <ul class="hidden-tools-list">
+        <li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-plus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-minus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+            <i class="fa-regular fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+            <i class="fa-regular fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="visible-tools-list">
+        <li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+            <i class="fa-regular fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+        
+    </ul>
+</div>
+
+    </div>
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+
+</main>
+
+
+    
+<script src="/js/libs/Swup.min.js"></script>
+
+<script src="/js/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+
+
+
+<script src="/js/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/utils.js" type="module"></script>
+
+<script src="/js/main.js" type="module"></script>
+
+<script src="/js/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/layouts/categoryList.js" type="module"></script>
+
+
+
+
+
+    
+<script src="/js/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/tools/runtime.js"></script>
+
+    
+<script src="/js/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+  
+<script src="/js/libs/Typed.min.js"></script>
+
+  
+<script src="/js/plugins/typed.js" type="module"></script>
+
+
+
+
+
+
+    
+<script src="/js/libs/minimasonry.min.js"></script>
+
+    
+<script src="/js/plugins/masonry.js" type="module"></script>
+
+
+
+
+<div class="post-scripts" data-swup-reload-script>
+    
+        
+<script src="/js/libs/anime.min.js"></script>
+
+        
+<script src="/js/tools/tocToggle.js" type="module"></script>
+
+<script src="/js/layouts/toc.js" type="module"></script>
+
+<script src="/js/plugins/tabs.js" type="module"></script>
+
+    
+</div>
+
+
+</body>
+</html>
