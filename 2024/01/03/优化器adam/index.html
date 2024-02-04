@@ -13,20 +13,25 @@
     
     <!--- Seo Part-->
     
-    <link rel="canonical" href="http://example.com/2023/10/23/transformer-注意力机制/"/>
+    <link rel="canonical" href="http://example.com/2024/01/03/优化器adam/"/>
     <meta name="robots" content="index,follow">
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta property="og:type" content="article">
-<meta property="og:title" content="transformer-注意力机制">
-<meta property="og:url" content="http://example.com/2023/10/23/transformer-%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/index.html">
+        <meta name="description" content="写在前面我们定义一个通用的思路框架，方便在后面理解各算法之间的关系和改进。首先定义待优化参数 $\theta$，目标函数$J(\theta)$，学习率为$\alpha$ ，然后我们进行迭代优化，假设当前的epoch为，参数更新步骤如下：  计算目标函数关于当前参数的梯度：  $$\begin{equation}g_t&#x3D; \nabla J(\theta)\end{equation}\tag">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深情小小侯的博客">
+<meta property="og:url" content="http://example.com/2024/01/03/%E4%BC%98%E5%8C%96%E5%99%A8adam/index.html">
 <meta property="og:site_name" content="深情小小侯的博客">
+<meta property="og:description" content="写在前面我们定义一个通用的思路框架，方便在后面理解各算法之间的关系和改进。首先定义待优化参数 $\theta$，目标函数$J(\theta)$，学习率为$\alpha$ ，然后我们进行迭代优化，假设当前的epoch为，参数更新步骤如下：  计算目标函数关于当前参数的梯度：  $$\begin{equation}g_t&#x3D; \nabla J(\theta)\end{equation}\tag">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-10-23T01:03:50.000Z">
-<meta property="article:modified_time" content="2023-10-23T01:03:50.138Z">
+<meta property="og:image" content="https://latex.csdn.net/eq?t">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/0ebaf5af890536caa3c97730e7bc5871.png">
+<meta property="article:published_time" content="2024-01-03T01:30:29.000Z">
+<meta property="article:modified_time" content="2024-01-04T10:22:23.936Z">
 <meta property="article:author" content="深情小小侯">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://latex.csdn.net/eq?t">
     
     
     <!--- Icon Part-->
@@ -37,8 +42,6 @@
     <!--- Page Info-->
     
     <title>
-        
-            transformer-注意力机制 -
         
         深情小小侯的博客
     </title>
@@ -291,7 +294,7 @@
 
         <div class="article-title">
             
-                <h1 class="article-title-regular">transformer-注意力机制</h1>
+                <h1 class="article-title-regular"></h1>
             
             </div>
             
@@ -313,15 +316,15 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fa-regular fa-pen-fancy"></i>&nbsp;
-        <span class="desktop">2023-10-23 09:03:50</span>
-        <span class="mobile">2023-10-23 09:03:50</span>
+        <span class="desktop">2024-01-03 09:30:29</span>
+        <span class="mobile">2024-01-03 09:30:29</span>
         <span class="hover-info">创建</span>
     </span>
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2023-10-23 09:03:50</span>
-            <span class="mobile">2023-10-23 09:03:50</span>
+            <span class="desktop">2024-01-04 18:22:23</span>
+            <span class="mobile">2024-01-04 18:22:23</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -348,25 +351,129 @@
 
 
         <div class="article-content markdown-body">
-            
+            <h1 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h1><p>我们定义一个通用的思路框架，方便在后面理解各算法之间的关系和改进。首先定义待优化参数 $\theta$，目标函数$J(\theta)$，学习率为$\alpha$ ，然后我们进行迭代优化，假设当前的epoch为<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://latex.csdn.net/eq?t"
+                      alt="t"
+                >，参数更新步骤如下：</p>
+<ol>
+<li>计算目标函数关于当前参数的梯度：</li>
+</ol>
+<p>$$<br>\begin{equation}g_t&#x3D; \nabla J(\theta)\end{equation}\tag{1}<br>$$</p>
+<ol start="2">
+<li><p>根据历史梯度计算一阶动量和二阶动量 $m_t和v_t$</p>
+</li>
+<li><p>计算当前时刻的下降梯度</p>
+</li>
+</ol>
+<p>$$<br>\eta_t &#x3D; α·m_t&#x2F;\sqrt{V_t} \tag{2}<br>$$</p>
+<ol start="4">
+<li>根据下降梯度进行更新：</li>
+</ol>
+<p>$$<br>\theta_{t+1} &#x3D; \theta_t-\eta_t \tag{3}<br>$$</p>
+<p>下面介绍的所有优化算法基本都能套用这个流程，只是式子（3）的形式会有变化。</p>
+<h1 id="SGD随机梯度下降"><a href="#SGD随机梯度下降" class="headerlink" title="SGD随机梯度下降"></a>SGD随机梯度下降</h1><p>随机梯度下降每一次随机对一个训练样本计算梯度，并更新参数θ<br>$$<br>\theta &#x3D; \theta -\eta ·\nabla_{\theta}J(\theta:minibatch) 		\tag{6}<br>$$<br>优点：</p>
+<ul>
+<li>由于一次只用一个数据，因此梯度更新很快</li>
+<li>也会处于一个高 variance 的状态，更新时 loss 比较震荡，可能会使得其跳出局部最优点到达一个更好的局部最优。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>选择合适的学习率仍然是一个玄学</li>
+<li>学习率 schedule 需要预设不能自适应数据集的特点</li>
+<li>学习率针对所有参数，而并非所有参数需要同样的学习率</li>
+<li>对于非凸问题极易陷入局部最优</li>
+</ul>
+<h2 id="SGD-with-Momentum"><a href="#SGD-with-Momentum" class="headerlink" title="SGD with Momentum"></a>SGD with Momentum</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">torch</span>.optim.SGD(params, lr=&lt;<span class="built_in">object</span> <span class="built_in">object</span>&gt;, momentum=<span class="number">0</span>, dampening=<span class="number">0</span>, weight_decay=<span class="number">0</span>, nesterov=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure></div>
+
+<p>动量是一种有助于在相关方向上加速SGD并抑制振荡的方法，<strong>通过将当前梯度与过去梯度加权平均，来获取即将更新的梯度</strong>。如下图b图所示。它通过将过去时间步长的更新向量的一小部分添加到当前更新向量来实现这一点。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://img-blog.csdnimg.cn/img_convert/0ebaf5af890536caa3c97730e7bc5871.png"
+                     
+                ></p>
+<p>参数更新公式如下，其中ρ 是动量衰减率，m是速率（即一阶动量）：<br>$$<br>g_t &#x3D; \nabla_{\theta}J(\theta_{t-1})		 \tag{5}<br>$$</p>
+<p>$$<br>m_t &#x3D; \rho *m_{t-1}+g_t 			\tag{6}<br>$$</p>
+<p>$$<br>\theta_t &#x3D; \theta_{t-1}-\eta*m_t  		\tag{7}<br>$$</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">torch</span>.optim.SGD(params, lr=<span class="number">0.01</span>, momentum=<span class="number">0</span>, dampening=<span class="number">0</span>, weight_decay=<span class="number">0</span>, nesterov=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure></div>
+
+<p>使用了Momentum有如下特点：</p>
+<p>优点：加快收敛速度，有一定摆脱局部最优的能力，一定程度上缓解了没有动量的时候的问题</p>
+<p>缺点：a.仍然继承了一部分SGD的缺点</p>
+<p>​	 b.在随机梯度情况下，NAG对收敛率的作用不是很大</p>
+<p>​	 c.Momentum都是为了使梯度更新更灵活。但是人工设计的学习率总是有些生硬</p>
+<h1 id="AdaGrad"><a href="#AdaGrad" class="headerlink" title="AdaGrad"></a>AdaGrad</h1><p>Adagrad 是一种自适应梯度的优化器，它有什么特点呢？它对不同参数使用不同的学习率，对于更新频率较低的参数施以较大的学习率，对于更新频率较高的参数用以较小的学习率。我们先来看一下公式：$$g_{t,i}&#x3D; \nabla_{\theta_{t}} J(\theta_{t,i})$$</p>
+<p>$$g_{t,i}$$代表了第 t 步的第 i 个参数 $$\theta_{t,i}$$ 的梯度，梯度更新则使用下列式子：<br>$$<br>J(\theta_{t+1,i})&#x3D;J(\theta_{t,i})-\frac{\eta}{\sqrt{(G_{t,ii}+\epsilon)}}·g_{t,i} 				\tag{8}<br>$$</p>
+<p>实际上，Adagrad 在优化稀疏数据的时候表现会比较好，但是其缺点也是显而易见的，由于 Gt,ii��,�� 是一个非负数，随着步数增加很容易越累积越大，从导致学习率过早变小，学习缓慢。</p>
+<p>AdaGrad对学习率进行了一个约束，对于经常更新的参数，我们已经积累了大量关于它的知识，不希望被单个样本影响太大，希望学习速率慢一些；对于偶尔更新的参数，我们了解的信息太少，希望能从每个偶然出现的样本身上多学一些，即学习速率大一些。这样大大提高梯度下降的鲁棒性。而该方法中开始使用二阶动量，才意味着“自适应学习率”优化算法时代的到来。<br>        在SGD中，我们每次迭代对所有参数进行更新，因为每个参数使用相同的学习率。而AdaGrad在每个时间步长对每个参数使用不同的学习率。AdaGrad消除了手动调整学习率的需要。AdaGrad在迭代过程中不断调整学习率，并让目标函数中的每个参数都分别拥有自己的学习率。大多数实现使用学习率默认值为0.01，开始设置一个较大的学习率。<br> AdaGrad引入了二阶动量。二阶动量是迄今为止所有梯度值的平方$ V_t&#x3D;\sum_{t}^{i&#x3D;1}g^{2}<em>{i}$它是用来度量历史更新频率的。也就是说，我们的学习率现在是**$\frac{\eta}{\sqrt{(G_{t,ii}+\epsilon)}}$**从这里我们就会发现分母恒大于0，而且参数更新越频繁，二阶动量越大，学习率就越小，这一方法在稀疏数据场景下表现非常好，参数更新公式如下：<br>$$<br>v_t &#x3D; \sum</em>{i&#x3D;1}^{t}g_{t}^{2}			\tag{9}<br>$$</p>
+<p>$$<br>\theta_t&#x3D;\theta_{t-1}-\frac{\eta}{\sqrt{v_t+\epsilon}} *g_t			\tag{10}<br>$$</p>
+<p><strong>显然$\frac{\eta}{\sqrt{(G_{t,ii}+\epsilon)}}$会趋近于0</strong>，</p>
+<p><strong>总结</strong></p>
+<p>​        AdaGrad在每个时间步长对每个参数使用不同的学习率。并且引入了二阶动量，二阶动量是迄今为止所有梯度值的平方和。</p>
+<p>优点：AdaGrad消除了手动调整学习率的需要。AdaGrad在迭代过程中不断调整学习率，并让目标函数中的每个参数都分别拥有自己的学习率。</p>
+<p>缺点：a.仍需要手工设置一个全局学习率  , 如果  设置过大的话，会使regularizer过于敏感，对梯度的调节太大</p>
+<p>​    b.<strong>在分母中累积平方梯度，由于每个添加项都是正数，因此在训练过程中累积和不断增长</strong>。这导致学习率不断变小并最终变得无限小，此时算法不再能够获得额外的知识即导致模型不会再次学习。</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">params (iterable) – 待优化参数的iterable或者是定义了参数组的dict</span></span><br><span class="line"><span class="string">lr (float, 可选) – 学习率（默认: 1e-2）</span></span><br><span class="line"><span class="string">lr_decay (float, 可选) – 学习率衰减（默认: 0）</span></span><br><span class="line"><span class="string">weight_decay (float, 可选) – 权重衰减（L2惩罚）（默认: 0）</span></span><br><span class="line"><span class="string">initial_accumulator_value - 累加器的起始值，必须为正。</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">torch</span>.optim.Adagrad(params, lr=<span class="number">0.01</span>, lr_decay=<span class="number">0</span>, weight_decay=<span class="number">0</span>, initial_accumulator_value=<span class="number">0</span>)</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h1 id="RMSProp"><a href="#RMSProp" class="headerlink" title="RMSProp"></a>RMSProp</h1><p>RMSProp算法有效解决了这个问题。通过累计各个变量的梯度的平方r，然后用每个变量的梯度除以r，即可有效缓解变量间的梯度差异。如下伪代码是计算过程。</p>
+<p> 该类实现 RMSprop 优化方法（Hinton 提出），RMS 是均方根（root meam square）的意思。RMSprop 和 Adadelta 一样，也是对 Adagrad 的一种改进。RMSprop 采用<strong>均方根作为分母</strong>，可缓解 Adagrad 学习率下降较快的问题，并且引入均方根，可以减少摆动。</p>
+<p>RMSprop与Adadelta属于同一时期的作品，都是对Adagrad的优化，解决了Adagrad多次迭代后，学习率将逐渐下降至0的问题。RMSProp算法将AdaGrad的梯度平方和累改加为指数加权的移动平均，使得其在非凸设定下效果更好。设定参数：全局初始率 $l$默认设为0.001，decay rate$\rho$ ，默认设置为0.9，一个极小的常量$\epsilon$  ，通常为10e-6，参数更新公式如下：</p>
+<p>$$<br>v_t &#x3D;\rho v_{t-1}+(1-\rho)g_{t}^2			\tag{11}<br>$$</p>
+<p>$$<br>\theta_t&#x3D;\theta_{t-1}-\frac{\eta}{\sqrt{v_t}+\epsilon} *g_t			\tag{10}<br>$$</p>
+<p> 可以看到式子（15）和Adadelta的（13）的分母是基本一样的（只是的位置有所区别），两者虽然思想不一样，但是实现一样的，都是指数加权的移动平均，也算殊途同归了。</p>
+<p><strong>总结</strong></p>
+<p> RMSprop算是Adagrad的一种发展，用梯度平方的指数加权平均代替了全部梯度的平方和，相当于只实现了Adadelta的第一个修改，效果趋于RMSprop和Adadelta二者之间。</p>
+<p>优点：适合处理非平稳目标(包括季节性和周期性)——对于RNN效果很好</p>
+<p>缺点：RMSprop依然依赖于全局学习率 </p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=pytorch&spm=1001.2101.3001.7020" >pytorch <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> RMSProp参数</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">torch.optim.RMSprop(params,</span><br><span class="line">                    lr=<span class="number">0.01</span>,</span><br><span class="line">                    alpha=<span class="number">0.99</span>, <span class="comment">### 平滑常数</span></span><br><span class="line">                    eps=<span class="number">1e-08</span>,  <span class="comment">### epsilon,加在分母上防止除0</span></span><br><span class="line">                    weight_decay=<span class="number">0</span>, <span class="comment">## weight_decay的作用是用当前可学习参数p的值修改偏导数，即</span></span><br><span class="line">                    momentum=<span class="number">0</span>,</span><br><span class="line">                    centered=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure></div>
+
+<p>$alpha 平滑常数$<br>$epsilon,加在分母上防止除0 $</p>
+<p>$weight_decay的作用是用当前可学习参数p的值修改偏导数，即g_t &#x3D; g_t+(p*weight_decay)$</p>
+<h1 id="Adam"><a href="#Adam" class="headerlink" title="Adam"></a>Adam</h1><p>**torch.optim.Adam,**该类实现 Adam(Adaptive Moment Estimation))优化方法。Adam 是一种自适应学习率的优化方法，Adam 利用梯度的一阶矩估计和二阶矩估计动态的调整学习率。Adam 是结合了 Momentum 和 RMSprop，并进行了偏差修正。 了解了Adagrad 和RMSProp。</p>
+<p>​    <strong>在adam中，一阶矩来控制模型更新的方向，二阶矩控制步长(学习率)。利用梯度的一阶矩估计和二阶矩估计动态调整每个参数的学习率。</strong></p>
+<p>$$<br>m_t &#x3D; \beta_1*m_{t-1}+(1-\beta_1)*g_t 		\tag{13}<br>$$</p>
+<p>$$<br>v_t  &#x3D;\beta_2*v_{t-1}+(1-\beta_2)*g_t^2			\tag{14}<br>$$</p>
+<p>$$<br>\hat{m_t}&#x3D;\frac{m_t}{1-\beta_1^t}		\tag{15}<br>$$</p>
+<p>$$<br>\hat{v_t}&#x3D;\frac{v_t}{1-\beta_2^t}   \tag{16}<br>$$</p>
+<p>$$<br>\theta_t &#x3D; \theta_{t-1}-\eta*\frac{\hat{m}_t}{\sqrt{\hat{v}_t}+\epsilon}				\tag{17}<br>$$</p>
+<p>式子(17)更新模型参数 ，分子表示在过去一段时间内各分量的平均值，即梯度更新的大致走向，分母表示在过去一段时间内各分量的平均大小。相当于分两步走，第一步是确定一个合适的下降方向（即分子项），第二步，对这个选定的方向上的各个子方向做一下微调（分母项），这样，推进较快的子方向会慢下来，推进较慢的子方向会加快速度，动态调整了各个子方向的学习率。因此，Adam结合了Momentum和RMSprop两种算法的优点</p>
+<p>主要包含以下几个显著的优点：</p>
+<p>\1. 实现简单，计算高效，对内存需求少</p>
+<p>\2. 参数的更新不受梯度的伸缩变换影响</p>
+<p>\3. 超参数具有很好的解释性，且通常无需调整或仅需很少的微调</p>
+<p>\4. 更新的步长能够被限制在大致的范围内（初始学习率）</p>
+<p>\5. 能自然地实现步长退火过程（自动调整学习率）</p>
+<p>\6. 很适合应用于大规模的数据及参数的场景</p>
+<p>\7. 适用于不稳定目标函数</p>
+<p>\8. 适用于梯度稀疏或梯度存在很大噪声的问题</p>
+<p>β1 系数为指数衰减率，控制权重分配（动量与当前梯度），通常取接近于1的值。</p>
+<p>β2 系数为指数衰减率，控制之前的梯度平方的影响情况。</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">torch</span>.optim.Adam(params, lr=<span class="number">0.001</span>, betas=(<span class="number">0.9</span>, <span class="number">0.999</span>), eps=<span class="number">1e-08</span>, weight_decay=<span class="number">0</span>)   <span class="comment">#betas(β1,β2)</span></span><br></pre></td></tr></table></figure></div>
+
+
         </div>
 
         
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li><strong>标题:</strong> transformer-注意力机制</li>
+        <li><strong>标题:</strong> </li>
         <li><strong>作者:</strong> 深情小小侯</li>
         <li><strong>创建于
-                :</strong> 2023-10-23 09:03:50</li>
+                :</strong> 2024-01-03 09:30:29</li>
         
             <li>
                 <strong>更新于
-                    :</strong> 2023-10-23 09:03:50
+                    :</strong> 2024-01-04 18:22:23
             </li>
         
         <li>
-            <strong>链接:</strong> https://redefine.ohevan.com/2023/10/23/transformer-注意力机制/
+            <strong>链接:</strong> https://redefine.ohevan.com/2024/01/03/优化器adam/
         </li>
         <li>
             <strong>
@@ -393,13 +500,13 @@
                     <div class="article-prev">
                         <a class="prev"
                         rel="prev"
-                        href="/2023/10/23/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%AE%9E%E6%88%98/"
+                        href="/2024/01/03/Pytorch%E4%BC%98%E5%8C%96%E5%99%A8%E5%85%A8%E6%80%BB%E7%BB%93%EF%BC%88%E4%B8%80%EF%BC%89SGD%E3%80%81ASGD%E3%80%81Rprop%E3%80%81Adagrad/"
                         >
                             <span class="left arrow-icon flex justify-center items-center">
                                 <i class="fa-solid fa-chevron-left"></i>
                             </span>
                             <span class="title flex justify-center items-center">
-                                <span class="post-nav-title-item">图神经网络实战</span>
+                                <span class="post-nav-title-item">Pytorch优化器全总结（一）SGD、ASGD、Rprop、Adagrad</span>
                                 <span class="post-nav-item">上一篇</span>
                             </span>
                         </a>
@@ -409,10 +516,10 @@
                     <div class="article-next">
                         <a class="next"
                         rel="next"
-                        href="/2023/10/23/%E5%9B%BE%E8%81%94%E9%82%A6/"
+                        href="/2023/12/25/%E2%80%9C%E6%9D%8E%E6%B2%90%E8%8A%B1%E4%B9%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E2%80%9D/"
                         >
                             <span class="title flex justify-center items-center">
-                                <span class="post-nav-title-item">图神经网络(二)</span>
+                                <span class="post-nav-title-item">“基础模型pytorch学习笔记”</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex justify-center items-center">
@@ -477,8 +584,8 @@
             <div class="post-toc-wrap">
     <div class="post-toc">
         <div class="toc-title">此页目录</div>
-        <div class="page-title">transformer-注意力机制</div>
-        
+        <div class="page-title"></div>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%99%E5%9C%A8%E5%89%8D%E9%9D%A2"><span class="nav-number">1.</span> <span class="nav-text">写在前面</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SGD%E9%9A%8F%E6%9C%BA%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D"><span class="nav-number">2.</span> <span class="nav-text">SGD随机梯度下降</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#SGD-with-Momentum"><span class="nav-number">2.1.</span> <span class="nav-text">SGD with Momentum</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#AdaGrad"><span class="nav-number">3.</span> <span class="nav-text">AdaGrad</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RMSProp"><span class="nav-number">4.</span> <span class="nav-text">RMSProp</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Adam"><span class="nav-number">5.</span> <span class="nav-text">Adam</span></a></li></ol>
 
     </div>
 </div>
