@@ -1250,39 +1250,7 @@
 <h2 id="pytorch-RMSProp参数"><a href="#pytorch-RMSProp参数" class="headerlink" title="pytorch RMSProp参数"></a><a class="link"   href="https://so.csdn.net/so/search?q=pytorch&spm=1001.2101.3001.7020" >pytorch <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> RMSProp参数</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">torch.optim.RMSprop(params,</span><br><span class="line">                    lr=<span class="number">0.01</span>,</span><br><span class="line">                    alpha=<span class="number">0.99</span>, <span class="comment">### 平滑常数</span></span><br><span class="line">                    eps=<span class="number">1e-08</span>,  <span class="comment">### epsilon,加在分母上防止除0</span></span><br><span class="line">                    weight_decay=<span class="number">0</span>, <span class="comment">## weight_decay的作用是用当前可学习参数p的值修改偏导数，即</span></span><br><span class="line">                    momentum=<span class="number">0</span>,</span><br><span class="line">                    centered=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure></div>
 
 <p>$$<br>alpha 平滑常数 \<br>epsilon,加在分母上防止除0 \<br>weight_decay的作用是用当前可学习参数p的值修改偏导数，即g_t &#x3D; g_t+(p*weight_decay)<br>$$</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>基础模型pytorch学习笔记</title>
-    <url>/2023/12/25/%E5%9F%BA%E7%A1%80%E6%A8%A1%E5%9E%8Bpytorch%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%20/</url>
-    <content><![CDATA[<h1 id="Resnet"><a href="#Resnet" class="headerlink" title="Resnet"></a>Resnet</h1><p><strong>问题：随着神经网络的不断加深，一定会带来好处吗？</strong></p>
-<p>蓝色五角星表示最优值<br>标有Fi的闭合区域表示函数，闭合区域的面积代表函数的复杂程度，在这个区域中能够找到一个最优的模型（可以用区域中的一个点来表示，该点到最优值的距离可以用来衡量模型的好坏）<br>从上图中可以看出，随着函数的复杂度的不断增加，虽然函数的区域面积增大了，但是在该区域中所能找到的最优模型（该区域内的某一点）离最优值的距离可能会越来越远（也就是模型所在的区域随着函数复杂度的增加，逐渐偏离了原来的区域，离最优值越来越远）（非嵌套函数（non-nested function））<br>解决上述问题（模型走偏）的方法：每一次增加函数复杂度之后函数所覆盖的区域会包含原来函数所在的区域（嵌套函数（nested function）），只有当较复杂的函数类包含复杂度较小的函数类时，才能确保提高它的性能，如下图所示 </p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://i0.hdslb.com/bfs/note/c2e5b2e4475660b29a5166856b0c224e2ce52faf.png@1014w_!web-note.avif"
-                      alt="残差块"
-                ></p>
-<p>之前增加模型深度的方法都是层层堆叠的方法，ResNet的思想是在堆叠层数的同时不会增加模型的复杂度<br>上图中左侧表示一个正常块，右侧表示一个残差块<br>x：原始输入<br>f(x)：理想映射（也是激活函数的输入）<br>对于正常块中来说，虚线框中的部分需要直接拟合出理想映射 f(x)；而对于残差块来说，同样的虚线框中的部分需要拟合出残差映射 f(x) - x<br>残差映射在现实中往往更容易优化<br>如果以恒等映射 f(x) &#x3D; x 作为所想要学出的理想映射 f(x)，则只需要将残差块中虚线框内加权运算的权重和偏置参数设置为 0，f(x) 就变成恒等映射了<br>在实际中，当理想映射 f(x) 极接近于恒等映射时，残差映射易于捕捉恒等映射的细微波动<br>在残差块中，输入可以通过跨层数据线路更快地向前传播  </p>
-<p>残差块使得很深的网络更加容易训练（不管网络有多深，因为有跨层数据通路连接的存在，使得始终能够包含小的网络，因为跳转连接的存在，所以会先将下层的小型网络训练好再去训练更深层次的网络），甚至可以训练一千层的网络（只要内存足够，优化算法就能够实现）<br>学习嵌套函数是神经网络的理想情况，在深层神经网络中，学习另一层作为恒等映射比较容易<br>残差映射可以更容易地学习同一函数，例如将权重层中的参数近似为零<br>利用残差块可以训练出一个有效的深层神经网络：输入可以通过层间的残余连接更快地向前传播<br>残差网络对随后的深层神经网络的设计产生了深远影响，无论是卷积类网络还是全连接类网络，几乎现在所有的网络都会用到，因为只有这样才能够让网络搭建的更深</p>
-<hr>
-<h2 id="残差块"><a href="#残差块" class="headerlink" title="残差块:"></a>残差块:</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">from</span> torch.nn <span class="keyword">import</span> functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> d2l <span class="keyword">import</span> torch <span class="keyword">as</span> d2l</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Residual</span>(nn.Module):  </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, input_channels, num_channels,</span></span><br><span class="line"><span class="params">                 use_1x1conv=<span class="literal">False</span>, strides=<span class="number">1</span></span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(input_channels, num_channels,</span><br><span class="line">                               kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>, stride=strides)</span><br><span class="line">        self.conv2 = nn.Conv2d(num_channels, num_channels,</span><br><span class="line">                               kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">if</span> use_1x1conv:</span><br><span class="line">            self.conv3 = nn.Conv2d(input_channels, num_channels,</span><br><span class="line">                                   kernel_size=<span class="number">1</span>, stride=strides)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.conv3 = <span class="literal">None</span></span><br><span class="line">        self.bn1 = nn.BatchNorm2d(num_channels)</span><br><span class="line">        self.bn2 = nn.BatchNorm2d(num_channels)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, X</span>):</span><br><span class="line">        Y = F.relu(self.bn1(self.conv1(X)))</span><br><span class="line">        Y = self.bn2(self.conv2(Y))</span><br><span class="line">        <span class="keyword">if</span> self.conv3:</span><br><span class="line">            X = self.conv3(X)</span><br><span class="line">        Y += X</span><br><span class="line">        <span class="keyword">return</span> F.relu(Y)</span><br></pre></td></tr></table></figure></div>
-
-<p>通俗的说就是如果加了conv3的效果好，loss小了  就用，不然就不用</p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://zh-v2.d2l.ai/_images/resnet-block.svg"
-                      alt="包含以及不包含 1×1 卷积层的残差块"
-                ></p>
-<h2 id="Resnet模型"><a href="#Resnet模型" class="headerlink" title="Resnet模型"></a>Resnet模型</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">b1 = nn.Sequential(nn.Conv2d(<span class="number">1</span>, <span class="number">64</span>, kernel_size=<span class="number">7</span>, stride=<span class="number">2</span>, padding=<span class="number">3</span>),</span><br><span class="line">                   nn.BatchNorm2d(<span class="number">64</span>), nn.ReLU(),</span><br><span class="line">                   nn.MaxPool2d(kernel_size=<span class="number">3</span>, stride=<span class="number">2</span>, padding=<span class="number">1</span>))</span><br></pre></td></tr></table></figure></div>
-
-]]></content>
-  </entry>
-  <entry>
-    <title></title>
-    <url>/2024/01/03/Pytorch%E4%BC%98%E5%8C%96%E5%99%A8SGD%E3%80%81SGDM%E3%80%81Rprop%E3%80%81Adagrad%E3%80%81Adma/</url>
-    <content><![CDATA[<h1 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h1><p>我们定义一个通用的思路框架，方便在后面理解各算法之间的关系和改进。首先定义待优化参数 $\theta$，目标函数$J(\theta)$，学习率为$\alpha$ ，然后我们进行迭代优化，假设当前的epoch为(<a class="link"   href="https://latex.csdn.net/eq?t)%EF%BC%8C%E5%8F%82%E6%95%B0%E6%9B%B4%E6%96%B0%E6%AD%A5%E9%AA%A4%E5%A6%82%E4%B8%8B%EF%BC%9A" >https://latex.csdn.net/eq?t)，参数更新步骤如下： <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h1 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h1><p>我们定义一个通用的思路框架，方便在后面理解各算法之间的关系和改进。首先定义待优化参数 $\theta$，目标函数$J(\theta)$，学习率为$\alpha$ ，然后我们进行迭代优化，假设当前的epoch为(<a class="link"   href="https://latex.csdn.net/eq?t)%EF%BC%8C%E5%8F%82%E6%95%B0%E6%9B%B4%E6%96%B0%E6%AD%A5%E9%AA%A4%E5%A6%82%E4%B8%8B%EF%BC%9A" >https://latex.csdn.net/eq?t)，参数更新步骤如下： <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
 <ol>
 <li>计算目标函数关于当前参数的梯度：</li>
 </ol>
@@ -1345,7 +1313,7 @@
 
 
 
-<h1 id="RMSProp"><a href="#RMSProp" class="headerlink" title="RMSProp"></a>RMSProp</h1><p>RMSProp算法有效解决了这个问题。通过累计各个变量的梯度的平方r，然后用每个变量的梯度除以r，即可有效缓解变量间的梯度差异。如下伪代码是计算过程。</p>
+<h1 id="RMSProp-1"><a href="#RMSProp-1" class="headerlink" title="RMSProp"></a>RMSProp</h1><p>RMSProp算法有效解决了这个问题。通过累计各个变量的梯度的平方r，然后用每个变量的梯度除以r，即可有效缓解变量间的梯度差异。如下伪代码是计算过程。</p>
 <p> 该类实现 RMSprop 优化方法（Hinton 提出），RMS 是均方根（root meam square）的意思。RMSprop 和 Adadelta 一样，也是对 Adagrad 的一种改进。RMSprop 采用<strong>均方根作为分母</strong>，可缓解 Adagrad 学习率下降较快的问题，并且引入均方根，可以减少摆动。</p>
 <p>RMSprop与Adadelta属于同一时期的作品，都是对Adagrad的优化，解决了Adagrad多次迭代后，学习率将逐渐下降至0的问题。RMSProp算法将AdaGrad的梯度平方和累改加为指数加权的移动平均，使得其在非凸设定下效果更好。设定参数：全局初始率 $l$默认设为0.001，decay rate$\rho$ ，默认设置为0.9，一个极小的常量$\epsilon$  ，通常为10e-6，参数更新公式如下：</p>
 <p>$$<br>v_t &#x3D;\rho v_{t-1}+(1-\rho)g_{t}^2			\tag{11}<br>$$</p>
@@ -1360,7 +1328,7 @@
 
 <p>$alpha 平滑常数$<br>$epsilon,加在分母上防止除0 $</p>
 <p>$weight_decay的作用是用当前可学习参数p的值修改偏导数，即g_t &#x3D; g_t+(p*weight_decay)$</p>
-<h1 id="Adam"><a href="#Adam" class="headerlink" title="Adam"></a>Adam</h1><p>**torch.optim.Adam,**该类实现 Adam(Adaptive Moment Estimation))优化方法。Adam 是一种自适应学习率的优化方法，Adam 利用梯度的一阶矩估计和二阶矩估计动态的调整学习率。Adam 是结合了 Momentum 和 RMSprop，并进行了偏差修正。 了解了Adagrad 和RMSProp。</p>
+<h1 id="Adam-1"><a href="#Adam-1" class="headerlink" title="Adam"></a>Adam</h1><p>**torch.optim.Adam,**该类实现 Adam(Adaptive Moment Estimation))优化方法。Adam 是一种自适应学习率的优化方法，Adam 利用梯度的一阶矩估计和二阶矩估计动态的调整学习率。Adam 是结合了 Momentum 和 RMSprop，并进行了偏差修正。 了解了Adagrad 和RMSProp。</p>
 <p>​    <strong>在adam中，一阶矩来控制模型更新的方向，二阶矩控制步长(学习率)。利用梯度的一阶矩估计和二阶矩估计动态调整每个参数的学习率。</strong></p>
 <p>$$<br>m_t &#x3D; \beta_1*m_{t-1}+(1-\beta_1)*g_t 		\tag{13}<br>$$</p>
 <p>$$<br>v_t  &#x3D;\beta_2*v_{t-1}+(1-\beta_2)*g_t^2			\tag{14}<br>$$</p>
@@ -1382,5 +1350,37 @@
 <div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">torch</span>.optim.Adam(params, lr=<span class="number">0.001</span>, betas=(<span class="number">0.9</span>, <span class="number">0.999</span>), eps=<span class="number">1e-08</span>, weight_decay=<span class="number">0</span>)   <span class="comment">#betas(β1,β2)</span></span><br></pre></td></tr></table></figure></div>
 
 ]]></content>
+  </entry>
+  <entry>
+    <title>基础模型pytorch学习笔记</title>
+    <url>/2023/12/25/%E5%9F%BA%E7%A1%80%E6%A8%A1%E5%9E%8Bpytorch%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%20/</url>
+    <content><![CDATA[<h1 id="Resnet"><a href="#Resnet" class="headerlink" title="Resnet"></a>Resnet</h1><p><strong>问题：随着神经网络的不断加深，一定会带来好处吗？</strong></p>
+<p>蓝色五角星表示最优值<br>标有Fi的闭合区域表示函数，闭合区域的面积代表函数的复杂程度，在这个区域中能够找到一个最优的模型（可以用区域中的一个点来表示，该点到最优值的距离可以用来衡量模型的好坏）<br>从上图中可以看出，随着函数的复杂度的不断增加，虽然函数的区域面积增大了，但是在该区域中所能找到的最优模型（该区域内的某一点）离最优值的距离可能会越来越远（也就是模型所在的区域随着函数复杂度的增加，逐渐偏离了原来的区域，离最优值越来越远）（非嵌套函数（non-nested function））<br>解决上述问题（模型走偏）的方法：每一次增加函数复杂度之后函数所覆盖的区域会包含原来函数所在的区域（嵌套函数（nested function）），只有当较复杂的函数类包含复杂度较小的函数类时，才能确保提高它的性能，如下图所示 </p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://i0.hdslb.com/bfs/note/c2e5b2e4475660b29a5166856b0c224e2ce52faf.png@1014w_!web-note.avif"
+                      alt="残差块"
+                ></p>
+<p>之前增加模型深度的方法都是层层堆叠的方法，ResNet的思想是在堆叠层数的同时不会增加模型的复杂度<br>上图中左侧表示一个正常块，右侧表示一个残差块<br>x：原始输入<br>f(x)：理想映射（也是激活函数的输入）<br>对于正常块中来说，虚线框中的部分需要直接拟合出理想映射 f(x)；而对于残差块来说，同样的虚线框中的部分需要拟合出残差映射 f(x) - x<br>残差映射在现实中往往更容易优化<br>如果以恒等映射 f(x) &#x3D; x 作为所想要学出的理想映射 f(x)，则只需要将残差块中虚线框内加权运算的权重和偏置参数设置为 0，f(x) 就变成恒等映射了<br>在实际中，当理想映射 f(x) 极接近于恒等映射时，残差映射易于捕捉恒等映射的细微波动<br>在残差块中，输入可以通过跨层数据线路更快地向前传播  </p>
+<p>残差块使得很深的网络更加容易训练（不管网络有多深，因为有跨层数据通路连接的存在，使得始终能够包含小的网络，因为跳转连接的存在，所以会先将下层的小型网络训练好再去训练更深层次的网络），甚至可以训练一千层的网络（只要内存足够，优化算法就能够实现）<br>学习嵌套函数是神经网络的理想情况，在深层神经网络中，学习另一层作为恒等映射比较容易<br>残差映射可以更容易地学习同一函数，例如将权重层中的参数近似为零<br>利用残差块可以训练出一个有效的深层神经网络：输入可以通过层间的残余连接更快地向前传播<br>残差网络对随后的深层神经网络的设计产生了深远影响，无论是卷积类网络还是全连接类网络，几乎现在所有的网络都会用到，因为只有这样才能够让网络搭建的更深</p>
+<hr>
+<h2 id="残差块"><a href="#残差块" class="headerlink" title="残差块:"></a>残差块:</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">from</span> torch.nn <span class="keyword">import</span> functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> d2l <span class="keyword">import</span> torch <span class="keyword">as</span> d2l</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Residual</span>(nn.Module):  </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, input_channels, num_channels,</span></span><br><span class="line"><span class="params">                 use_1x1conv=<span class="literal">False</span>, strides=<span class="number">1</span></span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(input_channels, num_channels,</span><br><span class="line">                               kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>, stride=strides)</span><br><span class="line">        self.conv2 = nn.Conv2d(num_channels, num_channels,</span><br><span class="line">                               kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">if</span> use_1x1conv:</span><br><span class="line">            self.conv3 = nn.Conv2d(input_channels, num_channels,</span><br><span class="line">                                   kernel_size=<span class="number">1</span>, stride=strides)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.conv3 = <span class="literal">None</span></span><br><span class="line">        self.bn1 = nn.BatchNorm2d(num_channels)</span><br><span class="line">        self.bn2 = nn.BatchNorm2d(num_channels)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, X</span>):</span><br><span class="line">        Y = F.relu(self.bn1(self.conv1(X)))</span><br><span class="line">        Y = self.bn2(self.conv2(Y))</span><br><span class="line">        <span class="keyword">if</span> self.conv3:</span><br><span class="line">            X = self.conv3(X)</span><br><span class="line">        Y += X</span><br><span class="line">        <span class="keyword">return</span> F.relu(Y)</span><br></pre></td></tr></table></figure></div>
+
+<p>通俗的说就是如果加了conv3的效果好，loss小了  就用，不然就不用</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://zh-v2.d2l.ai/_images/resnet-block.svg"
+                      alt="包含以及不包含 1×1 卷积层的残差块"
+                ></p>
+<h2 id="Resnet模型"><a href="#Resnet模型" class="headerlink" title="Resnet模型"></a>Resnet模型</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">b1 = nn.Sequential(nn.Conv2d(<span class="number">1</span>, <span class="number">64</span>, kernel_size=<span class="number">7</span>, stride=<span class="number">2</span>, padding=<span class="number">3</span>),</span><br><span class="line">                   nn.BatchNorm2d(<span class="number">64</span>), nn.ReLU(),</span><br><span class="line">                   nn.MaxPool2d(kernel_size=<span class="number">3</span>, stride=<span class="number">2</span>, padding=<span class="number">1</span>))</span><br></pre></td></tr></table></figure></div>
+
+]]></content>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/2024/01/03/Pytorch%E4%BC%98%E5%8C%96%E5%99%A8SGD%E3%80%81SGDM%E3%80%81Rprop%E3%80%81Adagrad%E3%80%81Adma/</url>
+    <content><![CDATA[]]></content>
   </entry>
 </search>
