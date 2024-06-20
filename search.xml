@@ -104,6 +104,28 @@
 <div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">Tensor.transpose(dim0, dim1) → Tensor</span><br><span class="line">torch.transpose(<span class="built_in">input</span>, dim0, dim1) → Tensor</span><br><span class="line"> </span><br><span class="line"><span class="built_in">input</span> (Tensor) – the <span class="built_in">input</span> tensor.</span><br><span class="line">dim0 (<span class="built_in">int</span>) – the first dimension to be transposed</span><br><span class="line">dim1 (<span class="built_in">int</span>) – the second dimension to be transposed</span><br></pre></td></tr></table></figure></div>
 
 <hr>
+<h1 id="卷积层"><a href="#卷积层" class="headerlink" title="卷积层"></a>卷积层</h1><h3 id="class-torch-nn-Conv2d-in-channels-out-channels-kernel-size-stride-1-padding-0-dilation-1-groups-1-bias-True"><a href="#class-torch-nn-Conv2d-in-channels-out-channels-kernel-size-stride-1-padding-0-dilation-1-groups-1-bias-True" class="headerlink" title="class torch.nn.Conv2d(in_channels, out_channels, kernel_size, stride&#x3D;1, padding&#x3D;0, dilation&#x3D;1, groups&#x3D;1, bias&#x3D;True)"></a>class torch.nn.Conv2d(in_channels, out_channels, kernel_size, stride&#x3D;1, padding&#x3D;0, dilation&#x3D;1, groups&#x3D;1, bias&#x3D;True)</h3><p>二维卷积层, 输入的尺度是(N, C_in,H,W)，输出尺度（N,C_out,H_out,W_out）的计算方式：</p>
+<p>$$out(N_i, C_{out_j})&#x3D;bias(C_{out_j})+\sum^{C_{in}-1}<em>{k&#x3D;0}weight(C</em>{out_j},k)\bigotimes input(N_i,k)$$</p>
+<p><strong>说明</strong><br><code>bigotimes</code>: 表示二维的相关系数计算 <code>stride</code>: 控制相关系数的计算步长<br><code>dilation</code>: 用于控制内核点之间的距离，详细描述在<a class="link"   href="https://github.com/vdumoulin/conv_arithmetic/blob/master/README.md" >这里 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a><br><code>groups</code>: 控制输入和输出之间的连接： <code>group=1</code>，输出是所有的输入的卷积；<code>group=2</code>，此时相当于有并排的两个卷积层，每个卷积层计算输入通道的一半，并且产生的输出是输出通道的一半，随后将这两个输出连接起来。</p>
+<p>参数<code>kernel_size</code>，<code>stride,padding</code>，<code>dilation</code>也可以是一个<code>int</code>的数据，此时卷积height和width值相同;也可以是一个<code>tuple</code>数组，<code>tuple</code>的第一维度表示height的数值，tuple的第二维度表示width的数值</p>
+<p><strong>Parameters：</strong></p>
+<ul>
+<li>in_channels(<code>int</code>) – 输入信号的通道</li>
+<li>out_channels(<code>int</code>) – 卷积产生的通道</li>
+<li>kerner_size(<code>int</code> or <code>tuple</code>) - 卷积核的尺寸</li>
+<li>stride(<code>int</code> or <code>tuple</code>, <code>optional</code>) - 卷积步长</li>
+<li>padding(<code>int</code> or <code>tuple</code>, <code>optional</code>) - 输入的每一条边补充0的层数</li>
+<li>dilation(<code>int</code> or <code>tuple</code>, <code>optional</code>) – 卷积核元素之间的间距</li>
+<li>groups(<code>int</code>, <code>optional</code>) – 从输入通道到输出通道的阻塞连接数</li>
+<li>bias(<code>bool</code>, <code>optional</code>) - 如果<code>bias=True</code>，添加偏置</li>
+</ul>
+<p><strong>shape:</strong><br>input: (N,C_in,H_in,W_in)<br>output: (N,C_out,H_out,W_out)<br>$$H_{out}&#x3D;floor((H_{in}+2<em>padding[0]-dilation[0]</em>(kernerl_size[0]-1)-1)&#x2F;stride[0]+1)$$</p>
+<p>$$W_{out}&#x3D;floor((W_{in}+2<em>padding[1]-dilation[1]</em>(kernerl_size[1]-1)-1)&#x2F;stride[1]+1)$$</p>
+<p><strong>变量:</strong><br>weight(<code>tensor</code>) - 卷积的权重，大小是(<code>out_channels</code>, <code>in_channels</code>,<code>kernel_size</code>)<br>bias(<code>tensor</code>) - 卷积的偏置系数，大小是（<code>out_channel</code>）</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># With square kernels and equal stride</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m = nn.Conv2d(<span class="number">16</span>, <span class="number">33</span>, <span class="number">3</span>, stride=<span class="number">2</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># non-square kernels and unequal stride and with padding</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m = nn.Conv2d(<span class="number">16</span>, <span class="number">33</span>, (<span class="number">3</span>, <span class="number">5</span>), stride=(<span class="number">2</span>, <span class="number">1</span>), padding=(<span class="number">4</span>, <span class="number">2</span>))</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># non-square kernels and unequal stride and with padding and dilation</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m = nn.Conv2d(<span class="number">16</span>, <span class="number">33</span>, (<span class="number">3</span>, <span class="number">5</span>), stride=(<span class="number">2</span>, <span class="number">1</span>), padding=(<span class="number">4</span>, <span class="number">2</span>), dilation=(<span class="number">3</span>, <span class="number">1</span>))</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">input</span> = autograd.Variable(torch.randn(<span class="number">20</span>, <span class="number">16</span>, <span class="number">50</span>, <span class="number">100</span>))</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>output = m(<span class="built_in">input</span>)</span><br></pre></td></tr></table></figure></div>
+
+
+
 <hr>
 ]]></content>
   </entry>
@@ -300,6 +322,45 @@
 <p>β2 系数为指数衰减率，控制之前的梯度平方的影响情况。</p>
 <div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">torch</span>.optim.Adam(params, lr=<span class="number">0.001</span>, betas=(<span class="number">0.9</span>, <span class="number">0.999</span>), eps=<span class="number">1e-08</span>, weight_decay=<span class="number">0</span>)   <span class="comment">#betas(β1,β2)</span></span><br></pre></td></tr></table></figure></div>
 
+
+
+<ol>
+<li><p>初始：学习率$\eta$，平滑常数(或者叫做衰减速率) $\beta_1 $, $\beta_2 $，分别用于平滑m和v，全局模型$g_t$，本地模型$w_t$，全局回合t</p>
+</li>
+<li><p>服务器：</p>
+<p>$g_t&#x3D;\sum_1^nw_{t-1}^i$ </p>
+<p>$m_t &#x3D; \beta_1*m_{t-1}+(1-\beta_1)*g_t 		\tag{13}$</p>
+<p>$v_t  &#x3D;\beta_2*v_{t-1}+(1-\beta_2)*g_t^2			\tag{14}$</p>
+</li>
+<li><p>客户端：</p>
+<p>$\hat{w_t} &#x3D; w_{t-1}-\eta *\frac{m_t}{\sqrt{v_t}+\epsilon}				\tag{17}$</p>
+<p>local.train($\hat{w_t}$)</p>
+</li>
+<li></li>
+<li></li>
+<li><p>服务器：</p>
+<p>​	初始化</p>
+<p>​	$m_t &#x3D; \beta_1*m_{t-1}+(1-\beta_1)*g_t 		\tag{13}$</p>
+<p>​	$v_t  &#x3D;\beta_2*v_{t-1}+(1-\beta_2)*g_t^2			\tag{14}$</p>
+<ol start="6">
+<li></li>
+</ol>
+<p>​	</p>
+</li>
+<li><p>客户端$i$：</p>
+</li>
+</ol>
+<p>​	$w_t^i$→$w_{t1}^i$,$w_{t2}^i$,$w_{t3}^i$</p>
+<ol start="2">
+<li>服务器:</li>
+</ol>
+<p>​	服务器1：$\hat{g}<em>{t1}&#x3D;\sum_1^nw</em>{t1}^i$   </p>
+<p>​					$g_{t1}$ &#x3D; $\hat{g}_{t1}$+$nosiy$</p>
+<p>​	服务器2：$\hat{g}<em>{t2}&#x3D;\sum_1^nw</em>{t2}^i$ </p>
+<p>​					$g_{t2}$ &#x3D; $\hat{g}_{t2}$+$nosiy$</p>
+<p>​	服务器3：$\hat{g}<em>{t3}&#x3D;\sum_1^nw</em>{t3}^i$ </p>
+<p>​					$g_{t3}$ &#x3D; $\hat{g}_{t3}$+$nosiy$</p>
+<p>​	$g_{t}&#x3D;$$g_{t1}$ +$g_{t2}$ +$g_{t3}$ </p>
 ]]></content>
   </entry>
   <entry>
@@ -1381,6 +1442,180 @@
 <blockquote>
 <p>\1) Regularized Local Loss<br>\2) Between Global and Local Model<br>\3) Between Historical Local Model Snapshots a) Meta-learning b) Transfer learning</p>
 </blockquote>
+]]></content>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/2024/03/15/%E5%8F%91%E7%A5%A8%E8%AE%B0%E5%BD%95/</url>
+    <content><![CDATA[<p>发票记录</p>
+<table>
+<thead>
+<tr>
+<th align="center">厂商</th>
+<th align="center">金额</th>
+<th align="center">发票类型</th>
+<th align="center">说明</th>
+<th align="center">时间</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">百度</td>
+<td align="center">66.26</td>
+<td align="center">企业类普票&#x2F;增值税普通发票</td>
+<td align="center">tokens资源包</td>
+<td align="center">2024-03-15 10:34:01</td>
+</tr>
+<tr>
+<td align="center">百度</td>
+<td align="center">80.22</td>
+<td align="center">企业类普票&#x2F;增值税普通发票</td>
+<td align="center">tokens资源包</td>
+<td align="center">2024-03-15 10:25:19</td>
+</tr>
+<tr>
+<td align="center">讯飞</td>
+<td align="center">1500</td>
+<td align="center">企业类普票&#x2F;增值税普通发票</td>
+<td align="center">tokens资源包</td>
+<td align="center">2024-03-15 11:01:38</td>
+</tr>
+<tr>
+<td align="center">智普</td>
+<td align="center">165.3087 (未开)</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">阿里</td>
+<td align="center">54.58(未开)</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+</tbody></table>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;path&quot;: &quot;能源互联网规划及配电网规划专业调考题库（2020版）-勘误更新版&quot;,</span><br><span class="line">    &quot;number&quot;: 1,</span><br><span class="line">    &quot;question&quot;: &quot;在装有热水的容器外涂上一薄层碳黑，则水凉的快，因为&quot;,</span><br><span class="line">    &quot;A&quot;: &quot;碳黑黑度大，辐射散热少&quot;,</span><br><span class="line">    &quot;B&quot;: &quot;碳黑黑度大，辐射散热少&quot;,</span><br><span class="line">    &quot;C&quot;: &quot;碳黑黑度小，辐射散热多&quot;,</span><br><span class="line">    &quot;D&quot;: &quot;碳黑黑度小，辐射散热少&quot;,</span><br><span class="line">    &quot;answer&quot;: &quot;B&quot;,</span><br><span class="line">    &quot;analysis&quot;: &quot;&quot;,</span><br><span class="line">    &quot;type&quot;: &quot;Singlechoice&quot;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure></div>
+
+]]></content>
+  </entry>
+  <entry>
+    <title>U-Net模型</title>
+    <url>/2024/02/28/U-Net%E6%A8%A1%E5%9E%8B/</url>
+    <content><![CDATA[<h1 id="U-Net"><a href="#U-Net" class="headerlink" title="U-Net"></a>U-Net</h1><p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://img-blog.csdn.net/20180508082955359"
+                     
+                ></p>
+<hr>
+<p>1、首先，定义一个[<code>DoubleConv</code>]模块，里面包含两个（卷积+BN+Relu）的组合。</p>
+<p>参数：in_channels，out_channels，还有一个中间参数mid_channels；</p>
+<p>对应网络中两个蓝箭头的操作。</p>
+<p>contracting path：</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://img-blog.csdnimg.cn/15ab3f39386a4151892d9e4f20efa4b4.png"
+                      style="zoom:50%;" 
+                >
+
+<p>2、定义一个Down模块，里面包含（下采样+DoubleConv）。</p>
+<p>然后就是  DoubleConv+MaxPool2d(下采样)→DoubleConv+MaxPool2d→DoubleConv+MaxPool2d→DoubleConv+MaxPool2d</p>
+<p>3、定义一个Up模块，里面包含（上采样+ context拼接+两个卷积层）</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">from typing import Dict</span><br><span class="line">import torch</span><br><span class="line">import torch.nn as nn</span><br><span class="line">import torch.nn.functional as F</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">class DoubleConv(nn.Sequential):</span><br><span class="line">    def __init__(self, in_channels, out_channels, mid_channels=None):</span><br><span class="line">        if mid_channels is None:    # 如果没有定义中间层channel则和输出层的channel一样</span><br><span class="line">            mid_channels = out_channels</span><br><span class="line">        # 调用父类方法中的initial方法。</span><br><span class="line">        # 加入BN层所以bias=0.</span><br><span class="line">        super(DoubleConv, self).__init__(</span><br><span class="line">            nn.Conv2d(in_channels, mid_channels, kernel_size=3, padding=1, bias=False),</span><br><span class="line">            nn.BatchNorm2d(mid_channels),</span><br><span class="line">            nn.ReLU(inplace=True),</span><br><span class="line">            nn.Conv2d(mid_channels, out_channels, kernel_size=3, padding=1, bias=False),</span><br><span class="line">            nn.BatchNorm2d(out_channels),</span><br><span class="line">            nn.ReLU(inplace=True)</span><br><span class="line">        )</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">class Down(nn.Sequential):</span><br><span class="line">    def __init__(self, in_channels, out_channels):</span><br><span class="line">        # 下采样maxpool，kernel_size=2，stride=2.</span><br><span class="line">        super(Down, self).__init__(</span><br><span class="line">            nn.MaxPool2d(2, stride=2),</span><br><span class="line">            DoubleConv(in_channels, out_channels)</span><br><span class="line">        )</span><br><span class="line"> </span><br><span class="line"># 上采样 + context拼接 + 两个卷积层</span><br><span class="line">class Up(nn.Module):</span><br><span class="line">    # in_channels对应context拼接后的特征层个数，bilinear是否使用双线性插值替代转置卷积</span><br><span class="line">    def __init__(self, in_channels, out_channels, bilinear=True):</span><br><span class="line">        super(Up, self).__init__()</span><br><span class="line">        if bilinear:    # 双线性插值，得到特征矩阵的channel和context拼接的特征矩阵channel一致</span><br><span class="line">            self.up = nn.Upsample(scale_factor=2, mode=&#x27;bilinear&#x27;, align_corners=True)</span><br><span class="line">            self.conv = DoubleConv(in_channels, out_channels, in_channels // 2)</span><br><span class="line">        else:   # 转置卷积</span><br><span class="line">            self.up = nn.ConvTranspose2d(in_channels, in_channels // 2, kernel_size=2, stride=2)</span><br><span class="line">            self.conv = DoubleConv(in_channels, out_channels)</span><br><span class="line"> </span><br><span class="line">    # x2：拼接的特征层</span><br><span class="line">    def forward(self, x1: torch.Tensor, x2: torch.Tensor) -&gt; torch.Tensor:</span><br><span class="line">        x1 = self.up(x1)</span><br><span class="line">        # [N, C, H, W]</span><br><span class="line">        diff_y = x2.size()[2] - x1.size()[2]    # 高度方向上的差值</span><br><span class="line">        diff_x = x2.size()[3] - x1.size()[3]    # 宽度方向上的差值</span><br><span class="line"> </span><br><span class="line">        # pad保证上采样后的图片和context拼接图片的高和宽相等，且是16的整数倍</span><br><span class="line">        # padding_left, padding_right, padding_top, padding_bottom</span><br><span class="line">        x1 = F.pad(x1, [diff_x // 2, diff_x - diff_x // 2,</span><br><span class="line">                        diff_y // 2, diff_y - diff_y // 2])</span><br><span class="line"> </span><br><span class="line">        x = torch.cat([x2, x1], dim=1)</span><br><span class="line">        x = self.conv(x)</span><br><span class="line">        return x</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">class OutConv(nn.Sequential):</span><br><span class="line">    def __init__(self, in_channels, num_classes):</span><br><span class="line">        super(OutConv, self).__init__(</span><br><span class="line">            nn.Conv2d(in_channels, num_classes, kernel_size=1)</span><br><span class="line">        )</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">class UNet(nn.Module):</span><br><span class="line">    def __init__(self,</span><br><span class="line">                 in_channels: int = 1,  # 实例化时，传入彩色图片=3</span><br><span class="line">                 num_classes: int = 2,  # 分割任务当中的分类类别个数</span><br><span class="line">                 bilinear: bool = True, # bilinear是否使用双线性插值替代转置卷积</span><br><span class="line">                 base_c: int = 64):     # 第一个卷积层所采用的卷积核的个数</span><br><span class="line">        super(UNet, self).__init__()</span><br><span class="line">        self.in_channels = in_channels</span><br><span class="line">        self.num_classes = num_classes</span><br><span class="line">        self.bilinear = bilinear</span><br><span class="line"> </span><br><span class="line">        self.in_conv = DoubleConv(in_channels, base_c)</span><br><span class="line">        self.down1 = Down(base_c, base_c * 2)</span><br><span class="line">        self.down2 = Down(base_c * 2, base_c * 4)</span><br><span class="line">        self.down3 = Down(base_c * 4, base_c * 8)</span><br><span class="line">        # bilinear=true，bilinear=2，双线性插值法：第四个down模块输入和输出channel不变</span><br><span class="line">        # bilinear=false，bilinear=1，转置卷积法：第四个down模块输出channel是输入的两倍</span><br><span class="line">        factor = 2 if bilinear else 1</span><br><span class="line">        self.down4 = Down(base_c * 8, base_c * 16 // factor)</span><br><span class="line">        self.up1 = Up(base_c * 16, base_c * 8 // factor, bilinear)</span><br><span class="line">        self.up2 = Up(base_c * 8, base_c * 4 // factor, bilinear)</span><br><span class="line">        self.up3 = Up(base_c * 4, base_c * 2 // factor, bilinear)</span><br><span class="line">        self.up4 = Up(base_c * 2, base_c, bilinear)</span><br><span class="line">        self.out_conv = OutConv(base_c, num_classes)</span><br><span class="line"> </span><br><span class="line">    def forward(self, x: torch.Tensor) -&gt; Dict[str, torch.Tensor]:</span><br><span class="line">        x1 = self.in_conv(x)</span><br><span class="line">        x2 = self.down1(x1)</span><br><span class="line">        x3 = self.down2(x2)</span><br><span class="line">        x4 = self.down3(x3)</span><br><span class="line">        x5 = self.down4(x4)</span><br><span class="line">        x = self.up1(x5, x4)</span><br><span class="line">        x = self.up2(x, x3)</span><br><span class="line">        x = self.up3(x, x2)</span><br><span class="line">        x = self.up4(x, x1)</span><br><span class="line">        logits = self.out_conv(x)   # 1x1卷积</span><br><span class="line"> </span><br><span class="line">        return &#123;&quot;out&quot;: logits&#125;  # 字典的形式返回</span><br></pre></td></tr></table></figure></div>
+
+
+
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> autograd</span><br><span class="line"></span><br><span class="line"><span class="comment">#把常用的2个卷积操作简单封装下</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DoubleConv</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, in_ch, out_ch,mid_channels=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="keyword">if</span> mid_channels <span class="keyword">is</span> <span class="literal">None</span>:    <span class="comment"># 如果没有定义中间层channel则和输出层的channel一样</span></span><br><span class="line">            mid_channels = out_channels</span><br><span class="line">        <span class="built_in">super</span>(DoubleConv, self).__init__()</span><br><span class="line">        self.conv = nn.Sequential(</span><br><span class="line">            nn.Conv2d(in_ch, mid_channels, <span class="number">3</span>, padding=<span class="number">1</span>),</span><br><span class="line">            nn.BatchNorm2d(out_ch), <span class="comment">#添加了BN层</span></span><br><span class="line">            nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line">            nn.Conv2d(mid_channels, out_ch, <span class="number">3</span>, padding=<span class="number">1</span>),</span><br><span class="line">            nn.BatchNorm2d(out_ch),</span><br><span class="line">            nn.ReLU(inplace=<span class="literal">True</span>)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, <span class="built_in">input</span></span>):</span><br><span class="line">        <span class="keyword">return</span> self.conv(<span class="built_in">input</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Unet</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, in_ch, out_ch</span>):</span><br><span class="line">        <span class="built_in">super</span>(Unet, self).__init__()</span><br><span class="line">        self.conv1 = DoubleConv(in_ch, <span class="number">64</span>)</span><br><span class="line">        self.pool1 = nn.MaxPool2d(<span class="number">2</span>)</span><br><span class="line">        self.conv2 = DoubleConv(<span class="number">64</span>, <span class="number">128</span>)</span><br><span class="line">        self.pool2 = nn.MaxPool2d(<span class="number">2</span>)</span><br><span class="line">        self.conv3 = DoubleConv(<span class="number">128</span>, <span class="number">256</span>)</span><br><span class="line">        self.pool3 = nn.MaxPool2d(<span class="number">2</span>)</span><br><span class="line">        self.conv4 = DoubleConv(<span class="number">256</span>, <span class="number">512</span>)</span><br><span class="line">        self.pool4 = nn.MaxPool2d(<span class="number">2</span>)</span><br><span class="line">        self.conv5 = DoubleConv(<span class="number">512</span>, <span class="number">1024</span>)</span><br><span class="line">        <span class="comment"># 逆卷积，也可以使用上采样(保证k=stride,stride即上采样倍数)</span></span><br><span class="line">        self.up6 = nn.ConvTranspose2d(<span class="number">1024</span>, <span class="number">512</span>, <span class="number">2</span>, stride=<span class="number">2</span>)</span><br><span class="line">        self.conv6 = DoubleConv(<span class="number">1024</span>, <span class="number">512</span>)</span><br><span class="line">        self.up7 = nn.ConvTranspose2d(<span class="number">512</span>, <span class="number">256</span>, <span class="number">2</span>, stride=<span class="number">2</span>)</span><br><span class="line">        self.conv7 = DoubleConv(<span class="number">512</span>, <span class="number">256</span>)</span><br><span class="line">        self.up8 = nn.ConvTranspose2d(<span class="number">256</span>, <span class="number">128</span>, <span class="number">2</span>, stride=<span class="number">2</span>)</span><br><span class="line">        self.conv8 = DoubleConv(<span class="number">256</span>, <span class="number">128</span>)</span><br><span class="line">        self.up9 = nn.ConvTranspose2d(<span class="number">128</span>, <span class="number">64</span>, <span class="number">2</span>, stride=<span class="number">2</span>)</span><br><span class="line">        self.conv9 = DoubleConv(<span class="number">128</span>, <span class="number">64</span>)</span><br><span class="line">        self.conv10 = nn.Conv2d(<span class="number">64</span>, out_ch, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        c1 = self.conv1(x)</span><br><span class="line">        p1 = self.pool1(c1)</span><br><span class="line">        c2 = self.conv2(p1)</span><br><span class="line">        p2 = self.pool2(c2)</span><br><span class="line">        c3 = self.conv3(p2)</span><br><span class="line">        p3 = self.pool3(c3)</span><br><span class="line">        c4 = self.conv4(p3)</span><br><span class="line">        p4 = self.pool4(c4)</span><br><span class="line">        c5 = self.conv5(p4)</span><br><span class="line">        up_6 = self.up6(c5)</span><br><span class="line">        merge6 = torch.cat([up_6, c4], dim=<span class="number">1</span>)</span><br><span class="line">        c6 = self.conv6(merge6)</span><br><span class="line">        up_7 = self.up7(c6)</span><br><span class="line">        merge7 = torch.cat([up_7, c3], dim=<span class="number">1</span>)</span><br><span class="line">        c7 = self.conv7(merge7)</span><br><span class="line">        up_8 = self.up8(c7)</span><br><span class="line">        merge8 = torch.cat([up_8, c2], dim=<span class="number">1</span>)</span><br><span class="line">        c8 = self.conv8(merge8)</span><br><span class="line">        up_9 = self.up9(c8)</span><br><span class="line">        merge9 = torch.cat([up_9, c1], dim=<span class="number">1</span>)</span><br><span class="line">        c9 = self.conv9(merge9)</span><br><span class="line">        c10 = self.conv10(c9)</span><br><span class="line">        out = nn.Sigmoid()(c10)</span><br><span class="line">        <span class="keyword">return</span> out</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+]]></content>
+  </entry>
+  <entry>
+    <title>bert基础</title>
+    <url>/2024/06/15/bert%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<h1 id="bert"><a href="#bert" class="headerlink" title="bert"></a>bert</h1><ul>
+<li><p>bert: encoder of transformer</p>
+<ul>
+<li>transformer: encoder-decoder(seq2seq)</li>
+</ul>
+</li>
+<li><p>bert</p>
+<ul>
+<li><p>embeddings</p>
+<ul>
+<li><p>word(token) embedding   # token_embed &#x3D; model.embeddings.word_embeddings(input_ids)</p>
+</li>
+<li><p>position embedding          # pos_embed &#x3D; model.embeddings.position_embeddings(pos_ids)</p>
+</li>
+<li><p>token type embedding      # seg_embed &#x3D; model.embeddings.token_type_embeddings(token_type_ids)</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">input_embed = token_embed + seg_embed + pos_embed.unsqueeze(0)</span><br></pre></td></tr></table></figure></div></li>
+</ul>
+</li>
+<li><p>encoder(12 layer)</p>
+<ul>
+<li>self attention (kqv)</li>
+<li>feed forward</li>
+</ul>
+</li>
+<li><p>pooler  由此得到最终输出</p>
+</li>
+</ul>
+</li>
+</ul>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">from transformers import BertTokenizer, BertModel</span><br><span class="line">import torch </span><br><span class="line">from torch import nn</span><br><span class="line"></span><br><span class="line">model_name = &#x27;bert-base-uncased&#x27;</span><br><span class="line">tokenizer = BertTokenizer.from_pretrained(model_name)</span><br><span class="line">model = BertModel.from_pretrained(model_name, output_attention=True)</span><br><span class="line"></span><br><span class="line">test_sent = &#x27;&#x27;</span><br><span class="line">input = tokenizer(test_sent, return_tensors=&#x27;pt&#x27;)</span><br><span class="line"># input -&gt; &#123;&#x27;input_ids&#x27;: tensor([[ 101, 2023, 2003, 1037, 3231, 6251,  102]]), &#x27;token_type_ids&#x27;: tensor([[0, 0, 0, 0, 0, 0, 0]]), &#x27;attention_mask&#x27;: tensor([[1, 1, 1, 1, 1, 1, 1]])&#125;</span><br><span class="line"></span><br><span class="line">#___________________________________________________________</span><br><span class="line">input_ids = input[&#x27;input_ids&#x27;]</span><br><span class="line">token_type_ids = input[&#x27;token_type_ids&#x27;]</span><br><span class="line">pos_ids = torch.arange(input_ids.shape[1])</span><br><span class="line"></span><br><span class="line">#  1. token embedding</span><br><span class="line">token_embed = model.embeddings.word_embeddings(input_ids)</span><br><span class="line">token_embed</span><br><span class="line"># 2. segment type embedding</span><br><span class="line">seg_embed = model.embeddings.token_type_embeddings(token_type_ids)</span><br><span class="line">seg_embed</span><br><span class="line"># 3. pos embedding</span><br><span class="line">pos_embed = model.embeddings.position_embeddings(pos_ids)</span><br><span class="line">seg_embed</span><br><span class="line"># 4. input embedding</span><br><span class="line">input_embed = token_embed + seg_embed + pos_embed.unsqueeze(0)</span><br><span class="line"># 5. 后处理</span><br><span class="line">embed = model.embeddings.LayerNorm(input_embed)</span><br><span class="line">embed = model.embeddings.dropout(embed)</span><br><span class="line"># 6. encoder</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+
+
+<ul>
+<li>torch.no_grad()<ul>
+<li>定义了一个上下文管理器，隐式地不进行梯度更新，不会改变 requires_grad</li>
+<li>适用于 eval 阶段，或 model forward 的过程中某些模块不更新梯度的模块（此时这些模块仅进行特征提取（前向计算），不反向更新）</li>
+</ul>
+</li>
+<li>param.requires_grad<ul>
+<li>显式地 frozen 掉一些module（layer）的梯度更新</li>
+<li>layer&#x2F;module 级别，</li>
+<li>可能会更灵活</li>
+</ul>
+</li>
+</ul>
+<h3 id="1-input"><a href="#1-input" class="headerlink" title="1. input"></a>1. input</h3><ul>
+<li>tokenizer 轻易不会将一个词处理为 <code>[UNK] (100)</code></li>
+<li>基于词汇表，tokenize, encode, decode 一体<ul>
+<li>tokenize：word &#x3D;&gt; token(s)，将word尽可能地映射为 vocab 中的 keys</li>
+<li>encode: token &#x3D;&gt; id</li>
+<li>decode: id &#x3D;&gt; token &#x3D;&gt; word<ul>
+<li>encode 完了之后也不是终点（word），decode 还要能很好地将 id 还原，尽可能与输入的 word 对齐；</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> BertModel, BertTokenizer</span><br><span class="line"></span><br><span class="line">model_name = <span class="string">&#x27;bert-base-uncased&#x27;</span></span><br><span class="line"></span><br><span class="line">tokenizer = BertTokenizer.from_pretrained(model_name)</span><br><span class="line">model = BertModel.from_pretrained(model_name, output_hidden_states=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;After stealing money from the bank vault, the bank robber was seen &quot;</span> \</span><br><span class="line">   <span class="string">&quot;fishing on the Mississippi river bank.&quot;</span></span><br><span class="line">    </span><br><span class="line">token_input = tokenizer(text, return_tensors=<span class="string">&#x27;pt&#x27;</span>)</span><br><span class="line">token_input </span><br><span class="line"><span class="comment"># &#123;&#x27;input_ids&#x27;: tensor([[  101,  2044, 11065,  2769,  2013,  1996,  2924, 11632,  1010,  1996, \</span></span><br><span class="line">          <span class="number">2924</span>, <span class="number">27307</span>,  <span class="number">2001</span>,  <span class="number">2464</span>,  <span class="number">5645</span>,  <span class="number">2006</span>,  <span class="number">1996</span>,  <span class="number">5900</span>,  <span class="number">2314</span>,  <span class="number">2924</span>,\</span><br><span class="line">          <span class="number">1012</span>,   <span class="number">102</span>]]), <span class="string">&#x27;token_type_ids&#x27;</span>: tensor([[<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]]), <span class="string">&#x27;attention_mask&#x27;</span>: tensor([[<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>]])&#125;\</span><br><span class="line">                </span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="2-model-forward"><a href="#2-model-forward" class="headerlink" title="2. model forward"></a>2. model forward</h3><h3 id="3-output"><a href="#3-output" class="headerlink" title="3. output"></a>3. output</h3><ul>
+<li>len(outputs) &#x3D;&#x3D; 3</li>
+<li>outputs[0]  last_hidden_state<ul>
+<li>last_hidden_state, shape: batch_size<em>seq_len</em>hidden_size(1*22*768)</li>
+</ul>
+</li>
+<li>outputs[1] pooler_output<ul>
+<li>pooler_output, shape: batch_size*hidden_size(1*768)</li>
+<li>Last layer hidden-state of the first token of the sequence (classification token, [CLS])</li>
+</ul>
+</li>
+<li>outputs[2] (model.config.output_hidden_states &#x3D; True) hidden_states<ul>
+<li>type: tuple</li>
+<li>one for the output of the embeddings(1), if the model has an embedding layer(12), + one for the output of each layer)<ul>
+<li>(1+12)<em>(batch_size</em>seq_len<em>hidden_size) &#x3D; 13*1*22</em>768</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>outputs[0] &#x3D;&#x3D; outputs[2][-1]</li>
+<li>outputs[1] &#x3D;&#x3D; model.pooler(outputs[2][-1])</li>
+<li>outputs[2][0] &#x3D;&#x3D; model.embeddings(token_input[‘input_ids’], token_input[‘token_type_ids’])</li>
+</ul>
 ]]></content>
   </entry>
 </search>
