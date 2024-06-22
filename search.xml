@@ -1,137 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>LSTM时序预测</title>
-    <url>/2023/10/28/LSTM%E6%97%B6%E5%BA%8F%E9%A2%84%E6%B5%8B/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
-    <title>【Pytorch基础】从numpy到tensor学习神经网络常用工具</title>
-    <url>/2023/10/16/PyTorch%E5%9F%BA%E7%A1%80/</url>
-    <content><![CDATA[<h1 id="笔记"><a href="#笔记" class="headerlink" title="笔记"></a>笔记</h1><h1 id="一、Numpy基础"><a href="#一、Numpy基础" class="headerlink" title="一、Numpy基础"></a>一、Numpy基础</h1><p>python本身含有列表list和数组array：</p>
-<p>列表list：存储索引的项目列表,元素可以是任何对象，保存的是对象的指针</p>
-<pre><code>            eg: words = [&quot;Hello&quot;,&quot;word&quot;]、number = [1,2,3]
-
-            对于数值运算，list有三个元素就需要三个指针，浪费内存资源
-</code></pre>
-<p>数组array：保存数值，和一维数组类似，不支持多维：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://img-blog.csdnimg.cn/20200501183930210.png#pic_center"
-                     
-                ></p>
-<p>numpy提供了<a class="link"   href="https://so.csdn.net/so/search?q=ndarray&spm=1001.2101.3001.7020" >ndarray <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>和ufunc弥补了python本身所带工具的不足：</p>
-<p><strong>ndarray：存储单一数据类型的多维数组，封装了许多常用的数学运算函数</strong></p>
-<p><strong>ufunc：对数组进行处理的函数</strong></p>
-<h2 id="1、numpy生成ndarray的几种方法"><a href="#1、numpy生成ndarray的几种方法" class="headerlink" title="1、numpy生成ndarray的几种方法"></a>1、numpy生成ndarray的几种方法</h2><p>以列表为例：</p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">#将列表转换成ndarray</span><br><span class="line">import numpy as np</span><br><span class="line">lst1 = [3.14, 2.17, 0, 1, 2]</span><br><span class="line">nd1 =np.array(lst1)</span><br><span class="line">print(nd1)</span><br><span class="line"># [3.14 2.17 0. 1. 2. ]</span><br><span class="line">print(type(nd1))</span><br><span class="line"># &lt;class &#x27;numpy.ndarray&#x27;&gt;</span><br><span class="line"> </span><br><span class="line">#嵌套列表转换成多为ndarray</span><br><span class="line">import numpy as np</span><br><span class="line">lst2 = [[3.14, 2.17, 0, 1, 2], [1, 2, 3, 4, 5]]</span><br><span class="line">nd2 =np.array(lst2)</span><br><span class="line">print(nd2)</span><br><span class="line"># [[3.14 2.17 0. 1. 2. ]</span><br><span class="line"># [1. 2. 3. 4. 5. ]]</span><br><span class="line">print(type(nd2))</span><br><span class="line"># &lt;class &#x27;numpy.ndarray&#x27;&gt;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="2-numpy元素获取"><a href="#2-numpy元素获取" class="headerlink" title="2.numpy元素获取"></a>2.numpy元素获取</h2><p>np[2::2,::3]</p>
-<ol>
-<li><code>2::2</code>: 这是行的高级索引。<ul>
-<li><code>2</code>: 从第二行开始（Python的索引是从0开始的，所以这实际上是第三行）。</li>
-<li><code>::2</code>: 每两行取一行。因此，这个部分会选择数组中的奇数行。</li>
-</ul>
-</li>
-<li><code>::3</code>: 这是列的高级索引。<ul>
-<li><code>::3</code>: 每三列取一列。因此，这个部分会选择数组中的每三列。</li>
-</ul>
-</li>
-</ol>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">np.arange(<span class="number">2019</span>)</span><br><span class="line">nd11 = np.arange(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#截取固定间隔数据</span></span><br><span class="line"><span class="built_in">print</span>(nd11[<span class="number">1</span>:<span class="number">6</span>:<span class="number">2</span>])</span><br><span class="line"><span class="comment">#[1 3 5]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#倒序取数</span></span><br><span class="line"><span class="built_in">print</span>(nd11[-<span class="number">4</span>:])</span><br><span class="line"><span class="comment">#[6 7 8 9]</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(nd11[::-<span class="number">1</span>])</span><br><span class="line"><span class="comment">#[9 8 7 6 5 4 3 2 1 0]</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#截取一个多维数组的一个区域内数据</span></span><br><span class="line">nd12=np.arange(<span class="number">16</span>).reshape([<span class="number">4</span>,<span class="number">4</span>])</span><br><span class="line"><span class="built_in">print</span>(nd12)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">[[ 0  1  2  3]</span></span><br><span class="line"><span class="string"> [ 4  5  6  7]</span></span><br><span class="line"><span class="string"> [ 8  9 10 11]</span></span><br><span class="line"><span class="string"> [12 13 14 15]]</span></span><br><span class="line"><span class="string"> &#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(nd12[<span class="number">1</span>:<span class="number">3</span>,<span class="number">1</span>:<span class="number">3</span>])</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">[[ 5  6]</span></span><br><span class="line"><span class="string"> [ 9 10]]</span></span><br><span class="line"><span class="string"> &#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="comment">#截取一个多维数组中，数值在一个值域之内的数据</span></span><br><span class="line">nd12[(nd12&gt;<span class="number">3</span>)&amp;(nd12&lt;<span class="number">10</span>)]</span><br><span class="line"><span class="comment">#截取多维数组中，指定的行,如读取第2,3行</span></span><br><span class="line"><span class="built_in">print</span>(nd12[[<span class="number">1</span>,<span class="number">2</span>]]) <span class="comment">#或nd12[1:3,:]</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">[[ 4  5  6  7]</span></span><br><span class="line"><span class="string"> [ 8  9 10 11]]&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">##截取多维数组中，指定的列,如读取第2,3列</span></span><br><span class="line"><span class="built_in">print</span>(nd12[:,<span class="number">1</span>:<span class="number">3</span>])</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">[[ 1  2]</span></span><br><span class="line"><span class="string"> [ 5  6]</span></span><br><span class="line"><span class="string"> [ 9 10]</span></span><br><span class="line"><span class="string"> [13 14]]&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure></div>
-
-<ol start="3">
-<li></li>
-</ol>
-<h1 id="二、Pytorch基础"><a href="#二、Pytorch基础" class="headerlink" title="二、Pytorch基础"></a>二、Pytorch基础</h1><p>PyTorch由4个主要包组成包组成，具体如下。</p>
-<ul>
-<li>torch：类似于NumPy的通用数组库，可将张量类型转换为torch.cuda.TensorFloat，并在GPU上进行计算。<br>torch.autograd：用于构建计算图形并自动获取梯度的包。<br>torch.nn：具有共享层和损失函数的神经网络库。<br>torch.optim：具有通用优化算法（如SGD，Adam等）的优化包。</li>
-<li>torch.autograd：用于构建计算图形并自动获取梯度的包。</li>
-<li>torch.nn：具有共享层和损失函数的神经网络库。</li>
-<li>torch.optim：具有通用优化算法（如SGD，Adam等）的优化包。</li>
-</ul>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#cuda是否可用；</span></span><br><span class="line">torch.cuda.is_available()</span><br><span class="line"><span class="comment"># 返回gpu数量；</span></span><br><span class="line">torch.cuda.device_count()</span><br><span class="line"><span class="comment"># 返回gpu名字，设备索引默认从0开始</span></span><br><span class="line">torch.cuda.get_device_name(index)  <span class="comment"># index 是索引, 默认从 0 开始</span></span><br><span class="line"><span class="comment"># 返回当前设备索引；</span></span><br><span class="line">torch.cuda.current_device()</span><br><span class="line"></span><br><span class="line">x.requires_grad_(<span class="literal">True</span>)</span><br><span class="line">x.grad</span><br><span class="line"></span><br><span class="line">y = <span class="number">2</span>*torch.dot(x,x)</span><br><span class="line"></span><br><span class="line">y.backward()</span><br><span class="line">x.grad</span><br><span class="line"></span><br><span class="line">x.grad.zero_()<span class="comment">#  重写、</span></span><br><span class="line"></span><br><span class="line">a = torch.randn(size=(), requires_grad = <span class="literal">True</span>)</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="指定GPU"><a href="#指定GPU" class="headerlink" title="指定GPU"></a>指定GPU</h2><p>代码中指定</p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">import os</span><br><span class="line">os.environ[&quot;CUDA_VISIBLE_DEVICES&quot;] = &quot;1&quot;</span><br><span class="line"># 可以同时指定多个设备（设备是真实存在的，不要指定不存在的设备）</span><br><span class="line"></span><br><span class="line">os.environ[&quot;CUDA_VISIBLE_DEVICES&quot;] = &quot;0, 1, 2, 3&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-<hr>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://img-blog.csdnimg.cn/fd5f2dd87d044aaa9cb3b7cd73dd6c7a.png"
-                      alt="修改tensor的形状"
-                ></p>
-<h2 id="nn-Sequential、nn-Module、nn-List-ModuleDict"><a href="#nn-Sequential、nn-Module、nn-List-ModuleDict" class="headerlink" title="nn.Sequential、nn.Module、nn.List_ModuleDict"></a>nn.Sequential、nn.Module、nn.List_ModuleDict</h2><h3 id="1-简介"><a href="#1-简介" class="headerlink" title="1.简介"></a>1.简介</h3><p>1）nn.Sequential、nn.ModuleList、nn.ModuleDict 类都继承自 Module 类。</p>
-<p>2）nn.Sequential、nn.ModuleList、nn.ModuleDict 语法，类似如下：</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">net = nn.Sequential(nn.Linear(<span class="number">32</span>, <span class="number">64</span>), nn.ReLU())</span><br><span class="line"></span><br><span class="line">net = nn.ModuleList([nn.Linear(<span class="number">32</span>, <span class="number">6</span>)<span class="number">4</span>, nn.ReLU()])</span><br><span class="line"></span><br><span class="line">net = nn.ModuleDict(&#123;<span class="string">&#x27;linear&#x27;</span>: nn.Linear(<span class="number">32</span>, <span class="number">64</span>), <span class="string">&#x27;act&#x27;</span>: nn.ReLU()&#125;)</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="2、nn-Sequential、nn-Module、nn-List-ModuleDict-区别"><a href="#2、nn-Sequential、nn-Module、nn-List-ModuleDict-区别" class="headerlink" title="2、nn.Sequential、nn.Module、nn.List_ModuleDict 区别"></a>2、nn.Sequential、nn.Module、nn.List_ModuleDict 区别</h3><p>1）<code>nn.ModuleList</code> 仅仅是一个储存各种模块的列表，这些模块之间没有联系也没有顺序（所以不用保证相邻层的输入输出维度匹配），而且没有实现 forward 功能需要自己实现</p>
-<p>2）和<code>nn.ModuleList</code> 一样， <code>nn.ModuleDict</code> 实例仅仅是存放了一些模块的字典，并没有定义 forward 函数需要自己定义</p>
-<p>3）而 <code>nn.Sequential</code> 内的模块需要按照顺序排列，要保证相邻层的输入输出大小相匹配；<code>nn.sequential</code> 内部 forward 功能已经实现，直接调用的，不需要再写 forward</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line">net1 = nn.Sequential(nn.Linear(<span class="number">32</span>, <span class="number">64</span>), nn.ReLU())</span><br><span class="line">net2 = nn.ModuleList([nn.Linear(<span class="number">32</span>, <span class="number">64</span>), nn.ReLU()])</span><br><span class="line">net3 = nn.ModuleDict(&#123;<span class="string">&#x27;linear&#x27;</span>: nn.Linear(<span class="number">32</span>, <span class="number">64</span>), <span class="string">&#x27;act&#x27;</span>: nn.ReLU()&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment"># print(net1)</span></span><br><span class="line"><span class="comment"># print(net2)</span></span><br><span class="line"><span class="comment"># print(net3)</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">Sequential(</span></span><br><span class="line"><span class="string">  (0): Linear(in_features=32, out_features=64, bias=True)</span></span><br><span class="line"><span class="string">  (1): ReLU()</span></span><br><span class="line"><span class="string">)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">x = torch.randn(<span class="number">8</span>, <span class="number">3</span>, <span class="number">32</span>)</span><br><span class="line"><span class="built_in">print</span>(net1(x).shape)     <span class="comment">#torch.Size([8, 3, 64])</span></span><br><span class="line"><span class="comment"># print(net2(x).shape)  # 会报错，提示缺少forward</span></span><br><span class="line"><span class="comment"># print(net3(x).shape)   # 会报错，提示缺少forward</span></span><br></pre></td></tr></table></figure></div>
-
-<hr>
-<p>为 nn.ModuleList 写 forward 函数</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">My_Model</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(My_Model, self).__init__()</span><br><span class="line">        self.layers = nn.ModuleList([nn.Linear(<span class="number">32</span>, <span class="number">64</span>),nn.ReLU()])</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="keyword">for</span> layer <span class="keyword">in</span> self.layers:</span><br><span class="line">            x = layer(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line">net = My_Model()</span><br><span class="line"></span><br><span class="line">x = torch.randn(<span class="number">8</span>, <span class="number">3</span>, <span class="number">32</span>)</span><br><span class="line">out = net(x)</span><br><span class="line"><span class="built_in">print</span>(out.shape)</span><br><span class="line"><span class="comment">#torch.Size([8, 3, 64])</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-<p>将 nn.ModuleList 转换成 nn.Sequential</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line">module_list = nn.ModuleList([nn.Linear(<span class="number">32</span>, <span class="number">64</span>), nn.ReLU()])</span><br><span class="line">net = nn.Sequential(*module_list)</span><br><span class="line">x = torch.randn(<span class="number">8</span>, <span class="number">3</span>, <span class="number">32</span>)</span><br><span class="line"><span class="built_in">print</span>(net(x).shape)</span><br></pre></td></tr></table></figure></div>
-
-<p>将 nn.ModuleDict 转换成 nn.Sequential</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line">module_dict = nn.ModuleDict(&#123;<span class="string">&#x27;linear&#x27;</span>: nn.Linear(<span class="number">32</span>, <span class="number">64</span>), <span class="string">&#x27;act&#x27;</span>: nn.ReLU()&#125;)</span><br><span class="line">net = nn.Sequential(*module_dict.values())</span><br><span class="line">x = torch.randn(<span class="number">8</span>, <span class="number">3</span>, <span class="number">32</span>)</span><br><span class="line"><span class="built_in">print</span>(net(x).shape)</span><br></pre></td></tr></table></figure></div>
-
-<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><h3 id="numpy数组转化为torch中的tensor："><a href="#numpy数组转化为torch中的tensor：" class="headerlink" title="numpy数组转化为torch中的tensor："></a>numpy数组转化为torch中的tensor：</h3><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">tensor = torch.tensor(numpy.arr)</span><br><span class="line">Tensor = torch.Tensor(numpy.arr)</span><br><span class="line">as_tensor = torch.as_tensor(numpy.arr)</span><br><span class="line">from_numpy = torch.from_numpy(numpy.arr)</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="torch中的tensor转化为numpy数组"><a href="#torch中的tensor转化为numpy数组" class="headerlink" title="torch中的tensor转化为numpy数组"></a>torch中的tensor转化为numpy数组</h3><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">np = tensor.numpy()</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="np-ndarray与Tensor中图像格式区别"><a href="#np-ndarray与Tensor中图像格式区别" class="headerlink" title="np.ndarray与Tensor中图像格式区别"></a>np.ndarray与Tensor中图像格式区别</h3><p>两者均以三维数组来表示一张图像，他们的区别在于图像信息被保存在数组中的不同位置，具体来说：</p>
-<ul>
-<li><code>np.ndarray</code>的<code>[h, w, c]</code>格式：数组中第一层元素为图像的每一行像素，第二层元素为每一列像素，最后一层元素为每一个通道的像素值，它将图片中的每一个像素作为描述单元，记录它三个通道的像素值。</li>
-<li><code>Tensor</code>的<code>[c, h, w]</code>格式：数组中第一层元素为图像的三个通道，第二层元素为某个通道上的一行像素，第三层为该通道上某列的像素值，它将图像某个通道的某行像素值作为描述单元。</li>
-</ul>
-<blockquote>
-<p>n：样本数量<br>c：图像通道数<br>w：图像宽度<br>h：图像高度</p>
-</blockquote>
-<h3 id="如何从-h-w-c-转为-c-h-w"><a href="#如何从-h-w-c-转为-c-h-w" class="headerlink" title="如何从[h, w, c]转为[c, h, w]"></a>如何从[h, w, c]转为[c, h, w]</h3><p>可以借助<code>numpy</code>的<code>transpose()</code>函数来实现这个转换。是的只要像下面简简单单的一句话即可实现</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">image = np.random.randint(<span class="number">256</span>, size=<span class="number">60</span>)</span><br><span class="line">image_hwc = image.reshape((<span class="number">5</span>,<span class="number">4</span>,<span class="number">3</span>))</span><br><span class="line"><span class="built_in">print</span>(image_hwc.shape)</span><br><span class="line"><span class="comment">#(5, 4, 3)</span></span><br><span class="line"></span><br><span class="line">image_chw = np.transpose(image_hwc, (<span class="number">2</span>,<span class="number">0</span>,<span class="number">1</span>))</span><br><span class="line"><span class="built_in">print</span>(image_chw.shape)</span><br><span class="line"><span class="comment">#(3, 5, 4)</span></span><br><span class="line"></span><br><span class="line">image_hcw = np.transpose(image_hwc, (<span class="number">0</span>,<span class="number">2</span>,<span class="number">1</span>))</span><br><span class="line"><span class="built_in">print</span>(image_hcw.shape)</span><br><span class="line"><span class="comment">#(5, 3, 4)</span></span><br><span class="line"></span><br><span class="line">image_hcw_tensor = torch.tensor(image_hcw)</span><br><span class="line"><span class="built_in">print</span>(image_hcw_tensor.shape)</span><br><span class="line"><span class="comment">#torch.Size([5, 3, 4])</span></span><br><span class="line"></span><br><span class="line">x = torch.transpose(image_hcw_tensor,<span class="number">0</span>,<span class="number">1</span>)</span><br><span class="line"><span class="comment">#等价于#</span></span><br><span class="line"><span class="comment">#x = torch.transpose(image_hcw_tensor,1,0)</span></span><br><span class="line"><span class="built_in">print</span>(x.shape)</span><br><span class="line"><span class="comment">#torch.Size([3, 5, 4])</span></span><br><span class="line"></span><br><span class="line">y_hcw = image_hcw_tensor.transpose(<span class="number">1</span>,<span class="number">0</span>)</span><br><span class="line"><span class="built_in">print</span>(y_hcw.shape)</span><br><span class="line"><span class="comment">#torch.Size([3, 5, 4])</span></span><br><span class="line"></span><br><span class="line">z_hcw = image_hwc.transpose(<span class="number">0</span>,<span class="number">2</span>,<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(z_hcw.shape)</span><br><span class="line"><span class="comment">#(5, 3, 4)</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-
-
-<p><strong>注意到，np的transpose和tensor的transpose不一样#</strong></p>
-<p>np的可以<code>[np_arr = np.transpose(np_arr, (2,0,1))]</code>  tensor的不可以，每次转两个</p>
-<p>​    在<a class="link"   href="https://so.csdn.net/so/search?q=Pytorch&spm=1001.2101.3001.7020" >Pytorch <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>中，transpose是Tensor类的一个重要方法，同时它也是torch模块中的一个函数，它们的语法如下所示。</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">Tensor.transpose(dim0, dim1) → Tensor</span><br><span class="line">torch.transpose(<span class="built_in">input</span>, dim0, dim1) → Tensor</span><br><span class="line"> </span><br><span class="line"><span class="built_in">input</span> (Tensor) – the <span class="built_in">input</span> tensor.</span><br><span class="line">dim0 (<span class="built_in">int</span>) – the first dimension to be transposed</span><br><span class="line">dim1 (<span class="built_in">int</span>) – the second dimension to be transposed</span><br></pre></td></tr></table></figure></div>
-
-<hr>
-<h1 id="卷积层"><a href="#卷积层" class="headerlink" title="卷积层"></a>卷积层</h1><h3 id="class-torch-nn-Conv2d-in-channels-out-channels-kernel-size-stride-1-padding-0-dilation-1-groups-1-bias-True"><a href="#class-torch-nn-Conv2d-in-channels-out-channels-kernel-size-stride-1-padding-0-dilation-1-groups-1-bias-True" class="headerlink" title="class torch.nn.Conv2d(in_channels, out_channels, kernel_size, stride&#x3D;1, padding&#x3D;0, dilation&#x3D;1, groups&#x3D;1, bias&#x3D;True)"></a>class torch.nn.Conv2d(in_channels, out_channels, kernel_size, stride&#x3D;1, padding&#x3D;0, dilation&#x3D;1, groups&#x3D;1, bias&#x3D;True)</h3><p>二维卷积层, 输入的尺度是(N, C_in,H,W)，输出尺度（N,C_out,H_out,W_out）的计算方式：</p>
-<p>$$out(N_i, C_{out_j})&#x3D;bias(C_{out_j})+\sum^{C_{in}-1}<em>{k&#x3D;0}weight(C</em>{out_j},k)\bigotimes input(N_i,k)$$</p>
-<p><strong>说明</strong><br><code>bigotimes</code>: 表示二维的相关系数计算 <code>stride</code>: 控制相关系数的计算步长<br><code>dilation</code>: 用于控制内核点之间的距离，详细描述在<a class="link"   href="https://github.com/vdumoulin/conv_arithmetic/blob/master/README.md" >这里 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a><br><code>groups</code>: 控制输入和输出之间的连接： <code>group=1</code>，输出是所有的输入的卷积；<code>group=2</code>，此时相当于有并排的两个卷积层，每个卷积层计算输入通道的一半，并且产生的输出是输出通道的一半，随后将这两个输出连接起来。</p>
-<p>参数<code>kernel_size</code>，<code>stride,padding</code>，<code>dilation</code>也可以是一个<code>int</code>的数据，此时卷积height和width值相同;也可以是一个<code>tuple</code>数组，<code>tuple</code>的第一维度表示height的数值，tuple的第二维度表示width的数值</p>
-<p><strong>Parameters：</strong></p>
-<ul>
-<li>in_channels(<code>int</code>) – 输入信号的通道</li>
-<li>out_channels(<code>int</code>) – 卷积产生的通道</li>
-<li>kerner_size(<code>int</code> or <code>tuple</code>) - 卷积核的尺寸</li>
-<li>stride(<code>int</code> or <code>tuple</code>, <code>optional</code>) - 卷积步长</li>
-<li>padding(<code>int</code> or <code>tuple</code>, <code>optional</code>) - 输入的每一条边补充0的层数</li>
-<li>dilation(<code>int</code> or <code>tuple</code>, <code>optional</code>) – 卷积核元素之间的间距</li>
-<li>groups(<code>int</code>, <code>optional</code>) – 从输入通道到输出通道的阻塞连接数</li>
-<li>bias(<code>bool</code>, <code>optional</code>) - 如果<code>bias=True</code>，添加偏置</li>
-</ul>
-<p><strong>shape:</strong><br>input: (N,C_in,H_in,W_in)<br>output: (N,C_out,H_out,W_out)<br>$$H_{out}&#x3D;floor((H_{in}+2<em>padding[0]-dilation[0]</em>(kernerl_size[0]-1)-1)&#x2F;stride[0]+1)$$</p>
-<p>$$W_{out}&#x3D;floor((W_{in}+2<em>padding[1]-dilation[1]</em>(kernerl_size[1]-1)-1)&#x2F;stride[1]+1)$$</p>
-<p><strong>变量:</strong><br>weight(<code>tensor</code>) - 卷积的权重，大小是(<code>out_channels</code>, <code>in_channels</code>,<code>kernel_size</code>)<br>bias(<code>tensor</code>) - 卷积的偏置系数，大小是（<code>out_channel</code>）</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># With square kernels and equal stride</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m = nn.Conv2d(<span class="number">16</span>, <span class="number">33</span>, <span class="number">3</span>, stride=<span class="number">2</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># non-square kernels and unequal stride and with padding</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m = nn.Conv2d(<span class="number">16</span>, <span class="number">33</span>, (<span class="number">3</span>, <span class="number">5</span>), stride=(<span class="number">2</span>, <span class="number">1</span>), padding=(<span class="number">4</span>, <span class="number">2</span>))</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># non-square kernels and unequal stride and with padding and dilation</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m = nn.Conv2d(<span class="number">16</span>, <span class="number">33</span>, (<span class="number">3</span>, <span class="number">5</span>), stride=(<span class="number">2</span>, <span class="number">1</span>), padding=(<span class="number">4</span>, <span class="number">2</span>), dilation=(<span class="number">3</span>, <span class="number">1</span>))</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">input</span> = autograd.Variable(torch.randn(<span class="number">20</span>, <span class="number">16</span>, <span class="number">50</span>, <span class="number">100</span>))</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>output = m(<span class="built_in">input</span>)</span><br></pre></td></tr></table></figure></div>
-
-
-
-<hr>
-]]></content>
-  </entry>
-  <entry>
-    <title></title>
-    <url>/2024/01/03/Pytorch%E4%BC%98%E5%8C%96%E5%99%A8SGD%E3%80%81SGDM%E3%80%81Rprop%E3%80%81Adagrad%E3%80%81Adma/</url>
+    <title>LLama_架构</title>
+    <url>/2024/06/22/LLama-%E6%9E%B6%E6%9E%84/</url>
     <content><![CDATA[]]></content>
   </entry>
   <entry>
@@ -480,6 +351,242 @@
 <h2 id="Leetcode-题"><a href="#Leetcode-题" class="headerlink" title="Leetcode 题"></a><strong>Leetcode 题</strong></h2>]]></content>
   </entry>
   <entry>
+    <title>LLM推理加速技术</title>
+    <url>/2024/06/22/LLM%E6%8E%A8%E7%90%86%E5%8A%A0%E9%80%9F%E6%8A%80%E6%9C%AF/</url>
+    <content><![CDATA[<p>一个常规的LLM推理过程通常分为两个阶段：<strong>prefill和decode</strong>。通常会使用KV cache技术加速推理。</p>
+<p><strong>预填充阶段（prefill）。</strong>在这个阶段中，我们<strong>把整段prompt喂给模型做forward计算</strong>。如果<strong>采用KV cache技术，在这个阶段中我们会把prompt过</strong> 𝑊𝑘,𝑊𝑣 <strong>后得到的</strong> 𝑋𝑘,𝑋𝑣 <strong>保存在cache_k和cache_v中</strong>。这样在对后面的token计算attention时，我们就不需要对前面的token重复计算 𝑋𝑘,𝑋𝑣 了，可以帮助我们节省推理时间。</p>
+<p><strong>生成response的阶段</strong>decode。在这个阶段中，<strong>我们根据prompt的prefill结果，一个token一个token地生成response</strong>。<br>同样，如果采用了KV cache，则每走完一个decode过程，我们就把对应response token的KV值存入cache中，以便能加速计算。例如对于图中的t4，它与cache中t0~t3的KV值计算完attention后，就把自己的KV值也装进cache中。对t6也是同理。<br><strong>由于Decode阶段的是逐一生成token的，因此它不能像prefill阶段那样能做大段prompt的并行计算，所以在LLM推理过程中，Decode阶段的耗时一般是更大的</strong>。</p>
+<p>从上述过程中，我们可以发现使用KV cache做推理时的一些特点：</p>
+<ul>
+<li><strong>随着prompt数量变多和序列变长，KV cache也变大，对gpu显存造成压力</strong></li>
+<li><strong>由于输出的序列长度无法预先知道，所以我们很难提前为KV cache量身定制存储空间</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>分布式（Distribution）</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td>量化（Quantization）</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><strong>剪枝（Pruning）</strong></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>知识蒸馏</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>算子融合</td>
+<td></td>
+</tr>
+</tbody></table>
+<p><strong>模型压缩</strong>:</p>
+<ul>
+<li><p>网络剪枝：结构化非结构化剪枝</p>
+</li>
+<li><p>知识蒸馏</p>
+</li>
+<li><p><strong>模型量化</strong></p>
+</li>
+<li><p>低秩分解</p>
+</li>
+</ul>
+<p><strong>大模型引擎调度</strong></p>
+<ul>
+<li>VLLM，TensorRT-LLM，Orca，llama.cpp</li>
+</ul>
+<h2 id="1-VLLM"><a href="#1-VLLM" class="headerlink" title="1. VLLM"></a>1. VLLM</h2><p>vLLM 主要特性：</p>
+<ol>
+<li>先进的服务吞吐量</li>
+<li>通过 PagedAttention 对注意力 key 和 value 进行内存管理</li>
+<li>对传入请求的批处理</li>
+</ol>
+<p>总结,</p>
+<p>通过 PagedAttention 对注意力 key 和 value 进行内存管理,PagedAttention 还有一个关键优势：高效的内存共享。例如，在<em>并行采样</em>中，同一个提示会生成多个输出序列。在这种情况下，输出序列之间可以共享提示的计算和内存。</p>
+<hr>
+<ul>
+<li><strong>Parallel Sampling</strong>：我给模型发送一个请求，希望它对prompt做续写，并给出三种不同的回答。我们管这个场景叫parallel sampling。在这个场景中，我们可以将prompt复制3次后拼接成1个batch喂给模型，让它做推理。但我们也需注意到，这种方式会产生prompt部分KV cache的重复存储。</li>
+<li><strong>Beam Search</strong>：束搜索，这是LLM常用的deocde策略之一，即在每个decode阶段，我不是只产生1个token，而是产生top k个token（这里k也被称为束宽）。top k个token必然对应着此刻的top k个序列。我把这top k个序列喂给模型，假设词表的大小为|V|，那么在下一时刻，我就要在k*|V|个候选者中再选出top k，以此类推。不难想象每一时刻我把top k序列喂给模型时，它们的前置token中有大量的KV cache是重复的。</li>
+<li><strong>Shared prefix：</strong>在某些大模型中，所有请求可能都会共享一个前置信息（比如system message: “假设你是一个有帮助的AI助手….”），这些前置信息没有必要重复存储KV cache</li>
+</ul>
+<h3 id="Parallel-Sampling"><a href="#Parallel-Sampling" class="headerlink" title="Parallel Sampling"></a>Parallel Sampling</h3><p><strong>（1）首先，Prefill阶段，vLLM拿到Sample A1和Sample A2，根据其中的文字内容，为其分配逻辑块和物理块。</strong></p>
+<ul>
+<li><strong>分配逻辑块：</strong>对于A1，vLLM为其分配逻辑块block0和block1；对于A2，vLLM为其分配逻辑块block0和block1。<strong>需要注意的是，A1的逻辑块和A2的逻辑块是独立的（尽管它们都叫block0和block1）</strong>，你可以将A1和A2视作操作系统中两个独立运行的进程。</li>
+<li><strong>分配物理块</strong>：对于A1和A2，虽然逻辑块独立，但因为它们的文字完全相同，所以可以<strong>在物理内存上共享相同的空间</strong>。所以A1的逻辑块block0&#x2F;1分别指向物理块block7&#x2F;1；A2的逻辑块block0&#x2F;1分别指向物理块block7&#x2F;1。我们设每个物理块下映射的逻辑块数量为<code>ref count</code>，所以对物理块block7&#x2F;1来说，它们的ref count都为2。</li>
+</ul>
+<p><strong>（2）然后，进入decode阶段，A1和A2各自做推理，得到第一个token，分别为<code>fathers</code>和<code>mothers</code>。</strong></p>
+<ul>
+<li><strong>将生成的token装入逻辑块</strong>：对于A1和A2来说，将其生成的token装入各自的逻辑块block1。</li>
+<li><strong>触发物理块copy-on-write机制</strong>：由于fathers&#x2F;mothers是两个完全不同的token，因此对物理块block1触发复制机制，即在物理内存上新开辟一块空间。此时物理块block1只和A2的逻辑块block1映射，将其ref count减去1；物理块block3只和A1的逻辑块block1映射，将其ref count设为1。</li>
+</ul>
+<h3 id="Beam-Search"><a href="#Beam-Search" class="headerlink" title="Beam Search"></a>Beam Search</h3><p>在并行采样中，从相同的提示生成多个输出序列。在这种情况下，可以在输出序列之间共享提示的计算和内存。通过其块表，PagedAttention能够自然地实现内存共享。类似于进程共享物理页，PagedAttention中的不同序列可以通过将它们的逻辑块映射到相同的物理块来共享块。为确保安全共享，PagedAttention跟踪物理块的引用计数并实现 Copy-on-Write 机制。</p>
+<p>通过PagedAttention的内存共享机制，极大地降低了复杂采样算法（如ParallelSampling和BeamSearch）的内存开销，使其内存使用量下降了高达55%。这项优化可以直接带来最多2.2倍的吞吐量提升，从而使得LLM服务中使用这些采样方法变得更加实用。</p>
+<h2 id="2-LLama-cpp"><a href="#2-LLama-cpp" class="headerlink" title="2. LLama.cpp"></a>2. LLama.cpp</h2><p>Llama.cpp 是一个轻量级、高效的 C++ 实现，用于运行大型语言模型（如 Meta 的 LLaMA 系列）。它允许在相对较低的硬件资源下（例如消费级 CPU 和少量内存）运行和推理大型语言模型。Llama.cpp 特别注重内存和计算资源的优化，使得在没有 GPU 的情况下也能进行模型推理。</p>
+<h2 id="3-Flash-attention"><a href="#3-Flash-attention" class="headerlink" title="3. Flash-attention"></a>3. Flash-attention</h2><h4 id="FlashAttention-的改进"><a href="#FlashAttention-的改进" class="headerlink" title="FlashAttention 的改进"></a>FlashAttention 的改进</h4><p>FlashAttention 通过以下步骤优化了注意力计算：</p>
+<ol>
+<li><strong>分块处理</strong>：<ul>
+<li>将输入矩阵分成较小的块，以减少内存占用并提高计算效率。</li>
+<li>每个块独立进行计算，利用现代 GPU 的并行计算能力。</li>
+</ul>
+</li>
+<li><strong>逐块计算注意力权重和应用</strong>：<ul>
+<li>在每个块内，计算注意力权重和应用注意力权重的操作都在局部进行，避免了大规模矩阵的全局计算。</li>
+<li>每个块内的计算顺序被设计为避免内存瓶颈和数据传输的开销。</li>
+</ul>
+</li>
+<li><strong>优化的内存访问</strong>：<ul>
+<li>通过优化内存访问模式，使得计算过程中需要的数据能够高效地被加载到 GPU 的高速缓存中。</li>
+<li>减少了内存访问延迟和数据传输开销。</li>
+</ul>
+</li>
+</ol>
+]]></content>
+  </entry>
+  <entry>
+    <title>LSTM时序预测</title>
+    <url>/2023/10/28/LSTM%E6%97%B6%E5%BA%8F%E9%A2%84%E6%B5%8B/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>【Pytorch基础】从numpy到tensor学习神经网络常用工具</title>
+    <url>/2023/10/16/PyTorch%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<h1 id="笔记"><a href="#笔记" class="headerlink" title="笔记"></a>笔记</h1><h1 id="一、Numpy基础"><a href="#一、Numpy基础" class="headerlink" title="一、Numpy基础"></a>一、Numpy基础</h1><p>python本身含有列表list和数组array：</p>
+<p>列表list：存储索引的项目列表,元素可以是任何对象，保存的是对象的指针</p>
+<pre><code>            eg: words = [&quot;Hello&quot;,&quot;word&quot;]、number = [1,2,3]
+
+            对于数值运算，list有三个元素就需要三个指针，浪费内存资源
+</code></pre>
+<p>数组array：保存数值，和一维数组类似，不支持多维：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://img-blog.csdnimg.cn/20200501183930210.png#pic_center"
+                     
+                ></p>
+<p>numpy提供了<a class="link"   href="https://so.csdn.net/so/search?q=ndarray&spm=1001.2101.3001.7020" >ndarray <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>和ufunc弥补了python本身所带工具的不足：</p>
+<p><strong>ndarray：存储单一数据类型的多维数组，封装了许多常用的数学运算函数</strong></p>
+<p><strong>ufunc：对数组进行处理的函数</strong></p>
+<h2 id="1、numpy生成ndarray的几种方法"><a href="#1、numpy生成ndarray的几种方法" class="headerlink" title="1、numpy生成ndarray的几种方法"></a>1、numpy生成ndarray的几种方法</h2><p>以列表为例：</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">#将列表转换成ndarray</span><br><span class="line">import numpy as np</span><br><span class="line">lst1 = [3.14, 2.17, 0, 1, 2]</span><br><span class="line">nd1 =np.array(lst1)</span><br><span class="line">print(nd1)</span><br><span class="line"># [3.14 2.17 0. 1. 2. ]</span><br><span class="line">print(type(nd1))</span><br><span class="line"># &lt;class &#x27;numpy.ndarray&#x27;&gt;</span><br><span class="line"> </span><br><span class="line">#嵌套列表转换成多为ndarray</span><br><span class="line">import numpy as np</span><br><span class="line">lst2 = [[3.14, 2.17, 0, 1, 2], [1, 2, 3, 4, 5]]</span><br><span class="line">nd2 =np.array(lst2)</span><br><span class="line">print(nd2)</span><br><span class="line"># [[3.14 2.17 0. 1. 2. ]</span><br><span class="line"># [1. 2. 3. 4. 5. ]]</span><br><span class="line">print(type(nd2))</span><br><span class="line"># &lt;class &#x27;numpy.ndarray&#x27;&gt;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="2-numpy元素获取"><a href="#2-numpy元素获取" class="headerlink" title="2.numpy元素获取"></a>2.numpy元素获取</h2><p>np[2::2,::3]</p>
+<ol>
+<li><code>2::2</code>: 这是行的高级索引。<ul>
+<li><code>2</code>: 从第二行开始（Python的索引是从0开始的，所以这实际上是第三行）。</li>
+<li><code>::2</code>: 每两行取一行。因此，这个部分会选择数组中的奇数行。</li>
+</ul>
+</li>
+<li><code>::3</code>: 这是列的高级索引。<ul>
+<li><code>::3</code>: 每三列取一列。因此，这个部分会选择数组中的每三列。</li>
+</ul>
+</li>
+</ol>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">np.arange(<span class="number">2019</span>)</span><br><span class="line">nd11 = np.arange(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#截取固定间隔数据</span></span><br><span class="line"><span class="built_in">print</span>(nd11[<span class="number">1</span>:<span class="number">6</span>:<span class="number">2</span>])</span><br><span class="line"><span class="comment">#[1 3 5]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#倒序取数</span></span><br><span class="line"><span class="built_in">print</span>(nd11[-<span class="number">4</span>:])</span><br><span class="line"><span class="comment">#[6 7 8 9]</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(nd11[::-<span class="number">1</span>])</span><br><span class="line"><span class="comment">#[9 8 7 6 5 4 3 2 1 0]</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#截取一个多维数组的一个区域内数据</span></span><br><span class="line">nd12=np.arange(<span class="number">16</span>).reshape([<span class="number">4</span>,<span class="number">4</span>])</span><br><span class="line"><span class="built_in">print</span>(nd12)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">[[ 0  1  2  3]</span></span><br><span class="line"><span class="string"> [ 4  5  6  7]</span></span><br><span class="line"><span class="string"> [ 8  9 10 11]</span></span><br><span class="line"><span class="string"> [12 13 14 15]]</span></span><br><span class="line"><span class="string"> &#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(nd12[<span class="number">1</span>:<span class="number">3</span>,<span class="number">1</span>:<span class="number">3</span>])</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">[[ 5  6]</span></span><br><span class="line"><span class="string"> [ 9 10]]</span></span><br><span class="line"><span class="string"> &#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="comment">#截取一个多维数组中，数值在一个值域之内的数据</span></span><br><span class="line">nd12[(nd12&gt;<span class="number">3</span>)&amp;(nd12&lt;<span class="number">10</span>)]</span><br><span class="line"><span class="comment">#截取多维数组中，指定的行,如读取第2,3行</span></span><br><span class="line"><span class="built_in">print</span>(nd12[[<span class="number">1</span>,<span class="number">2</span>]]) <span class="comment">#或nd12[1:3,:]</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">[[ 4  5  6  7]</span></span><br><span class="line"><span class="string"> [ 8  9 10 11]]&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">##截取多维数组中，指定的列,如读取第2,3列</span></span><br><span class="line"><span class="built_in">print</span>(nd12[:,<span class="number">1</span>:<span class="number">3</span>])</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">[[ 1  2]</span></span><br><span class="line"><span class="string"> [ 5  6]</span></span><br><span class="line"><span class="string"> [ 9 10]</span></span><br><span class="line"><span class="string"> [13 14]]&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure></div>
+
+<ol start="3">
+<li></li>
+</ol>
+<h1 id="二、Pytorch基础"><a href="#二、Pytorch基础" class="headerlink" title="二、Pytorch基础"></a>二、Pytorch基础</h1><p>PyTorch由4个主要包组成包组成，具体如下。</p>
+<ul>
+<li>torch：类似于NumPy的通用数组库，可将张量类型转换为torch.cuda.TensorFloat，并在GPU上进行计算。<br>torch.autograd：用于构建计算图形并自动获取梯度的包。<br>torch.nn：具有共享层和损失函数的神经网络库。<br>torch.optim：具有通用优化算法（如SGD，Adam等）的优化包。</li>
+<li>torch.autograd：用于构建计算图形并自动获取梯度的包。</li>
+<li>torch.nn：具有共享层和损失函数的神经网络库。</li>
+<li>torch.optim：具有通用优化算法（如SGD，Adam等）的优化包。</li>
+</ul>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#cuda是否可用；</span></span><br><span class="line">torch.cuda.is_available()</span><br><span class="line"><span class="comment"># 返回gpu数量；</span></span><br><span class="line">torch.cuda.device_count()</span><br><span class="line"><span class="comment"># 返回gpu名字，设备索引默认从0开始</span></span><br><span class="line">torch.cuda.get_device_name(index)  <span class="comment"># index 是索引, 默认从 0 开始</span></span><br><span class="line"><span class="comment"># 返回当前设备索引；</span></span><br><span class="line">torch.cuda.current_device()</span><br><span class="line"></span><br><span class="line">x.requires_grad_(<span class="literal">True</span>)</span><br><span class="line">x.grad</span><br><span class="line"></span><br><span class="line">y = <span class="number">2</span>*torch.dot(x,x)</span><br><span class="line"></span><br><span class="line">y.backward()</span><br><span class="line">x.grad</span><br><span class="line"></span><br><span class="line">x.grad.zero_()<span class="comment">#  重写、</span></span><br><span class="line"></span><br><span class="line">a = torch.randn(size=(), requires_grad = <span class="literal">True</span>)</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="指定GPU"><a href="#指定GPU" class="headerlink" title="指定GPU"></a>指定GPU</h2><p>代码中指定</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">import os</span><br><span class="line">os.environ[&quot;CUDA_VISIBLE_DEVICES&quot;] = &quot;1&quot;</span><br><span class="line"># 可以同时指定多个设备（设备是真实存在的，不要指定不存在的设备）</span><br><span class="line"></span><br><span class="line">os.environ[&quot;CUDA_VISIBLE_DEVICES&quot;] = &quot;0, 1, 2, 3&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://img-blog.csdnimg.cn/fd5f2dd87d044aaa9cb3b7cd73dd6c7a.png"
+                      alt="修改tensor的形状"
+                ></p>
+<h2 id="nn-Sequential、nn-Module、nn-List-ModuleDict"><a href="#nn-Sequential、nn-Module、nn-List-ModuleDict" class="headerlink" title="nn.Sequential、nn.Module、nn.List_ModuleDict"></a>nn.Sequential、nn.Module、nn.List_ModuleDict</h2><h3 id="1-简介"><a href="#1-简介" class="headerlink" title="1.简介"></a>1.简介</h3><p>1）nn.Sequential、nn.ModuleList、nn.ModuleDict 类都继承自 Module 类。</p>
+<p>2）nn.Sequential、nn.ModuleList、nn.ModuleDict 语法，类似如下：</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">net = nn.Sequential(nn.Linear(<span class="number">32</span>, <span class="number">64</span>), nn.ReLU())</span><br><span class="line"></span><br><span class="line">net = nn.ModuleList([nn.Linear(<span class="number">32</span>, <span class="number">6</span>)<span class="number">4</span>, nn.ReLU()])</span><br><span class="line"></span><br><span class="line">net = nn.ModuleDict(&#123;<span class="string">&#x27;linear&#x27;</span>: nn.Linear(<span class="number">32</span>, <span class="number">64</span>), <span class="string">&#x27;act&#x27;</span>: nn.ReLU()&#125;)</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="2、nn-Sequential、nn-Module、nn-List-ModuleDict-区别"><a href="#2、nn-Sequential、nn-Module、nn-List-ModuleDict-区别" class="headerlink" title="2、nn.Sequential、nn.Module、nn.List_ModuleDict 区别"></a>2、nn.Sequential、nn.Module、nn.List_ModuleDict 区别</h3><p>1）<code>nn.ModuleList</code> 仅仅是一个储存各种模块的列表，这些模块之间没有联系也没有顺序（所以不用保证相邻层的输入输出维度匹配），而且没有实现 forward 功能需要自己实现</p>
+<p>2）和<code>nn.ModuleList</code> 一样， <code>nn.ModuleDict</code> 实例仅仅是存放了一些模块的字典，并没有定义 forward 函数需要自己定义</p>
+<p>3）而 <code>nn.Sequential</code> 内的模块需要按照顺序排列，要保证相邻层的输入输出大小相匹配；<code>nn.sequential</code> 内部 forward 功能已经实现，直接调用的，不需要再写 forward</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line">net1 = nn.Sequential(nn.Linear(<span class="number">32</span>, <span class="number">64</span>), nn.ReLU())</span><br><span class="line">net2 = nn.ModuleList([nn.Linear(<span class="number">32</span>, <span class="number">64</span>), nn.ReLU()])</span><br><span class="line">net3 = nn.ModuleDict(&#123;<span class="string">&#x27;linear&#x27;</span>: nn.Linear(<span class="number">32</span>, <span class="number">64</span>), <span class="string">&#x27;act&#x27;</span>: nn.ReLU()&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment"># print(net1)</span></span><br><span class="line"><span class="comment"># print(net2)</span></span><br><span class="line"><span class="comment"># print(net3)</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">Sequential(</span></span><br><span class="line"><span class="string">  (0): Linear(in_features=32, out_features=64, bias=True)</span></span><br><span class="line"><span class="string">  (1): ReLU()</span></span><br><span class="line"><span class="string">)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">x = torch.randn(<span class="number">8</span>, <span class="number">3</span>, <span class="number">32</span>)</span><br><span class="line"><span class="built_in">print</span>(net1(x).shape)     <span class="comment">#torch.Size([8, 3, 64])</span></span><br><span class="line"><span class="comment"># print(net2(x).shape)  # 会报错，提示缺少forward</span></span><br><span class="line"><span class="comment"># print(net3(x).shape)   # 会报错，提示缺少forward</span></span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<p>为 nn.ModuleList 写 forward 函数</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">My_Model</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(My_Model, self).__init__()</span><br><span class="line">        self.layers = nn.ModuleList([nn.Linear(<span class="number">32</span>, <span class="number">64</span>),nn.ReLU()])</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="keyword">for</span> layer <span class="keyword">in</span> self.layers:</span><br><span class="line">            x = layer(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line">net = My_Model()</span><br><span class="line"></span><br><span class="line">x = torch.randn(<span class="number">8</span>, <span class="number">3</span>, <span class="number">32</span>)</span><br><span class="line">out = net(x)</span><br><span class="line"><span class="built_in">print</span>(out.shape)</span><br><span class="line"><span class="comment">#torch.Size([8, 3, 64])</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<p>将 nn.ModuleList 转换成 nn.Sequential</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line">module_list = nn.ModuleList([nn.Linear(<span class="number">32</span>, <span class="number">64</span>), nn.ReLU()])</span><br><span class="line">net = nn.Sequential(*module_list)</span><br><span class="line">x = torch.randn(<span class="number">8</span>, <span class="number">3</span>, <span class="number">32</span>)</span><br><span class="line"><span class="built_in">print</span>(net(x).shape)</span><br></pre></td></tr></table></figure></div>
+
+<p>将 nn.ModuleDict 转换成 nn.Sequential</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line">module_dict = nn.ModuleDict(&#123;<span class="string">&#x27;linear&#x27;</span>: nn.Linear(<span class="number">32</span>, <span class="number">64</span>), <span class="string">&#x27;act&#x27;</span>: nn.ReLU()&#125;)</span><br><span class="line">net = nn.Sequential(*module_dict.values())</span><br><span class="line">x = torch.randn(<span class="number">8</span>, <span class="number">3</span>, <span class="number">32</span>)</span><br><span class="line"><span class="built_in">print</span>(net(x).shape)</span><br></pre></td></tr></table></figure></div>
+
+<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><h3 id="numpy数组转化为torch中的tensor："><a href="#numpy数组转化为torch中的tensor：" class="headerlink" title="numpy数组转化为torch中的tensor："></a>numpy数组转化为torch中的tensor：</h3><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">tensor = torch.tensor(numpy.arr)</span><br><span class="line">Tensor = torch.Tensor(numpy.arr)</span><br><span class="line">as_tensor = torch.as_tensor(numpy.arr)</span><br><span class="line">from_numpy = torch.from_numpy(numpy.arr)</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="torch中的tensor转化为numpy数组"><a href="#torch中的tensor转化为numpy数组" class="headerlink" title="torch中的tensor转化为numpy数组"></a>torch中的tensor转化为numpy数组</h3><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">np = tensor.numpy()</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="np-ndarray与Tensor中图像格式区别"><a href="#np-ndarray与Tensor中图像格式区别" class="headerlink" title="np.ndarray与Tensor中图像格式区别"></a>np.ndarray与Tensor中图像格式区别</h3><p>两者均以三维数组来表示一张图像，他们的区别在于图像信息被保存在数组中的不同位置，具体来说：</p>
+<ul>
+<li><code>np.ndarray</code>的<code>[h, w, c]</code>格式：数组中第一层元素为图像的每一行像素，第二层元素为每一列像素，最后一层元素为每一个通道的像素值，它将图片中的每一个像素作为描述单元，记录它三个通道的像素值。</li>
+<li><code>Tensor</code>的<code>[c, h, w]</code>格式：数组中第一层元素为图像的三个通道，第二层元素为某个通道上的一行像素，第三层为该通道上某列的像素值，它将图像某个通道的某行像素值作为描述单元。</li>
+</ul>
+<blockquote>
+<p>n：样本数量<br>c：图像通道数<br>w：图像宽度<br>h：图像高度</p>
+</blockquote>
+<h3 id="如何从-h-w-c-转为-c-h-w"><a href="#如何从-h-w-c-转为-c-h-w" class="headerlink" title="如何从[h, w, c]转为[c, h, w]"></a>如何从[h, w, c]转为[c, h, w]</h3><p>可以借助<code>numpy</code>的<code>transpose()</code>函数来实现这个转换。是的只要像下面简简单单的一句话即可实现</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">image = np.random.randint(<span class="number">256</span>, size=<span class="number">60</span>)</span><br><span class="line">image_hwc = image.reshape((<span class="number">5</span>,<span class="number">4</span>,<span class="number">3</span>))</span><br><span class="line"><span class="built_in">print</span>(image_hwc.shape)</span><br><span class="line"><span class="comment">#(5, 4, 3)</span></span><br><span class="line"></span><br><span class="line">image_chw = np.transpose(image_hwc, (<span class="number">2</span>,<span class="number">0</span>,<span class="number">1</span>))</span><br><span class="line"><span class="built_in">print</span>(image_chw.shape)</span><br><span class="line"><span class="comment">#(3, 5, 4)</span></span><br><span class="line"></span><br><span class="line">image_hcw = np.transpose(image_hwc, (<span class="number">0</span>,<span class="number">2</span>,<span class="number">1</span>))</span><br><span class="line"><span class="built_in">print</span>(image_hcw.shape)</span><br><span class="line"><span class="comment">#(5, 3, 4)</span></span><br><span class="line"></span><br><span class="line">image_hcw_tensor = torch.tensor(image_hcw)</span><br><span class="line"><span class="built_in">print</span>(image_hcw_tensor.shape)</span><br><span class="line"><span class="comment">#torch.Size([5, 3, 4])</span></span><br><span class="line"></span><br><span class="line">x = torch.transpose(image_hcw_tensor,<span class="number">0</span>,<span class="number">1</span>)</span><br><span class="line"><span class="comment">#等价于#</span></span><br><span class="line"><span class="comment">#x = torch.transpose(image_hcw_tensor,1,0)</span></span><br><span class="line"><span class="built_in">print</span>(x.shape)</span><br><span class="line"><span class="comment">#torch.Size([3, 5, 4])</span></span><br><span class="line"></span><br><span class="line">y_hcw = image_hcw_tensor.transpose(<span class="number">1</span>,<span class="number">0</span>)</span><br><span class="line"><span class="built_in">print</span>(y_hcw.shape)</span><br><span class="line"><span class="comment">#torch.Size([3, 5, 4])</span></span><br><span class="line"></span><br><span class="line">z_hcw = image_hwc.transpose(<span class="number">0</span>,<span class="number">2</span>,<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(z_hcw.shape)</span><br><span class="line"><span class="comment">#(5, 3, 4)</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+
+
+<p><strong>注意到，np的transpose和tensor的transpose不一样#</strong></p>
+<p>np的可以<code>[np_arr = np.transpose(np_arr, (2,0,1))]</code>  tensor的不可以，每次转两个</p>
+<p>​    在<a class="link"   href="https://so.csdn.net/so/search?q=Pytorch&spm=1001.2101.3001.7020" >Pytorch <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>中，transpose是Tensor类的一个重要方法，同时它也是torch模块中的一个函数，它们的语法如下所示。</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">Tensor.transpose(dim0, dim1) → Tensor</span><br><span class="line">torch.transpose(<span class="built_in">input</span>, dim0, dim1) → Tensor</span><br><span class="line"> </span><br><span class="line"><span class="built_in">input</span> (Tensor) – the <span class="built_in">input</span> tensor.</span><br><span class="line">dim0 (<span class="built_in">int</span>) – the first dimension to be transposed</span><br><span class="line">dim1 (<span class="built_in">int</span>) – the second dimension to be transposed</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h1 id="卷积层"><a href="#卷积层" class="headerlink" title="卷积层"></a>卷积层</h1><h3 id="class-torch-nn-Conv2d-in-channels-out-channels-kernel-size-stride-1-padding-0-dilation-1-groups-1-bias-True"><a href="#class-torch-nn-Conv2d-in-channels-out-channels-kernel-size-stride-1-padding-0-dilation-1-groups-1-bias-True" class="headerlink" title="class torch.nn.Conv2d(in_channels, out_channels, kernel_size, stride&#x3D;1, padding&#x3D;0, dilation&#x3D;1, groups&#x3D;1, bias&#x3D;True)"></a>class torch.nn.Conv2d(in_channels, out_channels, kernel_size, stride&#x3D;1, padding&#x3D;0, dilation&#x3D;1, groups&#x3D;1, bias&#x3D;True)</h3><p>二维卷积层, 输入的尺度是(N, C_in,H,W)，输出尺度（N,C_out,H_out,W_out）的计算方式：</p>
+<p>$$out(N_i, C_{out_j})&#x3D;bias(C_{out_j})+\sum^{C_{in}-1}<em>{k&#x3D;0}weight(C</em>{out_j},k)\bigotimes input(N_i,k)$$</p>
+<p><strong>说明</strong><br><code>bigotimes</code>: 表示二维的相关系数计算 <code>stride</code>: 控制相关系数的计算步长<br><code>dilation</code>: 用于控制内核点之间的距离，详细描述在<a class="link"   href="https://github.com/vdumoulin/conv_arithmetic/blob/master/README.md" >这里 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a><br><code>groups</code>: 控制输入和输出之间的连接： <code>group=1</code>，输出是所有的输入的卷积；<code>group=2</code>，此时相当于有并排的两个卷积层，每个卷积层计算输入通道的一半，并且产生的输出是输出通道的一半，随后将这两个输出连接起来。</p>
+<p>参数<code>kernel_size</code>，<code>stride,padding</code>，<code>dilation</code>也可以是一个<code>int</code>的数据，此时卷积height和width值相同;也可以是一个<code>tuple</code>数组，<code>tuple</code>的第一维度表示height的数值，tuple的第二维度表示width的数值</p>
+<p><strong>Parameters：</strong></p>
+<ul>
+<li>in_channels(<code>int</code>) – 输入信号的通道</li>
+<li>out_channels(<code>int</code>) – 卷积产生的通道</li>
+<li>kerner_size(<code>int</code> or <code>tuple</code>) - 卷积核的尺寸</li>
+<li>stride(<code>int</code> or <code>tuple</code>, <code>optional</code>) - 卷积步长</li>
+<li>padding(<code>int</code> or <code>tuple</code>, <code>optional</code>) - 输入的每一条边补充0的层数</li>
+<li>dilation(<code>int</code> or <code>tuple</code>, <code>optional</code>) – 卷积核元素之间的间距</li>
+<li>groups(<code>int</code>, <code>optional</code>) – 从输入通道到输出通道的阻塞连接数</li>
+<li>bias(<code>bool</code>, <code>optional</code>) - 如果<code>bias=True</code>，添加偏置</li>
+</ul>
+<p><strong>shape:</strong><br>input: (N,C_in,H_in,W_in)<br>output: (N,C_out,H_out,W_out)<br>$$H_{out}&#x3D;floor((H_{in}+2<em>padding[0]-dilation[0]</em>(kernerl_size[0]-1)-1)&#x2F;stride[0]+1)$$</p>
+<p>$$W_{out}&#x3D;floor((W_{in}+2<em>padding[1]-dilation[1]</em>(kernerl_size[1]-1)-1)&#x2F;stride[1]+1)$$</p>
+<p><strong>变量:</strong><br>weight(<code>tensor</code>) - 卷积的权重，大小是(<code>out_channels</code>, <code>in_channels</code>,<code>kernel_size</code>)<br>bias(<code>tensor</code>) - 卷积的偏置系数，大小是（<code>out_channel</code>）</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># With square kernels and equal stride</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m = nn.Conv2d(<span class="number">16</span>, <span class="number">33</span>, <span class="number">3</span>, stride=<span class="number">2</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># non-square kernels and unequal stride and with padding</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m = nn.Conv2d(<span class="number">16</span>, <span class="number">33</span>, (<span class="number">3</span>, <span class="number">5</span>), stride=(<span class="number">2</span>, <span class="number">1</span>), padding=(<span class="number">4</span>, <span class="number">2</span>))</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># non-square kernels and unequal stride and with padding and dilation</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m = nn.Conv2d(<span class="number">16</span>, <span class="number">33</span>, (<span class="number">3</span>, <span class="number">5</span>), stride=(<span class="number">2</span>, <span class="number">1</span>), padding=(<span class="number">4</span>, <span class="number">2</span>), dilation=(<span class="number">3</span>, <span class="number">1</span>))</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">input</span> = autograd.Variable(torch.randn(<span class="number">20</span>, <span class="number">16</span>, <span class="number">50</span>, <span class="number">100</span>))</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>output = m(<span class="built_in">input</span>)</span><br></pre></td></tr></table></figure></div>
+
+
+
+<hr>
+]]></content>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/2024/01/03/Pytorch%E4%BC%98%E5%8C%96%E5%99%A8SGD%E3%80%81SGDM%E3%80%81Rprop%E3%80%81Adagrad%E3%80%81Adma/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
     <title>Pytorch优化器全总结（一）SGD、ASGD、Rprop、Adagrad</title>
     <url>/2024/01/03/Pytorch%E4%BC%98%E5%8C%96%E5%99%A8%E5%85%A8%E6%80%BB%E7%BB%93%EF%BC%88%E4%B8%80%EF%BC%89SGD%E3%80%81ASGD%E3%80%81Rprop%E3%80%81Adagrad/</url>
     <content><![CDATA[<h1 id="Adam"><a href="#Adam" class="headerlink" title="Adam"></a>Adam</h1><p>**torch.optim.Adam,**该类实现 Adam(Adaptive Moment Estimation))优化方法。Adam 是一种自适应学习率的优化方法，Adam 利用梯度的一阶矩估计和二阶矩估计动态的调整学习率。Adam 是结合了 Momentum 和 RMSprop，并进行了偏差修正。 了解了Adagrad 和RMSProp</p>
@@ -628,43 +735,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>U-Net模型</title>
-    <url>/2024/02/28/U-Net%E6%A8%A1%E5%9E%8B/</url>
-    <content><![CDATA[<h1 id="U-Net"><a href="#U-Net" class="headerlink" title="U-Net"></a>U-Net</h1><p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://img-blog.csdn.net/20180508082955359"
-                     
-                ></p>
-<hr>
-<p>1、首先，定义一个[<code>DoubleConv</code>]模块，里面包含两个（卷积+BN+Relu）的组合。</p>
-<p>参数：in_channels，out_channels，还有一个中间参数mid_channels；</p>
-<p>对应网络中两个蓝箭头的操作。</p>
-<p>contracting path：</p>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://img-blog.csdnimg.cn/15ab3f39386a4151892d9e4f20efa4b4.png"
-                      style="zoom:50%;" 
-                >
-
-<p>2、定义一个Down模块，里面包含（下采样+DoubleConv）。</p>
-<p>然后就是  DoubleConv+MaxPool2d(下采样)→DoubleConv+MaxPool2d→DoubleConv+MaxPool2d→DoubleConv+MaxPool2d</p>
-<p>3、定义一个Up模块，里面包含（上采样+ context拼接+两个卷积层）</p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">from typing import Dict</span><br><span class="line">import torch</span><br><span class="line">import torch.nn as nn</span><br><span class="line">import torch.nn.functional as F</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">class DoubleConv(nn.Sequential):</span><br><span class="line">    def __init__(self, in_channels, out_channels, mid_channels=None):</span><br><span class="line">        if mid_channels is None:    # 如果没有定义中间层channel则和输出层的channel一样</span><br><span class="line">            mid_channels = out_channels</span><br><span class="line">        # 调用父类方法中的initial方法。</span><br><span class="line">        # 加入BN层所以bias=0.</span><br><span class="line">        super(DoubleConv, self).__init__(</span><br><span class="line">            nn.Conv2d(in_channels, mid_channels, kernel_size=3, padding=1, bias=False),</span><br><span class="line">            nn.BatchNorm2d(mid_channels),</span><br><span class="line">            nn.ReLU(inplace=True),</span><br><span class="line">            nn.Conv2d(mid_channels, out_channels, kernel_size=3, padding=1, bias=False),</span><br><span class="line">            nn.BatchNorm2d(out_channels),</span><br><span class="line">            nn.ReLU(inplace=True)</span><br><span class="line">        )</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">class Down(nn.Sequential):</span><br><span class="line">    def __init__(self, in_channels, out_channels):</span><br><span class="line">        # 下采样maxpool，kernel_size=2，stride=2.</span><br><span class="line">        super(Down, self).__init__(</span><br><span class="line">            nn.MaxPool2d(2, stride=2),</span><br><span class="line">            DoubleConv(in_channels, out_channels)</span><br><span class="line">        )</span><br><span class="line"> </span><br><span class="line"># 上采样 + context拼接 + 两个卷积层</span><br><span class="line">class Up(nn.Module):</span><br><span class="line">    # in_channels对应context拼接后的特征层个数，bilinear是否使用双线性插值替代转置卷积</span><br><span class="line">    def __init__(self, in_channels, out_channels, bilinear=True):</span><br><span class="line">        super(Up, self).__init__()</span><br><span class="line">        if bilinear:    # 双线性插值，得到特征矩阵的channel和context拼接的特征矩阵channel一致</span><br><span class="line">            self.up = nn.Upsample(scale_factor=2, mode=&#x27;bilinear&#x27;, align_corners=True)</span><br><span class="line">            self.conv = DoubleConv(in_channels, out_channels, in_channels // 2)</span><br><span class="line">        else:   # 转置卷积</span><br><span class="line">            self.up = nn.ConvTranspose2d(in_channels, in_channels // 2, kernel_size=2, stride=2)</span><br><span class="line">            self.conv = DoubleConv(in_channels, out_channels)</span><br><span class="line"> </span><br><span class="line">    # x2：拼接的特征层</span><br><span class="line">    def forward(self, x1: torch.Tensor, x2: torch.Tensor) -&gt; torch.Tensor:</span><br><span class="line">        x1 = self.up(x1)</span><br><span class="line">        # [N, C, H, W]</span><br><span class="line">        diff_y = x2.size()[2] - x1.size()[2]    # 高度方向上的差值</span><br><span class="line">        diff_x = x2.size()[3] - x1.size()[3]    # 宽度方向上的差值</span><br><span class="line"> </span><br><span class="line">        # pad保证上采样后的图片和context拼接图片的高和宽相等，且是16的整数倍</span><br><span class="line">        # padding_left, padding_right, padding_top, padding_bottom</span><br><span class="line">        x1 = F.pad(x1, [diff_x // 2, diff_x - diff_x // 2,</span><br><span class="line">                        diff_y // 2, diff_y - diff_y // 2])</span><br><span class="line"> </span><br><span class="line">        x = torch.cat([x2, x1], dim=1)</span><br><span class="line">        x = self.conv(x)</span><br><span class="line">        return x</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">class OutConv(nn.Sequential):</span><br><span class="line">    def __init__(self, in_channels, num_classes):</span><br><span class="line">        super(OutConv, self).__init__(</span><br><span class="line">            nn.Conv2d(in_channels, num_classes, kernel_size=1)</span><br><span class="line">        )</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">class UNet(nn.Module):</span><br><span class="line">    def __init__(self,</span><br><span class="line">                 in_channels: int = 1,  # 实例化时，传入彩色图片=3</span><br><span class="line">                 num_classes: int = 2,  # 分割任务当中的分类类别个数</span><br><span class="line">                 bilinear: bool = True, # bilinear是否使用双线性插值替代转置卷积</span><br><span class="line">                 base_c: int = 64):     # 第一个卷积层所采用的卷积核的个数</span><br><span class="line">        super(UNet, self).__init__()</span><br><span class="line">        self.in_channels = in_channels</span><br><span class="line">        self.num_classes = num_classes</span><br><span class="line">        self.bilinear = bilinear</span><br><span class="line"> </span><br><span class="line">        self.in_conv = DoubleConv(in_channels, base_c)</span><br><span class="line">        self.down1 = Down(base_c, base_c * 2)</span><br><span class="line">        self.down2 = Down(base_c * 2, base_c * 4)</span><br><span class="line">        self.down3 = Down(base_c * 4, base_c * 8)</span><br><span class="line">        # bilinear=true，bilinear=2，双线性插值法：第四个down模块输入和输出channel不变</span><br><span class="line">        # bilinear=false，bilinear=1，转置卷积法：第四个down模块输出channel是输入的两倍</span><br><span class="line">        factor = 2 if bilinear else 1</span><br><span class="line">        self.down4 = Down(base_c * 8, base_c * 16 // factor)</span><br><span class="line">        self.up1 = Up(base_c * 16, base_c * 8 // factor, bilinear)</span><br><span class="line">        self.up2 = Up(base_c * 8, base_c * 4 // factor, bilinear)</span><br><span class="line">        self.up3 = Up(base_c * 4, base_c * 2 // factor, bilinear)</span><br><span class="line">        self.up4 = Up(base_c * 2, base_c, bilinear)</span><br><span class="line">        self.out_conv = OutConv(base_c, num_classes)</span><br><span class="line"> </span><br><span class="line">    def forward(self, x: torch.Tensor) -&gt; Dict[str, torch.Tensor]:</span><br><span class="line">        x1 = self.in_conv(x)</span><br><span class="line">        x2 = self.down1(x1)</span><br><span class="line">        x3 = self.down2(x2)</span><br><span class="line">        x4 = self.down3(x3)</span><br><span class="line">        x5 = self.down4(x4)</span><br><span class="line">        x = self.up1(x5, x4)</span><br><span class="line">        x = self.up2(x, x3)</span><br><span class="line">        x = self.up3(x, x2)</span><br><span class="line">        x = self.up4(x, x1)</span><br><span class="line">        logits = self.out_conv(x)   # 1x1卷积</span><br><span class="line"> </span><br><span class="line">        return &#123;&quot;out&quot;: logits&#125;  # 字典的形式返回</span><br></pre></td></tr></table></figure></div>
-
-
-
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> autograd</span><br><span class="line"></span><br><span class="line"><span class="comment">#把常用的2个卷积操作简单封装下</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DoubleConv</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, in_ch, out_ch,mid_channels=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="keyword">if</span> mid_channels <span class="keyword">is</span> <span class="literal">None</span>:    <span class="comment"># 如果没有定义中间层channel则和输出层的channel一样</span></span><br><span class="line">            mid_channels = out_channels</span><br><span class="line">        <span class="built_in">super</span>(DoubleConv, self).__init__()</span><br><span class="line">        self.conv = nn.Sequential(</span><br><span class="line">            nn.Conv2d(in_ch, mid_channels, <span class="number">3</span>, padding=<span class="number">1</span>),</span><br><span class="line">            nn.BatchNorm2d(out_ch), <span class="comment">#添加了BN层</span></span><br><span class="line">            nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line">            nn.Conv2d(mid_channels, out_ch, <span class="number">3</span>, padding=<span class="number">1</span>),</span><br><span class="line">            nn.BatchNorm2d(out_ch),</span><br><span class="line">            nn.ReLU(inplace=<span class="literal">True</span>)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, <span class="built_in">input</span></span>):</span><br><span class="line">        <span class="keyword">return</span> self.conv(<span class="built_in">input</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Unet</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, in_ch, out_ch</span>):</span><br><span class="line">        <span class="built_in">super</span>(Unet, self).__init__()</span><br><span class="line">        self.conv1 = DoubleConv(in_ch, <span class="number">64</span>)</span><br><span class="line">        self.pool1 = nn.MaxPool2d(<span class="number">2</span>)</span><br><span class="line">        self.conv2 = DoubleConv(<span class="number">64</span>, <span class="number">128</span>)</span><br><span class="line">        self.pool2 = nn.MaxPool2d(<span class="number">2</span>)</span><br><span class="line">        self.conv3 = DoubleConv(<span class="number">128</span>, <span class="number">256</span>)</span><br><span class="line">        self.pool3 = nn.MaxPool2d(<span class="number">2</span>)</span><br><span class="line">        self.conv4 = DoubleConv(<span class="number">256</span>, <span class="number">512</span>)</span><br><span class="line">        self.pool4 = nn.MaxPool2d(<span class="number">2</span>)</span><br><span class="line">        self.conv5 = DoubleConv(<span class="number">512</span>, <span class="number">1024</span>)</span><br><span class="line">        <span class="comment"># 逆卷积，也可以使用上采样(保证k=stride,stride即上采样倍数)</span></span><br><span class="line">        self.up6 = nn.ConvTranspose2d(<span class="number">1024</span>, <span class="number">512</span>, <span class="number">2</span>, stride=<span class="number">2</span>)</span><br><span class="line">        self.conv6 = DoubleConv(<span class="number">1024</span>, <span class="number">512</span>)</span><br><span class="line">        self.up7 = nn.ConvTranspose2d(<span class="number">512</span>, <span class="number">256</span>, <span class="number">2</span>, stride=<span class="number">2</span>)</span><br><span class="line">        self.conv7 = DoubleConv(<span class="number">512</span>, <span class="number">256</span>)</span><br><span class="line">        self.up8 = nn.ConvTranspose2d(<span class="number">256</span>, <span class="number">128</span>, <span class="number">2</span>, stride=<span class="number">2</span>)</span><br><span class="line">        self.conv8 = DoubleConv(<span class="number">256</span>, <span class="number">128</span>)</span><br><span class="line">        self.up9 = nn.ConvTranspose2d(<span class="number">128</span>, <span class="number">64</span>, <span class="number">2</span>, stride=<span class="number">2</span>)</span><br><span class="line">        self.conv9 = DoubleConv(<span class="number">128</span>, <span class="number">64</span>)</span><br><span class="line">        self.conv10 = nn.Conv2d(<span class="number">64</span>, out_ch, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        c1 = self.conv1(x)</span><br><span class="line">        p1 = self.pool1(c1)</span><br><span class="line">        c2 = self.conv2(p1)</span><br><span class="line">        p2 = self.pool2(c2)</span><br><span class="line">        c3 = self.conv3(p2)</span><br><span class="line">        p3 = self.pool3(c3)</span><br><span class="line">        c4 = self.conv4(p3)</span><br><span class="line">        p4 = self.pool4(c4)</span><br><span class="line">        c5 = self.conv5(p4)</span><br><span class="line">        up_6 = self.up6(c5)</span><br><span class="line">        merge6 = torch.cat([up_6, c4], dim=<span class="number">1</span>)</span><br><span class="line">        c6 = self.conv6(merge6)</span><br><span class="line">        up_7 = self.up7(c6)</span><br><span class="line">        merge7 = torch.cat([up_7, c3], dim=<span class="number">1</span>)</span><br><span class="line">        c7 = self.conv7(merge7)</span><br><span class="line">        up_8 = self.up8(c7)</span><br><span class="line">        merge8 = torch.cat([up_8, c2], dim=<span class="number">1</span>)</span><br><span class="line">        c8 = self.conv8(merge8)</span><br><span class="line">        up_9 = self.up9(c8)</span><br><span class="line">        merge9 = torch.cat([up_9, c1], dim=<span class="number">1</span>)</span><br><span class="line">        c9 = self.conv9(merge9)</span><br><span class="line">        c10 = self.conv10(c9)</span><br><span class="line">        out = nn.Sigmoid()(c10)</span><br><span class="line">        <span class="keyword">return</span> out</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-]]></content>
-  </entry>
-  <entry>
-    <title>arg的用法</title>
-    <url>/2023/10/19/arg%E7%9A%84%E7%94%A8%E6%B3%95/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
     <title>bert基础</title>
     <url>/2024/06/15/bert%E5%9F%BA%E7%A1%80/</url>
     <content><![CDATA[<h1 id="bert"><a href="#bert" class="headerlink" title="bert"></a>bert</h1><ul>
@@ -751,6 +821,43 @@
 <li>outputs[2][0] &#x3D;&#x3D; model.embeddings(token_input[‘input_ids’], token_input[‘token_type_ids’])</li>
 </ul>
 ]]></content>
+  </entry>
+  <entry>
+    <title>U-Net模型</title>
+    <url>/2024/02/28/U-Net%E6%A8%A1%E5%9E%8B/</url>
+    <content><![CDATA[<h1 id="U-Net"><a href="#U-Net" class="headerlink" title="U-Net"></a>U-Net</h1><p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://img-blog.csdn.net/20180508082955359"
+                     
+                ></p>
+<hr>
+<p>1、首先，定义一个[<code>DoubleConv</code>]模块，里面包含两个（卷积+BN+Relu）的组合。</p>
+<p>参数：in_channels，out_channels，还有一个中间参数mid_channels；</p>
+<p>对应网络中两个蓝箭头的操作。</p>
+<p>contracting path：</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://img-blog.csdnimg.cn/15ab3f39386a4151892d9e4f20efa4b4.png"
+                      style="zoom:50%;" 
+                >
+
+<p>2、定义一个Down模块，里面包含（下采样+DoubleConv）。</p>
+<p>然后就是  DoubleConv+MaxPool2d(下采样)→DoubleConv+MaxPool2d→DoubleConv+MaxPool2d→DoubleConv+MaxPool2d</p>
+<p>3、定义一个Up模块，里面包含（上采样+ context拼接+两个卷积层）</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">from typing import Dict</span><br><span class="line">import torch</span><br><span class="line">import torch.nn as nn</span><br><span class="line">import torch.nn.functional as F</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">class DoubleConv(nn.Sequential):</span><br><span class="line">    def __init__(self, in_channels, out_channels, mid_channels=None):</span><br><span class="line">        if mid_channels is None:    # 如果没有定义中间层channel则和输出层的channel一样</span><br><span class="line">            mid_channels = out_channels</span><br><span class="line">        # 调用父类方法中的initial方法。</span><br><span class="line">        # 加入BN层所以bias=0.</span><br><span class="line">        super(DoubleConv, self).__init__(</span><br><span class="line">            nn.Conv2d(in_channels, mid_channels, kernel_size=3, padding=1, bias=False),</span><br><span class="line">            nn.BatchNorm2d(mid_channels),</span><br><span class="line">            nn.ReLU(inplace=True),</span><br><span class="line">            nn.Conv2d(mid_channels, out_channels, kernel_size=3, padding=1, bias=False),</span><br><span class="line">            nn.BatchNorm2d(out_channels),</span><br><span class="line">            nn.ReLU(inplace=True)</span><br><span class="line">        )</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">class Down(nn.Sequential):</span><br><span class="line">    def __init__(self, in_channels, out_channels):</span><br><span class="line">        # 下采样maxpool，kernel_size=2，stride=2.</span><br><span class="line">        super(Down, self).__init__(</span><br><span class="line">            nn.MaxPool2d(2, stride=2),</span><br><span class="line">            DoubleConv(in_channels, out_channels)</span><br><span class="line">        )</span><br><span class="line"> </span><br><span class="line"># 上采样 + context拼接 + 两个卷积层</span><br><span class="line">class Up(nn.Module):</span><br><span class="line">    # in_channels对应context拼接后的特征层个数，bilinear是否使用双线性插值替代转置卷积</span><br><span class="line">    def __init__(self, in_channels, out_channels, bilinear=True):</span><br><span class="line">        super(Up, self).__init__()</span><br><span class="line">        if bilinear:    # 双线性插值，得到特征矩阵的channel和context拼接的特征矩阵channel一致</span><br><span class="line">            self.up = nn.Upsample(scale_factor=2, mode=&#x27;bilinear&#x27;, align_corners=True)</span><br><span class="line">            self.conv = DoubleConv(in_channels, out_channels, in_channels // 2)</span><br><span class="line">        else:   # 转置卷积</span><br><span class="line">            self.up = nn.ConvTranspose2d(in_channels, in_channels // 2, kernel_size=2, stride=2)</span><br><span class="line">            self.conv = DoubleConv(in_channels, out_channels)</span><br><span class="line"> </span><br><span class="line">    # x2：拼接的特征层</span><br><span class="line">    def forward(self, x1: torch.Tensor, x2: torch.Tensor) -&gt; torch.Tensor:</span><br><span class="line">        x1 = self.up(x1)</span><br><span class="line">        # [N, C, H, W]</span><br><span class="line">        diff_y = x2.size()[2] - x1.size()[2]    # 高度方向上的差值</span><br><span class="line">        diff_x = x2.size()[3] - x1.size()[3]    # 宽度方向上的差值</span><br><span class="line"> </span><br><span class="line">        # pad保证上采样后的图片和context拼接图片的高和宽相等，且是16的整数倍</span><br><span class="line">        # padding_left, padding_right, padding_top, padding_bottom</span><br><span class="line">        x1 = F.pad(x1, [diff_x // 2, diff_x - diff_x // 2,</span><br><span class="line">                        diff_y // 2, diff_y - diff_y // 2])</span><br><span class="line"> </span><br><span class="line">        x = torch.cat([x2, x1], dim=1)</span><br><span class="line">        x = self.conv(x)</span><br><span class="line">        return x</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">class OutConv(nn.Sequential):</span><br><span class="line">    def __init__(self, in_channels, num_classes):</span><br><span class="line">        super(OutConv, self).__init__(</span><br><span class="line">            nn.Conv2d(in_channels, num_classes, kernel_size=1)</span><br><span class="line">        )</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">class UNet(nn.Module):</span><br><span class="line">    def __init__(self,</span><br><span class="line">                 in_channels: int = 1,  # 实例化时，传入彩色图片=3</span><br><span class="line">                 num_classes: int = 2,  # 分割任务当中的分类类别个数</span><br><span class="line">                 bilinear: bool = True, # bilinear是否使用双线性插值替代转置卷积</span><br><span class="line">                 base_c: int = 64):     # 第一个卷积层所采用的卷积核的个数</span><br><span class="line">        super(UNet, self).__init__()</span><br><span class="line">        self.in_channels = in_channels</span><br><span class="line">        self.num_classes = num_classes</span><br><span class="line">        self.bilinear = bilinear</span><br><span class="line"> </span><br><span class="line">        self.in_conv = DoubleConv(in_channels, base_c)</span><br><span class="line">        self.down1 = Down(base_c, base_c * 2)</span><br><span class="line">        self.down2 = Down(base_c * 2, base_c * 4)</span><br><span class="line">        self.down3 = Down(base_c * 4, base_c * 8)</span><br><span class="line">        # bilinear=true，bilinear=2，双线性插值法：第四个down模块输入和输出channel不变</span><br><span class="line">        # bilinear=false，bilinear=1，转置卷积法：第四个down模块输出channel是输入的两倍</span><br><span class="line">        factor = 2 if bilinear else 1</span><br><span class="line">        self.down4 = Down(base_c * 8, base_c * 16 // factor)</span><br><span class="line">        self.up1 = Up(base_c * 16, base_c * 8 // factor, bilinear)</span><br><span class="line">        self.up2 = Up(base_c * 8, base_c * 4 // factor, bilinear)</span><br><span class="line">        self.up3 = Up(base_c * 4, base_c * 2 // factor, bilinear)</span><br><span class="line">        self.up4 = Up(base_c * 2, base_c, bilinear)</span><br><span class="line">        self.out_conv = OutConv(base_c, num_classes)</span><br><span class="line"> </span><br><span class="line">    def forward(self, x: torch.Tensor) -&gt; Dict[str, torch.Tensor]:</span><br><span class="line">        x1 = self.in_conv(x)</span><br><span class="line">        x2 = self.down1(x1)</span><br><span class="line">        x3 = self.down2(x2)</span><br><span class="line">        x4 = self.down3(x3)</span><br><span class="line">        x5 = self.down4(x4)</span><br><span class="line">        x = self.up1(x5, x4)</span><br><span class="line">        x = self.up2(x, x3)</span><br><span class="line">        x = self.up3(x, x2)</span><br><span class="line">        x = self.up4(x, x1)</span><br><span class="line">        logits = self.out_conv(x)   # 1x1卷积</span><br><span class="line"> </span><br><span class="line">        return &#123;&quot;out&quot;: logits&#125;  # 字典的形式返回</span><br></pre></td></tr></table></figure></div>
+
+
+
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> autograd</span><br><span class="line"></span><br><span class="line"><span class="comment">#把常用的2个卷积操作简单封装下</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DoubleConv</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, in_ch, out_ch,mid_channels=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="keyword">if</span> mid_channels <span class="keyword">is</span> <span class="literal">None</span>:    <span class="comment"># 如果没有定义中间层channel则和输出层的channel一样</span></span><br><span class="line">            mid_channels = out_channels</span><br><span class="line">        <span class="built_in">super</span>(DoubleConv, self).__init__()</span><br><span class="line">        self.conv = nn.Sequential(</span><br><span class="line">            nn.Conv2d(in_ch, mid_channels, <span class="number">3</span>, padding=<span class="number">1</span>),</span><br><span class="line">            nn.BatchNorm2d(out_ch), <span class="comment">#添加了BN层</span></span><br><span class="line">            nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line">            nn.Conv2d(mid_channels, out_ch, <span class="number">3</span>, padding=<span class="number">1</span>),</span><br><span class="line">            nn.BatchNorm2d(out_ch),</span><br><span class="line">            nn.ReLU(inplace=<span class="literal">True</span>)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, <span class="built_in">input</span></span>):</span><br><span class="line">        <span class="keyword">return</span> self.conv(<span class="built_in">input</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Unet</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, in_ch, out_ch</span>):</span><br><span class="line">        <span class="built_in">super</span>(Unet, self).__init__()</span><br><span class="line">        self.conv1 = DoubleConv(in_ch, <span class="number">64</span>)</span><br><span class="line">        self.pool1 = nn.MaxPool2d(<span class="number">2</span>)</span><br><span class="line">        self.conv2 = DoubleConv(<span class="number">64</span>, <span class="number">128</span>)</span><br><span class="line">        self.pool2 = nn.MaxPool2d(<span class="number">2</span>)</span><br><span class="line">        self.conv3 = DoubleConv(<span class="number">128</span>, <span class="number">256</span>)</span><br><span class="line">        self.pool3 = nn.MaxPool2d(<span class="number">2</span>)</span><br><span class="line">        self.conv4 = DoubleConv(<span class="number">256</span>, <span class="number">512</span>)</span><br><span class="line">        self.pool4 = nn.MaxPool2d(<span class="number">2</span>)</span><br><span class="line">        self.conv5 = DoubleConv(<span class="number">512</span>, <span class="number">1024</span>)</span><br><span class="line">        <span class="comment"># 逆卷积，也可以使用上采样(保证k=stride,stride即上采样倍数)</span></span><br><span class="line">        self.up6 = nn.ConvTranspose2d(<span class="number">1024</span>, <span class="number">512</span>, <span class="number">2</span>, stride=<span class="number">2</span>)</span><br><span class="line">        self.conv6 = DoubleConv(<span class="number">1024</span>, <span class="number">512</span>)</span><br><span class="line">        self.up7 = nn.ConvTranspose2d(<span class="number">512</span>, <span class="number">256</span>, <span class="number">2</span>, stride=<span class="number">2</span>)</span><br><span class="line">        self.conv7 = DoubleConv(<span class="number">512</span>, <span class="number">256</span>)</span><br><span class="line">        self.up8 = nn.ConvTranspose2d(<span class="number">256</span>, <span class="number">128</span>, <span class="number">2</span>, stride=<span class="number">2</span>)</span><br><span class="line">        self.conv8 = DoubleConv(<span class="number">256</span>, <span class="number">128</span>)</span><br><span class="line">        self.up9 = nn.ConvTranspose2d(<span class="number">128</span>, <span class="number">64</span>, <span class="number">2</span>, stride=<span class="number">2</span>)</span><br><span class="line">        self.conv9 = DoubleConv(<span class="number">128</span>, <span class="number">64</span>)</span><br><span class="line">        self.conv10 = nn.Conv2d(<span class="number">64</span>, out_ch, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        c1 = self.conv1(x)</span><br><span class="line">        p1 = self.pool1(c1)</span><br><span class="line">        c2 = self.conv2(p1)</span><br><span class="line">        p2 = self.pool2(c2)</span><br><span class="line">        c3 = self.conv3(p2)</span><br><span class="line">        p3 = self.pool3(c3)</span><br><span class="line">        c4 = self.conv4(p3)</span><br><span class="line">        p4 = self.pool4(c4)</span><br><span class="line">        c5 = self.conv5(p4)</span><br><span class="line">        up_6 = self.up6(c5)</span><br><span class="line">        merge6 = torch.cat([up_6, c4], dim=<span class="number">1</span>)</span><br><span class="line">        c6 = self.conv6(merge6)</span><br><span class="line">        up_7 = self.up7(c6)</span><br><span class="line">        merge7 = torch.cat([up_7, c3], dim=<span class="number">1</span>)</span><br><span class="line">        c7 = self.conv7(merge7)</span><br><span class="line">        up_8 = self.up8(c7)</span><br><span class="line">        merge8 = torch.cat([up_8, c2], dim=<span class="number">1</span>)</span><br><span class="line">        c8 = self.conv8(merge8)</span><br><span class="line">        up_9 = self.up9(c8)</span><br><span class="line">        merge9 = torch.cat([up_9, c1], dim=<span class="number">1</span>)</span><br><span class="line">        c9 = self.conv9(merge9)</span><br><span class="line">        c10 = self.conv10(c9)</span><br><span class="line">        out = nn.Sigmoid()(c10)</span><br><span class="line">        <span class="keyword">return</span> out</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+]]></content>
+  </entry>
+  <entry>
+    <title>arg的用法</title>
+    <url>/2023/10/19/arg%E7%9A%84%E7%94%A8%E6%B3%95/</url>
+    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>pandas数据分析数据预处理</title>
@@ -843,100 +950,6 @@
                      data-src="/%E5%9B%BE%E7%89%87%E7%9A%84%E9%93%BE%E6%8E%A5"
                       alt="图片描述"
                 ></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>transformer-注意力机制</title>
-    <url>/2023/10/23/transformer-%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/</url>
-    <content><![CDATA[<h2 id="1-Attention"><a href="#1-Attention" class="headerlink" title="1.Attention"></a>1.Attention</h2><h3 id="1-1-讲讲对Attention的理解？"><a href="#1-1-讲讲对Attention的理解？" class="headerlink" title="1.1 讲讲对Attention的理解？"></a>1.1 讲讲对Attention的理解？</h3><p>Attention机制是一种在处理时序相关问题的时候常用的技术，主要用于处理序列数据。<br>核心思想是在处理序列数据时，<strong>网络应该更关注输入中的重要部分，而忽略不重要的部分，它通过学习不同部分的权重，将输入的序列中的重要部分显式地加权，从而使得模型可以更好地关注与输出有关的信息。</strong></p>
-<p><strong>Attention机制的关键是引入一种机制来动态地计算输入序列中各个位置的权重，从而在每个时间步上，对输入序列的不同部分进行加权求和，得到当前时间步的输出。这样就实现了模型对输入中不同部分的关注度的自适应调整。</strong></p>
-<h3 id="1-2Attention的计算步骤是什么？"><a href="#1-2Attention的计算步骤是什么？" class="headerlink" title="1.2Attention的计算步骤是什么？"></a>1.2Attention的计算步骤是什么？</h3><p>如下：</p>
-<ul>
-<li><p>计算查询（Query）：查询是当前时间步的输入，用于和序列中其他位置的信息进行比较。</p>
-</li>
-<li><p>计算键（Key）和值（Value）：键表示序列中其他位置的信息，值是对应位置的表示。键和值用来和查询进行比较。</p>
-</li>
-<li><p>计算注意力权重：：通过将查询和键进行内积运算，进<strong>行缩放，根号d，</strong>然后应用softmax函数，得到注意力权重。这些权重表示了在当前时间步，模型应该关注序列中其他位置的重要程度。</p>
-</li>
-<li><p>加权求和：根据注意力权重将值进行加权求和，得到当前时间步的输出</p>
-</li>
-</ul>
-<p>在Transformer中，Self-Attention 被称为”Scaled Dot-Product Attention”，其计算过程如下：</p>
-<ol>
-<li>对于输入序列中的每个位置，通过计算其与所有其他位置之间的相似度得分（通常通过点积计算）。</li>
-<li>对得分进<strong>行缩放处理</strong>，以防止梯度爆炸。</li>
-<li>将得分用softmax函数转换为注意力权重，以便计算每个位置的加权和。</li>
-<li>使用注意力权重对输入序列中的所有位置进行加权求和，得到每个位置的自注意输出。</li>
-</ol>
-<h3 id="1-3-self-attention-在计算的过程中，如何对padding位做mask？"><a href="#1-3-self-attention-在计算的过程中，如何对padding位做mask？" class="headerlink" title="1.3 self-attention 在计算的过程中，如何对padding位做mask？"></a>1.3 self-attention 在计算的过程中，如何对padding位做mask？</h3><p>在 Attention 机制中，同样需要忽略 padding 部分的影响，这里以transformer encoder中的self-attention为例：self-attention中，Q和K在点积之后，需要先经过mask再进行softmax，<strong>因此，对于要屏蔽的部分，mask之后的输出需要为负无穷，这样softmax之后输出才为0</strong>。</p>
-<h3 id="1-4-多种attention"><a href="#1-4-多种attention" class="headerlink" title="1.4 多种attention"></a>1.4 多种attention</h3><p><strong>FlashAttention，加速</strong></p>
-<p>动机：</p>
-<ul>
-<li>不同硬件模块之间的带宽和存储空间有明显差异</li>
-<li>FlashAttention的主要动机就是希望把SRAM利用起来，但是难点就在于SRAM太小了，一个普通的矩阵乘法都放不下去。FlashAttention的解决思路就是将计算模块进行分解，拆成一个个小的计算任务。</li>
-</ul>
-<p>算法流程</p>
-<ol>
-<li>目标一：在不访问整个输入的情况下计算softmax函数的缩减；将输入分割成块，并在输入块上进行多次传递，从而以增量方式执行softmax缩减。</li>
-<li>目标二：在后向传播中不能存储中间注意力矩阵。标准Attention算法的实现需要将计算过程中的S、P写入到HBM中，而这些中间矩阵的大小与输入的序列长度有关且为二次型，因此Flash Attention就提出了不使用中间注意力矩阵，通过存储归一化因子来减少HBM内存的消耗。</li>
-</ol>
-<h2 id="2-Transformer"><a href="#2-Transformer" class="headerlink" title="2.Transformer"></a>2.Transformer</h2><h3 id="2-1-transformer中multi-head-attention中每个head为什么要进行降维？"><a href="#2-1-transformer中multi-head-attention中每个head为什么要进行降维？" class="headerlink" title="2.1 transformer中multi-head attention中每个head为什么要进行降维？"></a>2.1 transformer中multi-head attention中每个head为什么要进行降维？</h3><p>对每个head进行降维是为了增加模型的表达能力和效率。<br>每个head是独立的注意力机制，它们可以学习不同类型的特征和关系。通过使用多个注意力头，Transformer可以并行地学习多种不同的特征表示，从而增强了模型的表示能力。</p>
-<p>通过降低每个head的维度，Transformer可以在保持较高的表达能力的同时，大大减少计算复杂度。降维后的计算复杂度为</p>
-<p><strong>如何实现？</strong></p>
-<p>permute和reshape，不改变复杂度</p>
-<h3 id="2-2-transformer的点积模型做缩放的原因是什么？"><a href="#2-2-transformer的点积模型做缩放的原因是什么？" class="headerlink" title="2.2 transformer的点积模型做缩放的原因是什么？"></a>2.2 transformer的点积模型做缩放的原因是什么？</h3><p>使用缩放的原因是为了控制注意力权重的尺度，以避免在计算过程中出现梯度爆炸的问题。</p>
-<p>Attention的计算是在内积之后进行softmax，主要涉及的运算是$$e^{q \cdot k}，可以大致认为内积之后、softmax之前的数值在-3\sqrt{d}到3\sqrt{d}$$这个范围内，由于d通常都至少是64，所以$$e^{3\sqrt{d}}$$比较大而$$ e^{-3\sqrt{d}}$$比较小，因此经过softmax之后，Attention的分布非常接近一个one hot分布了，这带来严重的梯度消失问题，导致训练效果差。（例如y&#x3D;softmax(x)在|x|较大时进入了饱和区，x继续变化y值也几乎不变，即饱和区梯度消失）</p>
-<p>相应地，解决方法就有两个:</p>
-<ul>
-<li>除以根号d</li>
-<li>但是初始化q,k的全连接层的时候，其初始化方差要多除以一个d，这同样能使得使q⋅k的初始方差变为1，T5采用了这样的做法。</li>
-</ul>
-<h3 id="3-Transformer总体架构"><a href="#3-Transformer总体架构" class="headerlink" title="3.Transformer总体架构"></a>3.Transformer总体架构</h3><p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="C:\xhou\blog_pic\image_V6s3Iu8dFP.png"
-                      alt="image_V6s3Iu8dFP"
-                ></p>
-<p><a class="link"   href="https://dongnian.icu/llms/transformer/2.Transformer%E6%9E%B6%E6%9E%84%E8%A7%A3%E6%9E%90/image/image_V6s3Iu8dFP.png" > <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>（1）输入部分</p>
-<ul>
-<li>源文本嵌入层及其位置编码器</li>
-<li>目标文本嵌入层及其位置编码器</li>
-</ul>
-<p>位置编码器PositionalEncoding<strong>将词汇位置不同可能会产生不同语义的信息加入到词嵌入张量中, 以弥补位置信息的缺失.</strong></p>
-<p>位置编码的加入是必不可少的，因为纯粹的Attention模块是无法捕捉输入顺序的，即无法区分不同位置的Token。</p>
-<p>（2输入部分）</p>
-<ul>
-<li>线性层</li>
-<li>softmax</li>
-</ul>
-<p>（3）编码器</p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="C:\xhou\blog_pic\image_6RlUw8Ldsk.png"
-                      alt="image_6RlUw8Ldsk"
-                ></p>
-<ul>
-<li>由N个编码器层堆叠而成</li>
-<li>每个编码器层由两个子层连接结构组成</li>
-<li>第一个子层连接结构包括一个多头自注意力子层和规范化层以及一个残差连接</li>
-<li>第二个子层连接结构包括一个前馈全连接子层和规范化层以及一个残差连接</li>
-</ul>
-<p>（4）解码器</p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="C:\xhou\blog_pic\image_IlV0Rf2hVU.png"
-                      alt="image_IlV0Rf2hVU"
-                ></p>
-<ul>
-<li>由N个解码器层堆叠而成</li>
-<li>每个解码器层由三个子层连接结构组成</li>
-<li>第一个子层连接结构包括一个多头自注意力子层和规范化层以及一个残差连接</li>
-<li>第二个子层连接结构包括一个多头注意力子层和规范化层以及一个残差连接</li>
-<li>第三个子层连接结构包括一个前馈全连接子层和规范化层以及一个残差连接</li>
-</ul>
 ]]></content>
   </entry>
   <entry>
@@ -1052,6 +1065,105 @@
 ]]></content>
   </entry>
   <entry>
+    <title>transformer-注意力机制</title>
+    <url>/2023/10/23/transformer-%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/</url>
+    <content><![CDATA[<h2 id="1-Attention"><a href="#1-Attention" class="headerlink" title="1.Attention"></a>1.Attention</h2><h3 id="1-1-讲讲对Attention的理解？"><a href="#1-1-讲讲对Attention的理解？" class="headerlink" title="1.1 讲讲对Attention的理解？"></a>1.1 讲讲对Attention的理解？</h3><p>Attention机制是一种在处理时序相关问题的时候常用的技术，主要用于处理序列数据。<br>核心思想是在处理序列数据时，<strong>网络应该更关注输入中的重要部分，而忽略不重要的部分，它通过学习不同部分的权重，将输入的序列中的重要部分显式地加权，从而使得模型可以更好地关注与输出有关的信息。</strong></p>
+<p><strong>Attention机制的关键是引入一种机制来动态地计算输入序列中各个位置的权重，从而在每个时间步上，对输入序列的不同部分进行加权求和，得到当前时间步的输出。这样就实现了模型对输入中不同部分的关注度的自适应调整。</strong></p>
+<h3 id="1-2Attention的计算步骤是什么？"><a href="#1-2Attention的计算步骤是什么？" class="headerlink" title="1.2Attention的计算步骤是什么？"></a>1.2Attention的计算步骤是什么？</h3><p>如下：</p>
+<ul>
+<li><p>计算查询（Query）：查询是当前时间步的输入，用于和序列中其他位置的信息进行比较。</p>
+</li>
+<li><p>计算键（Key）和值（Value）：键表示序列中其他位置的信息，值是对应位置的表示。键和值用来和查询进行比较。</p>
+</li>
+<li><p>计算注意力权重：：通过将查询和键进行内积运算，进<strong>行缩放，根号d，</strong>然后应用softmax函数，得到注意力权重。这些权重表示了在当前时间步，模型应该关注序列中其他位置的重要程度。</p>
+</li>
+<li><p>加权求和：根据注意力权重将值进行加权求和，得到当前时间步的输出</p>
+</li>
+</ul>
+<p>在Transformer中，Self-Attention 被称为”Scaled Dot-Product Attention”，其计算过程如下：</p>
+<ol>
+<li>对于输入序列中的每个位置，通过计算其与所有其他位置之间的相似度得分（通常通过点积计算）。</li>
+<li>对得分进<strong>行缩放处理</strong>，以防止梯度爆炸。</li>
+<li>将得分用softmax函数转换为注意力权重，以便计算每个位置的加权和。</li>
+<li>使用注意力权重对输入序列中的所有位置进行加权求和，得到每个位置的自注意输出。</li>
+</ol>
+<h3 id="1-3-self-attention-在计算的过程中，如何对padding位做mask？"><a href="#1-3-self-attention-在计算的过程中，如何对padding位做mask？" class="headerlink" title="1.3 self-attention 在计算的过程中，如何对padding位做mask？"></a>1.3 self-attention 在计算的过程中，如何对padding位做mask？</h3><p>在 Attention 机制中，同样需要忽略 padding 部分的影响，这里以transformer encoder中的self-attention为例：self-attention中，Q和K在点积之后，需要先经过mask再进行softmax，<strong>因此，对于要屏蔽的部分，mask之后的输出需要为负无穷，这样softmax之后输出才为0</strong>。</p>
+<h3 id="1-4-多种attention"><a href="#1-4-多种attention" class="headerlink" title="1.4 多种attention"></a>1.4 多种attention</h3><p><strong>FlashAttention，加速</strong></p>
+<p>动机：</p>
+<ul>
+<li>不同硬件模块之间的带宽和存储空间有明显差异</li>
+<li>FlashAttention的主要动机就是希望把SRAM利用起来，但是难点就在于SRAM太小了，一个普通的矩阵乘法都放不下去。FlashAttention的解决思路就是将计算模块进行分解，拆成一个个小的计算任务。</li>
+</ul>
+<p>算法流程</p>
+<ol>
+<li>目标一：在不访问整个输入的情况下计算softmax函数的缩减；将输入分割成块，并在输入块上进行多次传递，从而以增量方式执行softmax缩减。</li>
+<li>目标二：在后向传播中不能存储中间注意力矩阵。标准Attention算法的实现需要将计算过程中的S、P写入到HBM中，而这些中间矩阵的大小与输入的序列长度有关且为二次型，因此Flash Attention就提出了不使用中间注意力矩阵，通过存储归一化因子来减少HBM内存的消耗。</li>
+</ol>
+<h2 id="2-Transformer"><a href="#2-Transformer" class="headerlink" title="2.Transformer"></a>2.Transformer</h2><h3 id="2-1-transformer中multi-head-attention中每个head为什么要进行降维？"><a href="#2-1-transformer中multi-head-attention中每个head为什么要进行降维？" class="headerlink" title="2.1 transformer中multi-head attention中每个head为什么要进行降维？"></a>2.1 transformer中multi-head attention中每个head为什么要进行降维？</h3><p>对每个head进行降维是为了增加模型的表达能力和效率。<br>每个head是独立的注意力机制，它们可以学习不同类型的特征和关系。通过使用多个注意力头，Transformer可以并行地学习多种不同的特征表示，从而增强了模型的表示能力。</p>
+<p>通过降低每个head的维度，Transformer可以在保持较高的表达能力的同时，大大减少计算复杂度。降维后的计算复杂度为</p>
+<p><strong>如何实现？</strong></p>
+<p>permute和reshape，不改变复杂度</p>
+<h3 id="2-2-transformer的点积模型做缩放的原因是什么？"><a href="#2-2-transformer的点积模型做缩放的原因是什么？" class="headerlink" title="2.2 transformer的点积模型做缩放的原因是什么？"></a>2.2 transformer的点积模型做缩放的原因是什么？</h3><p>使用缩放的原因是为了控制注意力权重的尺度，以避免在计算过程中出现梯度爆炸的问题。</p>
+<p>Attention的计算是在内积之后进行softmax，主要涉及的运算是$$e^{q \cdot k}，可以大致认为内积之后、softmax之前的数值在-3\sqrt{d}到3\sqrt{d}$$这个范围内，由于d通常都至少是64，所以$$e^{3\sqrt{d}}$$比较大而$$ e^{-3\sqrt{d}}$$比较小，因此经过softmax之后，Attention的分布非常接近一个one hot分布了，这带来严重的梯度消失问题，导致训练效果差。（例如y&#x3D;softmax(x)在|x|较大时进入了饱和区，x继续变化y值也几乎不变，即饱和区梯度消失）</p>
+<p>相应地，解决方法就有两个:</p>
+<ul>
+<li>除以根号d</li>
+<li>但是初始化q,k的全连接层的时候，其初始化方差要多除以一个d，这同样能使得使q⋅k的初始方差变为1，T5采用了这样的做法。</li>
+</ul>
+<h3 id="3-Transformer总体架构"><a href="#3-Transformer总体架构" class="headerlink" title="3.Transformer总体架构"></a>3.Transformer总体架构</h3><p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\xhou\blog_pic\image_V6s3Iu8dFP.png"
+                      alt="image_V6s3Iu8dFP"
+                ></p>
+<p><a class="link"   href="https://dongnian.icu/llms/transformer/2.Transformer%E6%9E%B6%E6%9E%84%E8%A7%A3%E6%9E%90/image/image_V6s3Iu8dFP.png" > <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>（1）输入部分</p>
+<ul>
+<li>源文本嵌入层及其位置编码器</li>
+<li>目标文本嵌入层及其位置编码器</li>
+</ul>
+<p>位置编码器PositionalEncoding<strong>将词汇位置不同可能会产生不同语义的信息加入到词嵌入张量中, 以弥补位置信息的缺失.</strong></p>
+<p>位置编码的加入是必不可少的，因为纯粹的Attention模块是无法捕捉输入顺序的，即无法区分不同位置的Token。</p>
+<p>（2输入部分）</p>
+<ul>
+<li>线性层</li>
+<li>softmax</li>
+</ul>
+<p>（3）编码器</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\xhou\blog_pic\image_6RlUw8Ldsk.png"
+                      alt="image_6RlUw8Ldsk"
+                ></p>
+<ul>
+<li>由N个编码器层堆叠而成</li>
+<li>每个编码器层由两个子层连接结构组成</li>
+<li>第一个子层连接结构包括一个多头自注意力子层和规范化层以及一个残差连接</li>
+<li>第二个子层连接结构包括一个前馈全连接子层和规范化层以及一个残差连接</li>
+</ul>
+<p>（4）解码器</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\xhou\blog_pic\image_IlV0Rf2hVU.png"
+                      alt="image_IlV0Rf2hVU"
+                ></p>
+<ul>
+<li>由N个解码器层堆叠而成</li>
+<li>每个解码器层由三个子层连接结构组成</li>
+<li>第一个子层连接结构包括一个多头自注意力子层和规范化层以及一个残差连接</li>
+<li>第二个子层连接结构包括一个多头注意力子层和规范化层以及一个残差连接</li>
+<li>第三个子层连接结构包括一个前馈全连接子层和规范化层以及一个残差连接</li>
+</ul>
+]]></content>
+  </entry>
+  <entry>
+    <title>图神经网络实战</title>
+    <url>/2023/10/23/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%AE%9E%E6%88%98/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
     <title>图神经网络</title>
     <url>/2023/10/19/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C(%E4%BA%8C)/</url>
     <content><![CDATA[<p>[TOC] </p>
@@ -1134,9 +1246,31 @@
 ]]></content>
   </entry>
   <entry>
-    <title>图神经网络实战</title>
-    <url>/2023/10/23/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%AE%9E%E6%88%98/</url>
-    <content><![CDATA[]]></content>
+    <title>基础模型pytorch学习笔记</title>
+    <url>/2023/12/25/%E5%9F%BA%E7%A1%80%E6%A8%A1%E5%9E%8Bpytorch%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%20/</url>
+    <content><![CDATA[<h1 id="Resnet"><a href="#Resnet" class="headerlink" title="Resnet"></a>Resnet</h1><p><strong>问题：随着神经网络的不断加深，一定会带来好处吗？</strong></p>
+<p>蓝色五角星表示最优值<br>标有Fi的闭合区域表示函数，闭合区域的面积代表函数的复杂程度，在这个区域中能够找到一个最优的模型（可以用区域中的一个点来表示，该点到最优值的距离可以用来衡量模型的好坏）<br>从上图中可以看出，随着函数的复杂度的不断增加，虽然函数的区域面积增大了，但是在该区域中所能找到的最优模型（该区域内的某一点）离最优值的距离可能会越来越远（也就是模型所在的区域随着函数复杂度的增加，逐渐偏离了原来的区域，离最优值越来越远）（非嵌套函数（non-nested function））<br>解决上述问题（模型走偏）的方法：每一次增加函数复杂度之后函数所覆盖的区域会包含原来函数所在的区域（嵌套函数（nested function）），只有当较复杂的函数类包含复杂度较小的函数类时，才能确保提高它的性能，如下图所示 </p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://i0.hdslb.com/bfs/note/c2e5b2e4475660b29a5166856b0c224e2ce52faf.png@1014w_!web-note.avif"
+                      alt="残差块"
+                ></p>
+<p>之前增加模型深度的方法都是层层堆叠的方法，ResNet的思想是在堆叠层数的同时不会增加模型的复杂度<br>上图中左侧表示一个正常块，右侧表示一个残差块<br>x：原始输入<br>f(x)：理想映射（也是激活函数的输入）<br>对于正常块中来说，虚线框中的部分需要直接拟合出理想映射 f(x)；而对于残差块来说，同样的虚线框中的部分需要拟合出残差映射 f(x) - x<br>残差映射在现实中往往更容易优化<br>如果以恒等映射 f(x) &#x3D; x 作为所想要学出的理想映射 f(x)，则只需要将残差块中虚线框内加权运算的权重和偏置参数设置为 0，f(x) 就变成恒等映射了<br>在实际中，当理想映射 f(x) 极接近于恒等映射时，残差映射易于捕捉恒等映射的细微波动<br>在残差块中，输入可以通过跨层数据线路更快地向前传播  </p>
+<p>残差块使得很深的网络更加容易训练（不管网络有多深，因为有跨层数据通路连接的存在，使得始终能够包含小的网络，因为跳转连接的存在，所以会先将下层的小型网络训练好再去训练更深层次的网络），甚至可以训练一千层的网络（只要内存足够，优化算法就能够实现）<br>学习嵌套函数是神经网络的理想情况，在深层神经网络中，学习另一层作为恒等映射比较容易<br>残差映射可以更容易地学习同一函数，例如将权重层中的参数近似为零<br>利用残差块可以训练出一个有效的深层神经网络：输入可以通过层间的残余连接更快地向前传播<br>残差网络对随后的深层神经网络的设计产生了深远影响，无论是卷积类网络还是全连接类网络，几乎现在所有的网络都会用到，因为只有这样才能够让网络搭建的更深</p>
+<hr>
+<h2 id="残差块"><a href="#残差块" class="headerlink" title="残差块:"></a>残差块:</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">from</span> torch.nn <span class="keyword">import</span> functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> d2l <span class="keyword">import</span> torch <span class="keyword">as</span> d2l</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Residual</span>(nn.Module):  </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, input_channels, num_channels,</span></span><br><span class="line"><span class="params">                 use_1x1conv=<span class="literal">False</span>, strides=<span class="number">1</span></span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(input_channels, num_channels,</span><br><span class="line">                               kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>, stride=strides)</span><br><span class="line">        self.conv2 = nn.Conv2d(num_channels, num_channels,</span><br><span class="line">                               kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">if</span> use_1x1conv:</span><br><span class="line">            self.conv3 = nn.Conv2d(input_channels, num_channels,</span><br><span class="line">                                   kernel_size=<span class="number">1</span>, stride=strides)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.conv3 = <span class="literal">None</span></span><br><span class="line">        self.bn1 = nn.BatchNorm2d(num_channels)</span><br><span class="line">        self.bn2 = nn.BatchNorm2d(num_channels)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, X</span>):</span><br><span class="line">        Y = F.relu(self.bn1(self.conv1(X)))</span><br><span class="line">        Y = self.bn2(self.conv2(Y))</span><br><span class="line">        <span class="keyword">if</span> self.conv3:</span><br><span class="line">            X = self.conv3(X)</span><br><span class="line">        Y += X</span><br><span class="line">        <span class="keyword">return</span> F.relu(Y)</span><br></pre></td></tr></table></figure></div>
+
+<p>通俗的说就是如果加了conv3的效果好，loss小了  就用，不然就不用</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://zh-v2.d2l.ai/_images/resnet-block.svg"
+                      alt="包含以及不包含 1×1 卷积层的残差块"
+                ></p>
+<h2 id="Resnet模型"><a href="#Resnet模型" class="headerlink" title="Resnet模型"></a>Resnet模型</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">b1 = nn.Sequential(nn.Conv2d(<span class="number">1</span>, <span class="number">64</span>, kernel_size=<span class="number">7</span>, stride=<span class="number">2</span>, padding=<span class="number">3</span>),</span><br><span class="line">                   nn.BatchNorm2d(<span class="number">64</span>), nn.ReLU(),</span><br><span class="line">                   nn.MaxPool2d(kernel_size=<span class="number">3</span>, stride=<span class="number">2</span>, padding=<span class="number">1</span>))</span><br></pre></td></tr></table></figure></div>
+
+]]></content>
   </entry>
   <entry>
     <title>图神经网络(二)</title>
@@ -1242,31 +1376,86 @@
 <h3 id="通过池化信息对GNN预测"><a href="#通过池化信息对GNN预测" class="headerlink" title="通过池化信息对GNN预测"></a>通过<a class="link"   href="https://so.csdn.net/so/search?q=%E6%B1%A0%E5%8C%96&spm=1001.2101.3001.7020" >池化 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>信息对GNN预测</h3>]]></content>
   </entry>
   <entry>
-    <title>基础模型pytorch学习笔记</title>
-    <url>/2023/12/25/%E5%9F%BA%E7%A1%80%E6%A8%A1%E5%9E%8Bpytorch%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%20/</url>
-    <content><![CDATA[<h1 id="Resnet"><a href="#Resnet" class="headerlink" title="Resnet"></a>Resnet</h1><p><strong>问题：随着神经网络的不断加深，一定会带来好处吗？</strong></p>
-<p>蓝色五角星表示最优值<br>标有Fi的闭合区域表示函数，闭合区域的面积代表函数的复杂程度，在这个区域中能够找到一个最优的模型（可以用区域中的一个点来表示，该点到最优值的距离可以用来衡量模型的好坏）<br>从上图中可以看出，随着函数的复杂度的不断增加，虽然函数的区域面积增大了，但是在该区域中所能找到的最优模型（该区域内的某一点）离最优值的距离可能会越来越远（也就是模型所在的区域随着函数复杂度的增加，逐渐偏离了原来的区域，离最优值越来越远）（非嵌套函数（non-nested function））<br>解决上述问题（模型走偏）的方法：每一次增加函数复杂度之后函数所覆盖的区域会包含原来函数所在的区域（嵌套函数（nested function）），只有当较复杂的函数类包含复杂度较小的函数类时，才能确保提高它的性能，如下图所示 </p>
+    <title>数据的读取与处理</title>
+    <url>/2023/10/18/%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA/</url>
+    <content><![CDATA[<h1 id="数据预处理、数据增强"><a href="#数据预处理、数据增强" class="headerlink" title="数据预处理、数据增强"></a>数据预处理、数据增强</h1><h2 id="1-数据增强"><a href="#1-数据增强" class="headerlink" title="1. 数据增强"></a>1. 数据增强</h2><p>数据增强可以增加训练集的样本数量，缓解过拟合，并提高模型的泛化能力，从而有效提升算法的性能。</p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="https://i0.hdslb.com/bfs/note/c2e5b2e4475660b29a5166856b0c224e2ce52faf.png@1014w_!web-note.avif"
-                      alt="残差块"
+                     data-src="https://p.ipic.vip/a161sy.png"
+                      alt="数据增强"
                 ></p>
-<p>之前增加模型深度的方法都是层层堆叠的方法，ResNet的思想是在堆叠层数的同时不会增加模型的复杂度<br>上图中左侧表示一个正常块，右侧表示一个残差块<br>x：原始输入<br>f(x)：理想映射（也是激活函数的输入）<br>对于正常块中来说，虚线框中的部分需要直接拟合出理想映射 f(x)；而对于残差块来说，同样的虚线框中的部分需要拟合出残差映射 f(x) - x<br>残差映射在现实中往往更容易优化<br>如果以恒等映射 f(x) &#x3D; x 作为所想要学出的理想映射 f(x)，则只需要将残差块中虚线框内加权运算的权重和偏置参数设置为 0，f(x) 就变成恒等映射了<br>在实际中，当理想映射 f(x) 极接近于恒等映射时，残差映射易于捕捉恒等映射的细微波动<br>在残差块中，输入可以通过跨层数据线路更快地向前传播  </p>
-<p>残差块使得很深的网络更加容易训练（不管网络有多深，因为有跨层数据通路连接的存在，使得始终能够包含小的网络，因为跳转连接的存在，所以会先将下层的小型网络训练好再去训练更深层次的网络），甚至可以训练一千层的网络（只要内存足够，优化算法就能够实现）<br>学习嵌套函数是神经网络的理想情况，在深层神经网络中，学习另一层作为恒等映射比较容易<br>残差映射可以更容易地学习同一函数，例如将权重层中的参数近似为零<br>利用残差块可以训练出一个有效的深层神经网络：输入可以通过层间的残余连接更快地向前传播<br>残差网络对随后的深层神经网络的设计产生了深远影响，无论是卷积类网络还是全连接类网络，几乎现在所有的网络都会用到，因为只有这样才能够让网络搭建的更深</p>
-<hr>
-<h2 id="残差块"><a href="#残差块" class="headerlink" title="残差块:"></a>残差块:</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">from</span> torch.nn <span class="keyword">import</span> functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> d2l <span class="keyword">import</span> torch <span class="keyword">as</span> d2l</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Residual</span>(nn.Module):  </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, input_channels, num_channels,</span></span><br><span class="line"><span class="params">                 use_1x1conv=<span class="literal">False</span>, strides=<span class="number">1</span></span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(input_channels, num_channels,</span><br><span class="line">                               kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>, stride=strides)</span><br><span class="line">        self.conv2 = nn.Conv2d(num_channels, num_channels,</span><br><span class="line">                               kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">if</span> use_1x1conv:</span><br><span class="line">            self.conv3 = nn.Conv2d(input_channels, num_channels,</span><br><span class="line">                                   kernel_size=<span class="number">1</span>, stride=strides)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.conv3 = <span class="literal">None</span></span><br><span class="line">        self.bn1 = nn.BatchNorm2d(num_channels)</span><br><span class="line">        self.bn2 = nn.BatchNorm2d(num_channels)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, X</span>):</span><br><span class="line">        Y = F.relu(self.bn1(self.conv1(X)))</span><br><span class="line">        Y = self.bn2(self.conv2(Y))</span><br><span class="line">        <span class="keyword">if</span> self.conv3:</span><br><span class="line">            X = self.conv3(X)</span><br><span class="line">        Y += X</span><br><span class="line">        <span class="keyword">return</span> F.relu(Y)</span><br></pre></td></tr></table></figure></div>
+<h2 id="2-数据预处理"><a href="#2-数据预处理" class="headerlink" title="2. 数据预处理"></a>2. 数据预处理</h2><p>1）将图像转换成 tensor 的数据格式</p>
+<p>2）将图像的 像素值范围 由 0～255 转换到 0～1</p>
+<p>3）(height, width, channel) &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&gt;&gt;&gt; (channel, height, width)</p>
+<p>4）归一化图像</p>
+<h2 id="3-使用节点"><a href="#3-使用节点" class="headerlink" title="3. 使用节点"></a>3. 使用节点</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">trans = transforms.Compose([transforms.RandomResizedCrop((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.RandomHorizontalFlip(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ColorJitter(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
 
-<p>通俗的说就是如果加了conv3的效果好，loss小了  就用，不然就不用</p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="https://zh-v2.d2l.ai/_images/resnet-block.svg"
-                      alt="包含以及不包含 1×1 卷积层的残差块"
+                     data-src="https://p.ipic.vip/iiqcob.png"
+                     
                 ></p>
-<h2 id="Resnet模型"><a href="#Resnet模型" class="headerlink" title="Resnet模型"></a>Resnet模型</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">b1 = nn.Sequential(nn.Conv2d(<span class="number">1</span>, <span class="number">64</span>, kernel_size=<span class="number">7</span>, stride=<span class="number">2</span>, padding=<span class="number">3</span>),</span><br><span class="line">                   nn.BatchNorm2d(<span class="number">64</span>), nn.ReLU(),</span><br><span class="line">                   nn.MaxPool2d(kernel_size=<span class="number">3</span>, stride=<span class="number">2</span>, padding=<span class="number">1</span>))</span><br></pre></td></tr></table></figure></div>
+<h1 id="torchvision-transforms-的使用"><a href="#torchvision-transforms-的使用" class="headerlink" title="torchvision.transforms 的使用"></a>torchvision.transforms 的使用</h1><p>官方文档地址： <a class="link"   href="https://pytorch.org/vision/stable/transforms.html" >https://pytorch.org/vision/stable/transforms.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h2 id="1-torchvision-transforms-ToTensor"><a href="#1-torchvision-transforms-ToTensor" class="headerlink" title="1. torchvision.transforms.ToTensor()"></a>1. torchvision.transforms.ToTensor()</h2><p><code>torchvision.transforms.ToTensor()</code> 做了三件事：</p>
+<p> 1）将图像的数据格式由 nump.ndarray 或 PIL.Image 转为 tensor，数据类型为 torch.FloatTensor</p>
+<p> 2）将像素值范围从 0-255 转换到 0-1之间， 处理方式 ：直接除以255</p>
+<p> 3）将 shape&#x3D;(H,W, C) 转换为 shape&#x3D; (C, H, W)</p>
+<p>🌼原始的data的shape为（5，5，3），则其表示有5个（5 ， 3）的二维数组，即我们把最外层的[]去掉就得到了5个五行三列的数据。</p>
+<p>🌼同样的，变换后data的shape为（3，5，5），则其表示有3个（5 ， 5）的二维数组，即我们把最外层的[]去掉就得到了3个五行五列的数据。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://p.ipic.vip/xksmgr.png"
+                     
+                ></p>
+<h2 id="2-torchvision-transforms-Normalize"><a href="#2-torchvision-transforms-Normalize" class="headerlink" title="2. torchvision.transforms.Normalize()"></a>2. torchvision.transforms.Normalize()</h2><p>作用：用均值和标准差对张量图像进行归一化，一般在 <code>torchvision.transforms.ToTensor()</code> 之后使用</p>
+<p>在使用 <code>torchvision.transforms.ToTensor()</code> 之后，像素值取值范围会被转换到 [0, 1]之间，再使用 <code>transforms.Normalize(mean, std)</code> 进行归一化后，原像素值就被分布到了 [-1, 1] 之间：</p>
+<p>公式：</p>
+<ul>
+<li>原来的 0~1 最小值 0 则变成 (0 - mean) &#x2F; std &#x3D; -1</li>
+</ul>
+<ul>
+<li>最大值1则变成 (1 - mean) &#x2F; std &#x3D; 1</li>
+</ul>
+<p>一般 mean 和 std 会分别指定3个值，代表图像3个通道的均值和方差，比如<code>torchvision.transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])</code></p>
+<p>如果是<strong>单通道的灰度图</strong>，均值为0.5，方差为0.5，可以写成 <code>transforms.Normalize(mean=[0.5], std=[0.5])</code></p>
+<p>因为 ImageNet数据集 是一个大型数据集，由一个大型数据集统计出来的均值和方差，基本符合所有数据集的像素值分布，所以，一般直接使用 <code>mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]</code></p>
+<h2 id="3-transforms-Compose"><a href="#3-transforms-Compose" class="headerlink" title="3.transforms.Compose()"></a>3.transforms.Compose()</h2><p><strong>训练阶段</strong></p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">trans = transforms.Compose([transforms.RandomResizedCrop((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.RandomHorizontalFlip(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ColorJitter(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
 
-]]></content>
+
+
+<p><strong>推理阶段(test)</strong></p>
+<p>推理阶段不会再对数据进行增强，只会做基础的预处理，比如：将尺寸处理到固定尺寸 ；使用 ToTensor 处理数据； Normalize 归一化</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">trans = transforms.Compose([transforms.RE((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h2 id="4-transforms-RandomResizedCrop随机尺寸裁剪"><a href="#4-transforms-RandomResizedCrop随机尺寸裁剪" class="headerlink" title="4.transforms.RandomResizedCrop随机尺寸裁剪"></a>4.transforms.RandomResizedCrop随机尺寸裁剪</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">resized_crop = transforms.RandomResizedCrop(size=(<span class="number">224</span>, <span class="number">224</span>),</span><br><span class="line">                                            scale=(<span class="number">0.08</span>, <span class="number">1.0</span>), </span><br><span class="line">                                            ratio=(<span class="number">0.75</span>, <span class="number">1.3333333333333333</span>), </span><br><span class="line">                                            interpolation=transforms.InterpolationMode.BILINEAR)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">上方代码解释：</span></span><br><span class="line"><span class="string"> 1、将图像进行随机裁剪，裁剪满足以下条件:</span></span><br><span class="line"><span class="string"> 裁剪后的图像 面积 与原图像的面积的比例 在 0.08 ～ 1</span></span><br><span class="line"><span class="string"> 裁剪后的图像高宽比范围在 0.75 ～ 1.33之间</span></span><br><span class="line"><span class="string"> 2、按照指定的插值方式， 将图像尺寸缩放到 （224， 224）</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure></div>
+
+<p>参数：</p>
+<ul>
+<li>size：期望的输出图像尺寸， 可以是 int值，也可可以是元组（H, W）</li>
+<li>scale ：在调整大小之前指定裁剪的随机区域的下界和上界。尺度是根据原始图像的面积来定义的。</li>
+<li>ratio：在调整大小之前，裁剪的随机纵横比的下限和上限。</li>
+<li>InterpolationMode ： 插值方式<ul>
+<li>InterpolationMode.NEAREST：最近邻插值。</li>
+<li>InterpolationMode.BILINEAR：双线性插值 (默认)</li>
+<li>InterpolationMode.BICUBIC：双三次插值。</li>
+</ul>
+</li>
+</ul>
+<h2 id="5-水平翻转与垂直翻转"><a href="#5-水平翻转与垂直翻转" class="headerlink" title="5.水平翻转与垂直翻转"></a>5.水平翻转与垂直翻转</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">horizontal_flip = transforms. RandomHorizontalFlip(<span class="number">0.5</span>)</span><br><span class="line">vertical_flip = transforms. RandomVerticalFlip(<span class="number">0.5</span>)</span><br></pre></td></tr></table></figure></div>
+
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://p.ipic.vip/wh6b5i.png"
+                     
+                ></p>
+<h2 id="6-ColorJitter"><a href="#6-ColorJitter" class="headerlink" title="6. ColorJitter"></a>6. ColorJitter</h2>]]></content>
   </entry>
   <entry>
     <title>差分隐私（一）</title>
@@ -1561,88 +1750,6 @@
 
 
 ]]></content>
-  </entry>
-  <entry>
-    <title>数据的读取与处理</title>
-    <url>/2023/10/18/%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA/</url>
-    <content><![CDATA[<h1 id="数据预处理、数据增强"><a href="#数据预处理、数据增强" class="headerlink" title="数据预处理、数据增强"></a>数据预处理、数据增强</h1><h2 id="1-数据增强"><a href="#1-数据增强" class="headerlink" title="1. 数据增强"></a>1. 数据增强</h2><p>数据增强可以增加训练集的样本数量，缓解过拟合，并提高模型的泛化能力，从而有效提升算法的性能。</p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://p.ipic.vip/a161sy.png"
-                      alt="数据增强"
-                ></p>
-<h2 id="2-数据预处理"><a href="#2-数据预处理" class="headerlink" title="2. 数据预处理"></a>2. 数据预处理</h2><p>1）将图像转换成 tensor 的数据格式</p>
-<p>2）将图像的 像素值范围 由 0～255 转换到 0～1</p>
-<p>3）(height, width, channel) &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&gt;&gt;&gt; (channel, height, width)</p>
-<p>4）归一化图像</p>
-<h2 id="3-使用节点"><a href="#3-使用节点" class="headerlink" title="3. 使用节点"></a>3. 使用节点</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">trans = transforms.Compose([transforms.RandomResizedCrop((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.RandomHorizontalFlip(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ColorJitter(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
-
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://p.ipic.vip/iiqcob.png"
-                     
-                ></p>
-<h1 id="torchvision-transforms-的使用"><a href="#torchvision-transforms-的使用" class="headerlink" title="torchvision.transforms 的使用"></a>torchvision.transforms 的使用</h1><p>官方文档地址： <a class="link"   href="https://pytorch.org/vision/stable/transforms.html" >https://pytorch.org/vision/stable/transforms.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<h2 id="1-torchvision-transforms-ToTensor"><a href="#1-torchvision-transforms-ToTensor" class="headerlink" title="1. torchvision.transforms.ToTensor()"></a>1. torchvision.transforms.ToTensor()</h2><p><code>torchvision.transforms.ToTensor()</code> 做了三件事：</p>
-<p> 1）将图像的数据格式由 nump.ndarray 或 PIL.Image 转为 tensor，数据类型为 torch.FloatTensor</p>
-<p> 2）将像素值范围从 0-255 转换到 0-1之间， 处理方式 ：直接除以255</p>
-<p> 3）将 shape&#x3D;(H,W, C) 转换为 shape&#x3D; (C, H, W)</p>
-<p>🌼原始的data的shape为（5，5，3），则其表示有5个（5 ， 3）的二维数组，即我们把最外层的[]去掉就得到了5个五行三列的数据。</p>
-<p>🌼同样的，变换后data的shape为（3，5，5），则其表示有3个（5 ， 5）的二维数组，即我们把最外层的[]去掉就得到了3个五行五列的数据。</p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://p.ipic.vip/xksmgr.png"
-                     
-                ></p>
-<h2 id="2-torchvision-transforms-Normalize"><a href="#2-torchvision-transforms-Normalize" class="headerlink" title="2. torchvision.transforms.Normalize()"></a>2. torchvision.transforms.Normalize()</h2><p>作用：用均值和标准差对张量图像进行归一化，一般在 <code>torchvision.transforms.ToTensor()</code> 之后使用</p>
-<p>在使用 <code>torchvision.transforms.ToTensor()</code> 之后，像素值取值范围会被转换到 [0, 1]之间，再使用 <code>transforms.Normalize(mean, std)</code> 进行归一化后，原像素值就被分布到了 [-1, 1] 之间：</p>
-<p>公式：</p>
-<ul>
-<li>原来的 0~1 最小值 0 则变成 (0 - mean) &#x2F; std &#x3D; -1</li>
-</ul>
-<ul>
-<li>最大值1则变成 (1 - mean) &#x2F; std &#x3D; 1</li>
-</ul>
-<p>一般 mean 和 std 会分别指定3个值，代表图像3个通道的均值和方差，比如<code>torchvision.transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])</code></p>
-<p>如果是<strong>单通道的灰度图</strong>，均值为0.5，方差为0.5，可以写成 <code>transforms.Normalize(mean=[0.5], std=[0.5])</code></p>
-<p>因为 ImageNet数据集 是一个大型数据集，由一个大型数据集统计出来的均值和方差，基本符合所有数据集的像素值分布，所以，一般直接使用 <code>mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]</code></p>
-<h2 id="3-transforms-Compose"><a href="#3-transforms-Compose" class="headerlink" title="3.transforms.Compose()"></a>3.transforms.Compose()</h2><p><strong>训练阶段</strong></p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">trans = transforms.Compose([transforms.RandomResizedCrop((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.RandomHorizontalFlip(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ColorJitter(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
-
-
-
-<p><strong>推理阶段(test)</strong></p>
-<p>推理阶段不会再对数据进行增强，只会做基础的预处理，比如：将尺寸处理到固定尺寸 ；使用 ToTensor 处理数据； Normalize 归一化</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">trans = transforms.Compose([transforms.RE((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
-
-
-
-<h2 id="4-transforms-RandomResizedCrop随机尺寸裁剪"><a href="#4-transforms-RandomResizedCrop随机尺寸裁剪" class="headerlink" title="4.transforms.RandomResizedCrop随机尺寸裁剪"></a>4.transforms.RandomResizedCrop随机尺寸裁剪</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">resized_crop = transforms.RandomResizedCrop(size=(<span class="number">224</span>, <span class="number">224</span>),</span><br><span class="line">                                            scale=(<span class="number">0.08</span>, <span class="number">1.0</span>), </span><br><span class="line">                                            ratio=(<span class="number">0.75</span>, <span class="number">1.3333333333333333</span>), </span><br><span class="line">                                            interpolation=transforms.InterpolationMode.BILINEAR)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">上方代码解释：</span></span><br><span class="line"><span class="string"> 1、将图像进行随机裁剪，裁剪满足以下条件:</span></span><br><span class="line"><span class="string"> 裁剪后的图像 面积 与原图像的面积的比例 在 0.08 ～ 1</span></span><br><span class="line"><span class="string"> 裁剪后的图像高宽比范围在 0.75 ～ 1.33之间</span></span><br><span class="line"><span class="string"> 2、按照指定的插值方式， 将图像尺寸缩放到 （224， 224）</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure></div>
-
-<p>参数：</p>
-<ul>
-<li>size：期望的输出图像尺寸， 可以是 int值，也可可以是元组（H, W）</li>
-<li>scale ：在调整大小之前指定裁剪的随机区域的下界和上界。尺度是根据原始图像的面积来定义的。</li>
-<li>ratio：在调整大小之前，裁剪的随机纵横比的下限和上限。</li>
-<li>InterpolationMode ： 插值方式<ul>
-<li>InterpolationMode.NEAREST：最近邻插值。</li>
-<li>InterpolationMode.BILINEAR：双线性插值 (默认)</li>
-<li>InterpolationMode.BICUBIC：双三次插值。</li>
-</ul>
-</li>
-</ul>
-<h2 id="5-水平翻转与垂直翻转"><a href="#5-水平翻转与垂直翻转" class="headerlink" title="5.水平翻转与垂直翻转"></a>5.水平翻转与垂直翻转</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">horizontal_flip = transforms. RandomHorizontalFlip(<span class="number">0.5</span>)</span><br><span class="line">vertical_flip = transforms. RandomVerticalFlip(<span class="number">0.5</span>)</span><br></pre></td></tr></table></figure></div>
-
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://p.ipic.vip/wh6b5i.png"
-                     
-                ></p>
-<h2 id="6-ColorJitter"><a href="#6-ColorJitter" class="headerlink" title="6. ColorJitter"></a>6. ColorJitter</h2>]]></content>
   </entry>
   <entry>
     <title>联邦学习在电力数据场景下的隐私保护研究</title>
@@ -2051,112 +2158,5 @@
 <p>\1) Regularized Local Loss<br>\2) Between Global and Local Model<br>\3) Between Historical Local Model Snapshots a) Meta-learning b) Transfer learning</p>
 </blockquote>
 ]]></content>
-  </entry>
-  <entry>
-    <title>LLM推理加速技术</title>
-    <url>/2024/06/22/LLM%E6%8E%A8%E7%90%86%E5%8A%A0%E9%80%9F%E6%8A%80%E6%9C%AF/</url>
-    <content><![CDATA[<p>一个常规的LLM推理过程通常分为两个阶段：<strong>prefill和decode</strong>。通常会使用KV cache技术加速推理。</p>
-<p><strong>预填充阶段（prefill）。</strong>在这个阶段中，我们<strong>把整段prompt喂给模型做forward计算</strong>。如果<strong>采用KV cache技术，在这个阶段中我们会把prompt过</strong> 𝑊𝑘,𝑊𝑣 <strong>后得到的</strong> 𝑋𝑘,𝑋𝑣 <strong>保存在cache_k和cache_v中</strong>。这样在对后面的token计算attention时，我们就不需要对前面的token重复计算 𝑋𝑘,𝑋𝑣 了，可以帮助我们节省推理时间。</p>
-<p><strong>生成response的阶段</strong>decode。在这个阶段中，<strong>我们根据prompt的prefill结果，一个token一个token地生成response</strong>。<br>同样，如果采用了KV cache，则每走完一个decode过程，我们就把对应response token的KV值存入cache中，以便能加速计算。例如对于图中的t4，它与cache中t0~t3的KV值计算完attention后，就把自己的KV值也装进cache中。对t6也是同理。<br><strong>由于Decode阶段的是逐一生成token的，因此它不能像prefill阶段那样能做大段prompt的并行计算，所以在LLM推理过程中，Decode阶段的耗时一般是更大的</strong>。</p>
-<p>从上述过程中，我们可以发现使用KV cache做推理时的一些特点：</p>
-<ul>
-<li><strong>随着prompt数量变多和序列变长，KV cache也变大，对gpu显存造成压力</strong></li>
-<li><strong>由于输出的序列长度无法预先知道，所以我们很难提前为KV cache量身定制存储空间</strong></li>
-</ul>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>分布式（Distribution）</th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td></td>
-<td>量化（Quantization）</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td><strong>剪枝（Pruning）</strong></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>知识蒸馏</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>算子融合</td>
-<td></td>
-</tr>
-</tbody></table>
-<p><strong>模型压缩</strong>:</p>
-<ul>
-<li><p>网络剪枝：结构化非结构化剪枝</p>
-</li>
-<li><p>知识蒸馏</p>
-</li>
-<li><p><strong>模型量化</strong></p>
-</li>
-<li><p>低秩分解</p>
-</li>
-</ul>
-<p><strong>大模型引擎调度</strong></p>
-<ul>
-<li>VLLM，TensorRT-LLM，Orca，llama.cpp</li>
-</ul>
-<h2 id="1-VLLM"><a href="#1-VLLM" class="headerlink" title="1. VLLM"></a>1. VLLM</h2><p>vLLM 主要特性：</p>
-<ol>
-<li>先进的服务吞吐量</li>
-<li>通过 PagedAttention 对注意力 key 和 value 进行内存管理</li>
-<li>对传入请求的批处理</li>
-</ol>
-<p>总结,</p>
-<p>通过 PagedAttention 对注意力 key 和 value 进行内存管理,PagedAttention 还有一个关键优势：高效的内存共享。例如，在<em>并行采样</em>中，同一个提示会生成多个输出序列。在这种情况下，输出序列之间可以共享提示的计算和内存。</p>
-<hr>
-<ul>
-<li><strong>Parallel Sampling</strong>：我给模型发送一个请求，希望它对prompt做续写，并给出三种不同的回答。我们管这个场景叫parallel sampling。在这个场景中，我们可以将prompt复制3次后拼接成1个batch喂给模型，让它做推理。但我们也需注意到，这种方式会产生prompt部分KV cache的重复存储。</li>
-<li><strong>Beam Search</strong>：束搜索，这是LLM常用的deocde策略之一，即在每个decode阶段，我不是只产生1个token，而是产生top k个token（这里k也被称为束宽）。top k个token必然对应着此刻的top k个序列。我把这top k个序列喂给模型，假设词表的大小为|V|，那么在下一时刻，我就要在k*|V|个候选者中再选出top k，以此类推。不难想象每一时刻我把top k序列喂给模型时，它们的前置token中有大量的KV cache是重复的。</li>
-<li><strong>Shared prefix：</strong>在某些大模型中，所有请求可能都会共享一个前置信息（比如system message: “假设你是一个有帮助的AI助手….”），这些前置信息没有必要重复存储KV cache</li>
-</ul>
-<h3 id="Parallel-Sampling"><a href="#Parallel-Sampling" class="headerlink" title="Parallel Sampling"></a>Parallel Sampling</h3><p><strong>（1）首先，Prefill阶段，vLLM拿到Sample A1和Sample A2，根据其中的文字内容，为其分配逻辑块和物理块。</strong></p>
-<ul>
-<li><strong>分配逻辑块：</strong>对于A1，vLLM为其分配逻辑块block0和block1；对于A2，vLLM为其分配逻辑块block0和block1。<strong>需要注意的是，A1的逻辑块和A2的逻辑块是独立的（尽管它们都叫block0和block1）</strong>，你可以将A1和A2视作操作系统中两个独立运行的进程。</li>
-<li><strong>分配物理块</strong>：对于A1和A2，虽然逻辑块独立，但因为它们的文字完全相同，所以可以<strong>在物理内存上共享相同的空间</strong>。所以A1的逻辑块block0&#x2F;1分别指向物理块block7&#x2F;1；A2的逻辑块block0&#x2F;1分别指向物理块block7&#x2F;1。我们设每个物理块下映射的逻辑块数量为<code>ref count</code>，所以对物理块block7&#x2F;1来说，它们的ref count都为2。</li>
-</ul>
-<p><strong>（2）然后，进入decode阶段，A1和A2各自做推理，得到第一个token，分别为<code>fathers</code>和<code>mothers</code>。</strong></p>
-<ul>
-<li><strong>将生成的token装入逻辑块</strong>：对于A1和A2来说，将其生成的token装入各自的逻辑块block1。</li>
-<li><strong>触发物理块copy-on-write机制</strong>：由于fathers&#x2F;mothers是两个完全不同的token，因此对物理块block1触发复制机制，即在物理内存上新开辟一块空间。此时物理块block1只和A2的逻辑块block1映射，将其ref count减去1；物理块block3只和A1的逻辑块block1映射，将其ref count设为1。</li>
-</ul>
-<h3 id="Beam-Search"><a href="#Beam-Search" class="headerlink" title="Beam Search"></a>Beam Search</h3><p>在并行采样中，从相同的提示生成多个输出序列。在这种情况下，可以在输出序列之间共享提示的计算和内存。通过其块表，PagedAttention能够自然地实现内存共享。类似于进程共享物理页，PagedAttention中的不同序列可以通过将它们的逻辑块映射到相同的物理块来共享块。为确保安全共享，PagedAttention跟踪物理块的引用计数并实现 Copy-on-Write 机制。</p>
-<p>通过PagedAttention的内存共享机制，极大地降低了复杂采样算法（如ParallelSampling和BeamSearch）的内存开销，使其内存使用量下降了高达55%。这项优化可以直接带来最多2.2倍的吞吐量提升，从而使得LLM服务中使用这些采样方法变得更加实用。</p>
-<h2 id="2-LLama-cpp"><a href="#2-LLama-cpp" class="headerlink" title="2. LLama.cpp"></a>2. LLama.cpp</h2><p>Llama.cpp 是一个轻量级、高效的 C++ 实现，用于运行大型语言模型（如 Meta 的 LLaMA 系列）。它允许在相对较低的硬件资源下（例如消费级 CPU 和少量内存）运行和推理大型语言模型。Llama.cpp 特别注重内存和计算资源的优化，使得在没有 GPU 的情况下也能进行模型推理。</p>
-<h2 id="3-Flash-attention"><a href="#3-Flash-attention" class="headerlink" title="3. Flash-attention"></a>3. Flash-attention</h2><h4 id="FlashAttention-的改进"><a href="#FlashAttention-的改进" class="headerlink" title="FlashAttention 的改进"></a>FlashAttention 的改进</h4><p>FlashAttention 通过以下步骤优化了注意力计算：</p>
-<ol>
-<li><strong>分块处理</strong>：<ul>
-<li>将输入矩阵分成较小的块，以减少内存占用并提高计算效率。</li>
-<li>每个块独立进行计算，利用现代 GPU 的并行计算能力。</li>
-</ul>
-</li>
-<li><strong>逐块计算注意力权重和应用</strong>：<ul>
-<li>在每个块内，计算注意力权重和应用注意力权重的操作都在局部进行，避免了大规模矩阵的全局计算。</li>
-<li>每个块内的计算顺序被设计为避免内存瓶颈和数据传输的开销。</li>
-</ul>
-</li>
-<li><strong>优化的内存访问</strong>：<ul>
-<li>通过优化内存访问模式，使得计算过程中需要的数据能够高效地被加载到 GPU 的高速缓存中。</li>
-<li>减少了内存访问延迟和数据传输开销。</li>
-</ul>
-</li>
-</ol>
-]]></content>
-  </entry>
-  <entry>
-    <title>LLama_架构</title>
-    <url>/2024/06/22/LLama-%E6%9E%B6%E6%9E%84/</url>
-    <content><![CDATA[]]></content>
   </entry>
 </search>
