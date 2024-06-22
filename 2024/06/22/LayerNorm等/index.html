@@ -13,16 +13,20 @@
     
     <!--- Seo Part-->
     
-    <link rel="canonical" href="http://example.com/archives/2024/03/"/>
+    <link rel="canonical" href="http://example.com/2024/06/22/layernorm等/"/>
     <meta name="robots" content="index,follow">
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta property="og:type" content="website">
-<meta property="og:title" content="深情小小侯的博客">
-<meta property="og:url" content="http://example.com/archives/2024/03/index.html">
+        <meta name="description" content="1.Normalization1.1 Batch Norm为什么要进行BN呢？  在深度神经网络训练的过程中，通常以输入网络的每一个mini-batch进行训练，这样每个batch具有不同的分布，使模型训练起来特别困难。 Internal Covariate Shift (ICS)内部协变量偏移 问题：在训练的过程中，激活函数会改变各层数据的分布，随着网络的加深，这种改变（差异）会越来越大，使模型">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LayerNorm等">
+<meta property="og:url" content="http://example.com/2024/06/22/LayerNorm%E7%AD%89/index.html">
 <meta property="og:site_name" content="深情小小侯的博客">
+<meta property="og:description" content="1.Normalization1.1 Batch Norm为什么要进行BN呢？  在深度神经网络训练的过程中，通常以输入网络的每一个mini-batch进行训练，这样每个batch具有不同的分布，使模型训练起来特别困难。 Internal Covariate Shift (ICS)内部协变量偏移 问题：在训练的过程中，激活函数会改变各层数据的分布，随着网络的加深，这种改变（差异）会越来越大，使模型">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-06-22T11:08:58.000Z">
+<meta property="article:modified_time" content="2024-06-22T14:24:48.039Z">
 <meta property="article:author" content="深情小小侯">
 <meta name="twitter:card" content="summary">
     
@@ -36,7 +40,7 @@
     
     <title>
         
-            归档: 2024/3 -
+            LayerNorm等 -
         
         深情小小侯的博客
     </title>
@@ -151,7 +155,7 @@
                         
                             <li class="navbar-item">
                                 <!-- Menu -->
-                                <a class="active" 
+                                <a class="" 
                                     href="/archives"  >
                                     
                                         
@@ -228,7 +232,7 @@
             
                 
                     <li class="drawer-navbar-item text-base my-1.5 flex justify-center items-center">
-                        <a class="rounded-3xl py-1.5 px-5 hover:border hover:!text-primary active:!text-primary group active" 
+                        <a class="rounded-3xl py-1.5 px-5 hover:border hover:!text-primary active:!text-primary group " 
                         href="/archives"  >
                              
                                 
@@ -284,253 +288,274 @@
             <div class="main-content">
 
                 
-                    <div class="archive-container ">
+                    <div class="post-page-container">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            
+                <h1 class="article-title-regular">LayerNorm等</h1>
+            
+            </div>
+            
+                    
+        
+        
+            <div class="article-header flex flex-row gap-2 items-center">
+                <div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+                    <img src="/images/redefine-avatar.svg">
+                </div>
+                <div class="info flex flex-col justify-between">
+                    <div class="author flex items-center">
+                        <span class="name text-default-text-color text-lg font-semibold">深情小小侯</span>
+                        
+                            <span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv3</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2024-06-22 19:08:58</span>
+        <span class="mobile">2024-06-22 19:08:58</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2024-06-22 22:24:48</span>
+            <span class="mobile">2024-06-22 22:24:48</span>
+            <span class="hover-info">更新</span>
+        </span>
     
 
-<div class="archive-list-container">
     
-        <section class="archive-item">
-            <div class="archive-item-header">
-                <span class="archive-year">2024</span>
-                <span class="archive-year-post-count">[9]</span>
-            </div>
-            <ul class="article-list">
-              
-                
-                    
-                    <li class="article-item" date-is='06-22'>
-                
-                
-                    <a href="/2024/06/22/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E8%AF%84%E6%B5%8B/">
-                        <span class="article-title">大模型评测</span>
-                    </a>
-                
-              
-                
-                
-                    <a href="/2024/06/22/LayerNorm%E7%AD%89/">
-                        <span class="article-title">LayerNorm等</span>
-                    </a>
-                
-              
-                
-                
-                    <a href="/2024/06/22/LLama-%E6%9E%B6%E6%9E%84/">
-                        <span class="article-title">LLama_架构</span>
-                    </a>
-                
-              
-                
-                
-                    <a href="/2024/06/22/LLM%E6%8E%A8%E7%90%86%E5%8A%A0%E9%80%9F%E6%8A%80%E6%9C%AF/">
-                        <span class="article-title">LLM推理加速技术</span>
-                    </a>
-                
-              
-                
-                    
-                    <li class="article-item" date-is='06-20'>
-                
-                
-                    <a href="/2024/06/20/LLM-base/">
-                        <span class="article-title">LLM_base</span>
-                    </a>
-                
-              
-                
-                    
-                    <li class="article-item" date-is='06-15'>
-                
-                
-                    <a href="/2024/06/15/bert%E5%9F%BA%E7%A1%80/">
-                        <span class="article-title">bert基础</span>
-                    </a>
-                
-              
-                
-                    
-                    <li class="article-item" date-is='03-15'>
-                
-                
-                    <a href="/2024/03/15/%E5%8F%91%E7%A5%A8%E8%AE%B0%E5%BD%95/">
-                        <span class="article-title"></span>
-                    </a>
-                
-              
-                
-                    
-                    <li class="article-item" date-is='02-28'>
-                
-                
-                    <a href="/2024/02/28/U-Net%E6%A8%A1%E5%9E%8B/">
-                        <span class="article-title">U-Net模型</span>
-                    </a>
-                
-              
-                
-                    
-                    <li class="article-item" date-is='01-03'>
-                
-                
-                    <a href="/2024/01/03/Pytorch%E4%BC%98%E5%8C%96%E5%99%A8%E5%85%A8%E6%80%BB%E7%BB%93%EF%BC%88%E4%B8%80%EF%BC%89SGD%E3%80%81ASGD%E3%80%81Rprop%E3%80%81Adagrad/">
-                        <span class="article-title">Pytorch优化器全总结（一）SGD、ASGD、Rprop、Adagrad</span>
-                    </a>
-                
-              
-            </ul>
-        </section>
     
-        <section class="archive-item">
-            <div class="archive-item-header">
-                <span class="archive-year">2023</span>
-                <span class="archive-year-post-count">[15]</span>
-            </div>
-            <ul class="article-list">
-              
-                
-                    
-                    <li class="article-item" date-is='12-25'>
-                
-                
-                    <a href="/2023/12/25/%E2%80%9C%E6%9D%8E%E6%B2%90%E8%8A%B1%E4%B9%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E2%80%9D/">
-                        <span class="article-title">“基础模型pytorch学习笔记”</span>
-                    </a>
-                
-              
-                
-                    
-                    <li class="article-item" date-is='12-20'>
-                
-                
-                    <a href="/2023/12/20/python%E8%B0%83%E7%94%A8%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%B5%8B%E8%AF%95%E8%87%AA%E5%B7%B1%E7%9A%84%E6%96%87%E4%BB%B6%E8%BE%93%E5%85%A5/">
-                        <span class="article-title">python调用大模型测试自己的文件输入</span>
-                    </a>
-                
-              
-                
-                    
-                    <li class="article-item" date-is='12-15'>
-                
-                
-                    <a href="/2023/12/15/pandas%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86/">
-                        <span class="article-title">pandas数据分析数据预处理</span>
-                    </a>
-                
-              
-                
-                    
-                    <li class="article-item" date-is='11-02'>
-                
-                
-                    <a href="/2023/11/02/%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81%EF%BC%88%E4%BA%8C%EF%BC%89/">
-                        <span class="article-title">差分隐私（二）</span>
-                    </a>
-                
-              
-                
-                    
-                    <li class="article-item" date-is='10-25'>
-                
-                
-                    <a href="/2023/10/25/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0Towards-Personalized-Federated-Learning/">
-                        <span class="article-title">论文笔记Towards Personalized Federated Learning</span>
-                    </a>
-                
-              
-                
-                    
-                    <li class="article-item" date-is='10-23'>
-                
-                
-                    <a href="/2023/10/23/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%AE%9E%E6%88%98/">
-                        <span class="article-title">图神经网络实战</span>
-                    </a>
-                
-              
-                
-                
-                    <a href="/2023/10/23/transformer-%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/">
-                        <span class="article-title">transformer-注意力机制</span>
-                    </a>
-                
-              
-                
-                
-                    <a href="/2023/10/23/%E5%9B%BE%E8%81%94%E9%82%A6/">
-                        <span class="article-title">图神经网络(二)</span>
-                    </a>
-                
-              
-                
-                    
-                    <li class="article-item" date-is='10-21'>
-                
-                
-                    <a href="/2023/10/21/%E8%81%94%E9%82%A6%E5%AD%A6%E4%B9%A0%E5%AE%9E%E6%88%98/">
-                        <span class="article-title">联邦学习实战</span>
-                    </a>
-                
-              
-                
-                    
-                    <li class="article-item" date-is='10-20'>
-                
-                
-                    <a href="/2023/10/20/%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81/">
-                        <span class="article-title">差分隐私（一）</span>
-                    </a>
-                
-              
-                
-                    
-                    <li class="article-item" date-is='10-19'>
-                
-                
-                    <a href="/2023/10/19/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C(%E4%BA%8C)/">
-                        <span class="article-title">图神经网络</span>
-                    </a>
-                
-              
-                
-                
-                    <a href="/2023/10/19/arg%E7%9A%84%E7%94%A8%E6%B3%95/">
-                        <span class="article-title">arg的用法</span>
-                    </a>
-                
-              
-                
-                    
-                    <li class="article-item" date-is='10-18'>
-                
-                
-                    <a href="/2023/10/18/%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA/">
-                        <span class="article-title">数据的读取与处理</span>
-                    </a>
-                
-              
-                
-                    
-                    <li class="article-item" date-is='10-16'>
-                
-                
-                    <a href="/2023/10/16/PyTorch%E5%9F%BA%E7%A1%80/">
-                        <span class="article-title">【Pytorch基础】从numpy到tensor学习神经网络常用工具</span>
-                    </a>
-                
-              
-                
-                
-                    <a href="/2023/10/16/my-first-blog/">
-                        <span class="article-title">my_first_blog</span>
-                    </a>
-                
-              
-            </ul>
-        </section>
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
     
 </div>
 
+                    </div>
+                </div>
+            </div>
+        
+
+        
+
+
+        <div class="article-content markdown-body">
+            <h2 id="1-Normalization"><a href="#1-Normalization" class="headerlink" title="1.Normalization"></a>1.Normalization</h2><h3 id="1-1-Batch-Norm"><a href="#1-1-Batch-Norm" class="headerlink" title="1.1 Batch Norm"></a>1.1 Batch Norm</h3><p>为什么要进行BN呢？</p>
+<ol>
+<li>在深度神经网络训练的过程中，通常以输入网络的每一个mini-batch进行训练，这<strong>样每个batch具有不同的分布</strong>，使模型训练起来特别困难。</li>
+<li>Internal Covariate Shift (ICS)内部协变量偏移 问题：在训练的过程中，<strong>激活函数会改变各层数据的分布，随着网络的加深，这种改变（差异）会越来越大，使模型训练起来特别困难，收敛速度很慢，会出现梯度消失的问题</strong>。</li>
+</ol>
+<p>BN的主要思想：针对每个神经元，<strong>使数据在进入激活函数之前，沿着通道计算每个batch的均值、方差，‘强迫’数据保持均值为0，方差为1的正态分布，避免发生梯度消失。</strong></p>
+<p><strong>BN的使用位置：</strong>全连接层或卷积操作之后，激活函数之前。</p>
+<p><strong>BN算法过程：</strong></p>
+<ul>
+<li>沿着通道计算每个batch的均值</li>
+<li>沿着通道计算每个batch的方差</li>
+<li>做归一化</li>
+<li>缩放因子和平移变量</li>
+</ul>
+<p>加入缩放和平移变量的原因是<strong>：保证每一次数据经过归一化后还保留原有学习来的特征，同时又能完成归一化操作，加速训练</strong>。 这两个参数是用来学习的参数</p>
+<p>BN的作用：</p>
+<ul>
+<li>允许较大的学习率</li>
+<li>保持隐藏层中数值的均值、方差不变，让数值更稳定</li>
+<li>有轻微的正则化作用（相当于给隐藏层加入噪声，类似Dropout）</li>
+</ul>
+<p>BN<strong>存在的问题</strong></p>
+<ol>
+<li>每次是在一个batch上计算均值、方差，如果batch size太小，则计算的均值、方差不足以代表整个数据分布。</li>
+<li>batch size太大：会超过内存容量；需要跑更多的epoch，导致总训练时间变长；会直接固定梯度下降的方向，导致很难更新。</li>
+</ol>
+<h3 id="1-2LayerNorm"><a href="#1-2LayerNorm" class="headerlink" title="1.2LayerNorm"></a>1.2LayerNorm</h3><p>LayerNorm是大模型也是transformer结构中最常用的归一化操作，简而言之，它的作用是 <strong>对特征张量按照某一维度或某几个维度进行0均值，1方差的归一化</strong> 操作，计算公式为</p>
+<p>​	$${y}&#x3D;\frac{\mathrm{x}-\mathrm{E}(\mathrm{x})}{\sqrt{\mathrm{V} \operatorname{ar}(\mathrm{x})+\epsilon}} * \gamma+β$$</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nn.LayerNorm(normalized_shape, eps=<span class="number">1e-05</span>, elementwise_affine=<span class="literal">True</span>, device=<span class="literal">None</span>, dtype=<span class="literal">None</span>)</span><br></pre></td></tr></table></figure></div>
+
+<p>normalized_shape：归一化的维度，int（最后一维）list（list里面的维度），还是以（2,2,4）为例，如果输入是int，则必须是4，如果是list，则可以是[4], [2,4], [2,2,4]，即最后一维，倒数两维，和所有维度</p>
+<p><strong>Layer Normalization (LN) 的一个优势是不需要批训练，在单条数据内部就能归一化</strong>。LN不依赖于batch size和输入sequence的长度，因此可以用于batch size为1和RNN中。LN用于RNN效果比较明显，但是在CNN上，效果不如BN。</p>
+<h3 id="1-3-RMSNorm"><a href="#1-3-RMSNorm" class="headerlink" title="1.3 RMSNorm"></a>1.3 RMSNorm</h3><p>与layerNorm相比，RMS Norm的主要区别在于去掉了减去均值的部分，计算公式为<br>$$<br>\bar{a}<em>{i}&#x3D;\frac{a</em>{i}}{\operatorname{RMS}(\mathbf{a})} g_{i}, \quad where~ \operatorname{RMS}(\mathbf{a})&#x3D;\sqrt{\frac{1}{n} \sum_{i&#x3D;1}^{n} a_{i}^{2}}<br>$$<br>但是RMSNorm比起LayerNorm确实减少了减去均值以及加上bias的计算，这在目前大模型预训练的计算量下就能够体现出训练速度上的优势了，并且RMSNorm<strong>在模型效果上的表现并不弱</strong>于LayerNorm**(LN取得成功的原因可能是缩放不变性，而不是平移不变性**)，所以选择RMSNorm就很自然了, 要注意RMSNorm也是LaverNorm的一种，以上提到的LaverNorm指的是最常见的形式</p>
+<p>激活函数的输入来考虑、做文章的，以不同的方式对<strong>激活函数的输入</strong>进行 Norm </p>
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><table>
+<thead>
+<tr>
+<th>正则化方法</th>
+<th>工作原理</th>
+<th>优点</th>
+<th>缺点</th>
+<th>应用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>LayerNorm</td>
+<td>对每个样本在同一层的激活进行归一化</td>
+<td>适用于变长序列、稳定训练</td>
+<td>计算开销大、对大型模型效果一般在非常深的网络中，LayerNorm 的效果可能不如其他正则化方法，如 BatchNorm。</td>
+<td>NLP模型、变长序列数据</td>
+</tr>
+<tr>
+<td>BatchNorm</td>
+<td>对每个批次的激活进行归一化</td>
+<td>加速训练、提高性能</td>
+<td>对批次大小敏感、训练推理不一致</td>
+<td>计算机视觉模型、固定大小输入</td>
+</tr>
+<tr>
+<td>RMSNorm</td>
+<td>使用输入的均方根进行归一化</td>
+<td>稳定性强、适合大模型、计算效率高</td>
+<td>缺乏灵活性、适用场景有限</td>
+<td>预训练模型、序列建模</td>
+</tr>
+</tbody></table>
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> LayerNorm等</li>
+        <li><strong>作者:</strong> 深情小小侯</li>
+        <li><strong>创建于
+                :</strong> 2024-06-22 19:08:58</li>
+        
+            <li>
+                <strong>更新于
+                    :</strong> 2024-06-22 22:24:48
+            </li>
+        
+        <li>
+            <strong>链接:</strong> https://redefine.ohevan.com/2024/06/22/LayerNorm等/
+        </li>
+        <li>
+            <strong>
+                版权声明:
+            </strong>
+            
+            本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0</a> 进行许可。
+            
+
+        </li>
+    </ul>
 </div>
+
+            </div>
+        
+
+        
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                        rel="prev"
+                        href="/2024/06/22/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E8%AF%84%E6%B5%8B/"
+                        >
+                            <span class="left arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">大模型评测</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                        rel="next"
+                        href="/2024/06/22/LLama-%E6%9E%B6%E6%9E%84/"
+                        >
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">LLama_架构</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+
+        
+            <div class="comment-container">
+                <div class="comments-container pjax">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fa-solid fa-comments"></i>&nbsp;评论
+    </div>
+    
+
+        
+            
+ 
+    <div id="waline"></div>
+    <script type="module"  data-swup-reload-script>
+        import { init } from '/js/libs/waline.mjs';
+
+        function loadWaline() {
+            init({
+                el: '#waline',
+                serverURL: 'https://example.example.com',
+                lang: 'zh-CN',
+                dark: 'body[class~="dark-mode"]',
+                requiredMeta: ['nick','mail'], // cannot customize by theme config, change it yourself
+            });
+        }
+
+        if ('true') {
+            const loadWalineTimeout = setTimeout(() => {
+                loadWaline();
+                clearTimeout(loadWalineTimeout);
+            }, 1000);
+        } else {
+            window.addEventListener('DOMContentLoaded', loadWaline);
+        }
+        
+    </script>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+
+    
+        <div class="toc-content-container">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <div class="toc-title">此页目录</div>
+        <div class="page-title">LayerNorm等</div>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Normalization"><span class="nav-number">1.</span> <span class="nav-text">1.Normalization</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-Batch-Norm"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 Batch Norm</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2LayerNorm"><span class="nav-number">1.2.</span> <span class="nav-text">1.2LayerNorm</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-RMSNorm"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 RMSNorm</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">2.</span> <span class="nav-text">总结</span></a></li></ol>
+
+    </div>
+</div>
+        </div>
+    
+</div>
+
+
 
                 
 
@@ -603,6 +628,27 @@
         </div>
     </div>
 
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="article-tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="right-bottom-tools page-aside-toggle">
+                <i class="fa-regular fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fa-regular fa-comments"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
     
 
     <div class="right-side-tools-container">
