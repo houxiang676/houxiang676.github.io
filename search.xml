@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>LLama_架构</title>
-    <url>/2024/06/22/LLama-%E6%9E%B6%E6%9E%84/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
     <title>LLM_base</title>
     <url>/2024/06/20/LLM-base/</url>
     <content><![CDATA[<h2 id="基本知识"><a href="#基本知识" class="headerlink" title="基本知识"></a>基本知识</h2><h2 id="Attention"><a href="#Attention" class="headerlink" title="Attention"></a>Attention</h2><p>Self-Attention的核心是用文本中的其它词来增强目标词的语义表示，从而更好的利用上下文的信息。</p>
@@ -453,6 +448,11 @@
 ]]></content>
   </entry>
   <entry>
+    <title>LLama_架构</title>
+    <url>/2024/06/22/LLama-%E6%9E%B6%E6%9E%84/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
     <title>LSTM时序预测</title>
     <url>/2023/10/28/LSTM%E6%97%B6%E5%BA%8F%E9%A2%84%E6%B5%8B/</url>
     <content><![CDATA[]]></content>
@@ -580,11 +580,6 @@
 
 <hr>
 ]]></content>
-  </entry>
-  <entry>
-    <title></title>
-    <url>/2024/01/03/Pytorch%E4%BC%98%E5%8C%96%E5%99%A8SGD%E3%80%81SGDM%E3%80%81Rprop%E3%80%81Adagrad%E3%80%81Adma/</url>
-    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>Pytorch优化器全总结（一）SGD、ASGD、Rprop、Adagrad</title>
@@ -735,94 +730,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>bert基础</title>
-    <url>/2024/06/15/bert%E5%9F%BA%E7%A1%80/</url>
-    <content><![CDATA[<h1 id="bert"><a href="#bert" class="headerlink" title="bert"></a>bert</h1><ul>
-<li><p>bert: encoder of transformer</p>
-<ul>
-<li>transformer: encoder-decoder(seq2seq)</li>
-</ul>
-</li>
-<li><p>bert</p>
-<ul>
-<li><p>embeddings</p>
-<ul>
-<li><p>word(token) embedding   # token_embed &#x3D; model.embeddings.word_embeddings(input_ids)</p>
-</li>
-<li><p>position embedding          # pos_embed &#x3D; model.embeddings.position_embeddings(pos_ids)</p>
-</li>
-<li><p>token type embedding      # seg_embed &#x3D; model.embeddings.token_type_embeddings(token_type_ids)</p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">input_embed = token_embed + seg_embed + pos_embed.unsqueeze(0)</span><br></pre></td></tr></table></figure></div></li>
-</ul>
-</li>
-<li><p>encoder(12 layer)</p>
-<ul>
-<li>self attention (kqv)</li>
-<li>feed forward</li>
-</ul>
-</li>
-<li><p>pooler  由此得到最终输出</p>
-</li>
-</ul>
-</li>
-</ul>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">from transformers import BertTokenizer, BertModel</span><br><span class="line">import torch </span><br><span class="line">from torch import nn</span><br><span class="line"></span><br><span class="line">model_name = &#x27;bert-base-uncased&#x27;</span><br><span class="line">tokenizer = BertTokenizer.from_pretrained(model_name)</span><br><span class="line">model = BertModel.from_pretrained(model_name, output_attention=True)</span><br><span class="line"></span><br><span class="line">test_sent = &#x27;&#x27;</span><br><span class="line">input = tokenizer(test_sent, return_tensors=&#x27;pt&#x27;)</span><br><span class="line"># input -&gt; &#123;&#x27;input_ids&#x27;: tensor([[ 101, 2023, 2003, 1037, 3231, 6251,  102]]), &#x27;token_type_ids&#x27;: tensor([[0, 0, 0, 0, 0, 0, 0]]), &#x27;attention_mask&#x27;: tensor([[1, 1, 1, 1, 1, 1, 1]])&#125;</span><br><span class="line"></span><br><span class="line">#___________________________________________________________</span><br><span class="line">input_ids = input[&#x27;input_ids&#x27;]</span><br><span class="line">token_type_ids = input[&#x27;token_type_ids&#x27;]</span><br><span class="line">pos_ids = torch.arange(input_ids.shape[1])</span><br><span class="line"></span><br><span class="line">#  1. token embedding</span><br><span class="line">token_embed = model.embeddings.word_embeddings(input_ids)</span><br><span class="line">token_embed</span><br><span class="line"># 2. segment type embedding</span><br><span class="line">seg_embed = model.embeddings.token_type_embeddings(token_type_ids)</span><br><span class="line">seg_embed</span><br><span class="line"># 3. pos embedding</span><br><span class="line">pos_embed = model.embeddings.position_embeddings(pos_ids)</span><br><span class="line">seg_embed</span><br><span class="line"># 4. input embedding</span><br><span class="line">input_embed = token_embed + seg_embed + pos_embed.unsqueeze(0)</span><br><span class="line"># 5. 后处理</span><br><span class="line">embed = model.embeddings.LayerNorm(input_embed)</span><br><span class="line">embed = model.embeddings.dropout(embed)</span><br><span class="line"># 6. encoder</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-
-
-<ul>
-<li>torch.no_grad()<ul>
-<li>定义了一个上下文管理器，隐式地不进行梯度更新，不会改变 requires_grad</li>
-<li>适用于 eval 阶段，或 model forward 的过程中某些模块不更新梯度的模块（此时这些模块仅进行特征提取（前向计算），不反向更新）</li>
-</ul>
-</li>
-<li>param.requires_grad<ul>
-<li>显式地 frozen 掉一些module（layer）的梯度更新</li>
-<li>layer&#x2F;module 级别，</li>
-<li>可能会更灵活</li>
-</ul>
-</li>
-</ul>
-<h3 id="1-input"><a href="#1-input" class="headerlink" title="1. input"></a>1. input</h3><ul>
-<li>tokenizer 轻易不会将一个词处理为 <code>[UNK] (100)</code></li>
-<li>基于词汇表，tokenize, encode, decode 一体<ul>
-<li>tokenize：word &#x3D;&gt; token(s)，将word尽可能地映射为 vocab 中的 keys</li>
-<li>encode: token &#x3D;&gt; id</li>
-<li>decode: id &#x3D;&gt; token &#x3D;&gt; word<ul>
-<li>encode 完了之后也不是终点（word），decode 还要能很好地将 id 还原，尽可能与输入的 word 对齐；</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> BertModel, BertTokenizer</span><br><span class="line"></span><br><span class="line">model_name = <span class="string">&#x27;bert-base-uncased&#x27;</span></span><br><span class="line"></span><br><span class="line">tokenizer = BertTokenizer.from_pretrained(model_name)</span><br><span class="line">model = BertModel.from_pretrained(model_name, output_hidden_states=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;After stealing money from the bank vault, the bank robber was seen &quot;</span> \</span><br><span class="line">   <span class="string">&quot;fishing on the Mississippi river bank.&quot;</span></span><br><span class="line">    </span><br><span class="line">token_input = tokenizer(text, return_tensors=<span class="string">&#x27;pt&#x27;</span>)</span><br><span class="line">token_input </span><br><span class="line"><span class="comment"># &#123;&#x27;input_ids&#x27;: tensor([[  101,  2044, 11065,  2769,  2013,  1996,  2924, 11632,  1010,  1996, \</span></span><br><span class="line">          <span class="number">2924</span>, <span class="number">27307</span>,  <span class="number">2001</span>,  <span class="number">2464</span>,  <span class="number">5645</span>,  <span class="number">2006</span>,  <span class="number">1996</span>,  <span class="number">5900</span>,  <span class="number">2314</span>,  <span class="number">2924</span>,\</span><br><span class="line">          <span class="number">1012</span>,   <span class="number">102</span>]]), <span class="string">&#x27;token_type_ids&#x27;</span>: tensor([[<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]]), <span class="string">&#x27;attention_mask&#x27;</span>: tensor([[<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>]])&#125;\</span><br><span class="line">                </span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-<h3 id="2-model-forward"><a href="#2-model-forward" class="headerlink" title="2. model forward"></a>2. model forward</h3><h3 id="3-output"><a href="#3-output" class="headerlink" title="3. output"></a>3. output</h3><ul>
-<li>len(outputs) &#x3D;&#x3D; 3</li>
-<li>outputs[0]  last_hidden_state<ul>
-<li>last_hidden_state, shape: batch_size<em>seq_len</em>hidden_size(1*22*768)</li>
-</ul>
-</li>
-<li>outputs[1] pooler_output<ul>
-<li>pooler_output, shape: batch_size*hidden_size(1*768)</li>
-<li>Last layer hidden-state of the first token of the sequence (classification token, [CLS])</li>
-</ul>
-</li>
-<li>outputs[2] (model.config.output_hidden_states &#x3D; True) hidden_states<ul>
-<li>type: tuple</li>
-<li>one for the output of the embeddings(1), if the model has an embedding layer(12), + one for the output of each layer)<ul>
-<li>(1+12)<em>(batch_size</em>seq_len<em>hidden_size) &#x3D; 13*1*22</em>768</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>outputs[0] &#x3D;&#x3D; outputs[2][-1]</li>
-<li>outputs[1] &#x3D;&#x3D; model.pooler(outputs[2][-1])</li>
-<li>outputs[2][0] &#x3D;&#x3D; model.embeddings(token_input[‘input_ids’], token_input[‘token_type_ids’])</li>
-</ul>
-]]></content>
-  </entry>
-  <entry>
     <title>U-Net模型</title>
     <url>/2024/02/28/U-Net%E6%A8%A1%E5%9E%8B/</url>
     <content><![CDATA[<h1 id="U-Net"><a href="#U-Net" class="headerlink" title="U-Net"></a>U-Net</h1><p><img  
@@ -858,23 +765,6 @@
     <title>arg的用法</title>
     <url>/2023/10/19/arg%E7%9A%84%E7%94%A8%E6%B3%95/</url>
     <content><![CDATA[]]></content>
-  </entry>
-  <entry>
-    <title>pandas数据分析数据预处理</title>
-    <url>/2023/12/15/pandas%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86/</url>
-    <content><![CDATA[<p>Pandas的数据结构为，DataFrame，一个表格型的数据结构，它含有一组有序的列，每列可以是不同的值类型（数值、字符串、布尔型值）。DataFrame 既有行索引也有列索引，它可以被看做由 Series 组成的字典（共同用一个索引）。而Series则 类似表格中的一个列（column），类似于一维数组，可以保存任何数据类型。我们把一个.csv文件读取进来就是一个DataFrame对象。DataFrame 构造方法如下</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">pandas.DataFrame( data, index, columns, dtype, copy)</span><br></pre></td></tr></table></figure></div>
-
-<p>data：一组数据(ndarray、series, map, lists, dict 等类型)。<br>index：索引值，或者可以称为行标签。<br>columns：列标签，默认为 RangeIndex (0, 1, 2, …, n) 。<br>dtype：数据类型。<br>copy：拷贝数据，默认为 False。</p>
-<h2 id="合并拆分"><a href="#合并拆分" class="headerlink" title="合并拆分"></a>合并拆分</h2><h3 id="合并"><a href="#合并" class="headerlink" title="合并"></a>合并</h3><p>例如，在<code>./MELD</code>路径下存在如下三个文件</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">dev_sent_emo.csv</span><br><span class="line">test_sent_emo.csv</span><br><span class="line">train_sent_emo.csv</span><br></pre></td></tr></table></figure></div>
-
-<p>代码如下</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> os.path <span class="keyword">import</span> join</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">combine_csv_files</span>(<span class="params">re_encode_path, save_name, files, save_in</span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;combine_csv_files</span></span><br><span class="line"><span class="string">    将指定路径下的所有csv文件合并为一个csv文件</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    使用示例：</span></span><br><span class="line"><span class="string">    file_names = os.listdir(&quot;./MELD/&quot;)</span></span><br><span class="line"><span class="string">    combine_csv_files(re_encode_path=&quot;./MELD/&quot;, </span></span><br><span class="line"><span class="string">                      save_name=&quot;MELD_total_text&quot;, </span></span><br><span class="line"><span class="string">                      files=file_names, </span></span><br><span class="line"><span class="string">                      save_in=&quot;./MELD/&quot;)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> os.path.isfile(join(save_in, <span class="string">&quot;%s.csv&quot;</span>) % save_name): </span><br><span class="line">        <span class="comment"># 如果已经存在合并后的文件，则直接return 0</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            main_list = []</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(files)):</span><br><span class="line">                content = pd.read_csv(join(re_encode_path, files[i]), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>)</span><br><span class="line">                <span class="keyword">if</span> i == <span class="number">0</span>:</span><br><span class="line">                    main_list.extend([<span class="built_in">list</span>(content.keys())])</span><br><span class="line">                main_list.extend(content.values.tolist())</span><br><span class="line"></span><br><span class="line">            main_dict = &#123;&#125;</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">list</span>(<span class="built_in">zip</span>(*main_list)):</span><br><span class="line">                main_dict[i[<span class="number">0</span>]] = <span class="built_in">list</span>(i[<span class="number">1</span>:])</span><br><span class="line">            data_df = pd.DataFrame(main_dict)</span><br><span class="line">            data_df.to_csv(join(save_in, <span class="string">&quot;%s.csv&quot;</span>) % save_name, encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        <span class="keyword">except</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;合并[%s]时发生错误&quot;</span> % save_name)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-<h3 id="拆分"><a href="#拆分" class="headerlink" title="拆分"></a>拆分</h3><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> os.path <span class="keyword">import</span> join</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">shuffle_total_data</span>(<span class="params">data_path=<span class="string">&quot;./MELD/MELD_total_text.csv&quot;</span>, </span></span><br><span class="line"><span class="params">                       save_path=<span class="string">&quot;./MELD/&quot;</span>, </span></span><br><span class="line"><span class="params">                       index_name=<span class="string">&quot;Dialogue_ID&quot;</span>,</span></span><br><span class="line"><span class="params">                       validation_split_percentage=<span class="number">0.1</span>, </span></span><br><span class="line"><span class="params">                       test_split_percentage=<span class="number">0.1</span>, </span></span><br><span class="line"><span class="params">                       regen=<span class="literal">False</span></span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;shuffle_total_data</span></span><br><span class="line"><span class="string">    将一个.csv文件(例如：CPED_total_text.csv)随机打乱，拆分为训练集、验证集、测试集，分别保存</span></span><br><span class="line"><span class="string">    使用示例：</span></span><br><span class="line"><span class="string">    shuffle_total_data(data_path=&quot;./MELD/MELD_total_text.csv&quot;, </span></span><br><span class="line"><span class="string">                       save_path=&quot;./MELD&quot;, </span></span><br><span class="line"><span class="string">                       index_name=&quot;Dialogue_ID&quot;,</span></span><br><span class="line"><span class="string">                       validation_split_percentage=0.1, </span></span><br><span class="line"><span class="string">                       test_split_percentage=0.1, </span></span><br><span class="line"><span class="string">                       regen=False)</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> regen==<span class="literal">False</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;不进行重复生成！&quot;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Read dataset from &quot;</span>, data_path)</span><br><span class="line">        data = pd.read_csv(data_path, encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>)</span><br><span class="line">                        </span><br><span class="line">        <span class="comment"># 划分为训练集、测试集</span></span><br><span class="line">        keys = <span class="built_in">list</span>(<span class="built_in">set</span>(data[index_name]))</span><br><span class="line">        random.shuffle(keys) <span class="comment"># 随机打乱</span></span><br><span class="line">        validation_split_id = <span class="built_in">int</span>(<span class="built_in">len</span>(keys)*(<span class="number">1</span>-validation_split_percentage-test_split_percentage))</span><br><span class="line">        test_split_id = <span class="built_in">int</span>(<span class="built_in">len</span>(keys)*(<span class="number">1</span>-test_split_percentage))</span><br><span class="line">        train_keys = keys[:validation_split_id] <span class="comment"># 训练集索引</span></span><br><span class="line">        valid_keys = keys[validation_split_id:test_split_id] <span class="comment"># 验证集索引</span></span><br><span class="line">        test_keys = keys[test_split_id:] <span class="comment"># 测试集索引</span></span><br><span class="line">        train_data = data[data[index_name].isin(train_keys)]</span><br><span class="line">        valid_data = data[data[index_name].isin(valid_keys)]</span><br><span class="line">        test_data = data[data[index_name].isin(test_keys)]</span><br><span class="line">        </span><br><span class="line">        train_data.to_csv(join(save_path,<span class="string">&quot;train_shuffle_split.csv&quot;</span>), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        valid_data.to_csv(join(save_path,<span class="string">&quot;valid_shuffle_split.csv&quot;</span>), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        test_data.to_csv(join(save_path,<span class="string">&quot;test_shuffle_split.csv&quot;</span>), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;已经完成数据集生成！&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-]]></content>
   </entry>
   <entry>
     <title>my_first_blog</title>
@@ -950,6 +840,117 @@
                      data-src="/%E5%9B%BE%E7%89%87%E7%9A%84%E9%93%BE%E6%8E%A5"
                       alt="图片描述"
                 ></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>pandas数据分析数据预处理</title>
+    <url>/2023/12/15/pandas%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86/</url>
+    <content><![CDATA[<p>Pandas的数据结构为，DataFrame，一个表格型的数据结构，它含有一组有序的列，每列可以是不同的值类型（数值、字符串、布尔型值）。DataFrame 既有行索引也有列索引，它可以被看做由 Series 组成的字典（共同用一个索引）。而Series则 类似表格中的一个列（column），类似于一维数组，可以保存任何数据类型。我们把一个.csv文件读取进来就是一个DataFrame对象。DataFrame 构造方法如下</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">pandas.DataFrame( data, index, columns, dtype, copy)</span><br></pre></td></tr></table></figure></div>
+
+<p>data：一组数据(ndarray、series, map, lists, dict 等类型)。<br>index：索引值，或者可以称为行标签。<br>columns：列标签，默认为 RangeIndex (0, 1, 2, …, n) 。<br>dtype：数据类型。<br>copy：拷贝数据，默认为 False。</p>
+<h2 id="合并拆分"><a href="#合并拆分" class="headerlink" title="合并拆分"></a>合并拆分</h2><h3 id="合并"><a href="#合并" class="headerlink" title="合并"></a>合并</h3><p>例如，在<code>./MELD</code>路径下存在如下三个文件</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">dev_sent_emo.csv</span><br><span class="line">test_sent_emo.csv</span><br><span class="line">train_sent_emo.csv</span><br></pre></td></tr></table></figure></div>
+
+<p>代码如下</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> os.path <span class="keyword">import</span> join</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">combine_csv_files</span>(<span class="params">re_encode_path, save_name, files, save_in</span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;combine_csv_files</span></span><br><span class="line"><span class="string">    将指定路径下的所有csv文件合并为一个csv文件</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    使用示例：</span></span><br><span class="line"><span class="string">    file_names = os.listdir(&quot;./MELD/&quot;)</span></span><br><span class="line"><span class="string">    combine_csv_files(re_encode_path=&quot;./MELD/&quot;, </span></span><br><span class="line"><span class="string">                      save_name=&quot;MELD_total_text&quot;, </span></span><br><span class="line"><span class="string">                      files=file_names, </span></span><br><span class="line"><span class="string">                      save_in=&quot;./MELD/&quot;)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> os.path.isfile(join(save_in, <span class="string">&quot;%s.csv&quot;</span>) % save_name): </span><br><span class="line">        <span class="comment"># 如果已经存在合并后的文件，则直接return 0</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            main_list = []</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(files)):</span><br><span class="line">                content = pd.read_csv(join(re_encode_path, files[i]), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>)</span><br><span class="line">                <span class="keyword">if</span> i == <span class="number">0</span>:</span><br><span class="line">                    main_list.extend([<span class="built_in">list</span>(content.keys())])</span><br><span class="line">                main_list.extend(content.values.tolist())</span><br><span class="line"></span><br><span class="line">            main_dict = &#123;&#125;</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">list</span>(<span class="built_in">zip</span>(*main_list)):</span><br><span class="line">                main_dict[i[<span class="number">0</span>]] = <span class="built_in">list</span>(i[<span class="number">1</span>:])</span><br><span class="line">            data_df = pd.DataFrame(main_dict)</span><br><span class="line">            data_df.to_csv(join(save_in, <span class="string">&quot;%s.csv&quot;</span>) % save_name, encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        <span class="keyword">except</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;合并[%s]时发生错误&quot;</span> % save_name)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="拆分"><a href="#拆分" class="headerlink" title="拆分"></a>拆分</h3><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> os.path <span class="keyword">import</span> join</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">shuffle_total_data</span>(<span class="params">data_path=<span class="string">&quot;./MELD/MELD_total_text.csv&quot;</span>, </span></span><br><span class="line"><span class="params">                       save_path=<span class="string">&quot;./MELD/&quot;</span>, </span></span><br><span class="line"><span class="params">                       index_name=<span class="string">&quot;Dialogue_ID&quot;</span>,</span></span><br><span class="line"><span class="params">                       validation_split_percentage=<span class="number">0.1</span>, </span></span><br><span class="line"><span class="params">                       test_split_percentage=<span class="number">0.1</span>, </span></span><br><span class="line"><span class="params">                       regen=<span class="literal">False</span></span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;shuffle_total_data</span></span><br><span class="line"><span class="string">    将一个.csv文件(例如：CPED_total_text.csv)随机打乱，拆分为训练集、验证集、测试集，分别保存</span></span><br><span class="line"><span class="string">    使用示例：</span></span><br><span class="line"><span class="string">    shuffle_total_data(data_path=&quot;./MELD/MELD_total_text.csv&quot;, </span></span><br><span class="line"><span class="string">                       save_path=&quot;./MELD&quot;, </span></span><br><span class="line"><span class="string">                       index_name=&quot;Dialogue_ID&quot;,</span></span><br><span class="line"><span class="string">                       validation_split_percentage=0.1, </span></span><br><span class="line"><span class="string">                       test_split_percentage=0.1, </span></span><br><span class="line"><span class="string">                       regen=False)</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> regen==<span class="literal">False</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;不进行重复生成！&quot;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Read dataset from &quot;</span>, data_path)</span><br><span class="line">        data = pd.read_csv(data_path, encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>)</span><br><span class="line">                        </span><br><span class="line">        <span class="comment"># 划分为训练集、测试集</span></span><br><span class="line">        keys = <span class="built_in">list</span>(<span class="built_in">set</span>(data[index_name]))</span><br><span class="line">        random.shuffle(keys) <span class="comment"># 随机打乱</span></span><br><span class="line">        validation_split_id = <span class="built_in">int</span>(<span class="built_in">len</span>(keys)*(<span class="number">1</span>-validation_split_percentage-test_split_percentage))</span><br><span class="line">        test_split_id = <span class="built_in">int</span>(<span class="built_in">len</span>(keys)*(<span class="number">1</span>-test_split_percentage))</span><br><span class="line">        train_keys = keys[:validation_split_id] <span class="comment"># 训练集索引</span></span><br><span class="line">        valid_keys = keys[validation_split_id:test_split_id] <span class="comment"># 验证集索引</span></span><br><span class="line">        test_keys = keys[test_split_id:] <span class="comment"># 测试集索引</span></span><br><span class="line">        train_data = data[data[index_name].isin(train_keys)]</span><br><span class="line">        valid_data = data[data[index_name].isin(valid_keys)]</span><br><span class="line">        test_data = data[data[index_name].isin(test_keys)]</span><br><span class="line">        </span><br><span class="line">        train_data.to_csv(join(save_path,<span class="string">&quot;train_shuffle_split.csv&quot;</span>), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        valid_data.to_csv(join(save_path,<span class="string">&quot;valid_shuffle_split.csv&quot;</span>), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        test_data.to_csv(join(save_path,<span class="string">&quot;test_shuffle_split.csv&quot;</span>), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;已经完成数据集生成！&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+]]></content>
+  </entry>
+  <entry>
+    <title>transformer-注意力机制</title>
+    <url>/2023/10/23/transformer-%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/</url>
+    <content><![CDATA[<h2 id="1-Attention"><a href="#1-Attention" class="headerlink" title="1.Attention"></a>1.Attention</h2><h3 id="1-1-讲讲对Attention的理解？"><a href="#1-1-讲讲对Attention的理解？" class="headerlink" title="1.1 讲讲对Attention的理解？"></a>1.1 讲讲对Attention的理解？</h3><p>Attention机制是一种在处理时序相关问题的时候常用的技术，主要用于处理序列数据。<br>核心思想是在处理序列数据时，<strong>网络应该更关注输入中的重要部分，而忽略不重要的部分，它通过学习不同部分的权重，将输入的序列中的重要部分显式地加权，从而使得模型可以更好地关注与输出有关的信息。</strong></p>
+<p><strong>Attention机制的关键是引入一种机制来动态地计算输入序列中各个位置的权重，从而在每个时间步上，对输入序列的不同部分进行加权求和，得到当前时间步的输出。这样就实现了模型对输入中不同部分的关注度的自适应调整。</strong></p>
+<h3 id="1-2Attention的计算步骤是什么？"><a href="#1-2Attention的计算步骤是什么？" class="headerlink" title="1.2Attention的计算步骤是什么？"></a>1.2Attention的计算步骤是什么？</h3><p>如下：</p>
+<ul>
+<li><p>计算查询（Query）：查询是当前时间步的输入，用于和序列中其他位置的信息进行比较。</p>
+</li>
+<li><p>计算键（Key）和值（Value）：键表示序列中其他位置的信息，值是对应位置的表示。键和值用来和查询进行比较。</p>
+</li>
+<li><p>计算注意力权重：：通过将查询和键进行内积运算，进<strong>行缩放，根号d，</strong>然后应用softmax函数，得到注意力权重。这些权重表示了在当前时间步，模型应该关注序列中其他位置的重要程度。</p>
+</li>
+<li><p>加权求和：根据注意力权重将值进行加权求和，得到当前时间步的输出</p>
+</li>
+</ul>
+<p>在Transformer中，Self-Attention 被称为”Scaled Dot-Product Attention”，其计算过程如下：</p>
+<ol>
+<li>对于输入序列中的每个位置，通过计算其与所有其他位置之间的相似度得分（通常通过点积计算）。</li>
+<li>对得分进<strong>行缩放处理</strong>，以防止梯度爆炸。</li>
+<li>将得分用softmax函数转换为注意力权重，以便计算每个位置的加权和。</li>
+<li>使用注意力权重对输入序列中的所有位置进行加权求和，得到每个位置的自注意输出。</li>
+</ol>
+<h3 id="1-3-self-attention-在计算的过程中，如何对padding位做mask？"><a href="#1-3-self-attention-在计算的过程中，如何对padding位做mask？" class="headerlink" title="1.3 self-attention 在计算的过程中，如何对padding位做mask？"></a>1.3 self-attention 在计算的过程中，如何对padding位做mask？</h3><p>在 Attention 机制中，同样需要忽略 padding 部分的影响，这里以transformer encoder中的self-attention为例：self-attention中，Q和K在点积之后，需要先经过mask再进行softmax，<strong>因此，对于要屏蔽的部分，mask之后的输出需要为负无穷，这样softmax之后输出才为0</strong>。</p>
+<h3 id="1-4-多种attention"><a href="#1-4-多种attention" class="headerlink" title="1.4 多种attention"></a>1.4 多种attention</h3><p><strong>FlashAttention，加速</strong></p>
+<p>动机：</p>
+<ul>
+<li>不同硬件模块之间的带宽和存储空间有明显差异</li>
+<li>FlashAttention的主要动机就是希望把SRAM利用起来，但是难点就在于SRAM太小了，一个普通的矩阵乘法都放不下去。FlashAttention的解决思路就是将计算模块进行分解，拆成一个个小的计算任务。</li>
+</ul>
+<p>算法流程</p>
+<ol>
+<li>目标一：在不访问整个输入的情况下计算softmax函数的缩减；将输入分割成块，并在输入块上进行多次传递，从而以增量方式执行softmax缩减。</li>
+<li>目标二：在后向传播中不能存储中间注意力矩阵。标准Attention算法的实现需要将计算过程中的S、P写入到HBM中，而这些中间矩阵的大小与输入的序列长度有关且为二次型，因此Flash Attention就提出了不使用中间注意力矩阵，通过存储归一化因子来减少HBM内存的消耗。</li>
+</ol>
+<h2 id="2-Transformer"><a href="#2-Transformer" class="headerlink" title="2.Transformer"></a>2.Transformer</h2><h3 id="2-1-transformer中multi-head-attention中每个head为什么要进行降维？"><a href="#2-1-transformer中multi-head-attention中每个head为什么要进行降维？" class="headerlink" title="2.1 transformer中multi-head attention中每个head为什么要进行降维？"></a>2.1 transformer中multi-head attention中每个head为什么要进行降维？</h3><p>对每个head进行降维是为了增加模型的表达能力和效率。<br>每个head是独立的注意力机制，它们可以学习不同类型的特征和关系。通过使用多个注意力头，Transformer可以并行地学习多种不同的特征表示，从而增强了模型的表示能力。</p>
+<p>通过降低每个head的维度，Transformer可以在保持较高的表达能力的同时，大大减少计算复杂度。降维后的计算复杂度为</p>
+<p><strong>如何实现？</strong></p>
+<p>permute和reshape，不改变复杂度</p>
+<h3 id="2-2-transformer的点积模型做缩放的原因是什么？"><a href="#2-2-transformer的点积模型做缩放的原因是什么？" class="headerlink" title="2.2 transformer的点积模型做缩放的原因是什么？"></a>2.2 transformer的点积模型做缩放的原因是什么？</h3><p>使用缩放的原因是为了控制注意力权重的尺度，以避免在计算过程中出现梯度爆炸的问题。</p>
+<p>Attention的计算是在内积之后进行softmax，主要涉及的运算是$$e^{q \cdot k}，可以大致认为内积之后、softmax之前的数值在-3\sqrt{d}到3\sqrt{d}$$这个范围内，由于d通常都至少是64，所以$$e^{3\sqrt{d}}$$比较大而$$ e^{-3\sqrt{d}}$$比较小，因此经过softmax之后，Attention的分布非常接近一个one hot分布了，这带来严重的梯度消失问题，导致训练效果差。（例如y&#x3D;softmax(x)在|x|较大时进入了饱和区，x继续变化y值也几乎不变，即饱和区梯度消失）</p>
+<p>相应地，解决方法就有两个:</p>
+<ul>
+<li>除以根号d</li>
+<li>但是初始化q,k的全连接层的时候，其初始化方差要多除以一个d，这同样能使得使q⋅k的初始方差变为1，T5采用了这样的做法。</li>
+</ul>
+<h3 id="3-Transformer总体架构"><a href="#3-Transformer总体架构" class="headerlink" title="3.Transformer总体架构"></a>3.Transformer总体架构</h3><p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\xhou\blog_pic\image_V6s3Iu8dFP.png"
+                      alt="image_V6s3Iu8dFP"
+                ></p>
+<p><a class="link"   href="https://dongnian.icu/llms/transformer/2.Transformer%E6%9E%B6%E6%9E%84%E8%A7%A3%E6%9E%90/image/image_V6s3Iu8dFP.png" > <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>（1）输入部分</p>
+<ul>
+<li>源文本嵌入层及其位置编码器</li>
+<li>目标文本嵌入层及其位置编码器</li>
+</ul>
+<p>位置编码器PositionalEncoding<strong>将词汇位置不同可能会产生不同语义的信息加入到词嵌入张量中, 以弥补位置信息的缺失.</strong></p>
+<p>位置编码的加入是必不可少的，因为纯粹的Attention模块是无法捕捉输入顺序的，即无法区分不同位置的Token。</p>
+<p>（2输入部分）</p>
+<ul>
+<li>线性层</li>
+<li>softmax</li>
+</ul>
+<p>（3）编码器</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\xhou\blog_pic\image_6RlUw8Ldsk.png"
+                      alt="image_6RlUw8Ldsk"
+                ></p>
+<ul>
+<li>由N个编码器层堆叠而成</li>
+<li>每个编码器层由两个子层连接结构组成</li>
+<li>第一个子层连接结构包括一个多头自注意力子层和规范化层以及一个残差连接</li>
+<li>第二个子层连接结构包括一个前馈全连接子层和规范化层以及一个残差连接</li>
+</ul>
+<p>（4）解码器</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\xhou\blog_pic\image_IlV0Rf2hVU.png"
+                      alt="image_IlV0Rf2hVU"
+                ></p>
+<ul>
+<li>由N个解码器层堆叠而成</li>
+<li>每个解码器层由三个子层连接结构组成</li>
+<li>第一个子层连接结构包括一个多头自注意力子层和规范化层以及一个残差连接</li>
+<li>第二个子层连接结构包括一个多头注意力子层和规范化层以及一个残差连接</li>
+<li>第三个子层连接结构包括一个前馈全连接子层和规范化层以及一个残差连接</li>
+</ul>
 ]]></content>
   </entry>
   <entry>
@@ -1065,103 +1066,92 @@
 ]]></content>
   </entry>
   <entry>
-    <title>transformer-注意力机制</title>
-    <url>/2023/10/23/transformer-%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/</url>
-    <content><![CDATA[<h2 id="1-Attention"><a href="#1-Attention" class="headerlink" title="1.Attention"></a>1.Attention</h2><h3 id="1-1-讲讲对Attention的理解？"><a href="#1-1-讲讲对Attention的理解？" class="headerlink" title="1.1 讲讲对Attention的理解？"></a>1.1 讲讲对Attention的理解？</h3><p>Attention机制是一种在处理时序相关问题的时候常用的技术，主要用于处理序列数据。<br>核心思想是在处理序列数据时，<strong>网络应该更关注输入中的重要部分，而忽略不重要的部分，它通过学习不同部分的权重，将输入的序列中的重要部分显式地加权，从而使得模型可以更好地关注与输出有关的信息。</strong></p>
-<p><strong>Attention机制的关键是引入一种机制来动态地计算输入序列中各个位置的权重，从而在每个时间步上，对输入序列的不同部分进行加权求和，得到当前时间步的输出。这样就实现了模型对输入中不同部分的关注度的自适应调整。</strong></p>
-<h3 id="1-2Attention的计算步骤是什么？"><a href="#1-2Attention的计算步骤是什么？" class="headerlink" title="1.2Attention的计算步骤是什么？"></a>1.2Attention的计算步骤是什么？</h3><p>如下：</p>
+    <title>bert基础</title>
+    <url>/2024/06/15/bert%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<h1 id="bert"><a href="#bert" class="headerlink" title="bert"></a>bert</h1><ul>
+<li><p>bert: encoder of transformer</p>
 <ul>
-<li><p>计算查询（Query）：查询是当前时间步的输入，用于和序列中其他位置的信息进行比较。</p>
+<li>transformer: encoder-decoder(seq2seq)</li>
+</ul>
 </li>
-<li><p>计算键（Key）和值（Value）：键表示序列中其他位置的信息，值是对应位置的表示。键和值用来和查询进行比较。</p>
+<li><p>bert</p>
+<ul>
+<li><p>embeddings</p>
+<ul>
+<li><p>word(token) embedding   # token_embed &#x3D; model.embeddings.word_embeddings(input_ids)</p>
 </li>
-<li><p>计算注意力权重：：通过将查询和键进行内积运算，进<strong>行缩放，根号d，</strong>然后应用softmax函数，得到注意力权重。这些权重表示了在当前时间步，模型应该关注序列中其他位置的重要程度。</p>
+<li><p>position embedding          # pos_embed &#x3D; model.embeddings.position_embeddings(pos_ids)</p>
 </li>
-<li><p>加权求和：根据注意力权重将值进行加权求和，得到当前时间步的输出</p>
+<li><p>token type embedding      # seg_embed &#x3D; model.embeddings.token_type_embeddings(token_type_ids)</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">input_embed = token_embed + seg_embed + pos_embed.unsqueeze(0)</span><br></pre></td></tr></table></figure></div></li>
+</ul>
+</li>
+<li><p>encoder(12 layer)</p>
+<ul>
+<li>self attention (kqv)</li>
+<li>feed forward</li>
+</ul>
+</li>
+<li><p>pooler  由此得到最终输出</p>
 </li>
 </ul>
-<p>在Transformer中，Self-Attention 被称为”Scaled Dot-Product Attention”，其计算过程如下：</p>
-<ol>
-<li>对于输入序列中的每个位置，通过计算其与所有其他位置之间的相似度得分（通常通过点积计算）。</li>
-<li>对得分进<strong>行缩放处理</strong>，以防止梯度爆炸。</li>
-<li>将得分用softmax函数转换为注意力权重，以便计算每个位置的加权和。</li>
-<li>使用注意力权重对输入序列中的所有位置进行加权求和，得到每个位置的自注意输出。</li>
-</ol>
-<h3 id="1-3-self-attention-在计算的过程中，如何对padding位做mask？"><a href="#1-3-self-attention-在计算的过程中，如何对padding位做mask？" class="headerlink" title="1.3 self-attention 在计算的过程中，如何对padding位做mask？"></a>1.3 self-attention 在计算的过程中，如何对padding位做mask？</h3><p>在 Attention 机制中，同样需要忽略 padding 部分的影响，这里以transformer encoder中的self-attention为例：self-attention中，Q和K在点积之后，需要先经过mask再进行softmax，<strong>因此，对于要屏蔽的部分，mask之后的输出需要为负无穷，这样softmax之后输出才为0</strong>。</p>
-<h3 id="1-4-多种attention"><a href="#1-4-多种attention" class="headerlink" title="1.4 多种attention"></a>1.4 多种attention</h3><p><strong>FlashAttention，加速</strong></p>
-<p>动机：</p>
-<ul>
-<li>不同硬件模块之间的带宽和存储空间有明显差异</li>
-<li>FlashAttention的主要动机就是希望把SRAM利用起来，但是难点就在于SRAM太小了，一个普通的矩阵乘法都放不下去。FlashAttention的解决思路就是将计算模块进行分解，拆成一个个小的计算任务。</li>
+</li>
 </ul>
-<p>算法流程</p>
-<ol>
-<li>目标一：在不访问整个输入的情况下计算softmax函数的缩减；将输入分割成块，并在输入块上进行多次传递，从而以增量方式执行softmax缩减。</li>
-<li>目标二：在后向传播中不能存储中间注意力矩阵。标准Attention算法的实现需要将计算过程中的S、P写入到HBM中，而这些中间矩阵的大小与输入的序列长度有关且为二次型，因此Flash Attention就提出了不使用中间注意力矩阵，通过存储归一化因子来减少HBM内存的消耗。</li>
-</ol>
-<h2 id="2-Transformer"><a href="#2-Transformer" class="headerlink" title="2.Transformer"></a>2.Transformer</h2><h3 id="2-1-transformer中multi-head-attention中每个head为什么要进行降维？"><a href="#2-1-transformer中multi-head-attention中每个head为什么要进行降维？" class="headerlink" title="2.1 transformer中multi-head attention中每个head为什么要进行降维？"></a>2.1 transformer中multi-head attention中每个head为什么要进行降维？</h3><p>对每个head进行降维是为了增加模型的表达能力和效率。<br>每个head是独立的注意力机制，它们可以学习不同类型的特征和关系。通过使用多个注意力头，Transformer可以并行地学习多种不同的特征表示，从而增强了模型的表示能力。</p>
-<p>通过降低每个head的维度，Transformer可以在保持较高的表达能力的同时，大大减少计算复杂度。降维后的计算复杂度为</p>
-<p><strong>如何实现？</strong></p>
-<p>permute和reshape，不改变复杂度</p>
-<h3 id="2-2-transformer的点积模型做缩放的原因是什么？"><a href="#2-2-transformer的点积模型做缩放的原因是什么？" class="headerlink" title="2.2 transformer的点积模型做缩放的原因是什么？"></a>2.2 transformer的点积模型做缩放的原因是什么？</h3><p>使用缩放的原因是为了控制注意力权重的尺度，以避免在计算过程中出现梯度爆炸的问题。</p>
-<p>Attention的计算是在内积之后进行softmax，主要涉及的运算是$$e^{q \cdot k}，可以大致认为内积之后、softmax之前的数值在-3\sqrt{d}到3\sqrt{d}$$这个范围内，由于d通常都至少是64，所以$$e^{3\sqrt{d}}$$比较大而$$ e^{-3\sqrt{d}}$$比较小，因此经过softmax之后，Attention的分布非常接近一个one hot分布了，这带来严重的梯度消失问题，导致训练效果差。（例如y&#x3D;softmax(x)在|x|较大时进入了饱和区，x继续变化y值也几乎不变，即饱和区梯度消失）</p>
-<p>相应地，解决方法就有两个:</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">from transformers import BertTokenizer, BertModel</span><br><span class="line">import torch </span><br><span class="line">from torch import nn</span><br><span class="line"></span><br><span class="line">model_name = &#x27;bert-base-uncased&#x27;</span><br><span class="line">tokenizer = BertTokenizer.from_pretrained(model_name)</span><br><span class="line">model = BertModel.from_pretrained(model_name, output_attention=True)</span><br><span class="line"></span><br><span class="line">test_sent = &#x27;&#x27;</span><br><span class="line">input = tokenizer(test_sent, return_tensors=&#x27;pt&#x27;)</span><br><span class="line"># input -&gt; &#123;&#x27;input_ids&#x27;: tensor([[ 101, 2023, 2003, 1037, 3231, 6251,  102]]), &#x27;token_type_ids&#x27;: tensor([[0, 0, 0, 0, 0, 0, 0]]), &#x27;attention_mask&#x27;: tensor([[1, 1, 1, 1, 1, 1, 1]])&#125;</span><br><span class="line"></span><br><span class="line">#___________________________________________________________</span><br><span class="line">input_ids = input[&#x27;input_ids&#x27;]</span><br><span class="line">token_type_ids = input[&#x27;token_type_ids&#x27;]</span><br><span class="line">pos_ids = torch.arange(input_ids.shape[1])</span><br><span class="line"></span><br><span class="line">#  1. token embedding</span><br><span class="line">token_embed = model.embeddings.word_embeddings(input_ids)</span><br><span class="line">token_embed</span><br><span class="line"># 2. segment type embedding</span><br><span class="line">seg_embed = model.embeddings.token_type_embeddings(token_type_ids)</span><br><span class="line">seg_embed</span><br><span class="line"># 3. pos embedding</span><br><span class="line">pos_embed = model.embeddings.position_embeddings(pos_ids)</span><br><span class="line">seg_embed</span><br><span class="line"># 4. input embedding</span><br><span class="line">input_embed = token_embed + seg_embed + pos_embed.unsqueeze(0)</span><br><span class="line"># 5. 后处理</span><br><span class="line">embed = model.embeddings.LayerNorm(input_embed)</span><br><span class="line">embed = model.embeddings.dropout(embed)</span><br><span class="line"># 6. encoder</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+
+
 <ul>
-<li>除以根号d</li>
-<li>但是初始化q,k的全连接层的时候，其初始化方差要多除以一个d，这同样能使得使q⋅k的初始方差变为1，T5采用了这样的做法。</li>
+<li>torch.no_grad()<ul>
+<li>定义了一个上下文管理器，隐式地不进行梯度更新，不会改变 requires_grad</li>
+<li>适用于 eval 阶段，或 model forward 的过程中某些模块不更新梯度的模块（此时这些模块仅进行特征提取（前向计算），不反向更新）</li>
 </ul>
-<h3 id="3-Transformer总体架构"><a href="#3-Transformer总体架构" class="headerlink" title="3.Transformer总体架构"></a>3.Transformer总体架构</h3><p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="C:\xhou\blog_pic\image_V6s3Iu8dFP.png"
-                      alt="image_V6s3Iu8dFP"
-                ></p>
-<p><a class="link"   href="https://dongnian.icu/llms/transformer/2.Transformer%E6%9E%B6%E6%9E%84%E8%A7%A3%E6%9E%90/image/image_V6s3Iu8dFP.png" > <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>（1）输入部分</p>
-<ul>
-<li>源文本嵌入层及其位置编码器</li>
-<li>目标文本嵌入层及其位置编码器</li>
+</li>
+<li>param.requires_grad<ul>
+<li>显式地 frozen 掉一些module（layer）的梯度更新</li>
+<li>layer&#x2F;module 级别，</li>
+<li>可能会更灵活</li>
 </ul>
-<p>位置编码器PositionalEncoding<strong>将词汇位置不同可能会产生不同语义的信息加入到词嵌入张量中, 以弥补位置信息的缺失.</strong></p>
-<p>位置编码的加入是必不可少的，因为纯粹的Attention模块是无法捕捉输入顺序的，即无法区分不同位置的Token。</p>
-<p>（2输入部分）</p>
-<ul>
-<li>线性层</li>
-<li>softmax</li>
+</li>
 </ul>
-<p>（3）编码器</p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="C:\xhou\blog_pic\image_6RlUw8Ldsk.png"
-                      alt="image_6RlUw8Ldsk"
-                ></p>
-<ul>
-<li>由N个编码器层堆叠而成</li>
-<li>每个编码器层由两个子层连接结构组成</li>
-<li>第一个子层连接结构包括一个多头自注意力子层和规范化层以及一个残差连接</li>
-<li>第二个子层连接结构包括一个前馈全连接子层和规范化层以及一个残差连接</li>
+<h3 id="1-input"><a href="#1-input" class="headerlink" title="1. input"></a>1. input</h3><ul>
+<li>tokenizer 轻易不会将一个词处理为 <code>[UNK] (100)</code></li>
+<li>基于词汇表，tokenize, encode, decode 一体<ul>
+<li>tokenize：word &#x3D;&gt; token(s)，将word尽可能地映射为 vocab 中的 keys</li>
+<li>encode: token &#x3D;&gt; id</li>
+<li>decode: id &#x3D;&gt; token &#x3D;&gt; word<ul>
+<li>encode 完了之后也不是终点（word），decode 还要能很好地将 id 还原，尽可能与输入的 word 对齐；</li>
 </ul>
-<p>（4）解码器</p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="C:\xhou\blog_pic\image_IlV0Rf2hVU.png"
-                      alt="image_IlV0Rf2hVU"
-                ></p>
-<ul>
-<li>由N个解码器层堆叠而成</li>
-<li>每个解码器层由三个子层连接结构组成</li>
-<li>第一个子层连接结构包括一个多头自注意力子层和规范化层以及一个残差连接</li>
-<li>第二个子层连接结构包括一个多头注意力子层和规范化层以及一个残差连接</li>
-<li>第三个子层连接结构包括一个前馈全连接子层和规范化层以及一个残差连接</li>
+</li>
+</ul>
+</li>
+</ul>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> BertModel, BertTokenizer</span><br><span class="line"></span><br><span class="line">model_name = <span class="string">&#x27;bert-base-uncased&#x27;</span></span><br><span class="line"></span><br><span class="line">tokenizer = BertTokenizer.from_pretrained(model_name)</span><br><span class="line">model = BertModel.from_pretrained(model_name, output_hidden_states=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;After stealing money from the bank vault, the bank robber was seen &quot;</span> \</span><br><span class="line">   <span class="string">&quot;fishing on the Mississippi river bank.&quot;</span></span><br><span class="line">    </span><br><span class="line">token_input = tokenizer(text, return_tensors=<span class="string">&#x27;pt&#x27;</span>)</span><br><span class="line">token_input </span><br><span class="line"><span class="comment"># &#123;&#x27;input_ids&#x27;: tensor([[  101,  2044, 11065,  2769,  2013,  1996,  2924, 11632,  1010,  1996, \</span></span><br><span class="line">          <span class="number">2924</span>, <span class="number">27307</span>,  <span class="number">2001</span>,  <span class="number">2464</span>,  <span class="number">5645</span>,  <span class="number">2006</span>,  <span class="number">1996</span>,  <span class="number">5900</span>,  <span class="number">2314</span>,  <span class="number">2924</span>,\</span><br><span class="line">          <span class="number">1012</span>,   <span class="number">102</span>]]), <span class="string">&#x27;token_type_ids&#x27;</span>: tensor([[<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]]), <span class="string">&#x27;attention_mask&#x27;</span>: tensor([[<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>]])&#125;\</span><br><span class="line">                </span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="2-model-forward"><a href="#2-model-forward" class="headerlink" title="2. model forward"></a>2. model forward</h3><h3 id="3-output"><a href="#3-output" class="headerlink" title="3. output"></a>3. output</h3><ul>
+<li>len(outputs) &#x3D;&#x3D; 3</li>
+<li>outputs[0]  last_hidden_state<ul>
+<li>last_hidden_state, shape: batch_size<em>seq_len</em>hidden_size(1*22*768)</li>
+</ul>
+</li>
+<li>outputs[1] pooler_output<ul>
+<li>pooler_output, shape: batch_size*hidden_size(1*768)</li>
+<li>Last layer hidden-state of the first token of the sequence (classification token, [CLS])</li>
+</ul>
+</li>
+<li>outputs[2] (model.config.output_hidden_states &#x3D; True) hidden_states<ul>
+<li>type: tuple</li>
+<li>one for the output of the embeddings(1), if the model has an embedding layer(12), + one for the output of each layer)<ul>
+<li>(1+12)<em>(batch_size</em>seq_len<em>hidden_size) &#x3D; 13*1*22</em>768</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>outputs[0] &#x3D;&#x3D; outputs[2][-1]</li>
+<li>outputs[1] &#x3D;&#x3D; model.pooler(outputs[2][-1])</li>
+<li>outputs[2][0] &#x3D;&#x3D; model.embeddings(token_input[‘input_ids’], token_input[‘token_type_ids’])</li>
 </ul>
 ]]></content>
-  </entry>
-  <entry>
-    <title>图神经网络实战</title>
-    <url>/2023/10/23/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%AE%9E%E6%88%98/</url>
-    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>图神经网络</title>
@@ -1246,31 +1236,9 @@
 ]]></content>
   </entry>
   <entry>
-    <title>基础模型pytorch学习笔记</title>
-    <url>/2023/12/25/%E5%9F%BA%E7%A1%80%E6%A8%A1%E5%9E%8Bpytorch%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%20/</url>
-    <content><![CDATA[<h1 id="Resnet"><a href="#Resnet" class="headerlink" title="Resnet"></a>Resnet</h1><p><strong>问题：随着神经网络的不断加深，一定会带来好处吗？</strong></p>
-<p>蓝色五角星表示最优值<br>标有Fi的闭合区域表示函数，闭合区域的面积代表函数的复杂程度，在这个区域中能够找到一个最优的模型（可以用区域中的一个点来表示，该点到最优值的距离可以用来衡量模型的好坏）<br>从上图中可以看出，随着函数的复杂度的不断增加，虽然函数的区域面积增大了，但是在该区域中所能找到的最优模型（该区域内的某一点）离最优值的距离可能会越来越远（也就是模型所在的区域随着函数复杂度的增加，逐渐偏离了原来的区域，离最优值越来越远）（非嵌套函数（non-nested function））<br>解决上述问题（模型走偏）的方法：每一次增加函数复杂度之后函数所覆盖的区域会包含原来函数所在的区域（嵌套函数（nested function）），只有当较复杂的函数类包含复杂度较小的函数类时，才能确保提高它的性能，如下图所示 </p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://i0.hdslb.com/bfs/note/c2e5b2e4475660b29a5166856b0c224e2ce52faf.png@1014w_!web-note.avif"
-                      alt="残差块"
-                ></p>
-<p>之前增加模型深度的方法都是层层堆叠的方法，ResNet的思想是在堆叠层数的同时不会增加模型的复杂度<br>上图中左侧表示一个正常块，右侧表示一个残差块<br>x：原始输入<br>f(x)：理想映射（也是激活函数的输入）<br>对于正常块中来说，虚线框中的部分需要直接拟合出理想映射 f(x)；而对于残差块来说，同样的虚线框中的部分需要拟合出残差映射 f(x) - x<br>残差映射在现实中往往更容易优化<br>如果以恒等映射 f(x) &#x3D; x 作为所想要学出的理想映射 f(x)，则只需要将残差块中虚线框内加权运算的权重和偏置参数设置为 0，f(x) 就变成恒等映射了<br>在实际中，当理想映射 f(x) 极接近于恒等映射时，残差映射易于捕捉恒等映射的细微波动<br>在残差块中，输入可以通过跨层数据线路更快地向前传播  </p>
-<p>残差块使得很深的网络更加容易训练（不管网络有多深，因为有跨层数据通路连接的存在，使得始终能够包含小的网络，因为跳转连接的存在，所以会先将下层的小型网络训练好再去训练更深层次的网络），甚至可以训练一千层的网络（只要内存足够，优化算法就能够实现）<br>学习嵌套函数是神经网络的理想情况，在深层神经网络中，学习另一层作为恒等映射比较容易<br>残差映射可以更容易地学习同一函数，例如将权重层中的参数近似为零<br>利用残差块可以训练出一个有效的深层神经网络：输入可以通过层间的残余连接更快地向前传播<br>残差网络对随后的深层神经网络的设计产生了深远影响，无论是卷积类网络还是全连接类网络，几乎现在所有的网络都会用到，因为只有这样才能够让网络搭建的更深</p>
-<hr>
-<h2 id="残差块"><a href="#残差块" class="headerlink" title="残差块:"></a>残差块:</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">from</span> torch.nn <span class="keyword">import</span> functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> d2l <span class="keyword">import</span> torch <span class="keyword">as</span> d2l</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Residual</span>(nn.Module):  </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, input_channels, num_channels,</span></span><br><span class="line"><span class="params">                 use_1x1conv=<span class="literal">False</span>, strides=<span class="number">1</span></span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(input_channels, num_channels,</span><br><span class="line">                               kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>, stride=strides)</span><br><span class="line">        self.conv2 = nn.Conv2d(num_channels, num_channels,</span><br><span class="line">                               kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">if</span> use_1x1conv:</span><br><span class="line">            self.conv3 = nn.Conv2d(input_channels, num_channels,</span><br><span class="line">                                   kernel_size=<span class="number">1</span>, stride=strides)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.conv3 = <span class="literal">None</span></span><br><span class="line">        self.bn1 = nn.BatchNorm2d(num_channels)</span><br><span class="line">        self.bn2 = nn.BatchNorm2d(num_channels)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, X</span>):</span><br><span class="line">        Y = F.relu(self.bn1(self.conv1(X)))</span><br><span class="line">        Y = self.bn2(self.conv2(Y))</span><br><span class="line">        <span class="keyword">if</span> self.conv3:</span><br><span class="line">            X = self.conv3(X)</span><br><span class="line">        Y += X</span><br><span class="line">        <span class="keyword">return</span> F.relu(Y)</span><br></pre></td></tr></table></figure></div>
-
-<p>通俗的说就是如果加了conv3的效果好，loss小了  就用，不然就不用</p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://zh-v2.d2l.ai/_images/resnet-block.svg"
-                      alt="包含以及不包含 1×1 卷积层的残差块"
-                ></p>
-<h2 id="Resnet模型"><a href="#Resnet模型" class="headerlink" title="Resnet模型"></a>Resnet模型</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">b1 = nn.Sequential(nn.Conv2d(<span class="number">1</span>, <span class="number">64</span>, kernel_size=<span class="number">7</span>, stride=<span class="number">2</span>, padding=<span class="number">3</span>),</span><br><span class="line">                   nn.BatchNorm2d(<span class="number">64</span>), nn.ReLU(),</span><br><span class="line">                   nn.MaxPool2d(kernel_size=<span class="number">3</span>, stride=<span class="number">2</span>, padding=<span class="number">1</span>))</span><br></pre></td></tr></table></figure></div>
-
-]]></content>
+    <title>图神经网络实战</title>
+    <url>/2023/10/23/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%AE%9E%E6%88%98/</url>
+    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>图神经网络(二)</title>
@@ -1376,86 +1344,31 @@
 <h3 id="通过池化信息对GNN预测"><a href="#通过池化信息对GNN预测" class="headerlink" title="通过池化信息对GNN预测"></a>通过<a class="link"   href="https://so.csdn.net/so/search?q=%E6%B1%A0%E5%8C%96&spm=1001.2101.3001.7020" >池化 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>信息对GNN预测</h3>]]></content>
   </entry>
   <entry>
-    <title>数据的读取与处理</title>
-    <url>/2023/10/18/%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA/</url>
-    <content><![CDATA[<h1 id="数据预处理、数据增强"><a href="#数据预处理、数据增强" class="headerlink" title="数据预处理、数据增强"></a>数据预处理、数据增强</h1><h2 id="1-数据增强"><a href="#1-数据增强" class="headerlink" title="1. 数据增强"></a>1. 数据增强</h2><p>数据增强可以增加训练集的样本数量，缓解过拟合，并提高模型的泛化能力，从而有效提升算法的性能。</p>
+    <title>基础模型pytorch学习笔记</title>
+    <url>/2023/12/25/%E5%9F%BA%E7%A1%80%E6%A8%A1%E5%9E%8Bpytorch%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%20/</url>
+    <content><![CDATA[<h1 id="Resnet"><a href="#Resnet" class="headerlink" title="Resnet"></a>Resnet</h1><p><strong>问题：随着神经网络的不断加深，一定会带来好处吗？</strong></p>
+<p>蓝色五角星表示最优值<br>标有Fi的闭合区域表示函数，闭合区域的面积代表函数的复杂程度，在这个区域中能够找到一个最优的模型（可以用区域中的一个点来表示，该点到最优值的距离可以用来衡量模型的好坏）<br>从上图中可以看出，随着函数的复杂度的不断增加，虽然函数的区域面积增大了，但是在该区域中所能找到的最优模型（该区域内的某一点）离最优值的距离可能会越来越远（也就是模型所在的区域随着函数复杂度的增加，逐渐偏离了原来的区域，离最优值越来越远）（非嵌套函数（non-nested function））<br>解决上述问题（模型走偏）的方法：每一次增加函数复杂度之后函数所覆盖的区域会包含原来函数所在的区域（嵌套函数（nested function）），只有当较复杂的函数类包含复杂度较小的函数类时，才能确保提高它的性能，如下图所示 </p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="https://p.ipic.vip/a161sy.png"
-                      alt="数据增强"
+                     data-src="https://i0.hdslb.com/bfs/note/c2e5b2e4475660b29a5166856b0c224e2ce52faf.png@1014w_!web-note.avif"
+                      alt="残差块"
                 ></p>
-<h2 id="2-数据预处理"><a href="#2-数据预处理" class="headerlink" title="2. 数据预处理"></a>2. 数据预处理</h2><p>1）将图像转换成 tensor 的数据格式</p>
-<p>2）将图像的 像素值范围 由 0～255 转换到 0～1</p>
-<p>3）(height, width, channel) &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&gt;&gt;&gt; (channel, height, width)</p>
-<p>4）归一化图像</p>
-<h2 id="3-使用节点"><a href="#3-使用节点" class="headerlink" title="3. 使用节点"></a>3. 使用节点</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">trans = transforms.Compose([transforms.RandomResizedCrop((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.RandomHorizontalFlip(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ColorJitter(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
+<p>之前增加模型深度的方法都是层层堆叠的方法，ResNet的思想是在堆叠层数的同时不会增加模型的复杂度<br>上图中左侧表示一个正常块，右侧表示一个残差块<br>x：原始输入<br>f(x)：理想映射（也是激活函数的输入）<br>对于正常块中来说，虚线框中的部分需要直接拟合出理想映射 f(x)；而对于残差块来说，同样的虚线框中的部分需要拟合出残差映射 f(x) - x<br>残差映射在现实中往往更容易优化<br>如果以恒等映射 f(x) &#x3D; x 作为所想要学出的理想映射 f(x)，则只需要将残差块中虚线框内加权运算的权重和偏置参数设置为 0，f(x) 就变成恒等映射了<br>在实际中，当理想映射 f(x) 极接近于恒等映射时，残差映射易于捕捉恒等映射的细微波动<br>在残差块中，输入可以通过跨层数据线路更快地向前传播  </p>
+<p>残差块使得很深的网络更加容易训练（不管网络有多深，因为有跨层数据通路连接的存在，使得始终能够包含小的网络，因为跳转连接的存在，所以会先将下层的小型网络训练好再去训练更深层次的网络），甚至可以训练一千层的网络（只要内存足够，优化算法就能够实现）<br>学习嵌套函数是神经网络的理想情况，在深层神经网络中，学习另一层作为恒等映射比较容易<br>残差映射可以更容易地学习同一函数，例如将权重层中的参数近似为零<br>利用残差块可以训练出一个有效的深层神经网络：输入可以通过层间的残余连接更快地向前传播<br>残差网络对随后的深层神经网络的设计产生了深远影响，无论是卷积类网络还是全连接类网络，几乎现在所有的网络都会用到，因为只有这样才能够让网络搭建的更深</p>
+<hr>
+<h2 id="残差块"><a href="#残差块" class="headerlink" title="残差块:"></a>残差块:</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">from</span> torch.nn <span class="keyword">import</span> functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> d2l <span class="keyword">import</span> torch <span class="keyword">as</span> d2l</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Residual</span>(nn.Module):  </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, input_channels, num_channels,</span></span><br><span class="line"><span class="params">                 use_1x1conv=<span class="literal">False</span>, strides=<span class="number">1</span></span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(input_channels, num_channels,</span><br><span class="line">                               kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>, stride=strides)</span><br><span class="line">        self.conv2 = nn.Conv2d(num_channels, num_channels,</span><br><span class="line">                               kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">if</span> use_1x1conv:</span><br><span class="line">            self.conv3 = nn.Conv2d(input_channels, num_channels,</span><br><span class="line">                                   kernel_size=<span class="number">1</span>, stride=strides)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.conv3 = <span class="literal">None</span></span><br><span class="line">        self.bn1 = nn.BatchNorm2d(num_channels)</span><br><span class="line">        self.bn2 = nn.BatchNorm2d(num_channels)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, X</span>):</span><br><span class="line">        Y = F.relu(self.bn1(self.conv1(X)))</span><br><span class="line">        Y = self.bn2(self.conv2(Y))</span><br><span class="line">        <span class="keyword">if</span> self.conv3:</span><br><span class="line">            X = self.conv3(X)</span><br><span class="line">        Y += X</span><br><span class="line">        <span class="keyword">return</span> F.relu(Y)</span><br></pre></td></tr></table></figure></div>
 
+<p>通俗的说就是如果加了conv3的效果好，loss小了  就用，不然就不用</p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="https://p.ipic.vip/iiqcob.png"
-                     
+                     data-src="https://zh-v2.d2l.ai/_images/resnet-block.svg"
+                      alt="包含以及不包含 1×1 卷积层的残差块"
                 ></p>
-<h1 id="torchvision-transforms-的使用"><a href="#torchvision-transforms-的使用" class="headerlink" title="torchvision.transforms 的使用"></a>torchvision.transforms 的使用</h1><p>官方文档地址： <a class="link"   href="https://pytorch.org/vision/stable/transforms.html" >https://pytorch.org/vision/stable/transforms.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<h2 id="1-torchvision-transforms-ToTensor"><a href="#1-torchvision-transforms-ToTensor" class="headerlink" title="1. torchvision.transforms.ToTensor()"></a>1. torchvision.transforms.ToTensor()</h2><p><code>torchvision.transforms.ToTensor()</code> 做了三件事：</p>
-<p> 1）将图像的数据格式由 nump.ndarray 或 PIL.Image 转为 tensor，数据类型为 torch.FloatTensor</p>
-<p> 2）将像素值范围从 0-255 转换到 0-1之间， 处理方式 ：直接除以255</p>
-<p> 3）将 shape&#x3D;(H,W, C) 转换为 shape&#x3D; (C, H, W)</p>
-<p>🌼原始的data的shape为（5，5，3），则其表示有5个（5 ， 3）的二维数组，即我们把最外层的[]去掉就得到了5个五行三列的数据。</p>
-<p>🌼同样的，变换后data的shape为（3，5，5），则其表示有3个（5 ， 5）的二维数组，即我们把最外层的[]去掉就得到了3个五行五列的数据。</p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://p.ipic.vip/xksmgr.png"
-                     
-                ></p>
-<h2 id="2-torchvision-transforms-Normalize"><a href="#2-torchvision-transforms-Normalize" class="headerlink" title="2. torchvision.transforms.Normalize()"></a>2. torchvision.transforms.Normalize()</h2><p>作用：用均值和标准差对张量图像进行归一化，一般在 <code>torchvision.transforms.ToTensor()</code> 之后使用</p>
-<p>在使用 <code>torchvision.transforms.ToTensor()</code> 之后，像素值取值范围会被转换到 [0, 1]之间，再使用 <code>transforms.Normalize(mean, std)</code> 进行归一化后，原像素值就被分布到了 [-1, 1] 之间：</p>
-<p>公式：</p>
-<ul>
-<li>原来的 0~1 最小值 0 则变成 (0 - mean) &#x2F; std &#x3D; -1</li>
-</ul>
-<ul>
-<li>最大值1则变成 (1 - mean) &#x2F; std &#x3D; 1</li>
-</ul>
-<p>一般 mean 和 std 会分别指定3个值，代表图像3个通道的均值和方差，比如<code>torchvision.transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])</code></p>
-<p>如果是<strong>单通道的灰度图</strong>，均值为0.5，方差为0.5，可以写成 <code>transforms.Normalize(mean=[0.5], std=[0.5])</code></p>
-<p>因为 ImageNet数据集 是一个大型数据集，由一个大型数据集统计出来的均值和方差，基本符合所有数据集的像素值分布，所以，一般直接使用 <code>mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]</code></p>
-<h2 id="3-transforms-Compose"><a href="#3-transforms-Compose" class="headerlink" title="3.transforms.Compose()"></a>3.transforms.Compose()</h2><p><strong>训练阶段</strong></p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">trans = transforms.Compose([transforms.RandomResizedCrop((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.RandomHorizontalFlip(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ColorJitter(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
+<h2 id="Resnet模型"><a href="#Resnet模型" class="headerlink" title="Resnet模型"></a>Resnet模型</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">b1 = nn.Sequential(nn.Conv2d(<span class="number">1</span>, <span class="number">64</span>, kernel_size=<span class="number">7</span>, stride=<span class="number">2</span>, padding=<span class="number">3</span>),</span><br><span class="line">                   nn.BatchNorm2d(<span class="number">64</span>), nn.ReLU(),</span><br><span class="line">                   nn.MaxPool2d(kernel_size=<span class="number">3</span>, stride=<span class="number">2</span>, padding=<span class="number">1</span>))</span><br></pre></td></tr></table></figure></div>
 
-
-
-<p><strong>推理阶段(test)</strong></p>
-<p>推理阶段不会再对数据进行增强，只会做基础的预处理，比如：将尺寸处理到固定尺寸 ；使用 ToTensor 处理数据； Normalize 归一化</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">trans = transforms.Compose([transforms.RE((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
-
-
-
-<h2 id="4-transforms-RandomResizedCrop随机尺寸裁剪"><a href="#4-transforms-RandomResizedCrop随机尺寸裁剪" class="headerlink" title="4.transforms.RandomResizedCrop随机尺寸裁剪"></a>4.transforms.RandomResizedCrop随机尺寸裁剪</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">resized_crop = transforms.RandomResizedCrop(size=(<span class="number">224</span>, <span class="number">224</span>),</span><br><span class="line">                                            scale=(<span class="number">0.08</span>, <span class="number">1.0</span>), </span><br><span class="line">                                            ratio=(<span class="number">0.75</span>, <span class="number">1.3333333333333333</span>), </span><br><span class="line">                                            interpolation=transforms.InterpolationMode.BILINEAR)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">上方代码解释：</span></span><br><span class="line"><span class="string"> 1、将图像进行随机裁剪，裁剪满足以下条件:</span></span><br><span class="line"><span class="string"> 裁剪后的图像 面积 与原图像的面积的比例 在 0.08 ～ 1</span></span><br><span class="line"><span class="string"> 裁剪后的图像高宽比范围在 0.75 ～ 1.33之间</span></span><br><span class="line"><span class="string"> 2、按照指定的插值方式， 将图像尺寸缩放到 （224， 224）</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure></div>
-
-<p>参数：</p>
-<ul>
-<li>size：期望的输出图像尺寸， 可以是 int值，也可可以是元组（H, W）</li>
-<li>scale ：在调整大小之前指定裁剪的随机区域的下界和上界。尺度是根据原始图像的面积来定义的。</li>
-<li>ratio：在调整大小之前，裁剪的随机纵横比的下限和上限。</li>
-<li>InterpolationMode ： 插值方式<ul>
-<li>InterpolationMode.NEAREST：最近邻插值。</li>
-<li>InterpolationMode.BILINEAR：双线性插值 (默认)</li>
-<li>InterpolationMode.BICUBIC：双三次插值。</li>
-</ul>
-</li>
-</ul>
-<h2 id="5-水平翻转与垂直翻转"><a href="#5-水平翻转与垂直翻转" class="headerlink" title="5.水平翻转与垂直翻转"></a>5.水平翻转与垂直翻转</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">horizontal_flip = transforms. RandomHorizontalFlip(<span class="number">0.5</span>)</span><br><span class="line">vertical_flip = transforms. RandomVerticalFlip(<span class="number">0.5</span>)</span><br></pre></td></tr></table></figure></div>
-
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://p.ipic.vip/wh6b5i.png"
-                     
-                ></p>
-<h2 id="6-ColorJitter"><a href="#6-ColorJitter" class="headerlink" title="6. ColorJitter"></a>6. ColorJitter</h2>]]></content>
+]]></content>
   </entry>
   <entry>
     <title>差分隐私（一）</title>
@@ -1752,6 +1665,88 @@
 ]]></content>
   </entry>
   <entry>
+    <title>数据的读取与处理</title>
+    <url>/2023/10/18/%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA/</url>
+    <content><![CDATA[<h1 id="数据预处理、数据增强"><a href="#数据预处理、数据增强" class="headerlink" title="数据预处理、数据增强"></a>数据预处理、数据增强</h1><h2 id="1-数据增强"><a href="#1-数据增强" class="headerlink" title="1. 数据增强"></a>1. 数据增强</h2><p>数据增强可以增加训练集的样本数量，缓解过拟合，并提高模型的泛化能力，从而有效提升算法的性能。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://p.ipic.vip/a161sy.png"
+                      alt="数据增强"
+                ></p>
+<h2 id="2-数据预处理"><a href="#2-数据预处理" class="headerlink" title="2. 数据预处理"></a>2. 数据预处理</h2><p>1）将图像转换成 tensor 的数据格式</p>
+<p>2）将图像的 像素值范围 由 0～255 转换到 0～1</p>
+<p>3）(height, width, channel) &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&gt;&gt;&gt; (channel, height, width)</p>
+<p>4）归一化图像</p>
+<h2 id="3-使用节点"><a href="#3-使用节点" class="headerlink" title="3. 使用节点"></a>3. 使用节点</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">trans = transforms.Compose([transforms.RandomResizedCrop((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.RandomHorizontalFlip(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ColorJitter(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
+
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://p.ipic.vip/iiqcob.png"
+                     
+                ></p>
+<h1 id="torchvision-transforms-的使用"><a href="#torchvision-transforms-的使用" class="headerlink" title="torchvision.transforms 的使用"></a>torchvision.transforms 的使用</h1><p>官方文档地址： <a class="link"   href="https://pytorch.org/vision/stable/transforms.html" >https://pytorch.org/vision/stable/transforms.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h2 id="1-torchvision-transforms-ToTensor"><a href="#1-torchvision-transforms-ToTensor" class="headerlink" title="1. torchvision.transforms.ToTensor()"></a>1. torchvision.transforms.ToTensor()</h2><p><code>torchvision.transforms.ToTensor()</code> 做了三件事：</p>
+<p> 1）将图像的数据格式由 nump.ndarray 或 PIL.Image 转为 tensor，数据类型为 torch.FloatTensor</p>
+<p> 2）将像素值范围从 0-255 转换到 0-1之间， 处理方式 ：直接除以255</p>
+<p> 3）将 shape&#x3D;(H,W, C) 转换为 shape&#x3D; (C, H, W)</p>
+<p>🌼原始的data的shape为（5，5，3），则其表示有5个（5 ， 3）的二维数组，即我们把最外层的[]去掉就得到了5个五行三列的数据。</p>
+<p>🌼同样的，变换后data的shape为（3，5，5），则其表示有3个（5 ， 5）的二维数组，即我们把最外层的[]去掉就得到了3个五行五列的数据。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://p.ipic.vip/xksmgr.png"
+                     
+                ></p>
+<h2 id="2-torchvision-transforms-Normalize"><a href="#2-torchvision-transforms-Normalize" class="headerlink" title="2. torchvision.transforms.Normalize()"></a>2. torchvision.transforms.Normalize()</h2><p>作用：用均值和标准差对张量图像进行归一化，一般在 <code>torchvision.transforms.ToTensor()</code> 之后使用</p>
+<p>在使用 <code>torchvision.transforms.ToTensor()</code> 之后，像素值取值范围会被转换到 [0, 1]之间，再使用 <code>transforms.Normalize(mean, std)</code> 进行归一化后，原像素值就被分布到了 [-1, 1] 之间：</p>
+<p>公式：</p>
+<ul>
+<li>原来的 0~1 最小值 0 则变成 (0 - mean) &#x2F; std &#x3D; -1</li>
+</ul>
+<ul>
+<li>最大值1则变成 (1 - mean) &#x2F; std &#x3D; 1</li>
+</ul>
+<p>一般 mean 和 std 会分别指定3个值，代表图像3个通道的均值和方差，比如<code>torchvision.transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])</code></p>
+<p>如果是<strong>单通道的灰度图</strong>，均值为0.5，方差为0.5，可以写成 <code>transforms.Normalize(mean=[0.5], std=[0.5])</code></p>
+<p>因为 ImageNet数据集 是一个大型数据集，由一个大型数据集统计出来的均值和方差，基本符合所有数据集的像素值分布，所以，一般直接使用 <code>mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]</code></p>
+<h2 id="3-transforms-Compose"><a href="#3-transforms-Compose" class="headerlink" title="3.transforms.Compose()"></a>3.transforms.Compose()</h2><p><strong>训练阶段</strong></p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">trans = transforms.Compose([transforms.RandomResizedCrop((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.RandomHorizontalFlip(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ColorJitter(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
+
+
+
+<p><strong>推理阶段(test)</strong></p>
+<p>推理阶段不会再对数据进行增强，只会做基础的预处理，比如：将尺寸处理到固定尺寸 ；使用 ToTensor 处理数据； Normalize 归一化</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">trans = transforms.Compose([transforms.RE((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h2 id="4-transforms-RandomResizedCrop随机尺寸裁剪"><a href="#4-transforms-RandomResizedCrop随机尺寸裁剪" class="headerlink" title="4.transforms.RandomResizedCrop随机尺寸裁剪"></a>4.transforms.RandomResizedCrop随机尺寸裁剪</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">resized_crop = transforms.RandomResizedCrop(size=(<span class="number">224</span>, <span class="number">224</span>),</span><br><span class="line">                                            scale=(<span class="number">0.08</span>, <span class="number">1.0</span>), </span><br><span class="line">                                            ratio=(<span class="number">0.75</span>, <span class="number">1.3333333333333333</span>), </span><br><span class="line">                                            interpolation=transforms.InterpolationMode.BILINEAR)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">上方代码解释：</span></span><br><span class="line"><span class="string"> 1、将图像进行随机裁剪，裁剪满足以下条件:</span></span><br><span class="line"><span class="string"> 裁剪后的图像 面积 与原图像的面积的比例 在 0.08 ～ 1</span></span><br><span class="line"><span class="string"> 裁剪后的图像高宽比范围在 0.75 ～ 1.33之间</span></span><br><span class="line"><span class="string"> 2、按照指定的插值方式， 将图像尺寸缩放到 （224， 224）</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure></div>
+
+<p>参数：</p>
+<ul>
+<li>size：期望的输出图像尺寸， 可以是 int值，也可可以是元组（H, W）</li>
+<li>scale ：在调整大小之前指定裁剪的随机区域的下界和上界。尺度是根据原始图像的面积来定义的。</li>
+<li>ratio：在调整大小之前，裁剪的随机纵横比的下限和上限。</li>
+<li>InterpolationMode ： 插值方式<ul>
+<li>InterpolationMode.NEAREST：最近邻插值。</li>
+<li>InterpolationMode.BILINEAR：双线性插值 (默认)</li>
+<li>InterpolationMode.BICUBIC：双三次插值。</li>
+</ul>
+</li>
+</ul>
+<h2 id="5-水平翻转与垂直翻转"><a href="#5-水平翻转与垂直翻转" class="headerlink" title="5.水平翻转与垂直翻转"></a>5.水平翻转与垂直翻转</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">horizontal_flip = transforms. RandomHorizontalFlip(<span class="number">0.5</span>)</span><br><span class="line">vertical_flip = transforms. RandomVerticalFlip(<span class="number">0.5</span>)</span><br></pre></td></tr></table></figure></div>
+
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://p.ipic.vip/wh6b5i.png"
+                     
+                ></p>
+<h2 id="6-ColorJitter"><a href="#6-ColorJitter" class="headerlink" title="6. ColorJitter"></a>6. ColorJitter</h2>]]></content>
+  </entry>
+  <entry>
     <title>联邦学习在电力数据场景下的隐私保护研究</title>
     <url>/2023/12/04/%E8%81%94%E9%82%A6%E5%AD%A6%E4%B9%A0%E5%9C%A8%E7%94%B5%E5%8A%9B%E6%95%B0%E6%8D%AE%E4%B8%8B%E7%9A%84%E9%9A%90%E7%A7%81%E4%BF%9D%E6%8A%A4%E7%A0%94%E7%A9%B6/</url>
     <content><![CDATA[<p>基于联邦学习的个人车主用户数据加密和应用</p>
@@ -1967,91 +1962,6 @@
 <p>链接19-4：GBoard输入法模型</p>
 <p><a class="link"   href="https://ai.googleblog.com/2017/04/federated-learning-collaborative.html" >https://ai.googleblog.com/2017/04/federated-learning-collaborative.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
 <p>链接19-5：可解析性AI标准  <a class="link"   href="https://sagroups.ieee.org/2894/" >https://sagroups.ieee.org/2894/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>虚拟电厂与联邦学习(一)</title>
-    <url>/2023/11/20/%E8%99%9A%E6%8B%9F%E7%94%B5%E5%8E%82%E4%B8%8E%E8%81%94%E9%82%A6%E5%AD%A6%E4%B9%A0/</url>
-    <content><![CDATA[<h1 id="虚拟电厂"><a href="#虚拟电厂" class="headerlink" title="虚拟电厂"></a>虚拟电厂</h1><p><strong>虚拟电厂</strong>（<strong>Virtual power plant</strong>）是以电网云为基础的<a class="link"   href="https://zh.wikipedia.org/wiki/%E5%88%86%E6%95%A3%E5%BC%8F%E7%99%BC%E9%9B%BB" >分散式电厂 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，可以聚集各种不同类型技术的<a class="link"   href="https://zh.wikipedia.org/wiki/%E9%9B%BB%E5%8A%9B" >电力 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>。主要目的是增强电力调度能力、以及促进<a class="link"   href="https://zh.wikipedia.org/wiki/%E9%9B%BB%E5%8A%9B%E8%87%AA%E7%94%B1%E5%8C%96" >电力自由市场 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>交易的活络。目前虚拟电厂在<a class="link"   href="https://zh.wikipedia.org/wiki/%E7%BE%8E%E5%9C%8B" >美国 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>、<a class="link"   href="https://zh.wikipedia.org/wiki/%E6%AD%90%E6%B4%B2" >欧洲 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>和<a class="link"   href="https://zh.wikipedia.org/wiki/%E6%BE%B3%E5%A4%A7%E5%88%A9%E4%BA%9E" >澳大利亚 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>均有相关案例。</p>
-<p>虚拟电厂具有多样性、协同性、灵活性等技术特点，能够有效聚合多层级的分布式资源，满足新型电力系统绿色低碳、灵活高效、多元互动，高度市场化地运行需求，为实现“双碳”目标提供重要的技术支撑。国家层面政策大力支持，地方层面山西等地重要政策推动行业实现突破。以《“十四五”现代能源体系规划》为代表的多个政策鼓励虚拟电厂发展，北京、山西等地也已经发布具体政策支持虚拟电厂发展。从政策中可以看出，政策不仅鼓励虚拟电厂发展，而且有望推动虚拟电厂在电力交易等方面发挥更大作用。2022年6月，山西能源局印发《虚拟电厂建设与运营管理实施方案》，其中提到“负荷类”虚拟电厂参与中长期、现货及辅助服务市场，“一体化”虚拟电厂参与现货及辅助服务市场。同时，东北能源监管局会同省有关单位组织起草了《辽宁省电力市场运营基本规则及六项配套规则(征求意见稿》，提出将现阶段逐步将储能企业、虚拟电厂、负荷聚合商等纳入电力交易市场主体范围。</p>
-<p><strong>虚拟电厂就是通过数字化手段将各类分散可调电源和负荷汇聚起来，等效于一个进行统一管理和调度的特殊电厂，同时作为主体参与电力市场。</strong></p>
-<p><strong>虚拟电厂</strong>（Virtual Power Plant，VPP）是将<strong>分布式发电机组、可控负荷和分布式储能</strong>设施有机结合，通过配套的<strong>调控技术、通信技术</strong>实现对各类分布式能源进行<strong>整合调控的载体</strong>，是可以作为一个<strong>特殊电厂</strong>参与电力市场和电网运行的协调管理系统。它既可以作为<strong>“正电厂”</strong>向 系统供电调峰，又可作为<strong>“负电厂”</strong>加大负荷消纳配合系统填谷</p>
-<h2 id="发电-编辑"><a href="#发电-编辑" class="headerlink" title="发电[编辑]"></a>发电[<a class="link"   href="https://zh.wikipedia.org/w/index.php?title=%E8%99%9B%E6%93%AC%E9%9B%BB%E5%BB%A0&action=edit&section=1" >编辑 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>]</h2><p>虚拟电厂是一种汇集多种类型的电源，以提高电网可靠度的系统[<a class="link"   href="https://zh.wikipedia.org/wiki/%E8%99%9B%E6%93%AC%E9%9B%BB%E5%BB%A0#cite_note-tudelft-1" >1] <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>。电力来源通常由不同类型、可调度和不可调度、可控制或灵活负载的分散式发电系统所组成的集合。这些系统由中央机构控制，并且可以包括微型<a class="link"   href="https://zh.wikipedia.org/wiki/%E7%83%AD%E7%94%B5%E8%81%94%E4%BA%A7" >热电联产 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，天然气往复式发动机，小型<a class="link"   href="https://zh.wikipedia.org/wiki/%E9%A2%A8%E5%8A%9B%E7%99%BC%E9%9B%BB%E5%BB%A0" >风力发电厂 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，<a class="link"   href="https://zh.wikipedia.org/wiki/%E5%A4%AA%E9%99%BD%E8%83%BD%E7%99%BC%E9%9B%BB" >太阳能发电 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，河道水力发电厂，<a class="link"   href="https://zh.wikipedia.org/wiki/%E5%B0%8F%E5%9E%8B%E6%B0%B4%E5%8A%9B%E7%99%BC%E9%9B%BB" >小型水力发电 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，<a class="link"   href="https://zh.wikipedia.org/wiki/%E7%94%9F%E7%89%A9%E8%B3%AA%E8%83%BD" >生物质能 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，备用发电机和<a class="link"   href="https://zh.wikipedia.org/wiki/%E5%82%A8%E8%83%BD%E6%8A%80%E6%9C%AF" >储能系统 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>等。</p>
-<p>虚拟电厂的优势包括能够在短时间内提供<a class="link"   href="https://zh.wikipedia.org/wiki/%E5%B0%96%E5%B3%B0%E8%B2%A0%E8%BC%89%E7%99%BC%E9%9B%BB%E5%BB%A0" >尖峰负载电力 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>或跟随负载的发电。相对于传统的发电厂，虚拟电厂可提供更高的效率和更大的灵活性。更大的灵活性可使系统对波动做出更好的反应，但是其要求较佳的系统优化、控制和安全的通信[<a class="link"   href="https://zh.wikipedia.org/wiki/%E8%99%9B%E6%93%AC%E9%9B%BB%E5%BB%A0#cite_note-ieeexplore-2" >2] <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>。</p>
-<p>根据Pike Research 2012年的报告，虚拟电厂容量从2011年到2017年增长65%，从全球的55.6GW增至91.7GW，2017年全球收入将从53亿美元增至65亿美元[<a class="link"   href="https://zh.wikipedia.org/wiki/%E8%99%9B%E6%93%AC%E9%9B%BB%E5%BB%A0#cite_note-businesswire-3" >3] <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>。</p>
-<p>另外，虚拟电厂代表着“能源互聯網”。这些系统利用现有的<a class="link"   href="https://zh.wikipedia.org/wiki/%E7%94%B5%E7%BD%91" >电网 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>来为客户量身定制电力供需服务。 虚拟电厂使用一套复杂的基于<a class="link"   href="https://zh.wikipedia.org/wiki/%E8%BB%9F%E4%BB%B6" >软件 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>的系统，为最终用户和分配实用程序最大化价值。它们是动态的，可以实时提供价值，并且可以对不断变化的客户负载状况做出快速反应。</p>
-<p>从广义上来讲，虚拟电厂是需求侧响应的延伸。需求侧响应主要是削峰，主要针对用户负荷；虚拟电厂则是削峰和填谷兼顾，部分具有储能特征，源、网、荷、储都包括在内。与需求响应的调节方式相比，虚拟电厂由于接入了更多元化的用户，如储能、分布式发电、可控负荷等，在用户参与调节时，不仅负荷侧的用户可以调节自身用电增减，还可以召集储能测、电源侧的用户调节电能输出，具有丰富的调节方式和手段。</p>
-<p>虚拟电厂由可控机组、不可控机组（如风、光等分布式能源）、储能、可控负荷、电动汽车、通信设备等聚合而成，并进一步考虑需求响应、不确定性等要素，通过与控制中心、云中心、电力交易中心等进行信息通信，实现与大电网的能量互换。</p>
-<p>从本质讲，虚拟电厂就是虚拟化的发电厂，它并不具备实体发电厂的物理属性，而是一种管理模式或者是一套系统，通过配套的技术把分散在不同空间的小型太阳能、风能等新能源发电装置、储能电池和各类可控制、可调节的用电设备、负荷整合集成、协调控制，对外等效形成一个可控电源，辅助电力系统运行，并可参与电力市场交易，同时优化资源利用，维护区域内，甚至跨区域的用电稳定与用电安全。它既可以有计划地接受电力系统的电力，又可以向电力系统反向输出电力，更灵活高效地进行“削峰填谷”等作业，并获得客观的经济效益。</p>
-<h2 id="辅助服务-编辑"><a href="#辅助服务-编辑" class="headerlink" title="辅助服务[编辑]"></a>辅助服务[<a class="link"   href="https://zh.wikipedia.org/w/index.php?title=%E8%99%9B%E6%93%AC%E9%9B%BB%E5%BB%A0&action=edit&section=2" >编辑 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>]</h2><p>虚拟电厂还可用于为电网运营商提供辅助服务，以帮助维护<a class="link"   href="https://zh.wikipedia.org/wiki/%E7%94%B5%E7%BD%91" >电网 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>稳定性。辅助服务包括频率调节、负载追踪和提供操作储备。这些服务主要用于维持电力供需的瞬时平衡。提供辅助服务的电厂必须回应电网运营商传来的信号，以响应用户需求水平的变化，在几秒钟到几分钟的时间内增加或减少负荷。</p>
-<p>由于辅助服务通常由可控制的化石燃料发电机提供，因此，未来包含<a class="link"   href="https://zh.wikipedia.org/wiki/%E5%A4%AA%E9%99%BD%E8%83%BD" >太阳能 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>和<a class="link"   href="https://zh.wikipedia.org/wiki/%E9%A2%A8%E8%83%BD" >风能 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>比例很高的无碳电网必须依靠其他形式的可控制发电或消耗，<a class="link"   href="https://zh.wikipedia.org/wiki/%E8%BB%8A%E8%BC%9B" >车辆 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>到<a class="link"   href="https://zh.wikipedia.org/wiki/%E7%B6%B2%E6%A0%BC%E8%A8%88%E7%AE%97" >网格技术 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>就是其中最著名的例子。在这种情况下，连接到电网的分散式电动车辆可充当单个虚拟电厂。通过有选择地控制每辆车的充电速度，电网可以看到净注入或能量消耗，就好像大型电池正在提供这项服务一样。</p>
-<p>同样，目前已有厂商研究以<a class="link"   href="https://zh.wikipedia.org/wiki/%E7%86%B1%E6%B3%B5" >热泵 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>或<a class="link"   href="https://zh.wikipedia.org/wiki/%E7%A9%BA%E8%AA%BF" >空调 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>来提供电网提供辅助服务[<a class="link"   href="https://zh.wikipedia.org/wiki/%E8%99%9B%E6%93%AC%E9%9B%BB%E5%BB%A0#cite_note-Sustainable_Buildings_and_Cities-4" >4] <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>。只要保持室内的舒适性，就可以选择性地关闭和打开分散式热泵，以改变其总功率消耗。</p>
-<p>由于虚拟发电厂可以并行运行，因此与发电厂相比，虚拟发电厂可以具有更高的<a class="link"   href="https://zh.wikipedia.org/wiki/%E9%B4%A8%E5%AD%90%E6%9B%B2%E7%B7%9A" >鸭子曲线 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>（Duck Curve），这在早晨和傍晚有较高<a class="link"   href="https://zh.wikipedia.org/wiki/%E9%B4%A8%E5%AD%90%E6%9B%B2%E7%B7%9A" >鸭子曲线 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>的电网中尤为重要。但是，分散式性质会产生通信和延迟问题，这可能需要诸如频率调节之类的快速服务。</p>
-<h2 id="能源交易-编辑"><a href="#能源交易-编辑" class="headerlink" title="能源交易[编辑]"></a>能源交易[<a class="link"   href="https://zh.wikipedia.org/w/index.php?title=%E8%99%9B%E6%93%AC%E9%9B%BB%E5%BB%A0&action=edit&section=3" >编辑 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>]</h2><p>虚拟发电厂为基于电网云的中央或分散式控制中心，它利用<a class="link"   href="https://zh.wikipedia.org/wiki/%E8%B3%87%E8%A8%8A%E5%8F%8A%E9%80%9A%E8%A8%8A%E7%A7%91%E6%8A%80" >资讯及通讯科技 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>（ICT）和<a class="link"   href="https://zh.wikipedia.org/wiki/%E7%89%A9%E8%81%94%E7%BD%91" >物联网 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>（IoT）设备来整合异构分散式能源，目的是在趸售电力市场上进行能源交易，或为系统运营商提供辅助服务[<a class="link"   href="https://zh.wikipedia.org/wiki/%E8%99%9B%E6%93%AC%E9%9B%BB%E5%BB%A0#cite_note-VPP_FSD_2017-5" >5] <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>。</p>
-<p><strong>相较于传统能源发电，新能源发电具有随机性、波动性等特点，大规模的新能源并网，电力系统是否也将面临较大挑战？挑战主要体现在哪些方面？</strong></p>
-<p><strong>大规模性能源并网是否也将面临较大挑战？</strong></p>
-<p>是的</p>
-<p><strong>挑战主要体现在哪些方面？</strong></p>
-<p>1)风电、太阳能等发电形式将对电网出力端形成较大的冲击，影响到电力系统的稳定性维护。</p>
-<p>2)峰谷差问题催生的储能、分布式电源的大规模装机也增加了出力资源的数量，调度复杂度大幅提升。</p>
-<p>但是虚拟电厂能够有效聚合分布式电源和储能电站等资源，依靠物联网等技术，处理风电、光伏等出力端带来的不确定性，帮助电网实现协调优化控制，加强新型电力系统内部各单元间的协同，从而提升电力系统的灵活性与稳定性。</p>
-<p>三大业务板块：</p>
-<p><strong>“注源控流”业务板块</strong></p>
-<p>使分布式发电有组织、有规律地接入系统和服务平 台，进行统一协调运维管理，形成一定规模合力， 相对可调可控，最终实现并网运行。与此同时，控 制调节负荷侧的电力流向及流量。尽可能多地接入 可调节用电负荷，使其有序、有规律地按计划用电， 并提升综合能效管理，在最大限度地不影响生产生 活用电的情况下，综合考虑外部电网供电情况、内部自发电情况、各类用电成本、电网需求侧智能管 控等因素，科学合理并按最优经济性安排用电计划。</p>
-<p><strong>“电力储备”业务板块</strong></p>
-<p>多元化储能是实现“注源控流”的关键支撑。对分散的分布式小型新能源发电进行聚合，实现聚合多元化资源更 有力量、更易调控、更具操作空间。同时，聚合资源统一服从上级调令在聚合资源圈内配套需要的储能系统。对于“控流业务”同样需要配置配套的储能系统才能更灵活、便捷地制定最佳用电方案。</p>
-<p><strong>“商业”业务板块</strong></p>
-<p>在聚合多类资源后，最终要参与到电力市场中来才能 获得收益。商业模式主要有2种：1.电力交易，虚拟电厂作为售电企业与用户直接交易，或从火电厂购买发电权;2.辅助服务市场，虚拟电厂通过负荷低谷时减少出力或增加负荷、在负荷高峰时增加出力或削减负荷来参与调峰服务交易，以及类似参与调频等服务市场。</p>
-<p>在实际的运行中，虚拟电厂会从描述个分布式能源的参数组合中创建一个操作配置文件，这个文件也正是虚拟电厂的信息核心。换句话说，虚拟电厂参与了</p>
-<ol>
-<li><p>电力交易（例如在批发市场中签订合同）</p>
-</li>
-<li><p>分布式能源组合信息（用于向系统运营商提供管理与辅助服务）</p>
-</li>
-</ol>
-<p>这两种不同用途的配置文件也正是CVPP和TVPP运行的核心信息。</p>
-<p>在CVPP的实际运行中，每个分布式能源主体都需要上报其运行参数、边际成本等信息，一般可由CVPP安装在这些分布式能源处的终端装置完成信息采集，这些分布式能源的输入信息，市场分析、地方数据等其他输入信息一起汇集到单一的虚拟电厂中创建配置文件，每个配置文件都代表了一个分布式能源实时组合的运行描述。 随着CVPP有越来越多这样的配置文件，它会获得越来越多的市场信息，那么下一步他就可以完成在远期合同市场、期货市场、电能量市场及辅助服务市场的投资组合方案，并实时评估相关交易能力。</p>
-<p><strong>1.发电设备：</strong>屋顶光伏、燃料电池、发电机、热电联产系统、 可再生能源发电设备等。</p>
-<p>**2.储能设备:**家用蓄电池、车载蓄电池、电子热水器、固定式蓄电池、热泵、蓄热空调、电子热水机等。</p>
-<p>**3.节电设备:**空调、照明、通风设备、风扇、压缩机、冷却器等。</p>
-<hr>
-<p>这些功能有两个重要功能。首先，这些设备产生的数据量比以往任何时候都大得多。收集、处理、分析和使用这些数据来做出决策和确定行动需要带宽、足够的处理能力和速度。其次，设备是异构的。例如，对于在很短的距离内有效通信的物联网设备，蓝牙可能是可能的或有利的。但是对于跨越数公里进行通信的设备，必须使用蜂窝通信。有些设备可以通过互联网安全有效地连接和协调，而有些设备则不能，尤其是在涉及直接访问关键基础设施的情况下。，在虚拟电厂最雄心勃勃的情况下，虚拟电厂将涉及通过机器学习算法进行电网优化。随着 DER 和 VPP 集成到电力系统中，云和边缘的使用将成为安全性、弹性和处理速度的决定性特征之一。显然，系统将两者兼而有之;运营电力系统需要处理和操作大量分散的数据，随着分散式 DER 和 VPP 的数量增加到数十万，每个 DER 和 VPP 都与家庭物联网以及相互通信，哪些信息应该在本地处理，哪些可以发送到云端将成为新的考试问题。</p>
-<hr>
-<p><strong>虚拟电厂 + 需求响应：</strong>聚合分布式可控资源参与需求侧响应服务，获得经济收益。</p>
-<p><strong>虚拟电厂 + 辅助服务：</strong>聚合分布式可控资源参与调峰等电力辅助服务交易，获得经济收益。</p>
-<p><strong>虚拟电厂 + 风光电站运营服务：</strong>为风光电站提供运营服务，通过收取软件服务费及合同能源管理方式。</p>
-<p><strong>虚拟电厂 + 储能资源运营服务：</strong>为风光电站提供运营服务，通过收取软件服务费及合同能源管理方式。</p>
-<p><strong>虚拟电厂 + 增值服务：</strong>通过提供绿电、绿证、双碳等相关产品咨询及购买服务，获取经济收益。</p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://pic3.zhimg.com/v2-f7871f13da08720388cb39d7249a5aa6_r.jpg"
-                      alt="img"
-                ></p>
-<p>虚拟电厂的三个角色：虚拟电厂产品提供方，负责开发、建设、运营和管理各类虚拟资源，并且抽象成虚拟电厂产品组合；虚拟电厂产品购买方，主要是电网调度部门和营销部门，未来也可以包括地方政府、配电公司、售电公司、<a class="link"   href="https://www.zhihu.com/search?q=%E7%94%B5%E5%8A%9B%E7%94%A8%E6%88%B7&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra=%7B%22sourceType%22:%22answer%22,%22sourceId%22:3153493652%7D" >电力用户 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，甚至其他市场主体；虚拟电厂产品的<a class="link"   href="https://www.zhihu.com/search?q=%E4%BA%A4%E6%98%93%E5%B9%B3%E5%8F%B0&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra=%7B%22sourceType%22:%22answer%22,%22sourceId%22:3153493652%7D" >交易平台 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，这和交易模式有关，如果是双边交易，则可以不经过集中式交易平台，由购买方-提供方协商完成交易。</p>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://picx.zhimg.com/v2-7f3dc918818a8f1d6832045ea6c90c2b_r.jpg?source=1940ef5c"
-                      alt="img" style="zoom:50%;" 
-                >
-
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://pic3.zhimg.com/v2-10194a780386f46a2235c81b750de9c2_r.jpg"
-                      alt="img" style="zoom:50%;" 
-                >
-
-<hr>
-<p>什么是虚拟电厂</p>
-<p>可再生能源接入电力系统比例的大幅提升带来了新的问题，由于风电和光伏等新能源在出力特性上具有随机性、间歇性、周期性、波动性的特点，高比例新能源接入电力系统，使得发电侧的电能产出无法控制。同时，由于新能源汽车等高功率负荷的高速增长，也使得用电侧负荷变得难以预估。电源侧和负荷侧双重不确定造成难以实现电能生产量和需求量的严格匹配，对电力系统的稳定性构成严重威胁。</p>
-<p><strong>构建新型电力系统是实现“双碳”目标的重要手段，以新能源为主体是新型电力系统的主要特征，对高比例可再生能源的消纳和调控是新型电力系统的核心能力。</strong></p>
-<p>随着分布式新能源并网容量的迅速提升，各类分布式储能系统也被大量配置于分布式新能源发电侧、配电网侧、用户侧和微电网，用于提升新能源消纳比例、保障供电稳定性、提升电能质量、峰谷套利等。与此同时，近年来在国家一系列政策助力下，我国新能源汽车数量也大幅增长。<strong>这些数量庞大的分布式新能源、分布式储能系统、电动汽车共同构成了新型电力系统下的分布式资源。</strong></p>
-<p>然而，<strong>现阶段大量的分布式资源由于单体规模较小，无法独立满足电网的调度需求，发挥最大效益。</strong></p>
-<h5 id="首先，可缓解分布式发电的负面效应，提高电网运行稳定性。"><a href="#首先，可缓解分布式发电的负面效应，提高电网运行稳定性。" class="headerlink" title="首先，可缓解分布式发电的负面效应，提高电网运行稳定性。"></a>首先，可缓解分布式发电的负面效应，提高电网运行稳定性。</h5><p>虚拟电厂作为一种可视化的自组织模式，不仅能够通过组合多种分布式资源实现发电，同时也能够通过调节可控负荷、采用分时电价、可中断电价以及用户时段储能等措施，来实现节能储备。这种协调控制优化大大降低了分布式资源并网对电网所造成的冲击，从而降低了分布式资源增长所带来的调度难度，使得配电管理更加合理有序，进而提高了系统运行的稳定性。</p>
-<h5 id="其次，可高效利用和促进分布式能源发电。"><a href="#其次，可高效利用和促进分布式能源发电。" class="headerlink" title="其次，可高效利用和促进分布式能源发电。"></a>其次，可高效利用和促进分布式能源发电。</h5><p>随着我国分布式光伏和分散式风电等分布式能源增长迅速，其大规模、高比例接入给电力系统的平衡和电网安全运行带来了一系列挑战。如果这些分布式发电以虚拟电厂的形式参与电网的运行，通过内部的组合优化，可以消除其波动对电网的影响，从而实现高效利用。此外，虚拟电厂还能使分布式能源从电力市场中获取最大的经济效益，缩短成本回收周期，从而吸引和扩大此类投资，进而促进分布式能源的发展。</p>
-<h5 id="最后，可以以市场手段促进发电资源的优化配置。"><a href="#最后，可以以市场手段促进发电资源的优化配置。" class="headerlink" title="最后，可以以市场手段促进发电资源的优化配置。"></a>最后，可以以市场手段促进发电资源的优化配置。</h5><p>虚拟电厂表现为传统的可调度发电厂。由于拥有多样化的发电资源，虚拟电厂不仅可以参与主能量市场，也可以参与辅助服务市场，从而参与多种电力市场的运营模式及其调度框架，对发电资源的广泛优化配置起到了积极的促进作用。</p>
 ]]></content>
   </entry>
   <entry>
