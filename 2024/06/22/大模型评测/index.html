@@ -13,19 +13,22 @@
     
     <!--- Seo Part-->
     
-    <link rel="canonical" href="http://example.com/2024/06/22/llama-架构/"/>
+    <link rel="canonical" href="http://example.com/2024/06/22/大模型评测/"/>
     <meta name="robots" content="index,follow">
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta property="og:type" content="article">
-<meta property="og:title" content="LLama_架构">
-<meta property="og:url" content="http://example.com/2024/06/22/LLama-%E6%9E%B6%E6%9E%84/index.html">
+        <meta name="description" content="1. 大模型怎么评测？自动评测和人工评测。 自动评测方法基于计算机算法和自动生成的指标，能够快速且高效地评测模型的性能。比如ROUGE F1，acc 而人工评测则侧重于人类专家的主观判断和质量评测，能够提供更深入、细致的分析和意见。了解和掌握这两种评测方法对准确评测和改进语言模型的能力十分重要。 如何衡量大模型水平在评测 LLMs 的性能时，选择合适的任务和领域对于展示大型语言模型的表现、优势和劣">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大模型评测">
+<meta property="og:url" content="http://example.com/2024/06/22/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E8%AF%84%E6%B5%8B/index.html">
 <meta property="og:site_name" content="深情小小侯的博客">
+<meta property="og:description" content="1. 大模型怎么评测？自动评测和人工评测。 自动评测方法基于计算机算法和自动生成的指标，能够快速且高效地评测模型的性能。比如ROUGE F1，acc 而人工评测则侧重于人类专家的主观判断和质量评测，能够提供更深入、细致的分析和意见。了解和掌握这两种评测方法对准确评测和改进语言模型的能力十分重要。 如何衡量大模型水平在评测 LLMs 的性能时，选择合适的任务和领域对于展示大型语言模型的表现、优势和劣">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2024-06-22T08:44:34.000Z">
-<meta property="article:modified_time" content="2024-06-22T08:44:34.600Z">
+<meta property="article:published_time" content="2024-06-22T14:04:12.000Z">
+<meta property="article:modified_time" content="2024-06-22T14:17:35.555Z">
 <meta property="article:author" content="深情小小侯">
+<meta property="article:tag" content="LLMs">
 <meta name="twitter:card" content="summary">
     
     
@@ -38,7 +41,7 @@
     
     <title>
         
-            LLama_架构 -
+            大模型评测 -
         
         深情小小侯的博客
     </title>
@@ -291,7 +294,7 @@
 
         <div class="article-title">
             
-                <h1 class="article-title-regular">LLama_架构</h1>
+                <h1 class="article-title-regular">大模型评测</h1>
             
             </div>
             
@@ -313,20 +316,31 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fa-regular fa-pen-fancy"></i>&nbsp;
-        <span class="desktop">2024-06-22 16:44:34</span>
-        <span class="mobile">2024-06-22 16:44:34</span>
+        <span class="desktop">2024-06-22 22:04:12</span>
+        <span class="mobile">2024-06-22 22:04:12</span>
         <span class="hover-info">创建</span>
     </span>
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2024-06-22 16:44:34</span>
-            <span class="mobile">2024-06-22 16:44:34</span>
+            <span class="desktop">2024-06-22 22:17:35</span>
+            <span class="mobile">2024-06-22 22:17:35</span>
             <span class="hover-info">更新</span>
         </span>
     
 
     
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/LLMs/">LLMs</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
     
 
     
@@ -348,25 +362,61 @@
 
 
         <div class="article-content markdown-body">
-            
+            <h2 id="1-大模型怎么评测？"><a href="#1-大模型怎么评测？" class="headerlink" title="1. 大模型怎么评测？"></a>1. 大模型怎么评测？</h2><p><strong>自动评测和人工评测</strong>。</p>
+<p>自动评测方法基于计算机算法和自动生成的指标，能够快速且高效地评测模型的性能。比如ROUGE F1，acc</p>
+<p>而人工评测则侧重于人类专家的主观判断和质量评测，能够提供更深入、细致的分析和意见。了解和掌握这两种评测方法对准确评测和改进语言模型的能力十分重要。</p>
+<h3 id="如何衡量大模型水平"><a href="#如何衡量大模型水平" class="headerlink" title="如何衡量大模型水平"></a>如何衡量大模型水平</h3><p>在评测 LLMs 的性能时，选择合适的任务和领域对于展示大型语言模型的表现、优势和劣势至关重要。为了更清晰地展示 LLMs 的能力水平，文章将现有的任务划分为以下不同的类别：</p>
+<ul>
+<li>自然语言处理：包括自然语言理解、推理、自然语言生成和多语言任务</li>
+<li>安全性：鲁棒性、伦理、偏见和真实性</li>
+<li>医学应用：包括医学问答、医学考试、医学教育和医学助手</li>
+<li>社会科学</li>
+<li>自然科学与工程：包括数学、通用科学和工程</li>
+<li>代码</li>
+<li>代理应用：将 LLMs 作为代理使用</li>
+</ul>
+<h3 id="大模型评估方法有哪些"><a href="#大模型评估方法有哪些" class="headerlink" title="大模型评估方法有哪些"></a>大模型评估方法有哪些</h3><ol>
+<li>首先是“直接评估指标”这一类别。这些是在人工智能领域长期以来广泛使用的传统指标。像准确率（accuracy）和F1得分（F1 score）等指标属于这个类别。通常情况下，这种方法涉及从模型中获取单一的输出，并将其与参考值进行比较，可以通过约束条件或提取所需信息的方式来实现评估。</li>
+<li>接下来是第二类方法，称为“间接或分解的启发式方法（indirect or decomposed heuristics）”。在这种方法中，我们利用较小的模型（smaller models）来评估主模型（the main model）生成的答案，这些较小的模型可以是微调过的模型或原始的分解模型（raw decompositions）。</li>
+<li>第三类评估方法被称为“基于模型的评估”。在这种方法中，模型本身提供最终的评估分数或评估结果。然而，这也引入了额外的可变因素。即使模型可以获取到ground truth信息，评估指标本身也可能在评分过程中产生随机因素或不确定因素。</li>
+</ol>
+<h3 id="大模型的-honest-原则是如何实现的？模型如何判断回答的知识是训练过的已知的知识，怎么训练这种能力？"><a href="#大模型的-honest-原则是如何实现的？模型如何判断回答的知识是训练过的已知的知识，怎么训练这种能力？" class="headerlink" title="大模型的 honest 原则是如何实现的？模型如何判断回答的知识是训练过的已知的知识，怎么训练这种能力？"></a>大模型的 honest 原则是如何实现的？模型如何判断回答的知识是训练过的已知的知识，怎么训练这种能力？</h3><p>大模型需要遵循的 helpful，honest， harmless 的原则。<br>可<strong>以有意构造如下的训练样本</strong>，以提升模型遵守 honest 原则，可以算 trick 了：微调时构造知识问答类训练集，给出不知道的不回答，加强 honest 原则；阅读理解题，读过的要回答，没读过的不回答，不要胡说八道。</p>
+<h2 id="2-幻视"><a href="#2-幻视" class="headerlink" title="2.幻视"></a>2.幻视</h2><h3 id="1-什么是大模型幻觉？"><a href="#1-什么是大模型幻觉？" class="headerlink" title="1.什么是大模型幻觉？"></a>1.什么是大模型幻觉？</h3><p>在语言模型的背景下，幻觉指的是一本正经的胡说八道：看似流畅自然的表述，实则不符合事实或者是错误的。</p>
+<p>幻觉影响了模型的可靠性和可信度，因此需要解决LLM的幻觉问题</p>
+<p>幻觉主要可以分为两类：即内在幻觉和外在幻觉。</p>
+<ul>
+<li>内在幻觉：生成的内容与源内容相矛盾。  </li>
+<li>外部幻觉：生成的内容不能从源内容中得到验证，既不受源内容支持也不受其反驳。</li>
+</ul>
+<h2 id="2-残生的原因"><a href="#2-残生的原因" class="headerlink" title="2.残生的原因"></a>2.残生的原因</h2><ul>
+<li><strong>训练与实际应用中的解码差异：</strong>在常见的训练方法中，我们鼓励模型基于真实数据预测下一个词汇。但在实际应用中，模型则是根据自己先前生成的内容进行预测。这种方法上的差异，尤其在处理长文本时，可能会导致模型的输出出现“幻觉”。</li>
+<li><strong>解码过程中的随机性</strong>：某些旨在增加输出多样性的解码策略，如top-k采样、top-p方法以及温度调节，有时会增加“幻觉”的产生。这往往是因为模型在选择输出词汇时引入了随机性，而没有始终选择最可能的词汇。 </li>
+<li><strong>训练数据中的偏见</strong></li>
+<li><strong>缺乏外部验证</strong></li>
+</ul>
+<h3 id="3-如何缓解："><a href="#3-如何缓解：" class="headerlink" title="3.如何缓解："></a>3.如何缓解：</h3><ul>
+<li>采样多个输出并检查其一致性</li>
+<li><strong>外部知识集成</strong>RAG</li>
+</ul>
+
         </div>
 
         
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li><strong>标题:</strong> LLama_架构</li>
+        <li><strong>标题:</strong> 大模型评测</li>
         <li><strong>作者:</strong> 深情小小侯</li>
         <li><strong>创建于
-                :</strong> 2024-06-22 16:44:34</li>
+                :</strong> 2024-06-22 22:04:12</li>
         
             <li>
                 <strong>更新于
-                    :</strong> 2024-06-22 16:44:34
+                    :</strong> 2024-06-22 22:17:35
             </li>
         
         <li>
-            <strong>链接:</strong> https://redefine.ohevan.com/2024/06/22/LLama-架构/
+            <strong>链接:</strong> https://redefine.ohevan.com/2024/06/22/大模型评测/
         </li>
         <li>
             <strong>
@@ -383,6 +433,14 @@
             </div>
         
 
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/LLMs/">#LLMs</a>&nbsp;
+                    </li>
+                
+            </ul>
         
 
         
@@ -462,8 +520,8 @@
             <div class="post-toc-wrap">
     <div class="post-toc">
         <div class="toc-title">此页目录</div>
-        <div class="page-title">LLama_架构</div>
-        
+        <div class="page-title">大模型评测</div>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%80%8E%E4%B9%88%E8%AF%84%E6%B5%8B%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">1. 大模型怎么评测？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E8%A1%A1%E9%87%8F%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%B0%B4%E5%B9%B3"><span class="nav-number">1.1.</span> <span class="nav-text">如何衡量大模型水平</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%A7%E6%A8%A1%E5%9E%8B%E8%AF%84%E4%BC%B0%E6%96%B9%E6%B3%95%E6%9C%89%E5%93%AA%E4%BA%9B"><span class="nav-number">1.2.</span> <span class="nav-text">大模型评估方法有哪些</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9A%84-honest-%E5%8E%9F%E5%88%99%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F%E6%A8%A1%E5%9E%8B%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E5%9B%9E%E7%AD%94%E7%9A%84%E7%9F%A5%E8%AF%86%E6%98%AF%E8%AE%AD%E7%BB%83%E8%BF%87%E7%9A%84%E5%B7%B2%E7%9F%A5%E7%9A%84%E7%9F%A5%E8%AF%86%EF%BC%8C%E6%80%8E%E4%B9%88%E8%AE%AD%E7%BB%83%E8%BF%99%E7%A7%8D%E8%83%BD%E5%8A%9B%EF%BC%9F"><span class="nav-number">1.3.</span> <span class="nav-text">大模型的 honest 原则是如何实现的？模型如何判断回答的知识是训练过的已知的知识，怎么训练这种能力？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%B9%BB%E8%A7%86"><span class="nav-number">2.</span> <span class="nav-text">2.幻视</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%B9%BB%E8%A7%89%EF%BC%9F"><span class="nav-number">2.1.</span> <span class="nav-text">1.什么是大模型幻觉？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%AE%8B%E7%94%9F%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="nav-number">3.</span> <span class="nav-text">2.残生的原因</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%A6%82%E4%BD%95%E7%BC%93%E8%A7%A3%EF%BC%9A"><span class="nav-number">3.1.</span> <span class="nav-text">3.如何缓解：</span></a></li></ol></li></ol>
 
     </div>
 </div>
