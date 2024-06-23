@@ -18,18 +18,18 @@
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta name="description" content="1.Attention1.1 讲讲对Attention的理解？Attention机制是一种在处理时序相关问题的时候常用的技术，主要用于处理序列数据。核心思想是在处理序列数据时，网络应该更关注输入中的重要部分，而忽略不重要的部分，它通过学习不同部分的权重，将输入的序列中的重要部分显式地加权，从而使得模型可以更好地关注与输出有关的信息。 Attention机制的关键是引入一种机制来动态地计算输入序列中">
+        <meta name="description" content="1.Attention1.1 讲讲对Attention的理解？Attention机制是一种在处理时序相关问题的时候常用的技术，主要用于处理序列数据。核心思想是在处理序列数据时，网络应该更关注输入中的重要部分，而忽略不重要的部分，它通过学习不同部分的权重，将输入的序列中的重要部分显式地加权，从而使得模型可以更好地关注与输出有关的信息。 self-attention是⼀种通过⾃身和⾃身进⾏关联的att">
 <meta property="og:type" content="article">
 <meta property="og:title" content="transformer-注意力机制">
 <meta property="og:url" content="http://example.com/2023/10/23/transformer-%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/index.html">
 <meta property="og:site_name" content="深情小小侯的博客">
-<meta property="og:description" content="1.Attention1.1 讲讲对Attention的理解？Attention机制是一种在处理时序相关问题的时候常用的技术，主要用于处理序列数据。核心思想是在处理序列数据时，网络应该更关注输入中的重要部分，而忽略不重要的部分，它通过学习不同部分的权重，将输入的序列中的重要部分显式地加权，从而使得模型可以更好地关注与输出有关的信息。 Attention机制的关键是引入一种机制来动态地计算输入序列中">
+<meta property="og:description" content="1.Attention1.1 讲讲对Attention的理解？Attention机制是一种在处理时序相关问题的时候常用的技术，主要用于处理序列数据。核心思想是在处理序列数据时，网络应该更关注输入中的重要部分，而忽略不重要的部分，它通过学习不同部分的权重，将输入的序列中的重要部分显式地加权，从而使得模型可以更好地关注与输出有关的信息。 self-attention是⼀种通过⾃身和⾃身进⾏关联的att">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="c:\xhou\blog_pic\image_V6s3Iu8dFP.png">
 <meta property="og:image" content="c:\xhou\blog_pic\image_6RlUw8Ldsk.png">
 <meta property="og:image" content="c:\xhou\blog_pic\image_IlV0Rf2hVU.png">
 <meta property="article:published_time" content="2023-10-23T01:03:50.000Z">
-<meta property="article:modified_time" content="2024-06-22T08:26:01.283Z">
+<meta property="article:modified_time" content="2024-06-23T02:14:57.877Z">
 <meta property="article:author" content="深情小小侯">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="c:\xhou\blog_pic\image_V6s3Iu8dFP.png">
@@ -326,8 +326,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2024-06-22 16:26:01</span>
-            <span class="mobile">2024-06-22 16:26:01</span>
+            <span class="desktop">2024-06-23 10:14:57</span>
+            <span class="mobile">2024-06-23 10:14:57</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -355,6 +355,8 @@
 
         <div class="article-content markdown-body">
             <h2 id="1-Attention"><a href="#1-Attention" class="headerlink" title="1.Attention"></a>1.Attention</h2><h3 id="1-1-讲讲对Attention的理解？"><a href="#1-1-讲讲对Attention的理解？" class="headerlink" title="1.1 讲讲对Attention的理解？"></a>1.1 讲讲对Attention的理解？</h3><p>Attention机制是一种在处理时序相关问题的时候常用的技术，主要用于处理序列数据。<br>核心思想是在处理序列数据时，<strong>网络应该更关注输入中的重要部分，而忽略不重要的部分，它通过学习不同部分的权重，将输入的序列中的重要部分显式地加权，从而使得模型可以更好地关注与输出有关的信息。</strong></p>
+<p>self-attention是⼀种通过⾃身和⾃身进⾏关联的attention机制, 从⽽得到更好的 representation来表达⾃身.</p>
+<p>self-attention是attention机制的⼀种特殊情况: 在self-attention中, Q&#x3D;K&#x3D;V, 序列中的每个单词(token)都和该序列中的其他所有单词 (token)进⾏attention规则的计算.</p>
 <p><strong>Attention机制的关键是引入一种机制来动态地计算输入序列中各个位置的权重，从而在每个时间步上，对输入序列的不同部分进行加权求和，得到当前时间步的输出。这样就实现了模型对输入中不同部分的关注度的自适应调整。</strong></p>
 <h3 id="1-2Attention的计算步骤是什么？"><a href="#1-2Attention的计算步骤是什么？" class="headerlink" title="1.2Attention的计算步骤是什么？"></a>1.2Attention的计算步骤是什么？</h3><p>如下：</p>
 <ul>
@@ -392,6 +394,8 @@
 <p>permute和reshape，不改变复杂度</p>
 <h3 id="2-2-transformer的点积模型做缩放的原因是什么？"><a href="#2-2-transformer的点积模型做缩放的原因是什么？" class="headerlink" title="2.2 transformer的点积模型做缩放的原因是什么？"></a>2.2 transformer的点积模型做缩放的原因是什么？</h3><p>使用缩放的原因是为了控制注意力权重的尺度，以避免在计算过程中出现梯度爆炸的问题。</p>
 <p>Attention的计算是在内积之后进行softmax，主要涉及的运算是$$e^{q \cdot k}，可以大致认为内积之后、softmax之前的数值在-3\sqrt{d}到3\sqrt{d}$$这个范围内，由于d通常都至少是64，所以$$e^{3\sqrt{d}}$$比较大而$$ e^{-3\sqrt{d}}$$比较小，因此经过softmax之后，Attention的分布非常接近一个one hot分布了，这带来严重的梯度消失问题，导致训练效果差。（例如y&#x3D;softmax(x)在|x|较大时进入了饱和区，x继续变化y值也几乎不变，即饱和区梯度消失）</p>
+<p>数学上的意义: 假设q和k的统计变量是满⾜标准正态分布的独⽴随机变量, 意味着q和k满⾜均 值为0, ⽅差为1。 那么q和k的点积结果就是均值为0, ⽅差为dk<br>, 为了抵消这种⽅差被放⼤倍的影响, 在计算中主动将点积缩放根号dk</p>
+<p>.</p>
 <p>相应地，解决方法就有两个:</p>
 <ul>
 <li>除以根号d</li>
@@ -443,6 +447,20 @@
 <li>第二个子层连接结构包括一个多头注意力子层和规范化层以及一个残差连接</li>
 <li>第三个子层连接结构包括一个前馈全连接子层和规范化层以及一个残差连接</li>
 </ul>
+<h2 id="3-并行化"><a href="#3-并行化" class="headerlink" title="3.并行化"></a>3.并行化</h2><p>Transformer架构中Encoder模块的并行化机制</p>
+<ul>
+<li>Encoder模块在训练阶段和测试阶段都可以实现完全相同的并行化.</li>
+<li>Encoder模块在Embedding层, Feed Forward层, Add &amp; Norm层都是可以并行化的.</li>
+<li>Encoder模块在self-attention层, 因为各个token之间存在依赖关系, 无法独立计算, 不是真正意义上的并行化.</li>
+<li>Encoder模块在self-attention层, 因为采用了矩阵运算的实现方式, 可以一次性的完成所有注意力张量的计算, 也是另一种”并行化”的体现.</li>
+<li>Transformer架构中Decoder模块的并行化机制</li>
+</ul>
+<p>Decoder模块在训练阶段可以实现并行化.</p>
+<ul>
+<li>Decoder模块在训练阶段的Embedding层, Feed Forward层, Add &amp; Norm层都是可以并行化的.</li>
+<li>Decoder模块在self-attention层, 以及Encoder-Decoder Attention层, 因为各个token之间存在依赖关系, 无法独立计算, 不是真正意义上的并行化.</li>
+<li>Decoder模块在self-attention层, 以及Encoder-Decoder Attention层, 因为采用了矩阵运算的实现方式, 可以一次性的完成所有注意力张量的计算, 也是另一种”并行化”的体现.</li>
+</ul>
 
         </div>
 
@@ -457,7 +475,7 @@
         
             <li>
                 <strong>更新于
-                    :</strong> 2024-06-22 16:26:01
+                    :</strong> 2024-06-23 10:14:57
             </li>
         
         <li>
@@ -573,7 +591,7 @@
     <div class="post-toc">
         <div class="toc-title">此页目录</div>
         <div class="page-title">transformer-注意力机制</div>
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Attention"><span class="nav-number">1.</span> <span class="nav-text">1.Attention</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E8%AE%B2%E8%AE%B2%E5%AF%B9Attention%E7%9A%84%E7%90%86%E8%A7%A3%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 讲讲对Attention的理解？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2Attention%E7%9A%84%E8%AE%A1%E7%AE%97%E6%AD%A5%E9%AA%A4%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.2.</span> <span class="nav-text">1.2Attention的计算步骤是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-self-attention-%E5%9C%A8%E8%AE%A1%E7%AE%97%E7%9A%84%E8%BF%87%E7%A8%8B%E4%B8%AD%EF%BC%8C%E5%A6%82%E4%BD%95%E5%AF%B9padding%E4%BD%8D%E5%81%9Amask%EF%BC%9F"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 self-attention 在计算的过程中，如何对padding位做mask？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E5%A4%9A%E7%A7%8Dattention"><span class="nav-number">1.4.</span> <span class="nav-text">1.4 多种attention</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Transformer"><span class="nav-number">2.</span> <span class="nav-text">2.Transformer</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-transformer%E4%B8%ADmulti-head-attention%E4%B8%AD%E6%AF%8F%E4%B8%AAhead%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%BF%9B%E8%A1%8C%E9%99%8D%E7%BB%B4%EF%BC%9F"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 transformer中multi-head attention中每个head为什么要进行降维？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-transformer%E7%9A%84%E7%82%B9%E7%A7%AF%E6%A8%A1%E5%9E%8B%E5%81%9A%E7%BC%A9%E6%94%BE%E7%9A%84%E5%8E%9F%E5%9B%A0%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 transformer的点积模型做缩放的原因是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Transformer%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84"><span class="nav-number">2.3.</span> <span class="nav-text">3.Transformer总体架构</span></a></li></ol></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Attention"><span class="nav-number">1.</span> <span class="nav-text">1.Attention</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E8%AE%B2%E8%AE%B2%E5%AF%B9Attention%E7%9A%84%E7%90%86%E8%A7%A3%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 讲讲对Attention的理解？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2Attention%E7%9A%84%E8%AE%A1%E7%AE%97%E6%AD%A5%E9%AA%A4%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.2.</span> <span class="nav-text">1.2Attention的计算步骤是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-self-attention-%E5%9C%A8%E8%AE%A1%E7%AE%97%E7%9A%84%E8%BF%87%E7%A8%8B%E4%B8%AD%EF%BC%8C%E5%A6%82%E4%BD%95%E5%AF%B9padding%E4%BD%8D%E5%81%9Amask%EF%BC%9F"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 self-attention 在计算的过程中，如何对padding位做mask？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E5%A4%9A%E7%A7%8Dattention"><span class="nav-number">1.4.</span> <span class="nav-text">1.4 多种attention</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Transformer"><span class="nav-number">2.</span> <span class="nav-text">2.Transformer</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-transformer%E4%B8%ADmulti-head-attention%E4%B8%AD%E6%AF%8F%E4%B8%AAhead%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%BF%9B%E8%A1%8C%E9%99%8D%E7%BB%B4%EF%BC%9F"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 transformer中multi-head attention中每个head为什么要进行降维？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-transformer%E7%9A%84%E7%82%B9%E7%A7%AF%E6%A8%A1%E5%9E%8B%E5%81%9A%E7%BC%A9%E6%94%BE%E7%9A%84%E5%8E%9F%E5%9B%A0%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 transformer的点积模型做缩放的原因是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Transformer%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84"><span class="nav-number">2.3.</span> <span class="nav-text">3.Transformer总体架构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%B9%B6%E8%A1%8C%E5%8C%96"><span class="nav-number">3.</span> <span class="nav-text">3.并行化</span></a></li></ol>
 
     </div>
 </div>
