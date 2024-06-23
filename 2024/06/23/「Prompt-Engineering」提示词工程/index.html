@@ -18,13 +18,15 @@
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta property="og:type" content="article">
+        <meta name="description" content="提示工程（Prompt Engingering），也被称为上下文提示（In-Context Prompting），指的是通过结构化文本等方式来完善提示词，引导LLM输出我们期望的结果。通过提示词工程可以在不更新模型权重的情况下，让LLM完成不同类型的任务。其主要依赖于经验，而且提示词工程方法的效果在不同的模型中可能会有很大的差异，因此需要大量的实验和探索。 提示工程旨在获取这些提示并帮助模型在其输">
+<meta property="og:type" content="article">
 <meta property="og:title" content="「Prompt Engineering」提示词工程">
 <meta property="og:url" content="http://example.com/2024/06/23/%E3%80%8CPrompt-Engineering%E3%80%8D%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B/index.html">
 <meta property="og:site_name" content="深情小小侯的博客">
+<meta property="og:description" content="提示工程（Prompt Engingering），也被称为上下文提示（In-Context Prompting），指的是通过结构化文本等方式来完善提示词，引导LLM输出我们期望的结果。通过提示词工程可以在不更新模型权重的情况下，让LLM完成不同类型的任务。其主要依赖于经验，而且提示词工程方法的效果在不同的模型中可能会有很大的差异，因此需要大量的实验和探索。 提示工程旨在获取这些提示并帮助模型在其输">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-06-23T02:38:14.000Z">
-<meta property="article:modified_time" content="2024-06-23T02:38:14.486Z">
+<meta property="article:modified_time" content="2024-06-23T06:13:01.317Z">
 <meta property="article:author" content="深情小小侯">
 <meta name="twitter:card" content="summary">
     
@@ -320,8 +322,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2024-06-23 10:38:14</span>
-            <span class="mobile">2024-06-23 10:38:14</span>
+            <span class="desktop">2024-06-23 14:13:01</span>
+            <span class="mobile">2024-06-23 14:13:01</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -348,7 +350,42 @@
 
 
         <div class="article-content markdown-body">
-            
+            <p>提示工程（Prompt Engingering），也被称为上下文提示（In-Context Prompting），指的是通过结构化文本等方式来完善提示词，引导LLM输出我们期望的结果。通过提示词工程可以在不更新模型权重的情况下，让LLM完成不同类型的任务。其主要依赖于经验，而且提示词工程方法的效果在不同的模型中可能会有很大的差异，因此需要大量的实验和探索。</p>
+<p>提示工程旨在获取这些提示并帮助模型在其输出中实现高准确度和相关性，掌握提示工程相关技能将有助于用户更好地了解大型语言模型的能力和局限性。特别地， 矢量数据库、agent和prompt pipeline已经被用作在对话中，作为向 LLM 提供相关上下文数据的途径。</p>
+<p>提示工程涉及选择、编写和组织提示，以便获得所需的输出，主要包括以下方面：</p>
+<ul>
+<li>Prompt 格式：确定 prompt 的结构和格式，例如，问题形式、描述形式、关键词形式等。</li>
+<li>Prompt 内容：选择合适的词语、短语或问题，以确保模型理解用户的意图。</li>
+<li>Prompt 上下文：考虑前文或上下文信息，以确保模型的回应与先前的对话或情境相关。</li>
+<li>Prompt 编写技巧：使用清晰、简洁和明了的语言编写 prompt，以准确传达用户的需求。</li>
+<li>Prompt 优化：在尝试不同 prompt 后，根据结果对 prompt 进行调整和优化，以获得更满意的回应。</li>
+</ul>
+<h2 id="COT链式思考提示"><a href="#COT链式思考提示" class="headerlink" title="COT链式思考提示"></a>COT链式思考提示</h2><p>提示通过中间推理步骤实现了复杂的推理能力。您可以将其与少样本提示相结合，以获得更好的结果，以便在回答之前进行推理的更复杂的任务。</p>
+<h3 id="Zero-shot-CoT"><a href="#Zero-shot-CoT" class="headerlink" title="Zero-shot-CoT"></a>Zero-shot-CoT</h3><p>:我去市场买了10个苹果。我给了邻居2个苹果和修理工2个苹果。然后我去买了5个苹果并吃了1个。我还剩下多少苹果？<em><strong>让我们逐步思考</strong></em></p>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Q:我去市场买了10个苹果。我给了邻居2个苹果和修理工2个苹果。然后我去买了5个苹果并吃了1个。我还剩下多少苹果？**让我们逐步思考**</span><br><span class="line"></span><br><span class="line">A：首先，您从10个苹果开始。</span><br><span class="line">您给了邻居和修理工各2个苹果，所以您还剩下6个苹果。</span><br><span class="line">然后您买了5个苹果，所以现在您有11个苹果。</span><br><span class="line">最后，您吃了1个苹果，所以您还剩下10个苹果。</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="Few-shot-CoT"><a href="#Few-shot-CoT" class="headerlink" title="Few-shot_CoT"></a>Few-shot_CoT</h3><p>就是举个例子，推导的例子</p>
+<h2 id="Zero-shot-Prompting"><a href="#Zero-shot-Prompting" class="headerlink" title="Zero-shot Prompting"></a>Zero-shot Prompting</h2><p>Zero-Shot Prompting 指的是在大型语言模型(LLM)中，不需要额外微调或训练,直接通过文本提示就可以完成指定的下游任务。</p>
+<p>请注意，在上面的提示中，我们没有向模型提供任何示例——这就是零样本能力的作用</p>
+<p>主要思想:</p>
+<ul>
+<li><p>先训练一个通用的大型语言模型,学习语言的基本规则,掌握丰富的常识和知识。</p>
+</li>
+<li><p>然后在不改变模型参数的情况下,只通过软性提示指导模型完成特定任务。</p>
+</li>
+<li><p>模型根据提示和已掌握的知识,生成对应任务的输出。</p>
+</li>
+</ul>
+<p><strong>缺点</strong>：Zero-Shot Prompting 技术依赖于预训练的语言模型，这些模型可能会受到训练数据集的限制和偏见。它的输出有时可能不够准确，或不符合预期。这可能需要对模型进⾏进⼀步的微调或添加更多的提示⽂本来纠正。</p>
+<h2 id="Few-shot-Prompting"><a href="#Few-shot-Prompting" class="headerlink" title="Few-shot Prompting"></a>Few-shot Prompting</h2><p>但在使用零样本设置时，它们在更复杂的任务上仍然表现不佳。少样本提示可以作为一种技<strong>术，以启用上下文学习</strong>，我们在提示中提供演示以引导模型实现更好的性能。演示作为后续示例的条件，是通过提供<strong>模型少量高质量的示例</strong>,这些示例包括目标任务的输入和期望输出。通过观察这些良好的示例，模型可以更好地理解人类意图和生成准确输出的标准。</p>
+<p><strong>关键思想</strong>:</p>
+<ul>
+<li>仍然基于预训练好的通用语言模型</li>
+<li>使用软提示指导模型完成新任务</li>
+<li><strong>额外提供1-2个相关示例作为提示补充</strong></li>
+</ul>
+<p><strong>缺点</strong>：这种方法可能会消耗更多的token，并且在处理长文本的输入或者输出的时候可能会遇到上下文长度限制的问题。大型语言模型（例如GPT-3）在zero-shot能力方面表现出色。但对于复杂任务，few-shot 提示性能更好。为了提高性能，我们使用，few-shot 提示进行上下文学习，通过在提示中提供演示来指导模型执行任务。换句话说，将模型置于一些特定任务的示例中有助于提高模型性能。</p>
+
         </div>
 
         
@@ -362,7 +399,7 @@
         
             <li>
                 <strong>更新于
-                    :</strong> 2024-06-23 10:38:14
+                    :</strong> 2024-06-23 14:13:01
             </li>
         
         <li>
@@ -463,7 +500,7 @@
     <div class="post-toc">
         <div class="toc-title">此页目录</div>
         <div class="page-title">「Prompt Engineering」提示词工程</div>
-        
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#COT%E9%93%BE%E5%BC%8F%E6%80%9D%E8%80%83%E6%8F%90%E7%A4%BA"><span class="nav-number">1.</span> <span class="nav-text">COT链式思考提示</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Zero-shot-CoT"><span class="nav-number">1.1.</span> <span class="nav-text">Zero-shot-CoT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Few-shot-CoT"><span class="nav-number">1.2.</span> <span class="nav-text">Few-shot_CoT</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Zero-shot-Prompting"><span class="nav-number">2.</span> <span class="nav-text">Zero-shot Prompting</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Few-shot-Prompting"><span class="nav-number">3.</span> <span class="nav-text">Few-shot Prompting</span></a></li></ol>
 
     </div>
 </div>
