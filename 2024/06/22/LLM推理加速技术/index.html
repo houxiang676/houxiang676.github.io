@@ -26,7 +26,7 @@
 <meta property="og:description" content="一个常规的LLM推理过程通常分为两个阶段：prefill和decode。通常会使用KV cache技术加速推理。 预填充阶段（prefill）。在这个阶段中，我们把整段prompt喂给模型做forward计算。如果采用KV cache技术，在这个阶段中我们会把prompt过 𝑊𝑘,𝑊𝑣 后得到的 𝑋𝑘,𝑋𝑣 保存在cache_k和cache_v中。这样在对后面的token计算att">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-06-22T00:54:14.000Z">
-<meta property="article:modified_time" content="2024-06-22T02:53:11.490Z">
+<meta property="article:modified_time" content="2024-06-23T08:38:04.650Z">
 <meta property="article:author" content="深情小小侯">
 <meta name="twitter:card" content="summary">
     
@@ -322,8 +322,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2024-06-22 10:53:11</span>
-            <span class="mobile">2024-06-22 10:53:11</span>
+            <span class="desktop">2024-06-23 16:38:04</span>
+            <span class="mobile">2024-06-23 16:38:04</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -408,7 +408,14 @@
 <li>通过 PagedAttention 对注意力 key 和 value 进行内存管理</li>
 <li>对传入请求的批处理</li>
 </ol>
-<p>总结,</p>
+<p>总结,减少显存、提高吞吐量。如何优化KV cache，节省显存，提高推理吞吐量，就成了LLM推理框架需要解决的重点问题</p>
+<p><strong>实现原理：</strong></p>
+<p>通过 PagedAttention 对注意力 key 和 value 进行内存管理，降低显存，提高推理速度</p>
+<p>pagedAttention 实现原理</p>
+<ol>
+<li>内存中保存Key、value 值，允许内存空间不需要连续。不必浪费大量显存。方法：内存中序列的逻辑通过块表映射到物理内存中，保证其逻辑性。</li>
+<li>内存中可以共享内存，使prompt 计算可以共享。</li>
+</ol>
 <p>通过 PagedAttention 对注意力 key 和 value 进行内存管理,PagedAttention 还有一个关键优势：高效的内存共享。例如，在<em>并行采样</em>中，同一个提示会生成多个输出序列。在这种情况下，输出序列之间可以共享提示的计算和内存。</p>
 <hr>
 <ul>
@@ -416,6 +423,7 @@
 <li><strong>Beam Search</strong>：束搜索，这是LLM常用的deocde策略之一，即在每个decode阶段，我不是只产生1个token，而是产生top k个token（这里k也被称为束宽）。top k个token必然对应着此刻的top k个序列。我把这top k个序列喂给模型，假设词表的大小为|V|，那么在下一时刻，我就要在k*|V|个候选者中再选出top k，以此类推。不难想象每一时刻我把top k序列喂给模型时，它们的前置token中有大量的KV cache是重复的。</li>
 <li><strong>Shared prefix：</strong>在某些大模型中，所有请求可能都会共享一个前置信息（比如system message: “假设你是一个有帮助的AI助手….”），这些前置信息没有必要重复存储KV cache</li>
 </ul>
+<h3 id="为什么Cache只存储K、V，而不存储Q？"><a href="#为什么Cache只存储K、V，而不存储Q？" class="headerlink" title="为什么Cache只存储K、V，而不存储Q？"></a>为什么Cache只存储K、V，而不存储Q？</h3><p>在Transformer架构的注意力机制中，Q（Query）代表当前输入Token的查询信息，它需要与所有先前和当前的K（Key）进行匹配来决定注意力的分配。因为Q是专门针对当前正在处理的Token的，所以它每次都是独一无二的，即便在没有Cache的情况下，对于序列中的每个新Token，Q都会改变。<br>相反，K（Key）和V（Value）通常与序列中已经处理过的Token相关，它们可以被缓存起来供后续的Token查询使用。存储K和V使得模型可以重用之前Token的信息，而不必重新计算它们，这样可以大大节省计算资源。如果存储Q值，对于每个新的Token，我们仍然需要重新计算整个Q与所有K的匹配度，这不会减少计算量。因此，只缓存KV值而不缓存Q值，是为了优化计算效率。</p>
 <h3 id="Parallel-Sampling"><a href="#Parallel-Sampling" class="headerlink" title="Parallel Sampling"></a>Parallel Sampling</h3><p><strong>（1）首先，Prefill阶段，vLLM拿到Sample A1和Sample A2，根据其中的文字内容，为其分配逻辑块和物理块。</strong></p>
 <ul>
 <li><strong>分配逻辑块：</strong>对于A1，vLLM为其分配逻辑块block0和block1；对于A2，vLLM为其分配逻辑块block0和block1。<strong>需要注意的是，A1的逻辑块和A2的逻辑块是独立的（尽管它们都叫block0和block1）</strong>，你可以将A1和A2视作操作系统中两个独立运行的进程。</li>
@@ -461,7 +469,7 @@
         
             <li>
                 <strong>更新于
-                    :</strong> 2024-06-22 10:53:11
+                    :</strong> 2024-06-23 16:38:04
             </li>
         
         <li>
@@ -577,7 +585,7 @@
     <div class="post-toc">
         <div class="toc-title">此页目录</div>
         <div class="page-title">LLM推理加速技术</div>
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-VLLM"><span class="nav-number">1.</span> <span class="nav-text">1. VLLM</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Parallel-Sampling"><span class="nav-number">1.1.</span> <span class="nav-text">Parallel Sampling</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Beam-Search"><span class="nav-number">1.2.</span> <span class="nav-text">Beam Search</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-LLama-cpp"><span class="nav-number">2.</span> <span class="nav-text">2. LLama.cpp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Flash-attention"><span class="nav-number">3.</span> <span class="nav-text">3. Flash-attention</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-VLLM"><span class="nav-number">1.</span> <span class="nav-text">1. VLLM</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88Cache%E5%8F%AA%E5%AD%98%E5%82%A8K%E3%80%81V%EF%BC%8C%E8%80%8C%E4%B8%8D%E5%AD%98%E5%82%A8Q%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">为什么Cache只存储K、V，而不存储Q？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Parallel-Sampling"><span class="nav-number">1.2.</span> <span class="nav-text">Parallel Sampling</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Beam-Search"><span class="nav-number">1.3.</span> <span class="nav-text">Beam Search</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-LLama-cpp"><span class="nav-number">2.</span> <span class="nav-text">2. LLama.cpp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Flash-attention"><span class="nav-number">3.</span> <span class="nav-text">3. Flash-attention</span></a></li></ol>
 
     </div>
 </div>

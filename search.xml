@@ -406,7 +406,14 @@
 <li>通过 PagedAttention 对注意力 key 和 value 进行内存管理</li>
 <li>对传入请求的批处理</li>
 </ol>
-<p>总结,</p>
+<p>总结,减少显存、提高吞吐量。如何优化KV cache，节省显存，提高推理吞吐量，就成了LLM推理框架需要解决的重点问题</p>
+<p><strong>实现原理：</strong></p>
+<p>通过 PagedAttention 对注意力 key 和 value 进行内存管理，降低显存，提高推理速度</p>
+<p>pagedAttention 实现原理</p>
+<ol>
+<li>内存中保存Key、value 值，允许内存空间不需要连续。不必浪费大量显存。方法：内存中序列的逻辑通过块表映射到物理内存中，保证其逻辑性。</li>
+<li>内存中可以共享内存，使prompt 计算可以共享。</li>
+</ol>
 <p>通过 PagedAttention 对注意力 key 和 value 进行内存管理,PagedAttention 还有一个关键优势：高效的内存共享。例如，在<em>并行采样</em>中，同一个提示会生成多个输出序列。在这种情况下，输出序列之间可以共享提示的计算和内存。</p>
 <hr>
 <ul>
@@ -414,6 +421,7 @@
 <li><strong>Beam Search</strong>：束搜索，这是LLM常用的deocde策略之一，即在每个decode阶段，我不是只产生1个token，而是产生top k个token（这里k也被称为束宽）。top k个token必然对应着此刻的top k个序列。我把这top k个序列喂给模型，假设词表的大小为|V|，那么在下一时刻，我就要在k*|V|个候选者中再选出top k，以此类推。不难想象每一时刻我把top k序列喂给模型时，它们的前置token中有大量的KV cache是重复的。</li>
 <li><strong>Shared prefix：</strong>在某些大模型中，所有请求可能都会共享一个前置信息（比如system message: “假设你是一个有帮助的AI助手….”），这些前置信息没有必要重复存储KV cache</li>
 </ul>
+<h3 id="为什么Cache只存储K、V，而不存储Q？"><a href="#为什么Cache只存储K、V，而不存储Q？" class="headerlink" title="为什么Cache只存储K、V，而不存储Q？"></a>为什么Cache只存储K、V，而不存储Q？</h3><p>在Transformer架构的注意力机制中，Q（Query）代表当前输入Token的查询信息，它需要与所有先前和当前的K（Key）进行匹配来决定注意力的分配。因为Q是专门针对当前正在处理的Token的，所以它每次都是独一无二的，即便在没有Cache的情况下，对于序列中的每个新Token，Q都会改变。<br>相反，K（Key）和V（Value）通常与序列中已经处理过的Token相关，它们可以被缓存起来供后续的Token查询使用。存储K和V使得模型可以重用之前Token的信息，而不必重新计算它们，这样可以大大节省计算资源。如果存储Q值，对于每个新的Token，我们仍然需要重新计算整个Q与所有K的匹配度，这不会减少计算量。因此，只缓存KV值而不缓存Q值，是为了优化计算效率。</p>
 <h3 id="Parallel-Sampling"><a href="#Parallel-Sampling" class="headerlink" title="Parallel Sampling"></a>Parallel Sampling</h3><p><strong>（1）首先，Prefill阶段，vLLM拿到Sample A1和Sample A2，根据其中的文字内容，为其分配逻辑块和物理块。</strong></p>
 <ul>
 <li><strong>分配逻辑块：</strong>对于A1，vLLM为其分配逻辑块block0和block1；对于A2，vLLM为其分配逻辑块block0和block1。<strong>需要注意的是，A1的逻辑块和A2的逻辑块是独立的（尽管它们都叫block0和block1）</strong>，你可以将A1和A2视作操作系统中两个独立运行的进程。</li>
@@ -905,23 +913,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>pandas数据分析数据预处理</title>
-    <url>/2023/12/15/pandas%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86/</url>
-    <content><![CDATA[<p>Pandas的数据结构为，DataFrame，一个表格型的数据结构，它含有一组有序的列，每列可以是不同的值类型（数值、字符串、布尔型值）。DataFrame 既有行索引也有列索引，它可以被看做由 Series 组成的字典（共同用一个索引）。而Series则 类似表格中的一个列（column），类似于一维数组，可以保存任何数据类型。我们把一个.csv文件读取进来就是一个DataFrame对象。DataFrame 构造方法如下</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">pandas.DataFrame( data, index, columns, dtype, copy)</span><br></pre></td></tr></table></figure></div>
-
-<p>data：一组数据(ndarray、series, map, lists, dict 等类型)。<br>index：索引值，或者可以称为行标签。<br>columns：列标签，默认为 RangeIndex (0, 1, 2, …, n) 。<br>dtype：数据类型。<br>copy：拷贝数据，默认为 False。</p>
-<h2 id="合并拆分"><a href="#合并拆分" class="headerlink" title="合并拆分"></a>合并拆分</h2><h3 id="合并"><a href="#合并" class="headerlink" title="合并"></a>合并</h3><p>例如，在<code>./MELD</code>路径下存在如下三个文件</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">dev_sent_emo.csv</span><br><span class="line">test_sent_emo.csv</span><br><span class="line">train_sent_emo.csv</span><br></pre></td></tr></table></figure></div>
-
-<p>代码如下</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> os.path <span class="keyword">import</span> join</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">combine_csv_files</span>(<span class="params">re_encode_path, save_name, files, save_in</span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;combine_csv_files</span></span><br><span class="line"><span class="string">    将指定路径下的所有csv文件合并为一个csv文件</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    使用示例：</span></span><br><span class="line"><span class="string">    file_names = os.listdir(&quot;./MELD/&quot;)</span></span><br><span class="line"><span class="string">    combine_csv_files(re_encode_path=&quot;./MELD/&quot;, </span></span><br><span class="line"><span class="string">                      save_name=&quot;MELD_total_text&quot;, </span></span><br><span class="line"><span class="string">                      files=file_names, </span></span><br><span class="line"><span class="string">                      save_in=&quot;./MELD/&quot;)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> os.path.isfile(join(save_in, <span class="string">&quot;%s.csv&quot;</span>) % save_name): </span><br><span class="line">        <span class="comment"># 如果已经存在合并后的文件，则直接return 0</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            main_list = []</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(files)):</span><br><span class="line">                content = pd.read_csv(join(re_encode_path, files[i]), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>)</span><br><span class="line">                <span class="keyword">if</span> i == <span class="number">0</span>:</span><br><span class="line">                    main_list.extend([<span class="built_in">list</span>(content.keys())])</span><br><span class="line">                main_list.extend(content.values.tolist())</span><br><span class="line"></span><br><span class="line">            main_dict = &#123;&#125;</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">list</span>(<span class="built_in">zip</span>(*main_list)):</span><br><span class="line">                main_dict[i[<span class="number">0</span>]] = <span class="built_in">list</span>(i[<span class="number">1</span>:])</span><br><span class="line">            data_df = pd.DataFrame(main_dict)</span><br><span class="line">            data_df.to_csv(join(save_in, <span class="string">&quot;%s.csv&quot;</span>) % save_name, encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        <span class="keyword">except</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;合并[%s]时发生错误&quot;</span> % save_name)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-<h3 id="拆分"><a href="#拆分" class="headerlink" title="拆分"></a>拆分</h3><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> os.path <span class="keyword">import</span> join</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">shuffle_total_data</span>(<span class="params">data_path=<span class="string">&quot;./MELD/MELD_total_text.csv&quot;</span>, </span></span><br><span class="line"><span class="params">                       save_path=<span class="string">&quot;./MELD/&quot;</span>, </span></span><br><span class="line"><span class="params">                       index_name=<span class="string">&quot;Dialogue_ID&quot;</span>,</span></span><br><span class="line"><span class="params">                       validation_split_percentage=<span class="number">0.1</span>, </span></span><br><span class="line"><span class="params">                       test_split_percentage=<span class="number">0.1</span>, </span></span><br><span class="line"><span class="params">                       regen=<span class="literal">False</span></span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;shuffle_total_data</span></span><br><span class="line"><span class="string">    将一个.csv文件(例如：CPED_total_text.csv)随机打乱，拆分为训练集、验证集、测试集，分别保存</span></span><br><span class="line"><span class="string">    使用示例：</span></span><br><span class="line"><span class="string">    shuffle_total_data(data_path=&quot;./MELD/MELD_total_text.csv&quot;, </span></span><br><span class="line"><span class="string">                       save_path=&quot;./MELD&quot;, </span></span><br><span class="line"><span class="string">                       index_name=&quot;Dialogue_ID&quot;,</span></span><br><span class="line"><span class="string">                       validation_split_percentage=0.1, </span></span><br><span class="line"><span class="string">                       test_split_percentage=0.1, </span></span><br><span class="line"><span class="string">                       regen=False)</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> regen==<span class="literal">False</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;不进行重复生成！&quot;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Read dataset from &quot;</span>, data_path)</span><br><span class="line">        data = pd.read_csv(data_path, encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>)</span><br><span class="line">                        </span><br><span class="line">        <span class="comment"># 划分为训练集、测试集</span></span><br><span class="line">        keys = <span class="built_in">list</span>(<span class="built_in">set</span>(data[index_name]))</span><br><span class="line">        random.shuffle(keys) <span class="comment"># 随机打乱</span></span><br><span class="line">        validation_split_id = <span class="built_in">int</span>(<span class="built_in">len</span>(keys)*(<span class="number">1</span>-validation_split_percentage-test_split_percentage))</span><br><span class="line">        test_split_id = <span class="built_in">int</span>(<span class="built_in">len</span>(keys)*(<span class="number">1</span>-test_split_percentage))</span><br><span class="line">        train_keys = keys[:validation_split_id] <span class="comment"># 训练集索引</span></span><br><span class="line">        valid_keys = keys[validation_split_id:test_split_id] <span class="comment"># 验证集索引</span></span><br><span class="line">        test_keys = keys[test_split_id:] <span class="comment"># 测试集索引</span></span><br><span class="line">        train_data = data[data[index_name].isin(train_keys)]</span><br><span class="line">        valid_data = data[data[index_name].isin(valid_keys)]</span><br><span class="line">        test_data = data[data[index_name].isin(test_keys)]</span><br><span class="line">        </span><br><span class="line">        train_data.to_csv(join(save_path,<span class="string">&quot;train_shuffle_split.csv&quot;</span>), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        valid_data.to_csv(join(save_path,<span class="string">&quot;valid_shuffle_split.csv&quot;</span>), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        test_data.to_csv(join(save_path,<span class="string">&quot;test_shuffle_split.csv&quot;</span>), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;已经完成数据集生成！&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-]]></content>
-  </entry>
-  <entry>
     <title>my_first_blog</title>
     <url>/2023/10/16/my-first-blog/</url>
     <content><![CDATA[<h1 id="写在前面的话："><a href="#写在前面的话：" class="headerlink" title="写在前面的话："></a>写在前面的话：</h1><p>记录一下，第一次写博客，希望每天可以进步一点点，要把之前学过整理出来，以后的学习要做一个记录。走得快走得慢不重要，走下去就是胜利。</p>
@@ -1086,6 +1077,23 @@
 ]]></content>
   </entry>
   <entry>
+    <title>pandas数据分析数据预处理</title>
+    <url>/2023/12/15/pandas%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86/</url>
+    <content><![CDATA[<p>Pandas的数据结构为，DataFrame，一个表格型的数据结构，它含有一组有序的列，每列可以是不同的值类型（数值、字符串、布尔型值）。DataFrame 既有行索引也有列索引，它可以被看做由 Series 组成的字典（共同用一个索引）。而Series则 类似表格中的一个列（column），类似于一维数组，可以保存任何数据类型。我们把一个.csv文件读取进来就是一个DataFrame对象。DataFrame 构造方法如下</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">pandas.DataFrame( data, index, columns, dtype, copy)</span><br></pre></td></tr></table></figure></div>
+
+<p>data：一组数据(ndarray、series, map, lists, dict 等类型)。<br>index：索引值，或者可以称为行标签。<br>columns：列标签，默认为 RangeIndex (0, 1, 2, …, n) 。<br>dtype：数据类型。<br>copy：拷贝数据，默认为 False。</p>
+<h2 id="合并拆分"><a href="#合并拆分" class="headerlink" title="合并拆分"></a>合并拆分</h2><h3 id="合并"><a href="#合并" class="headerlink" title="合并"></a>合并</h3><p>例如，在<code>./MELD</code>路径下存在如下三个文件</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">dev_sent_emo.csv</span><br><span class="line">test_sent_emo.csv</span><br><span class="line">train_sent_emo.csv</span><br></pre></td></tr></table></figure></div>
+
+<p>代码如下</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> os.path <span class="keyword">import</span> join</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">combine_csv_files</span>(<span class="params">re_encode_path, save_name, files, save_in</span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;combine_csv_files</span></span><br><span class="line"><span class="string">    将指定路径下的所有csv文件合并为一个csv文件</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    使用示例：</span></span><br><span class="line"><span class="string">    file_names = os.listdir(&quot;./MELD/&quot;)</span></span><br><span class="line"><span class="string">    combine_csv_files(re_encode_path=&quot;./MELD/&quot;, </span></span><br><span class="line"><span class="string">                      save_name=&quot;MELD_total_text&quot;, </span></span><br><span class="line"><span class="string">                      files=file_names, </span></span><br><span class="line"><span class="string">                      save_in=&quot;./MELD/&quot;)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> os.path.isfile(join(save_in, <span class="string">&quot;%s.csv&quot;</span>) % save_name): </span><br><span class="line">        <span class="comment"># 如果已经存在合并后的文件，则直接return 0</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            main_list = []</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(files)):</span><br><span class="line">                content = pd.read_csv(join(re_encode_path, files[i]), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>)</span><br><span class="line">                <span class="keyword">if</span> i == <span class="number">0</span>:</span><br><span class="line">                    main_list.extend([<span class="built_in">list</span>(content.keys())])</span><br><span class="line">                main_list.extend(content.values.tolist())</span><br><span class="line"></span><br><span class="line">            main_dict = &#123;&#125;</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">list</span>(<span class="built_in">zip</span>(*main_list)):</span><br><span class="line">                main_dict[i[<span class="number">0</span>]] = <span class="built_in">list</span>(i[<span class="number">1</span>:])</span><br><span class="line">            data_df = pd.DataFrame(main_dict)</span><br><span class="line">            data_df.to_csv(join(save_in, <span class="string">&quot;%s.csv&quot;</span>) % save_name, encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        <span class="keyword">except</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;合并[%s]时发生错误&quot;</span> % save_name)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="拆分"><a href="#拆分" class="headerlink" title="拆分"></a>拆分</h3><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> os.path <span class="keyword">import</span> join</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">shuffle_total_data</span>(<span class="params">data_path=<span class="string">&quot;./MELD/MELD_total_text.csv&quot;</span>, </span></span><br><span class="line"><span class="params">                       save_path=<span class="string">&quot;./MELD/&quot;</span>, </span></span><br><span class="line"><span class="params">                       index_name=<span class="string">&quot;Dialogue_ID&quot;</span>,</span></span><br><span class="line"><span class="params">                       validation_split_percentage=<span class="number">0.1</span>, </span></span><br><span class="line"><span class="params">                       test_split_percentage=<span class="number">0.1</span>, </span></span><br><span class="line"><span class="params">                       regen=<span class="literal">False</span></span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;shuffle_total_data</span></span><br><span class="line"><span class="string">    将一个.csv文件(例如：CPED_total_text.csv)随机打乱，拆分为训练集、验证集、测试集，分别保存</span></span><br><span class="line"><span class="string">    使用示例：</span></span><br><span class="line"><span class="string">    shuffle_total_data(data_path=&quot;./MELD/MELD_total_text.csv&quot;, </span></span><br><span class="line"><span class="string">                       save_path=&quot;./MELD&quot;, </span></span><br><span class="line"><span class="string">                       index_name=&quot;Dialogue_ID&quot;,</span></span><br><span class="line"><span class="string">                       validation_split_percentage=0.1, </span></span><br><span class="line"><span class="string">                       test_split_percentage=0.1, </span></span><br><span class="line"><span class="string">                       regen=False)</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> regen==<span class="literal">False</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;不进行重复生成！&quot;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Read dataset from &quot;</span>, data_path)</span><br><span class="line">        data = pd.read_csv(data_path, encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>)</span><br><span class="line">                        </span><br><span class="line">        <span class="comment"># 划分为训练集、测试集</span></span><br><span class="line">        keys = <span class="built_in">list</span>(<span class="built_in">set</span>(data[index_name]))</span><br><span class="line">        random.shuffle(keys) <span class="comment"># 随机打乱</span></span><br><span class="line">        validation_split_id = <span class="built_in">int</span>(<span class="built_in">len</span>(keys)*(<span class="number">1</span>-validation_split_percentage-test_split_percentage))</span><br><span class="line">        test_split_id = <span class="built_in">int</span>(<span class="built_in">len</span>(keys)*(<span class="number">1</span>-test_split_percentage))</span><br><span class="line">        train_keys = keys[:validation_split_id] <span class="comment"># 训练集索引</span></span><br><span class="line">        valid_keys = keys[validation_split_id:test_split_id] <span class="comment"># 验证集索引</span></span><br><span class="line">        test_keys = keys[test_split_id:] <span class="comment"># 测试集索引</span></span><br><span class="line">        train_data = data[data[index_name].isin(train_keys)]</span><br><span class="line">        valid_data = data[data[index_name].isin(valid_keys)]</span><br><span class="line">        test_data = data[data[index_name].isin(test_keys)]</span><br><span class="line">        </span><br><span class="line">        train_data.to_csv(join(save_path,<span class="string">&quot;train_shuffle_split.csv&quot;</span>), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        valid_data.to_csv(join(save_path,<span class="string">&quot;valid_shuffle_split.csv&quot;</span>), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        test_data.to_csv(join(save_path,<span class="string">&quot;test_shuffle_split.csv&quot;</span>), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;已经完成数据集生成！&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+]]></content>
+  </entry>
+  <entry>
     <title>python调用大模型测试自己的文件输入</title>
     <url>/2023/12/20/python%E8%B0%83%E7%94%A8%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%B5%8B%E8%AF%95%E8%87%AA%E5%B7%B1%E7%9A%84%E6%96%87%E4%BB%B6%E8%BE%93%E5%85%A5/</url>
     <content><![CDATA[<h1 id="通义千问"><a href="#通义千问" class="headerlink" title="通义千问"></a>通义千问</h1><p><a class="link"   href="https://dashscope.console.aliyun.com/model" >模型服务灵积 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
@@ -1115,32 +1123,6 @@
 
 <hr>
 <h1 id="盘古AI"><a href="#盘古AI" class="headerlink" title="盘古AI"></a>盘古AI</h1><p>研究研究先。。。</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>“基础模型pytorch学习笔记”</title>
-    <url>/2023/12/25/%E2%80%9C%E6%9D%8E%E6%B2%90%E8%8A%B1%E4%B9%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E2%80%9D/</url>
-    <content><![CDATA[<h1 id="Resnet"><a href="#Resnet" class="headerlink" title="Resnet"></a>Resnet</h1><p><strong>问题：随着神经网络的不断加深，一定会带来好处吗？</strong></p>
-<p>蓝色五角星表示最优值<br>标有Fi的闭合区域表示函数，闭合区域的面积代表函数的复杂程度，在这个区域中能够找到一个最优的模型（可以用区域中的一个点来表示，该点到最优值的距离可以用来衡量模型的好坏）<br>从上图中可以看出，随着函数的复杂度的不断增加，虽然函数的区域面积增大了，但是在该区域中所能找到的最优模型（该区域内的某一点）离最优值的距离可能会越来越远（也就是模型所在的区域随着函数复杂度的增加，逐渐偏离了原来的区域，离最优值越来越远）（非嵌套函数（non-nested function））<br>解决上述问题（模型走偏）的方法：每一次增加函数复杂度之后函数所覆盖的区域会包含原来函数所在的区域（嵌套函数（nested function）），只有当较复杂的函数类包含复杂度较小的函数类时，才能确保提高它的性能，如下图所示 </p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://i0.hdslb.com/bfs/note/c2e5b2e4475660b29a5166856b0c224e2ce52faf.png@1014w_!web-note.avif"
-                      alt="残差块"
-                ></p>
-<p>之前增加模型深度的方法都是层层堆叠的方法，ResNet的思想是在堆叠层数的同时不会增加模型的复杂度<br>上图中左侧表示一个正常块，右侧表示一个残差块<br>x：原始输入<br>f(x)：理想映射（也是激活函数的输入）<br>对于正常块中来说，虚线框中的部分需要直接拟合出理想映射 f(x)；而对于残差块来说，同样的虚线框中的部分需要拟合出残差映射 f(x) - x<br>残差映射在现实中往往更容易优化<br>如果以恒等映射 f(x) &#x3D; x 作为所想要学出的理想映射 f(x)，则只需要将残差块中虚线框内加权运算的权重和偏置参数设置为 0，f(x) 就变成恒等映射了<br>在实际中，当理想映射 f(x) 极接近于恒等映射时，残差映射易于捕捉恒等映射的细微波动<br>在残差块中，输入可以通过跨层数据线路更快地向前传播  </p>
-<p>残差块使得很深的网络更加容易训练（不管网络有多深，因为有跨层数据通路连接的存在，使得始终能够包含小的网络，因为跳转连接的存在，所以会先将下层的小型网络训练好再去训练更深层次的网络），甚至可以训练一千层的网络（只要内存足够，优化算法就能够实现）<br>学习嵌套函数是神经网络的理想情况，在深层神经网络中，学习另一层作为恒等映射比较容易<br>残差映射可以更容易地学习同一函数，例如将权重层中的参数近似为零<br>利用残差块可以训练出一个有效的深层神经网络：输入可以通过层间的残余连接更快地向前传播<br>残差网络对随后的深层神经网络的设计产生了深远影响，无论是卷积类网络还是全连接类网络，几乎现在所有的网络都会用到，因为只有这样才能够让网络搭建的更深</p>
-<hr>
-<p>残差块:</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">from</span> torch.nn <span class="keyword">import</span> functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> d2l <span class="keyword">import</span> torch <span class="keyword">as</span> d2l</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Residual</span>(nn.Module):  </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, input_channels, num_channels,</span></span><br><span class="line"><span class="params">                 use_1x1conv=<span class="literal">False</span>, strides=<span class="number">1</span></span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(input_channels, num_channels,</span><br><span class="line">                               kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>, stride=strides)</span><br><span class="line">        self.conv2 = nn.Conv2d(num_channels, num_channels,</span><br><span class="line">                               kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">if</span> use_1x1conv:</span><br><span class="line">            self.conv3 = nn.Conv2d(input_channels, num_channels,</span><br><span class="line">                                   kernel_size=<span class="number">1</span>, stride=strides)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.conv3 = <span class="literal">None</span></span><br><span class="line">        self.bn1 = nn.BatchNorm2d(num_channels)</span><br><span class="line">        self.bn2 = nn.BatchNorm2d(num_channels)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, X</span>):</span><br><span class="line">        Y = F.relu(self.bn1(self.conv1(X)))</span><br><span class="line">        Y = self.bn2(self.conv2(Y))</span><br><span class="line">        <span class="keyword">if</span> self.conv3:</span><br><span class="line">            X = self.conv3(X)</span><br><span class="line">        Y += X</span><br><span class="line">        <span class="keyword">return</span> F.relu(Y)</span><br></pre></td></tr></table></figure></div>
-
-<p>通俗的说就是如果加了conv3的效果好，loss小了  就用，不然就不用</p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://zh-v2.d2l.ai/_images/resnet-block.svg"
-                      alt="包含以及不包含 1×1 卷积层的残差块"
-                ></p>
 ]]></content>
   </entry>
   <entry>
@@ -1256,6 +1238,77 @@
 ]]></content>
   </entry>
   <entry>
+    <title>“基础模型pytorch学习笔记”</title>
+    <url>/2023/12/25/%E2%80%9C%E6%9D%8E%E6%B2%90%E8%8A%B1%E4%B9%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E2%80%9D/</url>
+    <content><![CDATA[<h1 id="Resnet"><a href="#Resnet" class="headerlink" title="Resnet"></a>Resnet</h1><p><strong>问题：随着神经网络的不断加深，一定会带来好处吗？</strong></p>
+<p>蓝色五角星表示最优值<br>标有Fi的闭合区域表示函数，闭合区域的面积代表函数的复杂程度，在这个区域中能够找到一个最优的模型（可以用区域中的一个点来表示，该点到最优值的距离可以用来衡量模型的好坏）<br>从上图中可以看出，随着函数的复杂度的不断增加，虽然函数的区域面积增大了，但是在该区域中所能找到的最优模型（该区域内的某一点）离最优值的距离可能会越来越远（也就是模型所在的区域随着函数复杂度的增加，逐渐偏离了原来的区域，离最优值越来越远）（非嵌套函数（non-nested function））<br>解决上述问题（模型走偏）的方法：每一次增加函数复杂度之后函数所覆盖的区域会包含原来函数所在的区域（嵌套函数（nested function）），只有当较复杂的函数类包含复杂度较小的函数类时，才能确保提高它的性能，如下图所示 </p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://i0.hdslb.com/bfs/note/c2e5b2e4475660b29a5166856b0c224e2ce52faf.png@1014w_!web-note.avif"
+                      alt="残差块"
+                ></p>
+<p>之前增加模型深度的方法都是层层堆叠的方法，ResNet的思想是在堆叠层数的同时不会增加模型的复杂度<br>上图中左侧表示一个正常块，右侧表示一个残差块<br>x：原始输入<br>f(x)：理想映射（也是激活函数的输入）<br>对于正常块中来说，虚线框中的部分需要直接拟合出理想映射 f(x)；而对于残差块来说，同样的虚线框中的部分需要拟合出残差映射 f(x) - x<br>残差映射在现实中往往更容易优化<br>如果以恒等映射 f(x) &#x3D; x 作为所想要学出的理想映射 f(x)，则只需要将残差块中虚线框内加权运算的权重和偏置参数设置为 0，f(x) 就变成恒等映射了<br>在实际中，当理想映射 f(x) 极接近于恒等映射时，残差映射易于捕捉恒等映射的细微波动<br>在残差块中，输入可以通过跨层数据线路更快地向前传播  </p>
+<p>残差块使得很深的网络更加容易训练（不管网络有多深，因为有跨层数据通路连接的存在，使得始终能够包含小的网络，因为跳转连接的存在，所以会先将下层的小型网络训练好再去训练更深层次的网络），甚至可以训练一千层的网络（只要内存足够，优化算法就能够实现）<br>学习嵌套函数是神经网络的理想情况，在深层神经网络中，学习另一层作为恒等映射比较容易<br>残差映射可以更容易地学习同一函数，例如将权重层中的参数近似为零<br>利用残差块可以训练出一个有效的深层神经网络：输入可以通过层间的残余连接更快地向前传播<br>残差网络对随后的深层神经网络的设计产生了深远影响，无论是卷积类网络还是全连接类网络，几乎现在所有的网络都会用到，因为只有这样才能够让网络搭建的更深</p>
+<hr>
+<p>残差块:</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">from</span> torch.nn <span class="keyword">import</span> functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> d2l <span class="keyword">import</span> torch <span class="keyword">as</span> d2l</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Residual</span>(nn.Module):  </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, input_channels, num_channels,</span></span><br><span class="line"><span class="params">                 use_1x1conv=<span class="literal">False</span>, strides=<span class="number">1</span></span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(input_channels, num_channels,</span><br><span class="line">                               kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>, stride=strides)</span><br><span class="line">        self.conv2 = nn.Conv2d(num_channels, num_channels,</span><br><span class="line">                               kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">if</span> use_1x1conv:</span><br><span class="line">            self.conv3 = nn.Conv2d(input_channels, num_channels,</span><br><span class="line">                                   kernel_size=<span class="number">1</span>, stride=strides)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.conv3 = <span class="literal">None</span></span><br><span class="line">        self.bn1 = nn.BatchNorm2d(num_channels)</span><br><span class="line">        self.bn2 = nn.BatchNorm2d(num_channels)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, X</span>):</span><br><span class="line">        Y = F.relu(self.bn1(self.conv1(X)))</span><br><span class="line">        Y = self.bn2(self.conv2(Y))</span><br><span class="line">        <span class="keyword">if</span> self.conv3:</span><br><span class="line">            X = self.conv3(X)</span><br><span class="line">        Y += X</span><br><span class="line">        <span class="keyword">return</span> F.relu(Y)</span><br></pre></td></tr></table></figure></div>
+
+<p>通俗的说就是如果加了conv3的效果好，loss小了  就用，不然就不用</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://zh-v2.d2l.ai/_images/resnet-block.svg"
+                      alt="包含以及不包含 1×1 卷积层的残差块"
+                ></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>「Prompt Engineering」提示词工程</title>
+    <url>/2024/06/23/%E3%80%8CPrompt-Engineering%E3%80%8D%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B/</url>
+    <content><![CDATA[<p>提示工程（Prompt Engingering），也被称为上下文提示（In-Context Prompting），指的是通过结构化文本等方式来完善提示词，引导LLM输出我们期望的结果。通过提示词工程可以在不更新模型权重的情况下，让LLM完成不同类型的任务。其主要依赖于经验，而且提示词工程方法的效果在不同的模型中可能会有很大的差异，因此需要大量的实验和探索。</p>
+<p>提示工程旨在获取这些提示并帮助模型在其输出中实现高准确度和相关性，掌握提示工程相关技能将有助于用户更好地了解大型语言模型的能力和局限性。特别地， 矢量数据库、agent和prompt pipeline已经被用作在对话中，作为向 LLM 提供相关上下文数据的途径。</p>
+<p>提示工程涉及选择、编写和组织提示，以便获得所需的输出，主要包括以下方面：</p>
+<ul>
+<li>Prompt 格式：确定 prompt 的结构和格式，例如，问题形式、描述形式、关键词形式等。</li>
+<li>Prompt 内容：选择合适的词语、短语或问题，以确保模型理解用户的意图。</li>
+<li>Prompt 上下文：考虑前文或上下文信息，以确保模型的回应与先前的对话或情境相关。</li>
+<li>Prompt 编写技巧：使用清晰、简洁和明了的语言编写 prompt，以准确传达用户的需求。</li>
+<li>Prompt 优化：在尝试不同 prompt 后，根据结果对 prompt 进行调整和优化，以获得更满意的回应。</li>
+</ul>
+<h2 id="COT链式思考提示"><a href="#COT链式思考提示" class="headerlink" title="COT链式思考提示"></a>COT链式思考提示</h2><p>提示通过中间推理步骤实现了复杂的推理能力。您可以将其与少样本提示相结合，以获得更好的结果，以便在回答之前进行推理的更复杂的任务。</p>
+<p>即链式思考提示，是一种在人工智能模型中引导逐步推理的方法。通过构建一系列有序、相互关联的思考步骤，模型能够更深入地理解问题，并生成结构化、逻辑清晰的回答。</p>
+<p>二、核心特点</p>
+<p>有序性：链式思考提示要求将问题分解为一系列有序的步骤，每个步骤都建立在前一个步骤的基础上，形成一条清晰的思考链条。</p>
+<p>关联性：每个思考步骤之间必须存在紧密的逻辑联系，以确保整个思考过程的连贯性和一致性。</p>
+<p>逐步推理：模型在每个步骤中只关注当前的问题和相关信息，通过逐步推理的方式逐步逼近最终答案。</p>
+<h3 id="Zero-shot-CoT"><a href="#Zero-shot-CoT" class="headerlink" title="Zero-shot-CoT"></a>Zero-shot-CoT</h3><p>:我去市场买了10个苹果。我给了邻居2个苹果和修理工2个苹果。然后我去买了5个苹果并吃了1个。我还剩下多少苹果？<em><strong>让我们逐步思考</strong></em></p>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">Q:我去市场买了10个苹果。我给了邻居2个苹果和修理工2个苹果。然后我去买了5个苹果并吃了1个。我还剩下多少苹果？**让我们逐步思考**</span><br><span class="line"></span><br><span class="line">A：首先，您从10个苹果开始。</span><br><span class="line">您给了邻居和修理工各2个苹果，所以您还剩下6个苹果。</span><br><span class="line">然后您买了5个苹果，所以现在您有11个苹果。</span><br><span class="line">最后，您吃了1个苹果，所以您还剩下10个苹果。</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="Few-shot-CoT"><a href="#Few-shot-CoT" class="headerlink" title="Few-shot_CoT"></a>Few-shot_CoT</h3><p>就是举个例子，推导的例子</p>
+<h2 id="Zero-shot-Prompting"><a href="#Zero-shot-Prompting" class="headerlink" title="Zero-shot Prompting"></a>Zero-shot Prompting</h2><p>Zero-Shot Prompting 指的是在大型语言模型(LLM)中，不需要额外微调或训练,直接通过文本提示就可以完成指定的下游任务。</p>
+<p>请注意，在上面的提示中，我们没有向模型提供任何示例——这就是零样本能力的作用</p>
+<p>主要思想:</p>
+<ul>
+<li><p>先训练一个通用的大型语言模型,学习语言的基本规则,掌握丰富的常识和知识。</p>
+</li>
+<li><p>然后在不改变模型参数的情况下,只通过软性提示指导模型完成特定任务。</p>
+</li>
+<li><p>模型根据提示和已掌握的知识,生成对应任务的输出。</p>
+</li>
+</ul>
+<p><strong>缺点</strong>：Zero-Shot Prompting 技术依赖于预训练的语言模型，这些模型可能会受到训练数据集的限制和偏见。它的输出有时可能不够准确，或不符合预期。这可能需要对模型进⾏进⼀步的微调或添加更多的提示⽂本来纠正。</p>
+<h2 id="Few-shot-Prompting"><a href="#Few-shot-Prompting" class="headerlink" title="Few-shot Prompting"></a>Few-shot Prompting</h2><p>但在使用零样本设置时，它们在更复杂的任务上仍然表现不佳。少样本提示可以作为一种技<strong>术，以启用上下文学习</strong>，我们在提示中提供演示以引导模型实现更好的性能。演示作为后续示例的条件，是通过提供<strong>模型少量高质量的示例</strong>,这些示例包括目标任务的输入和期望输出。通过观察这些良好的示例，模型可以更好地理解人类意图和生成准确输出的标准。</p>
+<p><strong>关键思想</strong>:</p>
+<ul>
+<li>仍然基于预训练好的通用语言模型</li>
+<li>使用软提示指导模型完成新任务</li>
+<li><strong>额外提供1-2个相关示例作为提示补充</strong></li>
+</ul>
+<p><strong>缺点</strong>：这种方法可能会消耗更多的token，并且在处理长文本的输入或者输出的时候可能会遇到上下文长度限制的问题。大型语言模型（例如GPT-3）在zero-shot能力方面表现出色。但对于复杂任务，few-shot 提示性能更好。为了提高性能，我们使用，few-shot 提示进行上下文学习，通过在提示中提供演示来指导模型执行任务。换句话说，将模型置于一些特定任务的示例中有助于提高模型性能。</p>
+]]></content>
+  </entry>
+  <entry>
     <title></title>
     <url>/2024/03/15/%E5%8F%91%E7%A5%A8%E8%AE%B0%E5%BD%95/</url>
     <content><![CDATA[<p>发票记录</p>
@@ -1307,46 +1360,6 @@
 </tbody></table>
 <div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;path&quot;: &quot;能源互联网规划及配电网规划专业调考题库（2020版）-勘误更新版&quot;,</span><br><span class="line">    &quot;number&quot;: 1,</span><br><span class="line">    &quot;question&quot;: &quot;在装有热水的容器外涂上一薄层碳黑，则水凉的快，因为&quot;,</span><br><span class="line">    &quot;A&quot;: &quot;碳黑黑度大，辐射散热少&quot;,</span><br><span class="line">    &quot;B&quot;: &quot;碳黑黑度大，辐射散热少&quot;,</span><br><span class="line">    &quot;C&quot;: &quot;碳黑黑度小，辐射散热多&quot;,</span><br><span class="line">    &quot;D&quot;: &quot;碳黑黑度小，辐射散热少&quot;,</span><br><span class="line">    &quot;answer&quot;: &quot;B&quot;,</span><br><span class="line">    &quot;analysis&quot;: &quot;&quot;,</span><br><span class="line">    &quot;type&quot;: &quot;Singlechoice&quot;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure></div>
 
-]]></content>
-  </entry>
-  <entry>
-    <title>「Prompt Engineering」提示词工程</title>
-    <url>/2024/06/23/%E3%80%8CPrompt-Engineering%E3%80%8D%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B/</url>
-    <content><![CDATA[<p>提示工程（Prompt Engingering），也被称为上下文提示（In-Context Prompting），指的是通过结构化文本等方式来完善提示词，引导LLM输出我们期望的结果。通过提示词工程可以在不更新模型权重的情况下，让LLM完成不同类型的任务。其主要依赖于经验，而且提示词工程方法的效果在不同的模型中可能会有很大的差异，因此需要大量的实验和探索。</p>
-<p>提示工程旨在获取这些提示并帮助模型在其输出中实现高准确度和相关性，掌握提示工程相关技能将有助于用户更好地了解大型语言模型的能力和局限性。特别地， 矢量数据库、agent和prompt pipeline已经被用作在对话中，作为向 LLM 提供相关上下文数据的途径。</p>
-<p>提示工程涉及选择、编写和组织提示，以便获得所需的输出，主要包括以下方面：</p>
-<ul>
-<li>Prompt 格式：确定 prompt 的结构和格式，例如，问题形式、描述形式、关键词形式等。</li>
-<li>Prompt 内容：选择合适的词语、短语或问题，以确保模型理解用户的意图。</li>
-<li>Prompt 上下文：考虑前文或上下文信息，以确保模型的回应与先前的对话或情境相关。</li>
-<li>Prompt 编写技巧：使用清晰、简洁和明了的语言编写 prompt，以准确传达用户的需求。</li>
-<li>Prompt 优化：在尝试不同 prompt 后，根据结果对 prompt 进行调整和优化，以获得更满意的回应。</li>
-</ul>
-<h2 id="COT链式思考提示"><a href="#COT链式思考提示" class="headerlink" title="COT链式思考提示"></a>COT链式思考提示</h2><p>提示通过中间推理步骤实现了复杂的推理能力。您可以将其与少样本提示相结合，以获得更好的结果，以便在回答之前进行推理的更复杂的任务。</p>
-<h3 id="Zero-shot-CoT"><a href="#Zero-shot-CoT" class="headerlink" title="Zero-shot-CoT"></a>Zero-shot-CoT</h3><p>:我去市场买了10个苹果。我给了邻居2个苹果和修理工2个苹果。然后我去买了5个苹果并吃了1个。我还剩下多少苹果？<em><strong>让我们逐步思考</strong></em></p>
-<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">Q:我去市场买了10个苹果。我给了邻居2个苹果和修理工2个苹果。然后我去买了5个苹果并吃了1个。我还剩下多少苹果？**让我们逐步思考**</span><br><span class="line"></span><br><span class="line">A：首先，您从10个苹果开始。</span><br><span class="line">您给了邻居和修理工各2个苹果，所以您还剩下6个苹果。</span><br><span class="line">然后您买了5个苹果，所以现在您有11个苹果。</span><br><span class="line">最后，您吃了1个苹果，所以您还剩下10个苹果。</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="Few-shot-CoT"><a href="#Few-shot-CoT" class="headerlink" title="Few-shot_CoT"></a>Few-shot_CoT</h3><p>就是举个例子，推导的例子</p>
-<h2 id="Zero-shot-Prompting"><a href="#Zero-shot-Prompting" class="headerlink" title="Zero-shot Prompting"></a>Zero-shot Prompting</h2><p>Zero-Shot Prompting 指的是在大型语言模型(LLM)中，不需要额外微调或训练,直接通过文本提示就可以完成指定的下游任务。</p>
-<p>请注意，在上面的提示中，我们没有向模型提供任何示例——这就是零样本能力的作用</p>
-<p>主要思想:</p>
-<ul>
-<li><p>先训练一个通用的大型语言模型,学习语言的基本规则,掌握丰富的常识和知识。</p>
-</li>
-<li><p>然后在不改变模型参数的情况下,只通过软性提示指导模型完成特定任务。</p>
-</li>
-<li><p>模型根据提示和已掌握的知识,生成对应任务的输出。</p>
-</li>
-</ul>
-<p><strong>缺点</strong>：Zero-Shot Prompting 技术依赖于预训练的语言模型，这些模型可能会受到训练数据集的限制和偏见。它的输出有时可能不够准确，或不符合预期。这可能需要对模型进⾏进⼀步的微调或添加更多的提示⽂本来纠正。</p>
-<h2 id="Few-shot-Prompting"><a href="#Few-shot-Prompting" class="headerlink" title="Few-shot Prompting"></a>Few-shot Prompting</h2><p>但在使用零样本设置时，它们在更复杂的任务上仍然表现不佳。少样本提示可以作为一种技<strong>术，以启用上下文学习</strong>，我们在提示中提供演示以引导模型实现更好的性能。演示作为后续示例的条件，是通过提供<strong>模型少量高质量的示例</strong>,这些示例包括目标任务的输入和期望输出。通过观察这些良好的示例，模型可以更好地理解人类意图和生成准确输出的标准。</p>
-<p><strong>关键思想</strong>:</p>
-<ul>
-<li>仍然基于预训练好的通用语言模型</li>
-<li>使用软提示指导模型完成新任务</li>
-<li><strong>额外提供1-2个相关示例作为提示补充</strong></li>
-</ul>
-<p><strong>缺点</strong>：这种方法可能会消耗更多的token，并且在处理长文本的输入或者输出的时候可能会遇到上下文长度限制的问题。大型语言模型（例如GPT-3）在zero-shot能力方面表现出色。但对于复杂任务，few-shot 提示性能更好。为了提高性能，我们使用，few-shot 提示进行上下文学习，通过在提示中提供演示来指导模型执行任务。换句话说，将模型置于一些特定任务的示例中有助于提高模型性能。</p>
 ]]></content>
   </entry>
   <entry>
