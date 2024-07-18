@@ -30,7 +30,7 @@
 <meta property="og:image" content="c:\xhou\blog_pic\image.png">
 <meta property="og:image" content="c:\xhou\blog_pic\image_1.png">
 <meta property="article:published_time" content="2024-06-22T08:44:34.000Z">
-<meta property="article:modified_time" content="2024-07-18T01:54:34.792Z">
+<meta property="article:modified_time" content="2024-07-18T13:48:11.933Z">
 <meta property="article:author" content="深情小小侯">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="c:\xhou\blog_pic\79ee1b168c08439eb0e1d9851254dc4c.png">
@@ -327,8 +327,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2024-07-18 09:54:34</span>
-            <span class="mobile">2024-07-18 09:54:34</span>
+            <span class="desktop">2024-07-18 21:48:11</span>
+            <span class="mobile">2024-07-18 21:48:11</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -419,7 +419,8 @@
 <p><strong>平滑的激活</strong>：SiLU 比 ReLU（Rectified Linear Unit）等函数更加平滑，避免了 ReLU 的“死区”问题，即当输入为负时，ReLU 输出恒为 0，导致神经元可能不会被激活。</p>
 <p><strong>梯度优化</strong>：SiLU 的平滑性使得其梯度在训练过程中更加稳定，避免了梯度爆炸或消失的问题，有助于提高模型训练的效果。</p>
 <p><strong>增强非线性能力</strong>：通过 Sigmoid 函数的非线性特性，SiLU 可以更好地捕捉输入与输出之间的复杂关系，从而增强模型的非线性表达能力。</p>
-<h3 id="SwishGLU"><a href="#SwishGLU" class="headerlink" title="SwishGLU"></a><strong>SwishGLU</strong></h3><p>GLU<br>$$<br>GLU(x)&#x3D;(XW)⊗σ(XV)<br>$$</p>
+<h3 id="SwishGLU"><a href="#SwishGLU" class="headerlink" title="SwishGLU"></a><strong>SwishGLU</strong></h3><p>GLU</p>
+<p>GLU通过门控机制对输出进行把控，像Attention一样可看作是对重要特征的选择。其优势是不仅具有通用激活函数的非线性，而且<strong>反向传播梯度时具有线性通道</strong>，类似ResNet残差网络中的加和操作传递梯度，能够缓解梯度消失问题。<br>$$<br>GLU(x)&#x3D;(XW)⊗σ(XV)<br>$$</p>
 <ul>
 <li>X 是输入矩阵。</li>
 <li>W 和 V 是可训练的权重矩阵。</li>
@@ -455,7 +456,7 @@
         
             <li>
                 <strong>更新于
-                    :</strong> 2024-07-18 09:54:34
+                    :</strong> 2024-07-18 21:48:11
             </li>
         
         <li>

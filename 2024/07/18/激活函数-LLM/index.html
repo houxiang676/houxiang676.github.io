@@ -13,16 +13,20 @@
     
     <!--- Seo Part-->
     
-    <link rel="canonical" href="http://example.com/"/>
+    <link rel="canonical" href="http://example.com/2024/07/18/激活函数-llm/"/>
     <meta name="robots" content="index,follow">
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta property="og:type" content="website">
-<meta property="og:title" content="深情小小侯的博客">
-<meta property="og:url" content="http://example.com/index.html">
+        <meta name="description" content="model 训练数据 激活函数 位置编码 layer norm    BERT  Tanh  LayerNorm   LLama3 以英语为主的拉丁语系，不包含中日韩文 SwiGLU RoPE Pre RMS Norm   GPT2  GeLU RoPE Pre Layer Normalization**   Chatglm 中英双语，中英文比例为1:1 GeGLU RoPE Post De">
+<meta property="og:type" content="article">
+<meta property="og:title" content="激活函数_LLM">
+<meta property="og:url" content="http://example.com/2024/07/18/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0-LLM/index.html">
 <meta property="og:site_name" content="深情小小侯的博客">
+<meta property="og:description" content="model 训练数据 激活函数 位置编码 layer norm    BERT  Tanh  LayerNorm   LLama3 以英语为主的拉丁语系，不包含中日韩文 SwiGLU RoPE Pre RMS Norm   GPT2  GeLU RoPE Pre Layer Normalization**   Chatglm 中英双语，中英文比例为1:1 GeGLU RoPE Post De">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-07-18T13:41:40.000Z">
+<meta property="article:modified_time" content="2024-07-18T14:10:41.172Z">
 <meta property="article:author" content="深情小小侯">
 <meta name="twitter:card" content="summary">
     
@@ -35,6 +39,8 @@
     <!--- Page Info-->
     
     <title>
+        
+            激活函数_LLM -
         
         深情小小侯的博客
     </title>
@@ -108,61 +114,6 @@
 <main class="page-container" id="swup">
 
     
-        
-    <style>
-        .home-banner-container {
-            background: transparent !important;
-        }
-
-        .home-article-item,
-        .sidebar-links,
-        .sidebar-content,
-        a.page-number,
-        a.extend,
-        .sidebar-links .links:hover,
-        .right-bottom-tools,
-        footer.footer {
-            background-color: var(--background-color-transparent-80) !important;
-        }
-
-        .right-bottom-tools:hover,
-        a.page-number:hover,
-        a.extend:hover {
-            background-color: var(--primary-color) !important;
-        }
-
-        .site-info,
-        .home-article-sticky-label {
-            background-color: var(--background-color-transparent-15) !important;
-        }
-
-        .home-article-sticky-label {
-            backdrop-filter: none !important;
-        }
-    </style>
-
-    <div class="home-banner-background transition-fade">
-    </div>
-
-
-<div class="home-banner-container flex justify-center items-center transition-fade">
-    <div class="content flex justify-center items-center">
-        <div class="description flex flex-col justify-center items-center"
-        
-        >
-            走得快走得慢不重要，走下去就是胜利
-            
-            
-                <p><i id="subtitle"></i></p>
-            
-        </div>
-        
-    </div>
-</div>
-
-
-
-    
 
     <div class="main-content-container">
 
@@ -170,13 +121,13 @@
         <div class="main-content-header">
             <header class="navbar-container">
     
-    <div class="navbar-content has-home-banner">
+    <div class="navbar-content">
         <div class="left">
             
             <a class="logo-title" href="/">
-                <h1>
+                
                 深情小小侯的博客
-                </h1>
+                
             </a>
         </div>
 
@@ -188,7 +139,7 @@
                         
                             <li class="navbar-item">
                                 <!-- Menu -->
-                                <a class="active" 
+                                <a class="" 
                                     href="/"  >
                                     
                                         
@@ -266,7 +217,7 @@
             
                 
                     <li class="drawer-navbar-item text-base my-1.5 flex justify-center items-center">
-                        <a class="rounded-3xl py-1.5 px-5 hover:border hover:!text-primary active:!text-primary group active" 
+                        <a class="rounded-3xl py-1.5 px-5 hover:border hover:!text-primary active:!text-primary group " 
                         href="/"  >
                              
                                 
@@ -333,534 +284,239 @@
         <div class="main-content-body">
 
             
-                <div class="home-sidebar-container">
-    <div class="sticky-container sticky">
-        
-            
-                <div class="sidebar-links">
-                    <div class="site-info">
-                        <div class="site-name">深情小小侯的博客</div>
-                        
-                            <div class="announcement">
-                                纸上得来终觉浅，绝知此事要躬行
-                            </div>
-                        
-                    </div>
-                    
-                        
-                            
-                                <a class="links" href="/archives">
-                                    
-                                        <i class="fa-regular fa-archive icon-space"></i>
-                                    
-                                    <span class="link-name">Archives</span>
-                                </a>
-                            
-                        
-                            
-                                <a class="links" href="/tags">
-                                    
-                                        <i class="fa-regular fa-tags icon-space"></i>
-                                    
-                                    <span class="link-name">Tags</span>
-                                </a>
-                            
-                        
-                    
-                </div>
-            
-            <div class="sidebar-content"  marginTop >
-                <div class="avatar flex justify-center">
-                    <img src="/images/redefine-avatar.svg">
-                </div>
-                <div class="author flex flex-col justify-center my-2.5 mx-0">
-                    <div class="name">深情小小侯</div>
-                    
-                        <div class="label">Lv3</div>
-                    
-                </div>
-                <div class="statistics">
-                    <a class="item" href="/tags">
-                        <div class="number">0</div>
-                        <div class="label">标签</div>
-                    </a>
-                    <a class="item" href="/categories">
-                        <div class="number">0</div>
-                        <div class="label">分类</div>
-                    </a>
-                    <a class="item" href="/archives">
-                        <div class="number">27</div>
-                        <div class="label">文章</div>
-                    </a>
-                </div>
-            </div>
-        
-
-    </div>
-</div>
-
-            
 
             <div class="main-content">
 
                 
-                    <div class="home-content-container">
-    <ul class="home-article-list">
-        
-            <li class="home-article-item">
+                    <div class="post-page-container">
+    <div class="article-content-container">
 
-                
-
-                
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2024/07/18/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0-LLM/">
-                        激活函数_LLM
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
+        <div class="article-title">
+            
+                <h1 class="article-title-regular">激活函数_LLM</h1>
+            
+            </div>
+            
                     
+        
+        
+            <div class="article-header flex flex-row gap-2 items-center">
+                <div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+                    <img src="/images/redefine-avatar.svg">
+                </div>
+                <div class="info flex flex-col justify-between">
+                    <div class="author flex items-center">
+                        <span class="name text-default-text-color text-lg font-semibold">深情小小侯</span>
                         
-
-
-model
-训练数据
-激活函数
-位置编码
-layer norm
-
-
-
-BERT
-
-Tanh
-
-LayerNorm
-
-
-LLama3
-以英语为主的拉丁语系，不包含中日韩文
-SwiGLU
-RoPE
-Pre RMS Norm
-
-
-GPT2
-
-GeLU...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fa-solid fa-calendars"></i>&nbsp;
-            <span class="home-article-date" data-date="Thu Jul 18 2024 21:41:40 GMT+0800">
-                
-                    2024-07-18
-                
-            </span>
-        </span>
-        
-        
-    </div>
-
-    <a href="/2024/07/18/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0-LLM/">阅读全文<span class="seo-reader-text">激活函数_LLM</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2024/07/17/transformer%E7%B3%BB%E5%88%97%E6%B1%87%E6%80%BB/">
-                        transformer模型
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        Attention1.attention，self-attentionAttention机制是一种在处理时序相关问题的时候常用的技术，主要用于处理序列数据。核心思想是在处理序列数据时，网络应该更关注输入中的重要部分，而忽略不重要的部分，它通过学习不同...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fa-solid fa-calendars"></i>&nbsp;
-            <span class="home-article-date" data-date="Wed Jul 17 2024 22:27:18 GMT+0800">
-                
-                    2024-07-17
-                
-            </span>
-        </span>
-        
-        
-    </div>
-
-    <a href="/2024/07/17/transformer%E7%B3%BB%E5%88%97%E6%B1%87%E6%80%BB/">阅读全文<span class="seo-reader-text">transformer模型</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2024/06/23/%E3%80%8CPrompt-Engineering%E3%80%8D%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B/">
-                        「Prompt Engineering」提示词工程
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        提示工程（Prompt Engingering），也被称为上下文提示（In-Context Prompting），指的是通过结构化文本等方式来完善提示词，引导LLM输出我们期望的结果。通过提示词工程可以在不更新模型权重的情况下，让LLM完成不同类型的...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fa-solid fa-calendars"></i>&nbsp;
-            <span class="home-article-date" data-date="Sun Jun 23 2024 10:38:14 GMT+0800">
-                
-                    2024-06-23
-                
-            </span>
-        </span>
-        
-        
-    </div>
-
-    <a href="/2024/06/23/%E3%80%8CPrompt-Engineering%E3%80%8D%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B/">阅读全文<span class="seo-reader-text">「Prompt Engineering」提示词工程</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2024/06/22/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E8%AF%84%E6%B5%8B/">
-                        大模型评测
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        1. 大模型怎么评测？自动评测和人工评测。
-自动评测方法基于计算机算法和自动生成的指标，能够快速且高效地评测模型的性能。比如ROUGE F1，acc
-而人工评测则侧重于人类专家的主观判断和质量评测，能够提供更深入、细致的分析和意见。了解和掌握这两种评...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fa-solid fa-calendars"></i>&nbsp;
-            <span class="home-article-date" data-date="Sat Jun 22 2024 22:04:12 GMT+0800">
-                
-                    2024-06-22
-                
-            </span>
-        </span>
-        
-        
-    </div>
-
-    <a href="/2024/06/22/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E8%AF%84%E6%B5%8B/">阅读全文<span class="seo-reader-text">大模型评测</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2024/06/22/LayerNorm%E7%AD%89/">
-                        LayerNorm等
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        1.Normalization归一化模块的位置通常有三种选择，分 别是层后归一化（Post-Layer Normalization, Post-Norm）、层前归一化（Pre-Layer Normalization, Pre-Norm）和夹心归一化（...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fa-solid fa-calendars"></i>&nbsp;
-            <span class="home-article-date" data-date="Sat Jun 22 2024 19:08:58 GMT+0800">
-                
-                    2024-06-22
-                
-            </span>
-        </span>
-        
-        
-    </div>
-
-    <a href="/2024/06/22/LayerNorm%E7%AD%89/">阅读全文<span class="seo-reader-text">LayerNorm等</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2024/06/22/LLama-%E6%9E%B6%E6%9E%84/">
-                        LLama_架构
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        LLaMA 所采用的 Transformer 结构和细节，与标准的 Transformer 架构不同的地方包括采用了前置层归一化（Pre-normalization）并使用 RMSNorm 归一化函数 （Normalizing Function）、激...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fa-solid fa-calendars"></i>&nbsp;
-            <span class="home-article-date" data-date="Sat Jun 22 2024 16:44:34 GMT+0800">
-                
-                    2024-06-22
-                
-            </span>
-        </span>
-        
-        
-    </div>
-
-    <a href="/2024/06/22/LLama-%E6%9E%B6%E6%9E%84/">阅读全文<span class="seo-reader-text">LLama_架构</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2024/06/22/LLM%E6%8E%A8%E7%90%86%E5%8A%A0%E9%80%9F%E6%8A%80%E6%9C%AF/">
-                        LLM推理加速技术
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        一个常规的LLM推理过程通常分为两个阶段：prefill和decode。通常会使用KV cache技术加速推理。
-预填充阶段（prefill）。在这个阶段中，我们把整段prompt喂给模型做forward计算。如果采用KV cache技术，在这个阶段...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fa-solid fa-calendars"></i>&nbsp;
-            <span class="home-article-date" data-date="Sat Jun 22 2024 08:54:14 GMT+0800">
-                
-                    2024-06-22
-                
-            </span>
-        </span>
-        
-        
-    </div>
-
-    <a href="/2024/06/22/LLM%E6%8E%A8%E7%90%86%E5%8A%A0%E9%80%9F%E6%8A%80%E6%9C%AF/">阅读全文<span class="seo-reader-text">LLM推理加速技术</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2024/06/20/LLM-base/">
-                        LLM_base
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        基本知识AttentionSelf-Attention的核心是用文本中的其它词来增强目标词的语义表示，从而更好的利用上下文的信息。
-self-attention 的时间复杂度是在经过维度的“分割”之后，在多个低维空间，相比原有的高维空间，能降低特征学...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fa-solid fa-calendars"></i>&nbsp;
-            <span class="home-article-date" data-date="Thu Jun 20 2024 11:38:11 GMT+0800">
-                
-                    2024-06-20
-                
-            </span>
-        </span>
-        
-        
-    </div>
-
-    <a href="/2024/06/20/LLM-base/">阅读全文<span class="seo-reader-text">LLM_base</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2024/06/15/bert%E5%9F%BA%E7%A1%80/">
-                        bert基础
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        bert
-bert: encoder of transformer
-
-transformer: encoder-decoder(seq2seq)
-
-
-bert
-
-embeddings
-
-word(token) embedding   # token_...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fa-solid fa-calendars"></i>&nbsp;
-            <span class="home-article-date" data-date="Sat Jun 15 2024 09:14:39 GMT+0800">
-                
-                    2024-06-15
-                
-            </span>
-        </span>
-        
-        
-    </div>
-
-    <a href="/2024/06/15/bert%E5%9F%BA%E7%A1%80/">阅读全文<span class="seo-reader-text">bert基础</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2024/03/15/%E5%8F%91%E7%A5%A8%E8%AE%B0%E5%BD%95/">
+                            <span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv3</span>
                         
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        发票记录
-
-
-
-厂商
-金额
-发票类型
-说明
-时间
-
-
-
-百度
-66.26
-企业类普票&#x2F;增值税普通发票
-tokens资源包
-2024-03-15 10:34:01
-
-
-百度
-80.22
-企业类普票&#x2F;增值税普通发票
-tokens资源包...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fa-solid fa-calendars"></i>&nbsp;
-            <span class="home-article-date" data-date="Fri Mar 15 2024 11:20:35 GMT+0800">
-                
-                    2024-03-15
-                
-            </span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2024-07-18 21:41:40</span>
+        <span class="mobile">2024-07-18 21:41:40</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2024-07-18 22:10:41</span>
+            <span class="mobile">2024-07-18 22:10:41</span>
+            <span class="hover-info">更新</span>
         </span>
-        
-        
-    </div>
+    
 
-    <a href="/2024/03/15/%E5%8F%91%E7%A5%A8%E8%AE%B0%E5%BD%95/">阅读全文<span class="seo-reader-text"></span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
+    
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
 </div>
 
+                    </div>
+                </div>
+            </div>
+        
+
+        
+
+
+        <div class="article-content markdown-body">
+            <table>
+<thead>
+<tr>
+<th>model</th>
+<th><strong>训练数据</strong></th>
+<th>激活函数</th>
+<th>位置编码</th>
+<th><strong>layer norm</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BERT</td>
+<td></td>
+<td>Tanh</td>
+<td></td>
+<td>LayerNorm</td>
+</tr>
+<tr>
+<td>LLama3</td>
+<td>以英语为主的拉丁语系，不包含中日韩文</td>
+<td>SwiGLU</td>
+<td>RoPE</td>
+<td>Pre RMS Norm</td>
+</tr>
+<tr>
+<td>GPT2</td>
+<td></td>
+<td>GeLU</td>
+<td>RoPE</td>
+<td>Pre Layer Normalization**</td>
+</tr>
+<tr>
+<td>Chatglm</td>
+<td>中英双语，中英文比例为1:1</td>
+<td>GeGLU</td>
+<td>RoPE</td>
+<td>Post Deep Norm</td>
+</tr>
+</tbody></table>
+<p>GLU通过门控机制对输出进行把控，像Attention一样可看作是对重要特征的选择。其优势是不仅具有通用激活函数的非线性，而且<strong>反向传播梯度时具有线性通道</strong>，类似ResNet残差网络中的加和操作传递梯度，能够缓解梯度消失问题。</p>
+<p><strong>post layer norm</strong>。在原始的transformer中，layer normalization是放在残差连接之后的，称为post LN。使用Post LN的深层transformer模型容易出现训练不稳定的问题。如下图所示，post LN<strong>随着transformer层数的加深，梯度范数逐渐增大</strong>，导致了训练的不稳定性。</p>
+<p><strong>pre layer norm</strong>。改变layer normalization的位置，<strong>将其放在残差连接的过程中</strong>，self-attention或FFN块之前，称为“Pre LN”。如下图所示，Pre layer norm在每个transformer层的梯度范数近似相等，有利于提升训练稳定性。相比于post LN，使用pre LN的深层transformer训练更稳定，可以缓解训练不稳定问题。<strong>但缺点是pre LN可能会轻微影响transformer模型的性能</strong> 大语言模型的一个挑战就是如何<strong>提升训练的稳定性</strong>。为了提升训练稳定性，GPT3、PaLM、BLOOM、OPT等大语言模型都采用了pre layer norm。</p>
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> 激活函数_LLM</li>
+        <li><strong>作者:</strong> 深情小小侯</li>
+        <li><strong>创建于
+                :</strong> 2024-07-18 21:41:40</li>
+        
+            <li>
+                <strong>更新于
+                    :</strong> 2024-07-18 22:10:41
             </li>
         
+        <li>
+            <strong>链接:</strong> https://redefine.ohevan.com/2024/07/18/激活函数-LLM/
+        </li>
+        <li>
+            <strong>
+                版权声明:
+            </strong>
+            
+            本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0</a> 进行许可。
+            
+
+        </li>
     </ul>
-
-    <div class="home-paginator">
-        <div class="paginator">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa-regular fa-angle-right"></i></a>
 </div>
+
+            </div>
+        
+
+        
+
+        
+
+        
+            <div class="article-nav">
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                        rel="next"
+                        href="/2024/07/17/transformer%E7%B3%BB%E5%88%97%E6%B1%87%E6%80%BB/"
+                        >
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">transformer模型</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+
+        
+            <div class="comment-container">
+                <div class="comments-container pjax">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fa-solid fa-comments"></i>&nbsp;评论
+    </div>
+    
+
+        
+            
+ 
+    <div id="waline"></div>
+    <script type="module"  data-swup-reload-script>
+        import { init } from '/js/libs/waline.mjs';
+
+        function loadWaline() {
+            init({
+                el: '#waline',
+                serverURL: 'https://example.example.com',
+                lang: 'zh-CN',
+                dark: 'body[class~="dark-mode"]',
+                requiredMeta: ['nick','mail'], // cannot customize by theme config, change it yourself
+            });
+        }
+
+        if ('true') {
+            const loadWalineTimeout = setTimeout(() => {
+                loadWaline();
+                clearTimeout(loadWalineTimeout);
+            }, 1000);
+        } else {
+            window.addEventListener('DOMContentLoaded', loadWaline);
+        }
+        
+    </script>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+
+    
+        <div class="toc-content-container">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <div class="toc-title">此页目录</div>
+        <div class="page-title">激活函数_LLM</div>
+        
 
     </div>
 </div>
+        </div>
+    
+</div>
 
-                    <div class="comment-container pjax"></div>
+
+
                 
 
             </div>
@@ -932,6 +588,27 @@ tokens资源包...
         </div>
     </div>
 
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="article-tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="right-bottom-tools page-aside-toggle">
+                <i class="fa-regular fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fa-regular fa-comments"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
     
 
     <div class="right-side-tools-container">
@@ -1016,7 +693,6 @@ tokens资源包...
         containers: ["#swup"],
     });
 </script>
-
 
 
 
