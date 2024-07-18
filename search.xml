@@ -458,19 +458,32 @@
   <entry>
     <title>LLama_架构</title>
     <url>/2024/06/22/LLama-%E6%9E%B6%E6%9E%84/</url>
-    <content><![CDATA[<p><img  
+    <content><![CDATA[<p>LLaMA 所采用的 Transformer 结构和细节，与标准的 Transformer 架构不同的地方包括采用了<strong>前置层归一化（Pre-normalization</strong>）并使用 RMSNorm 归一化函数 （Normalizing Function）、<strong>激活函数更换为 SwiGLU</strong>，并使用了旋转位置嵌入（RoP），整体 Transformer 架构与 GPT-2 类似。</p>
+<p><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="C:\xhou\blog_pic\微信图片_20240622163724.png"
+                     data-src="C:\xhou\blog_pic\79ee1b168c08439eb0e1d9851254dc4c.png"
                       alt="微信图片_20240622163724"
                 ></p>
 <h2 id="1-LLama结构"><a href="#1-LLama结构" class="headerlink" title="1. LLama结构"></a>1. LLama结构</h2><ul>
 <li>Embeding</li>
 <li>RMS Norm</li>
+</ul>
+<p>​	其中，残差连接 （Residual Connection）将输入与该层的输出相加，实现了信息在不同层的跳跃传 递，从而缓解梯度爆炸和消失的问题</p>
+<p>​		<strong>为了使得模型训练过程更加稳定</strong>，GPT-2 相较于 GPT 就引入了<strong>前置层归一化方法</strong>，将<strong>第一个层归一化移动到多头自注意力层之前</strong>，第二个层归一化也移动到了全连接层之前，同时残差连接的位置也调整到了多头自注意力层与全连接层之后。层归一化中也采用了 RMSNorm 归一化函数。 针对输入向量 aRMSNorm 函数计算公式如下：</p>
+<ul>
 <li>RoPE （注意是只对QK做旋转偏移，而且是在计算完QK之后）</li>
 <li>Group Attention</li>
 <li>RMS Norm</li>
 <li>FFN()</li>
+</ul>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\xhou\blog_pic\1.png"
+                     
+                ></p>
+<ul>
 <li>RMSNorm</li>
 <li>linear</li>
 </ul>
@@ -486,22 +499,24 @@
 <p>$$<br>GeLU(x) &#x3D; 0.5 \times x \times (1 + tanh(\sqrt{\frac{2}{\pi}} \times (x + 0.044715 \times x^3)))<br>$$<br>其中，<code>tanh() </code>是双曲正切函数，<code>sqrt()</code> 是平方根函数，π是圆周率。</p>
 <div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line"></span><br><span class="line">def GELU(x):</span><br><span class="line">    return 0.5 * x * (1 + np.tanh(np.sqrt(2 / np.pi) * (x + 0.044715 * np.power(x, 3))))</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
 
-<p><img  
+<img  
                      lazyload
                      src="/images/loading.svg"
                      data-src="C:\xhou\blog_pic\image.png"
-                      alt="image"
-                ></p>
+                      alt="image" style="zoom:25%;" 
+                >
+
 <p>相对于 Sigmoid 和 Tanh 激活函数，<strong>ReLU 和 GeLU 更为准确和高效，因为它们在神经网络中的梯度消失问题上表现更好。而 ReLU 和 GeLU 几乎没有梯度消失的现象，可以更好地支持深层神经网络的训练和优化</strong>。<br>而 ReLU 和 GeLU 的区别在于形状和计算效率。ReLU 是一个非常简单的函数，仅仅是输入为负数时返回0，而输入为正数时返回自身，从而仅包含了一次分段线性变换。<strong>但是，ReLU 函数存在一个问题，就是在输入为负数时，输出恒为0，这个问题可能会导致神经元死亡，从而降低模型的表达能力</strong>。GeLU 函数则是一个连续的 S 形曲线，介于 Sigmoid 和 ReLU 之间，<strong>形状比 ReLU 更为平滑，可以在一定程度上缓解神经元死亡的问题。不过，由于 GeLU 函数中包含了指数运算等复杂计算，所以在实际应用中通常比 ReLU 慢。</strong></p>
 <h3 id="Swish"><a href="#Swish" class="headerlink" title="Swish"></a>Swish</h3><p>Swish是一种激活函数，它在深度学习中常用于神经网络的非线性变换。Swish函数的计算公式如下：<br>$$<br>Swish(x) &#x3D; x \times sigmoid(\beta * x)<br>$$<br>其中，$sigmoid()$是Sigmoid函数，$x$ 是输入，$\beta$ 是一个可调节的超参数。</p>
 <p>我们使用参数 β&#x3D;1 的 Swish 函数。这种情况下，它被称为 Sigmoid 线性单元（SiLU）函数。</p>
-<p><strong>SiLU 是 Swish 的特例</strong>：当 β&#x3D;1\beta &#x3D; 1β&#x3D;1 时，Swish 函数退化为 SiLU，即标准的 Swish 函数</p>
-<p><img  
+<p><strong>SiLU 是 Swish 的特例</strong>：当 β&#x3D;1 时，Swish 函数退化为 SiLU，即标准的 Swish 函数</p>
+<img  
                      lazyload
                      src="/images/loading.svg"
                      data-src="C:\xhou\blog_pic\image_1.png"
-                      alt="image_1"
-                ></p>
+                      alt="image_1" style="zoom: 50%;" 
+                >
+
 <p>Swish函数的特点是在接近零的区域表现得类似于线性函数，而在远离零的区域则表现出非线性的特性。<strong>相比于其他常用的激活函数（如ReLU、tanh等），Swish函数在某些情况下能够提供更好的性能和更快的收敛速度。</strong></p>
 <p>Swish函数的设计灵感来自于自动搜索算法，它通过引入一个可调节的超参数来增加非线性程度。当beta为0时，Swish函数退化为线性函数；当beta趋近于无穷大时，Swish函数趋近于ReLU函数。<br>需要注意的是，Swish函数<strong>相对于其他激活函数来说计算开销较大，因为它需要进行Sigmoid运</strong>算。因此，在实际应用中，也可以根据具体情况选择其他的激活函数来代替Swish函数。</p>
 <p><strong>平滑的激活</strong>：SiLU 比 ReLU（Rectified Linear Unit）等函数更加平滑，避免了 ReLU 的“死区”问题，即当输入为负时，ReLU 输出恒为 0，导致神经元可能不会被激活。</p>
@@ -534,7 +549,14 @@
   <entry>
     <title>LayerNorm等</title>
     <url>/2024/06/22/LayerNorm%E7%AD%89/</url>
-    <content><![CDATA[<h2 id="1-Normalization"><a href="#1-Normalization" class="headerlink" title="1.Normalization"></a>1.Normalization</h2><h3 id="1-1-Batch-Norm"><a href="#1-1-Batch-Norm" class="headerlink" title="1.1 Batch Norm"></a>1.1 Batch Norm</h3><p>为什么要进行BN呢？</p>
+    <content><![CDATA[<h2 id="1-Normalization"><a href="#1-Normalization" class="headerlink" title="1.Normalization"></a>1.Normalization</h2><p>归一化模块的位置通常有三种选择，分 别是层<strong>后归一化（Post-Layer Normalization, Post-Norm）、层前归一化（Pre-Layer Normalization, Pre-Norm）和夹心归一化（Sandwich-Layer Normalization, SandwichNorm）。</strong></p>
+<p>在原理上，首先，有助于加快神经网络的训练收敛速度，使模型可以更有效地传播梯度，从而 减少训练时间。其次，后向归一化可以降低神经网络对于超参数（如学习率、初始 化参数等）的敏感性，使得网络更容易调优，并减少了超参数调整的难度。然而， 由于在输出层附近存在梯度较大的问题，采用 Post-Norm 的 Transformer 模型在训 练过程中通常会出现不稳定的现象，现有的大语言模型中，Post-Norm 很少被单独使用，通常是与其他策略相结合应用。例如，GLM-130B 将 Post-Norm 与 DeepNorm 结合使用。</p>
+<p>Post-Norm(𝒙) &#x3D; Norm(𝒙 + Sublayer(𝒙))</p>
+<p>此外，Pre-Norm 在最后一个 Transformer 层后还额外添加了一个 LayerNorm。相较于 Post-Norm，Pre-Norm 直接把每个子层 加在了归一化模块之后，仅仅对输入的表示进行了归一化，从而可以防止模型的 梯度爆炸或者梯度消失现象。虽然使用了 Pre-Norm 的 Transformer 模型在训练过 程中更加稳定，但是性能却逊色于采用了 Post-Norm 的模型。尽管对于性能有一 定的影响，但由于其能够有效维持训练的稳定性，很多主流的大语言模型仍然采 用 Pre-Norm。</p>
+<p>Pre-Norm(𝒙) &#x3D; 𝒙 + Sublayer(Norm(𝒙)), (5.18)</p>
+<p><strong>Pre-Norm（归一化前）</strong>：在子层计算之前进行归一化。这种方式虽然在训练初期可能收敛速度较慢，但在训练后期通常更加稳定，因为梯度在进入子层之前已经被归一化。</p>
+<p><strong>Post-Norm（归一化后）</strong>：在子层计算之后进行归一化。虽然在训练初期收敛速度更快，但在训练后期尤其是靠近输出层时可能会引发不稳定性。</p>
+<h3 id="1-1-Batch-Norm"><a href="#1-1-Batch-Norm" class="headerlink" title="1.1 Batch Norm"></a>1.1 Batch Norm</h3><p>为什么要进行BN呢？</p>
 <ol>
 <li>在深度神经网络训练的过程中，通常以输入网络的每一个mini-batch进行训练，这<strong>样每个batch具有不同的分布</strong>，使模型训练起来特别困难。</li>
 <li>Internal Covariate Shift (ICS)内部协变量偏移 问题：在训练的过程中，<strong>激活函数会改变各层数据的分布，随着网络的加深，这种改变（差异）会越来越大，使模型训练起来特别困难，收敛速度很慢，会出现梯度消失的问题</strong>。</li>
@@ -562,6 +584,7 @@
 </ol>
 <h3 id="1-2LayerNorm"><a href="#1-2LayerNorm" class="headerlink" title="1.2LayerNorm"></a>1.2LayerNorm</h3><p>LayerNorm是大模型也是transformer结构中最常用的归一化操作，简而言之，它的作用是 <strong>对特征张量按照某一维度或某几个维度进行0均值，1方差的归一化</strong> 操作，计算公式为</p>
 <p>​	$${y}&#x3D;\frac{\mathrm{x}-\mathrm{E}(\mathrm{x})}{\sqrt{\mathrm{V} \operatorname{ar}(\mathrm{x})+\epsilon}} * \gamma+β$$</p>
+<p> 这里的 xxx 可以理解为<strong>张量中具体某一维度的所有元素</strong></p>
 <div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">nn.LayerNorm(normalized_shape, eps=<span class="number">1e-05</span>, elementwise_affine=<span class="literal">True</span>, device=<span class="literal">None</span>, dtype=<span class="literal">None</span>)</span><br></pre></td></tr></table></figure></div>
 
 <p>normalized_shape：归一化的维度，int（最后一维）list（list里面的维度），还是以（2,2,4）为例，如果输入是int，则必须是4，如果是list，则可以是[4], [2,4], [2,2,4]，即最后一维，倒数两维，和所有维度</p>
@@ -2193,5 +2216,32 @@
 <p>\1) Regularized Local Loss<br>\2) Between Global and Local Model<br>\3) Between Historical Local Model Snapshots a) Meta-learning b) Transfer learning</p>
 </blockquote>
 ]]></content>
+  </entry>
+  <entry>
+    <title>transformer模型</title>
+    <url>/2024/07/17/transformer%E7%B3%BB%E5%88%97%E6%B1%87%E6%80%BB/</url>
+    <content><![CDATA[<h1 id="Attention"><a href="#Attention" class="headerlink" title="Attention"></a>Attention</h1><h2 id="1-attention，self-attention"><a href="#1-attention，self-attention" class="headerlink" title="1.attention，self-attention"></a>1.attention，self-attention</h2><p>Attention机制是一种在处理时序相关问题的时候常用的技术，主要用于处理序列数据。<br>核心思想是在处理序列数据时，<strong>网络应该更关注输入中的重要部分，而忽略不重要的部分，它通过学习不同部分的权重，将输入的序列中的重要部分显式地加权，从而使得模型可以更好地关注与输出有关的信息。</strong></p>
+<p>Attention机制的关键是引入一种机制来动态地计算输入序列中各个位置的权重，从而在每个时间步上，对输入序列的不同部分进行加权求和，得到当前时间步的输出。这样就实现了模型对输入中不同部分的关注度的自适应调整。</p>
+<p>self-attention是指在序列数据中，<strong>将当前位置与其他位置之间的关系建模</strong>。它通过计算每个位置与其他所有位置之间的相关性得分，从而为每个位置分配一个权重。这使得模型能够根据输入序列的不同部分的重要性，自适应地选择要关注的信息。</p>
+<h2 id="2-Attention的计算步骤是什么？"><a href="#2-Attention的计算步骤是什么？" class="headerlink" title="2.Attention的计算步骤是什么？"></a>2.Attention的计算步骤是什么？</h2><p>如下：</p>
+<ul>
+<li><p>计算查询（Query）：查询是当前时间步的输入，用于和序列中其他位置的信息进行比较。</p>
+</li>
+<li><p>计算键（Key）和值（Value）：键表示序列中其他位置的信息，值是对应位置的表示。键和值用来和查询进行比较。</p>
+</li>
+<li><p>计算注意力权重：：通过将查询和键进行内积运算，进<strong>行缩放，根号d，</strong>然后应用softmax函数，得到注意力权重。这些权重表示了在当前时间步，模型应该关注序列中其他位置的重要程度。</p>
+</li>
+<li><p>加权求和：根据注意力权重将值进行加权求和，得到当前时间步的输出</p>
+</li>
+</ul>
+<p>在Transformer中，Self-Attention 被称为”Scaled Dot-Product Attention”，其计算过程如下：</p>
+<ol>
+<li>对于输入序列中的每个位置，通过计算其与所有其他位置之间的相似度得分（通常通过点积计算）。</li>
+<li>对得分进<strong>行缩放处理</strong>，以防止梯度爆炸。</li>
+<li>将得分用softmax函数转换为注意力权重，以便计算每个位置的加权和。</li>
+<li>使用注意力权重对输入序列中的所有位置进行加权求和，得到每个位置的自注意输出。</li>
+</ol>
+<h1 id="layer-normalization"><a href="#layer-normalization" class="headerlink" title="layer_normalization"></a>layer_normalization</h1><h1 id="位置编码"><a href="#位置编码" class="headerlink" title="位置编码"></a>位置编码</h1><p>在多个block 前向传递的过程中position的信息不会丢失</p>
+<h1 id="分词器"><a href="#分词器" class="headerlink" title="分词器"></a>分词器</h1><h1 id="激活函数"><a href="#激活函数" class="headerlink" title="激活函数"></a>激活函数</h1>]]></content>
   </entry>
 </search>
