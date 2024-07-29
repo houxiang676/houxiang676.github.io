@@ -346,6 +346,98 @@
 <h2 id="Leetcode-题"><a href="#Leetcode-题" class="headerlink" title="Leetcode 题"></a><strong>Leetcode 题</strong></h2>]]></content>
   </entry>
   <entry>
+    <title>LLama_架构</title>
+    <url>/2024/06/22/LLama-%E6%9E%B6%E6%9E%84/</url>
+    <content><![CDATA[<p>LLaMA 所采用的 Transformer 结构和细节，与标准的 Transformer 架构不同的地方包括采用了<strong>前置层归一化（Pre-normalization</strong>）并使用 RMSNorm 归一化函数 （Normalizing Function）、<strong>激活函数更换为 SwiGLU</strong>，并使用了旋转位置嵌入（RoP），整体 Transformer 架构与 GPT-2 类似。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\xhou\blog_pic\79ee1b168c08439eb0e1d9851254dc4c.png"
+                      alt="微信图片_20240622163724"
+                ></p>
+<h2 id="1-LLama结构"><a href="#1-LLama结构" class="headerlink" title="1. LLama结构"></a>1. LLama结构</h2><ul>
+<li>Embeding</li>
+<li>RMS Norm</li>
+</ul>
+<p>​	其中，残差连接 （Residual Connection）将输入与该层的输出相加，实现了信息在不同层的跳跃传 递，从而缓解梯度爆炸和消失的问题</p>
+<p>​		<strong>为了使得模型训练过程更加稳定</strong>，GPT-2 相较于 GPT 就引入了<strong>前置层归一化方法</strong>，将<strong>第一个层归一化移动到多头自注意力层之前</strong>，第二个层归一化也移动到了全连接层之前，同时残差连接的位置也调整到了多头自注意力层与全连接层之后。层归一化中也采用了 RMSNorm 归一化函数。 针对输入向量 aRMSNorm 函数计算公式如下：</p>
+<ul>
+<li>RoPE （注意是只对QK做旋转偏移，而且是在计算完QK之后）</li>
+<li>Group Attention</li>
+<li>RMS Norm</li>
+<li>FFN()</li>
+</ul>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\xhou\blog_pic\1.png"
+                     
+                ></p>
+<ul>
+<li>RMSNorm</li>
+<li>linear</li>
+</ul>
+<h2 id="2-Group-Attention"><a href="#2-Group-Attention" class="headerlink" title="2.Group Attention"></a>2.Group Attention</h2><p>我们不仅优化算法执行的操作，而且优化最小化内存访问次数，以及算法执行的内存传输，因为与计算机比，io更慢</p>
+<h2 id="3-FFN"><a href="#3-FFN" class="headerlink" title="3. FFN"></a>3. FFN</h2><p>transformer：FFN（Feed-Forward Network）块是Transformer模型中的一个重要组成部分，接受自注意力子层的输出作为输入，并通过一个带有 Relu 激活函数的两层全连接网络对输入进行更加复杂的非线性变换。实验证明，这一非线性变换会对模型最终的性能产生十分 重要的影响。<br>FFN由两个全连接层（即前馈神经网络）和一个激活函数组成。下面是FFN块的计算公式：<br>$$<br>\operatorname{FFN}(\boldsymbol{x})&#x3D;\operatorname{Relu}\left(\boldsymbol{x} \boldsymbol{W}<em>{1}+\boldsymbol{b}</em>{1}\right) \boldsymbol{W}<em>{2}+\boldsymbol{b}</em>{2}<br>$$</p>
+<ol>
+<li>第一层全连接层（线性变换）：$z &#x3D; xW1 + b1$    其中，W1 是第一层全连接层的权重矩阵，b1 是偏置向量。</li>
+<li>激活函数：$a &#x3D; g(z)$    其中，g() 是激活函数，常用的激活函数有ReLU（Rectified Linear Unit）等。</li>
+<li>第二层全连接层（线性变换）：$，$其中，W2 是第二层全连接层的权重矩阵，b2 是偏置向量。</li>
+</ol>
+<p><strong>增大前馈子层隐状态的维度有利于提 升最终翻译结果的质量，因此，前馈子层隐状态的维度一般比自注意力子层要大。h-&gt;4h</strong><br>需要注意的是，上述公式中的 W1、b1、W2、b2 是FFN块的可学习参数，它们会通过训练过程进行学习和更新。</p>
+<h2 id="4-激活函数"><a href="#4-激活函数" class="headerlink" title="4. 激活函数"></a>4. 激活函数</h2><h3 id="GeLU"><a href="#GeLU" class="headerlink" title="GeLU"></a>GeLU</h3><p>GeLU（Gaussian Error Linear Unit）是一种激活函数，常用于神经网络中的非线性变换。它在Transformer模型中广泛应用于FFN（Feed-Forward Network）块。下面是GeLU的计算公式：<br>假设输入是一个标量 x，GeLU的计算公式如下：</p>
+<p>$$<br>GeLU(x) &#x3D; 0.5 \times x \times (1 + tanh(\sqrt{\frac{2}{\pi}} \times (x + 0.044715 \times x^3)))<br>$$<br>其中，<code>tanh() </code>是双曲正切函数，<code>sqrt()</code> 是平方根函数，π是圆周率。</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line"></span><br><span class="line">def GELU(x):</span><br><span class="line">    return 0.5 * x * (1 + np.tanh(np.sqrt(2 / np.pi) * (x + 0.044715 * np.power(x, 3))))</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\xhou\blog_pic\image.png"
+                      alt="image" style="zoom:25%;" 
+                >
+
+<p>相对于 Sigmoid 和 Tanh 激活函数，<strong>ReLU 和 GeLU 更为准确和高效，因为它们在神经网络中的梯度消失问题上表现更好。而 ReLU 和 GeLU 几乎没有梯度消失的现象，可以更好地支持深层神经网络的训练和优化</strong>。<br>而 ReLU 和 GeLU 的区别在于形状和计算效率。ReLU 是一个非常简单的函数，仅仅是输入为负数时返回0，而输入为正数时返回自身，从而仅包含了一次分段线性变换。<strong>但是，ReLU 函数存在一个问题，就是在输入为负数时，输出恒为0，这个问题可能会导致神经元死亡，从而降低模型的表达能力</strong>。GeLU 函数则是一个连续的 S 形曲线，介于 Sigmoid 和 ReLU 之间，<strong>形状比 ReLU 更为平滑，可以在一定程度上缓解神经元死亡的问题。不过，由于 GeLU 函数中包含了指数运算等复杂计算，所以在实际应用中通常比 ReLU 慢。</strong></p>
+<h3 id="Swish"><a href="#Swish" class="headerlink" title="Swish"></a>Swish</h3><p>Swish是一种激活函数，它在深度学习中常用于神经网络的非线性变换。Swish函数的计算公式如下：<br>$$<br>Swish(x) &#x3D; x \times sigmoid(\beta * x)<br>$$<br>其中，$sigmoid()$是Sigmoid函数，$x$ 是输入，$\beta$ 是一个可调节的超参数。</p>
+<p>我们使用参数 β&#x3D;1 的 Swish 函数。这种情况下，它被称为 Sigmoid 线性单元（SiLU）函数。</p>
+<p><strong>SiLU 是 Swish 的特例</strong>：当 β&#x3D;1 时，Swish 函数退化为 SiLU，即标准的 Swish 函数</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\xhou\blog_pic\image_1.png"
+                      alt="image_1" style="zoom: 50%;" 
+                >
+
+<p>Swish函数的特点是在接近零的区域表现得类似于线性函数，而在远离零的区域则表现出非线性的特性。<strong>相比于其他常用的激活函数（如ReLU、tanh等），Swish函数在某些情况下能够提供更好的性能和更快的收敛速度。</strong></p>
+<p>Swish函数的设计灵感来自于自动搜索算法，它通过引入一个可调节的超参数来增加非线性程度。当beta为0时，Swish函数退化为线性函数；当beta趋近于无穷大时，Swish函数趋近于ReLU函数。<br>需要注意的是，Swish函数<strong>相对于其他激活函数来说计算开销较大，因为它需要进行Sigmoid运</strong>算。因此，在实际应用中，也可以根据具体情况选择其他的激活函数来代替Swish函数。</p>
+<p><strong>平滑的激活</strong>：SiLU 比 ReLU（Rectified Linear Unit）等函数更加平滑，避免了 ReLU 的“死区”问题，即当输入为负时，ReLU 输出恒为 0，导致神经元可能不会被激活。</p>
+<p><strong>梯度优化</strong>：SiLU 的平滑性使得其梯度在训练过程中更加稳定，避免了梯度爆炸或消失的问题，有助于提高模型训练的效果。</p>
+<p><strong>增强非线性能力</strong>：通过 Sigmoid 函数的非线性特性，SiLU 可以更好地捕捉输入与输出之间的复杂关系，从而增强模型的非线性表达能力。</p>
+<h3 id="SwishGLU"><a href="#SwishGLU" class="headerlink" title="SwishGLU"></a><strong>SwishGLU</strong></h3><p>GLU</p>
+<p>GLU通过门控机制对输出进行把控，像Attention一样可看作是对重要特征的选择。其优势是不仅具有通用激活函数的非线性，而且<strong>反向传播梯度时具有线性通道</strong>，类似ResNet残差网络中的加和操作传递梯度，能够缓解梯度消失问题。<br>$$<br>GLU(x)&#x3D;(XW)⊗σ(XV)<br>$$</p>
+<ul>
+<li>X 是输入矩阵。</li>
+<li>W 和 V 是可训练的权重矩阵。</li>
+<li>⊗ 表示逐元素乘积。</li>
+<li>σ 是激活函数，通常选择Sigmoid函数。</li>
+</ul>
+<p>GLU（Gated Linear Unit）是一种特殊的激活单元，通过引入一个门控机制来对输入进行过滤。GLU块通常用于增强神经网络的表达能力。使用不同的激活函数可以形成不同的GLU变种，如使用GeLU（Gaussian Error Linear Unit）和SwiGLU（使用Swish函数）。</p>
+<p>使用 Swish 的 GLU 块 计算公式如下<br>$$<br>GLU(x) &#x3D; x * sigmoid(W_1 * x) \<br>FFN_{SwiGLU} &#x3D; (Swish_1(xW)*xV)W_2<br>$$<br>其中，$sigmoid()$ 是Sigmoid函数，$W_1$ 是一个可学习的权重矩阵。</p>
+<ul>
+<li>第二条路径(xV)经过线性变换后，直接用于门控机制。门控值由另一组权重和偏置计算得出，用于控制第一条路径的输出信息流。</li>
+</ul>
+<p>在公式中，首先将输入向量 x 通过一个全连接层（线性变换）得到一个与 x 维度相同的向量，然后将该向量通过Sigmoid函数进行激活。这个Sigmoid函数的输出称为门控向量，用来控制输入向量 x 的元素是否被激活。最后，将门控向量与输入向量 x 逐元素相乘，得到最终的输出向量。</p>
+<p>.Swish引入了一个参数化的非线性变换，通过对输入的平滑激活，可以产生更加复杂的映射效果。</p>
+<h3 id="使用-GLU-线性门控单元的-FFN-块-计算公式"><a href="#使用-GLU-线性门控单元的-FFN-块-计算公式" class="headerlink" title="使用 GLU 线性门控单元的 FFN 块 计算公式"></a>使用 GLU 线性门控单元的 FFN 块 计算公式</h3><p>使用GLU（Gated Linear Unit）线性门控单元的FFN（Feed-Forward Network）块是Transformer模型中常用的结构之一。它通过引入门控机制来增强模型的非线性能力。下面是使用GLU线性门控单元的FFN块的计算公式：</p>
+<p>$$<br>GLU(x)&#x3D;(XW)⊗σ(XV)<br>$$</p>
+<ul>
+<li>X 是输入矩阵。</li>
+<li>W 和 VV 是可训练的权重矩阵。</li>
+<li>⊗ 表示逐元素乘积。</li>
+<li>σ 是激活函数，通常选择Sigmoid函数。</li>
+</ul>
+]]></content>
+  </entry>
+  <entry>
     <title>LLM推理加速技术</title>
     <url>/2024/06/22/LLM%E6%8E%A8%E7%90%86%E5%8A%A0%E9%80%9F%E6%8A%80%E6%9C%AF/</url>
     <content><![CDATA[<p>一个常规的LLM推理过程通常分为两个阶段：<strong>prefill和decode</strong>。通常会使用KV cache技术加速推理。</p>
@@ -455,7 +547,9 @@
 </ol>
 <h2 id="DeepSpeed"><a href="#DeepSpeed" class="headerlink" title="DeepSpeed"></a>DeepSpeed</h2><p>：将显存优化进行到底</p>
 <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><ul>
-<li>数据并行（data parallelism, DP）：假设有 𝑁 张卡，每张卡都保存一个模型，每一次迭代（iteration&#x2F;step）都将batch数据分割成 𝑁 个等大小的micro-batch，每张卡根据拿到的micro-batch数据独立计算梯度，然后调用AllReduce计算梯度均值，每张卡再独立进行参数更新。</li>
+<li><p>数据并行（data parallelism, DP）：假设有 𝑁 张卡，每张卡都保存一个模型，每一次迭代（iteration&#x2F;step）都将batch数据分割成 𝑁 个等大小的micro-batch，每张卡根据拿到的micro-batch数据独立计算梯度，然后调用AllReduce计算梯度均值，每张卡再独立进行参数更新。</p>
+<p>加速的，不会减少所用内存。有通信开销</p>
+</li>
 </ul>
 <div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 假设模型有三层：L0, L1, L2</span><br><span class="line"># 每层有两个神经元</span><br><span class="line"># 两张卡</span><br><span class="line"></span><br><span class="line">GPU0: </span><br><span class="line">L0 | L1 | L2</span><br><span class="line">---|----|---</span><br><span class="line">a0 | b0 | c0</span><br><span class="line">a1 | b1 | c1</span><br><span class="line"></span><br><span class="line">GPU1:</span><br><span class="line">L0 | L1 | L2</span><br><span class="line">---|----|---</span><br><span class="line">a0 | b0 | c0</span><br><span class="line">a1 | b1 | c1</span><br></pre></td></tr></table></figure></div>
 
@@ -465,101 +559,11 @@
 <div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 假设模型有三层：L0, L1, L2</span><br><span class="line"># 每层有两个神经元</span><br><span class="line"># 两张卡</span><br><span class="line"></span><br><span class="line">GPU0:</span><br><span class="line">L0 | L1 | L2</span><br><span class="line">---|----|---</span><br><span class="line">a0 | b0 | c0</span><br><span class="line"></span><br><span class="line">GPU1:</span><br><span class="line">L0 | L1 | L2</span><br><span class="line">---|----|---</span><br><span class="line">a1 | b1 | c1</span><br></pre></td></tr></table></figure></div>
 
 <ul>
-<li>流水并行（pipeline parallelism, PP）：将网络按层切分，划分成多组，一张卡存一组。</li>
+<li><p>流水并行（pipeline parallelism, PP）：将网络按层切分，划分成多组，一张卡存一组。</p>
+<p>Pipeline并行的支持是通过PyTorch中的torch.distributed.pipeline.sync.Pipe类实现的。然而，这个类有两个主要限制：(1) 仅在模型实现为torch.nn.Sequential模块时有效，(2) 它要求每个模块的输入和输出必须是单个张量或张量元组。</p>
+</li>
 </ul>
 <div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 假设模型有8层</span><br><span class="line"># 两张卡</span><br><span class="line"></span><br><span class="line">======================  =====================</span><br><span class="line">|  L0 | L1 | L2 | L3 |  | L4 | L5 | L6 | L7 |</span><br><span class="line">======================  =====================</span><br><span class="line">        GPU0                 GPU1</span><br><span class="line"></span><br><span class="line"># 设想一下，当GPU0在进行（前向/后向）计算时，GPU1在干嘛？闲着</span><br><span class="line"># 当GPU1在进行（前向/后向)计算时，GPU0在干嘛？闲着</span><br><span class="line"># 为了防止”一卡工作，众卡围观“，实践中PP也会把batch数据分割成</span><br><span class="line"># 多个micro-batch，流水线执行</span><br></pre></td></tr></table></figure></div>
-]]></content>
-  </entry>
-  <entry>
-    <title>LLama_架构</title>
-    <url>/2024/06/22/LLama-%E6%9E%B6%E6%9E%84/</url>
-    <content><![CDATA[<p>LLaMA 所采用的 Transformer 结构和细节，与标准的 Transformer 架构不同的地方包括采用了<strong>前置层归一化（Pre-normalization</strong>）并使用 RMSNorm 归一化函数 （Normalizing Function）、<strong>激活函数更换为 SwiGLU</strong>，并使用了旋转位置嵌入（RoP），整体 Transformer 架构与 GPT-2 类似。</p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="C:\xhou\blog_pic\79ee1b168c08439eb0e1d9851254dc4c.png"
-                      alt="微信图片_20240622163724"
-                ></p>
-<h2 id="1-LLama结构"><a href="#1-LLama结构" class="headerlink" title="1. LLama结构"></a>1. LLama结构</h2><ul>
-<li>Embeding</li>
-<li>RMS Norm</li>
-</ul>
-<p>​	其中，残差连接 （Residual Connection）将输入与该层的输出相加，实现了信息在不同层的跳跃传 递，从而缓解梯度爆炸和消失的问题</p>
-<p>​		<strong>为了使得模型训练过程更加稳定</strong>，GPT-2 相较于 GPT 就引入了<strong>前置层归一化方法</strong>，将<strong>第一个层归一化移动到多头自注意力层之前</strong>，第二个层归一化也移动到了全连接层之前，同时残差连接的位置也调整到了多头自注意力层与全连接层之后。层归一化中也采用了 RMSNorm 归一化函数。 针对输入向量 aRMSNorm 函数计算公式如下：</p>
-<ul>
-<li>RoPE （注意是只对QK做旋转偏移，而且是在计算完QK之后）</li>
-<li>Group Attention</li>
-<li>RMS Norm</li>
-<li>FFN()</li>
-</ul>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="C:\xhou\blog_pic\1.png"
-                     
-                ></p>
-<ul>
-<li>RMSNorm</li>
-<li>linear</li>
-</ul>
-<h2 id="2-Group-Attention"><a href="#2-Group-Attention" class="headerlink" title="2.Group Attention"></a>2.Group Attention</h2><p>我们不仅优化算法执行的操作，而且优化最小化内存访问次数，以及算法执行的内存传输，因为与计算机比，io更慢</p>
-<h2 id="3-FFN"><a href="#3-FFN" class="headerlink" title="3. FFN"></a>3. FFN</h2><p>transformer：FFN（Feed-Forward Network）块是Transformer模型中的一个重要组成部分，接受自注意力子层的输出作为输入，并通过一个带有 Relu 激活函数的两层全连接网络对输入进行更加复杂的非线性变换。实验证明，这一非线性变换会对模型最终的性能产生十分 重要的影响。<br>FFN由两个全连接层（即前馈神经网络）和一个激活函数组成。下面是FFN块的计算公式：<br>$$<br>\operatorname{FFN}(\boldsymbol{x})&#x3D;\operatorname{Relu}\left(\boldsymbol{x} \boldsymbol{W}<em>{1}+\boldsymbol{b}</em>{1}\right) \boldsymbol{W}<em>{2}+\boldsymbol{b}</em>{2}<br>$$</p>
-<ol>
-<li>第一层全连接层（线性变换）：$z &#x3D; xW1 + b1$    其中，W1 是第一层全连接层的权重矩阵，b1 是偏置向量。</li>
-<li>激活函数：$a &#x3D; g(z)$    其中，g() 是激活函数，常用的激活函数有ReLU（Rectified Linear Unit）等。</li>
-<li>第二层全连接层（线性变换）：$，$其中，W2 是第二层全连接层的权重矩阵，b2 是偏置向量。</li>
-</ol>
-<p><strong>增大前馈子层隐状态的维度有利于提 升最终翻译结果的质量，因此，前馈子层隐状态的维度一般比自注意力子层要大。h-&gt;4h</strong><br>需要注意的是，上述公式中的 W1、b1、W2、b2 是FFN块的可学习参数，它们会通过训练过程进行学习和更新。</p>
-<h2 id="4-激活函数"><a href="#4-激活函数" class="headerlink" title="4. 激活函数"></a>4. 激活函数</h2><h3 id="GeLU"><a href="#GeLU" class="headerlink" title="GeLU"></a>GeLU</h3><p>GeLU（Gaussian Error Linear Unit）是一种激活函数，常用于神经网络中的非线性变换。它在Transformer模型中广泛应用于FFN（Feed-Forward Network）块。下面是GeLU的计算公式：<br>假设输入是一个标量 x，GeLU的计算公式如下：</p>
-<p>$$<br>GeLU(x) &#x3D; 0.5 \times x \times (1 + tanh(\sqrt{\frac{2}{\pi}} \times (x + 0.044715 \times x^3)))<br>$$<br>其中，<code>tanh() </code>是双曲正切函数，<code>sqrt()</code> 是平方根函数，π是圆周率。</p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line"></span><br><span class="line">def GELU(x):</span><br><span class="line">    return 0.5 * x * (1 + np.tanh(np.sqrt(2 / np.pi) * (x + 0.044715 * np.power(x, 3))))</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="C:\xhou\blog_pic\image.png"
-                      alt="image" style="zoom:25%;" 
-                >
-
-<p>相对于 Sigmoid 和 Tanh 激活函数，<strong>ReLU 和 GeLU 更为准确和高效，因为它们在神经网络中的梯度消失问题上表现更好。而 ReLU 和 GeLU 几乎没有梯度消失的现象，可以更好地支持深层神经网络的训练和优化</strong>。<br>而 ReLU 和 GeLU 的区别在于形状和计算效率。ReLU 是一个非常简单的函数，仅仅是输入为负数时返回0，而输入为正数时返回自身，从而仅包含了一次分段线性变换。<strong>但是，ReLU 函数存在一个问题，就是在输入为负数时，输出恒为0，这个问题可能会导致神经元死亡，从而降低模型的表达能力</strong>。GeLU 函数则是一个连续的 S 形曲线，介于 Sigmoid 和 ReLU 之间，<strong>形状比 ReLU 更为平滑，可以在一定程度上缓解神经元死亡的问题。不过，由于 GeLU 函数中包含了指数运算等复杂计算，所以在实际应用中通常比 ReLU 慢。</strong></p>
-<h3 id="Swish"><a href="#Swish" class="headerlink" title="Swish"></a>Swish</h3><p>Swish是一种激活函数，它在深度学习中常用于神经网络的非线性变换。Swish函数的计算公式如下：<br>$$<br>Swish(x) &#x3D; x \times sigmoid(\beta * x)<br>$$<br>其中，$sigmoid()$是Sigmoid函数，$x$ 是输入，$\beta$ 是一个可调节的超参数。</p>
-<p>我们使用参数 β&#x3D;1 的 Swish 函数。这种情况下，它被称为 Sigmoid 线性单元（SiLU）函数。</p>
-<p><strong>SiLU 是 Swish 的特例</strong>：当 β&#x3D;1 时，Swish 函数退化为 SiLU，即标准的 Swish 函数</p>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="C:\xhou\blog_pic\image_1.png"
-                      alt="image_1" style="zoom: 50%;" 
-                >
-
-<p>Swish函数的特点是在接近零的区域表现得类似于线性函数，而在远离零的区域则表现出非线性的特性。<strong>相比于其他常用的激活函数（如ReLU、tanh等），Swish函数在某些情况下能够提供更好的性能和更快的收敛速度。</strong></p>
-<p>Swish函数的设计灵感来自于自动搜索算法，它通过引入一个可调节的超参数来增加非线性程度。当beta为0时，Swish函数退化为线性函数；当beta趋近于无穷大时，Swish函数趋近于ReLU函数。<br>需要注意的是，Swish函数<strong>相对于其他激活函数来说计算开销较大，因为它需要进行Sigmoid运</strong>算。因此，在实际应用中，也可以根据具体情况选择其他的激活函数来代替Swish函数。</p>
-<p><strong>平滑的激活</strong>：SiLU 比 ReLU（Rectified Linear Unit）等函数更加平滑，避免了 ReLU 的“死区”问题，即当输入为负时，ReLU 输出恒为 0，导致神经元可能不会被激活。</p>
-<p><strong>梯度优化</strong>：SiLU 的平滑性使得其梯度在训练过程中更加稳定，避免了梯度爆炸或消失的问题，有助于提高模型训练的效果。</p>
-<p><strong>增强非线性能力</strong>：通过 Sigmoid 函数的非线性特性，SiLU 可以更好地捕捉输入与输出之间的复杂关系，从而增强模型的非线性表达能力。</p>
-<h3 id="SwishGLU"><a href="#SwishGLU" class="headerlink" title="SwishGLU"></a><strong>SwishGLU</strong></h3><p>GLU</p>
-<p>GLU通过门控机制对输出进行把控，像Attention一样可看作是对重要特征的选择。其优势是不仅具有通用激活函数的非线性，而且<strong>反向传播梯度时具有线性通道</strong>，类似ResNet残差网络中的加和操作传递梯度，能够缓解梯度消失问题。<br>$$<br>GLU(x)&#x3D;(XW)⊗σ(XV)<br>$$</p>
-<ul>
-<li>X 是输入矩阵。</li>
-<li>W 和 V 是可训练的权重矩阵。</li>
-<li>⊗ 表示逐元素乘积。</li>
-<li>σ 是激活函数，通常选择Sigmoid函数。</li>
-</ul>
-<p>GLU（Gated Linear Unit）是一种特殊的激活单元，通过引入一个门控机制来对输入进行过滤。GLU块通常用于增强神经网络的表达能力。使用不同的激活函数可以形成不同的GLU变种，如使用GeLU（Gaussian Error Linear Unit）和SwiGLU（使用Swish函数）。</p>
-<p>使用 Swish 的 GLU 块 计算公式如下<br>$$<br>GLU(x) &#x3D; x * sigmoid(W_1 * x) \<br>FFN_{SwiGLU} &#x3D; (Swish_1(xW)*xV)W_2<br>$$<br>其中，$sigmoid()$ 是Sigmoid函数，$W_1$ 是一个可学习的权重矩阵。</p>
-<ul>
-<li>第二条路径(xV)经过线性变换后，直接用于门控机制。门控值由另一组权重和偏置计算得出，用于控制第一条路径的输出信息流。</li>
-</ul>
-<p>在公式中，首先将输入向量 x 通过一个全连接层（线性变换）得到一个与 x 维度相同的向量，然后将该向量通过Sigmoid函数进行激活。这个Sigmoid函数的输出称为门控向量，用来控制输入向量 x 的元素是否被激活。最后，将门控向量与输入向量 x 逐元素相乘，得到最终的输出向量。</p>
-<p>.Swish引入了一个参数化的非线性变换，通过对输入的平滑激活，可以产生更加复杂的映射效果。</p>
-<h3 id="使用-GLU-线性门控单元的-FFN-块-计算公式"><a href="#使用-GLU-线性门控单元的-FFN-块-计算公式" class="headerlink" title="使用 GLU 线性门控单元的 FFN 块 计算公式"></a>使用 GLU 线性门控单元的 FFN 块 计算公式</h3><p>使用GLU（Gated Linear Unit）线性门控单元的FFN（Feed-Forward Network）块是Transformer模型中常用的结构之一。它通过引入门控机制来增强模型的非线性能力。下面是使用GLU线性门控单元的FFN块的计算公式：</p>
-<p>$$<br>GLU(x)&#x3D;(XW)⊗σ(XV)<br>$$</p>
-<ul>
-<li>X 是输入矩阵。</li>
-<li>W 和 VV 是可训练的权重矩阵。</li>
-<li>⊗ 表示逐元素乘积。</li>
-<li>σ 是激活函数，通常选择Sigmoid函数。</li>
-</ul>
 ]]></content>
   </entry>
   <entry>
@@ -640,6 +644,94 @@
 <td>预训练模型、序列建模</td>
 </tr>
 </tbody></table>
+]]></content>
+  </entry>
+  <entry>
+    <title>bert基础</title>
+    <url>/2024/06/15/bert%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<h1 id="bert"><a href="#bert" class="headerlink" title="bert"></a>bert</h1><ul>
+<li><p>bert: encoder of transformer</p>
+<ul>
+<li>transformer: encoder-decoder(seq2seq)</li>
+</ul>
+</li>
+<li><p>bert</p>
+<ul>
+<li><p>embeddings</p>
+<ul>
+<li><p>word(token) embedding   # token_embed &#x3D; model.embeddings.word_embeddings(input_ids)</p>
+</li>
+<li><p>position embedding          # pos_embed &#x3D; model.embeddings.position_embeddings(pos_ids)</p>
+</li>
+<li><p>token type embedding      # seg_embed &#x3D; model.embeddings.token_type_embeddings(token_type_ids)</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">input_embed = token_embed + seg_embed + pos_embed.unsqueeze(0)</span><br></pre></td></tr></table></figure></div></li>
+</ul>
+</li>
+<li><p>encoder(12 layer)</p>
+<ul>
+<li>self attention (kqv)</li>
+<li>feed forward</li>
+</ul>
+</li>
+<li><p>pooler  由此得到最终输出</p>
+</li>
+</ul>
+</li>
+</ul>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">from transformers import BertTokenizer, BertModel</span><br><span class="line">import torch </span><br><span class="line">from torch import nn</span><br><span class="line"></span><br><span class="line">model_name = &#x27;bert-base-uncased&#x27;</span><br><span class="line">tokenizer = BertTokenizer.from_pretrained(model_name)</span><br><span class="line">model = BertModel.from_pretrained(model_name, output_attention=True)</span><br><span class="line"></span><br><span class="line">test_sent = &#x27;&#x27;</span><br><span class="line">input = tokenizer(test_sent, return_tensors=&#x27;pt&#x27;)</span><br><span class="line"># input -&gt; &#123;&#x27;input_ids&#x27;: tensor([[ 101, 2023, 2003, 1037, 3231, 6251,  102]]), &#x27;token_type_ids&#x27;: tensor([[0, 0, 0, 0, 0, 0, 0]]), &#x27;attention_mask&#x27;: tensor([[1, 1, 1, 1, 1, 1, 1]])&#125;</span><br><span class="line"></span><br><span class="line">#___________________________________________________________</span><br><span class="line">input_ids = input[&#x27;input_ids&#x27;]</span><br><span class="line">token_type_ids = input[&#x27;token_type_ids&#x27;]</span><br><span class="line">pos_ids = torch.arange(input_ids.shape[1])</span><br><span class="line"></span><br><span class="line">#  1. token embedding</span><br><span class="line">token_embed = model.embeddings.word_embeddings(input_ids)</span><br><span class="line">token_embed</span><br><span class="line"># 2. segment type embedding</span><br><span class="line">seg_embed = model.embeddings.token_type_embeddings(token_type_ids)</span><br><span class="line">seg_embed</span><br><span class="line"># 3. pos embedding</span><br><span class="line">pos_embed = model.embeddings.position_embeddings(pos_ids)</span><br><span class="line">seg_embed</span><br><span class="line"># 4. input embedding</span><br><span class="line">input_embed = token_embed + seg_embed + pos_embed.unsqueeze(0)</span><br><span class="line"># 5. 后处理</span><br><span class="line">embed = model.embeddings.LayerNorm(input_embed)</span><br><span class="line">embed = model.embeddings.dropout(embed)</span><br><span class="line"># 6. encoder</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+
+
+<ul>
+<li>torch.no_grad()<ul>
+<li>定义了一个上下文管理器，隐式地不进行梯度更新，不会改变 requires_grad</li>
+<li>适用于 eval 阶段，或 model forward 的过程中某些模块不更新梯度的模块（此时这些模块仅进行特征提取（前向计算），不反向更新）</li>
+</ul>
+</li>
+<li>param.requires_grad<ul>
+<li>显式地 frozen 掉一些module（layer）的梯度更新</li>
+<li>layer&#x2F;module 级别，</li>
+<li>可能会更灵活</li>
+</ul>
+</li>
+</ul>
+<h3 id="1-input"><a href="#1-input" class="headerlink" title="1. input"></a>1. input</h3><ul>
+<li>tokenizer 轻易不会将一个词处理为 <code>[UNK] (100)</code></li>
+<li>基于词汇表，tokenize, encode, decode 一体<ul>
+<li>tokenize：word &#x3D;&gt; token(s)，将word尽可能地映射为 vocab 中的 keys</li>
+<li>encode: token &#x3D;&gt; id</li>
+<li>decode: id &#x3D;&gt; token &#x3D;&gt; word<ul>
+<li>encode 完了之后也不是终点（word），decode 还要能很好地将 id 还原，尽可能与输入的 word 对齐；</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> BertModel, BertTokenizer</span><br><span class="line"></span><br><span class="line">model_name = <span class="string">&#x27;bert-base-uncased&#x27;</span></span><br><span class="line"></span><br><span class="line">tokenizer = BertTokenizer.from_pretrained(model_name)</span><br><span class="line">model = BertModel.from_pretrained(model_name, output_hidden_states=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;After stealing money from the bank vault, the bank robber was seen &quot;</span> \</span><br><span class="line">   <span class="string">&quot;fishing on the Mississippi river bank.&quot;</span></span><br><span class="line">    </span><br><span class="line">token_input = tokenizer(text, return_tensors=<span class="string">&#x27;pt&#x27;</span>)</span><br><span class="line">token_input </span><br><span class="line"><span class="comment"># &#123;&#x27;input_ids&#x27;: tensor([[  101,  2044, 11065,  2769,  2013,  1996,  2924, 11632,  1010,  1996, \</span></span><br><span class="line">          <span class="number">2924</span>, <span class="number">27307</span>,  <span class="number">2001</span>,  <span class="number">2464</span>,  <span class="number">5645</span>,  <span class="number">2006</span>,  <span class="number">1996</span>,  <span class="number">5900</span>,  <span class="number">2314</span>,  <span class="number">2924</span>,\</span><br><span class="line">          <span class="number">1012</span>,   <span class="number">102</span>]]), <span class="string">&#x27;token_type_ids&#x27;</span>: tensor([[<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]]), <span class="string">&#x27;attention_mask&#x27;</span>: tensor([[<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>]])&#125;\</span><br><span class="line">                </span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="2-model-forward"><a href="#2-model-forward" class="headerlink" title="2. model forward"></a>2. model forward</h3><h3 id="3-output"><a href="#3-output" class="headerlink" title="3. output"></a>3. output</h3><ul>
+<li>len(outputs) &#x3D;&#x3D; 3</li>
+<li>outputs[0]  last_hidden_state<ul>
+<li>last_hidden_state, shape: batch_size<em>seq_len</em>hidden_size(1*22*768)</li>
+</ul>
+</li>
+<li>outputs[1] pooler_output<ul>
+<li>pooler_output, shape: batch_size*hidden_size(1*768)</li>
+<li>Last layer hidden-state of the first token of the sequence (classification token, [CLS])</li>
+</ul>
+</li>
+<li>outputs[2] (model.config.output_hidden_states &#x3D; True) hidden_states<ul>
+<li>type: tuple</li>
+<li>one for the output of the embeddings(1), if the model has an embedding layer(12), + one for the output of each layer)<ul>
+<li>(1+12)<em>(batch_size</em>seq_len<em>hidden_size) &#x3D; 13*1*22</em>768</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>outputs[0] &#x3D;&#x3D; outputs[2][-1]</li>
+<li>outputs[1] &#x3D;&#x3D; model.pooler(outputs[2][-1])</li>
+<li>outputs[2][0] &#x3D;&#x3D; model.embeddings(token_input[‘input_ids’], token_input[‘token_type_ids’])</li>
+</ul>
 ]]></content>
   </entry>
   <entry>
@@ -915,11 +1007,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>arg的用法</title>
-    <url>/2023/10/19/arg%E7%9A%84%E7%94%A8%E6%B3%95/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
     <title>U-Net模型</title>
     <url>/2024/02/28/U-Net%E6%A8%A1%E5%9E%8B/</url>
     <content><![CDATA[<h1 id="U-Net"><a href="#U-Net" class="headerlink" title="U-Net"></a>U-Net</h1><p><img  
@@ -1028,92 +1115,24 @@
 ]]></content>
   </entry>
   <entry>
-    <title>bert基础</title>
-    <url>/2024/06/15/bert%E5%9F%BA%E7%A1%80/</url>
-    <content><![CDATA[<h1 id="bert"><a href="#bert" class="headerlink" title="bert"></a>bert</h1><ul>
-<li><p>bert: encoder of transformer</p>
-<ul>
-<li>transformer: encoder-decoder(seq2seq)</li>
-</ul>
-</li>
-<li><p>bert</p>
-<ul>
-<li><p>embeddings</p>
-<ul>
-<li><p>word(token) embedding   # token_embed &#x3D; model.embeddings.word_embeddings(input_ids)</p>
-</li>
-<li><p>position embedding          # pos_embed &#x3D; model.embeddings.position_embeddings(pos_ids)</p>
-</li>
-<li><p>token type embedding      # seg_embed &#x3D; model.embeddings.token_type_embeddings(token_type_ids)</p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">input_embed = token_embed + seg_embed + pos_embed.unsqueeze(0)</span><br></pre></td></tr></table></figure></div></li>
-</ul>
-</li>
-<li><p>encoder(12 layer)</p>
-<ul>
-<li>self attention (kqv)</li>
-<li>feed forward</li>
-</ul>
-</li>
-<li><p>pooler  由此得到最终输出</p>
-</li>
-</ul>
-</li>
-</ul>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">from transformers import BertTokenizer, BertModel</span><br><span class="line">import torch </span><br><span class="line">from torch import nn</span><br><span class="line"></span><br><span class="line">model_name = &#x27;bert-base-uncased&#x27;</span><br><span class="line">tokenizer = BertTokenizer.from_pretrained(model_name)</span><br><span class="line">model = BertModel.from_pretrained(model_name, output_attention=True)</span><br><span class="line"></span><br><span class="line">test_sent = &#x27;&#x27;</span><br><span class="line">input = tokenizer(test_sent, return_tensors=&#x27;pt&#x27;)</span><br><span class="line"># input -&gt; &#123;&#x27;input_ids&#x27;: tensor([[ 101, 2023, 2003, 1037, 3231, 6251,  102]]), &#x27;token_type_ids&#x27;: tensor([[0, 0, 0, 0, 0, 0, 0]]), &#x27;attention_mask&#x27;: tensor([[1, 1, 1, 1, 1, 1, 1]])&#125;</span><br><span class="line"></span><br><span class="line">#___________________________________________________________</span><br><span class="line">input_ids = input[&#x27;input_ids&#x27;]</span><br><span class="line">token_type_ids = input[&#x27;token_type_ids&#x27;]</span><br><span class="line">pos_ids = torch.arange(input_ids.shape[1])</span><br><span class="line"></span><br><span class="line">#  1. token embedding</span><br><span class="line">token_embed = model.embeddings.word_embeddings(input_ids)</span><br><span class="line">token_embed</span><br><span class="line"># 2. segment type embedding</span><br><span class="line">seg_embed = model.embeddings.token_type_embeddings(token_type_ids)</span><br><span class="line">seg_embed</span><br><span class="line"># 3. pos embedding</span><br><span class="line">pos_embed = model.embeddings.position_embeddings(pos_ids)</span><br><span class="line">seg_embed</span><br><span class="line"># 4. input embedding</span><br><span class="line">input_embed = token_embed + seg_embed + pos_embed.unsqueeze(0)</span><br><span class="line"># 5. 后处理</span><br><span class="line">embed = model.embeddings.LayerNorm(input_embed)</span><br><span class="line">embed = model.embeddings.dropout(embed)</span><br><span class="line"># 6. encoder</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-
-
-<ul>
-<li>torch.no_grad()<ul>
-<li>定义了一个上下文管理器，隐式地不进行梯度更新，不会改变 requires_grad</li>
-<li>适用于 eval 阶段，或 model forward 的过程中某些模块不更新梯度的模块（此时这些模块仅进行特征提取（前向计算），不反向更新）</li>
-</ul>
-</li>
-<li>param.requires_grad<ul>
-<li>显式地 frozen 掉一些module（layer）的梯度更新</li>
-<li>layer&#x2F;module 级别，</li>
-<li>可能会更灵活</li>
-</ul>
-</li>
-</ul>
-<h3 id="1-input"><a href="#1-input" class="headerlink" title="1. input"></a>1. input</h3><ul>
-<li>tokenizer 轻易不会将一个词处理为 <code>[UNK] (100)</code></li>
-<li>基于词汇表，tokenize, encode, decode 一体<ul>
-<li>tokenize：word &#x3D;&gt; token(s)，将word尽可能地映射为 vocab 中的 keys</li>
-<li>encode: token &#x3D;&gt; id</li>
-<li>decode: id &#x3D;&gt; token &#x3D;&gt; word<ul>
-<li>encode 完了之后也不是终点（word），decode 还要能很好地将 id 还原，尽可能与输入的 word 对齐；</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> BertModel, BertTokenizer</span><br><span class="line"></span><br><span class="line">model_name = <span class="string">&#x27;bert-base-uncased&#x27;</span></span><br><span class="line"></span><br><span class="line">tokenizer = BertTokenizer.from_pretrained(model_name)</span><br><span class="line">model = BertModel.from_pretrained(model_name, output_hidden_states=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;After stealing money from the bank vault, the bank robber was seen &quot;</span> \</span><br><span class="line">   <span class="string">&quot;fishing on the Mississippi river bank.&quot;</span></span><br><span class="line">    </span><br><span class="line">token_input = tokenizer(text, return_tensors=<span class="string">&#x27;pt&#x27;</span>)</span><br><span class="line">token_input </span><br><span class="line"><span class="comment"># &#123;&#x27;input_ids&#x27;: tensor([[  101,  2044, 11065,  2769,  2013,  1996,  2924, 11632,  1010,  1996, \</span></span><br><span class="line">          <span class="number">2924</span>, <span class="number">27307</span>,  <span class="number">2001</span>,  <span class="number">2464</span>,  <span class="number">5645</span>,  <span class="number">2006</span>,  <span class="number">1996</span>,  <span class="number">5900</span>,  <span class="number">2314</span>,  <span class="number">2924</span>,\</span><br><span class="line">          <span class="number">1012</span>,   <span class="number">102</span>]]), <span class="string">&#x27;token_type_ids&#x27;</span>: tensor([[<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]]), <span class="string">&#x27;attention_mask&#x27;</span>: tensor([[<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>]])&#125;\</span><br><span class="line">                </span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-<h3 id="2-model-forward"><a href="#2-model-forward" class="headerlink" title="2. model forward"></a>2. model forward</h3><h3 id="3-output"><a href="#3-output" class="headerlink" title="3. output"></a>3. output</h3><ul>
-<li>len(outputs) &#x3D;&#x3D; 3</li>
-<li>outputs[0]  last_hidden_state<ul>
-<li>last_hidden_state, shape: batch_size<em>seq_len</em>hidden_size(1*22*768)</li>
-</ul>
-</li>
-<li>outputs[1] pooler_output<ul>
-<li>pooler_output, shape: batch_size*hidden_size(1*768)</li>
-<li>Last layer hidden-state of the first token of the sequence (classification token, [CLS])</li>
-</ul>
-</li>
-<li>outputs[2] (model.config.output_hidden_states &#x3D; True) hidden_states<ul>
-<li>type: tuple</li>
-<li>one for the output of the embeddings(1), if the model has an embedding layer(12), + one for the output of each layer)<ul>
-<li>(1+12)<em>(batch_size</em>seq_len<em>hidden_size) &#x3D; 13*1*22</em>768</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>outputs[0] &#x3D;&#x3D; outputs[2][-1]</li>
-<li>outputs[1] &#x3D;&#x3D; model.pooler(outputs[2][-1])</li>
-<li>outputs[2][0] &#x3D;&#x3D; model.embeddings(token_input[‘input_ids’], token_input[‘token_type_ids’])</li>
-</ul>
-]]></content>
+    <title>p-tuning等精简版、</title>
+    <url>/2024/07/29/p-tuning%E7%AD%89%E7%B2%BE%E7%AE%80%E7%89%88%E3%80%81/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>arg的用法</title>
+    <url>/2023/10/19/arg%E7%9A%84%E7%94%A8%E6%B3%95/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>p-tuning等精简版</title>
+    <url>/2024/07/29/p-tuning%E7%AD%89%E7%B2%BE%E7%AE%80%E7%89%88-1/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>p-tuning等精简版</title>
+    <url>/2024/07/29/p-tuning%E7%AD%89%E7%B2%BE%E7%AE%80%E7%89%88/</url>
+    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>pandas数据分析数据预处理</title>
@@ -1130,38 +1149,6 @@
 
 <h3 id="拆分"><a href="#拆分" class="headerlink" title="拆分"></a>拆分</h3><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> os.path <span class="keyword">import</span> join</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">shuffle_total_data</span>(<span class="params">data_path=<span class="string">&quot;./MELD/MELD_total_text.csv&quot;</span>, </span></span><br><span class="line"><span class="params">                       save_path=<span class="string">&quot;./MELD/&quot;</span>, </span></span><br><span class="line"><span class="params">                       index_name=<span class="string">&quot;Dialogue_ID&quot;</span>,</span></span><br><span class="line"><span class="params">                       validation_split_percentage=<span class="number">0.1</span>, </span></span><br><span class="line"><span class="params">                       test_split_percentage=<span class="number">0.1</span>, </span></span><br><span class="line"><span class="params">                       regen=<span class="literal">False</span></span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;shuffle_total_data</span></span><br><span class="line"><span class="string">    将一个.csv文件(例如：CPED_total_text.csv)随机打乱，拆分为训练集、验证集、测试集，分别保存</span></span><br><span class="line"><span class="string">    使用示例：</span></span><br><span class="line"><span class="string">    shuffle_total_data(data_path=&quot;./MELD/MELD_total_text.csv&quot;, </span></span><br><span class="line"><span class="string">                       save_path=&quot;./MELD&quot;, </span></span><br><span class="line"><span class="string">                       index_name=&quot;Dialogue_ID&quot;,</span></span><br><span class="line"><span class="string">                       validation_split_percentage=0.1, </span></span><br><span class="line"><span class="string">                       test_split_percentage=0.1, </span></span><br><span class="line"><span class="string">                       regen=False)</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> regen==<span class="literal">False</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;不进行重复生成！&quot;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Read dataset from &quot;</span>, data_path)</span><br><span class="line">        data = pd.read_csv(data_path, encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>)</span><br><span class="line">                        </span><br><span class="line">        <span class="comment"># 划分为训练集、测试集</span></span><br><span class="line">        keys = <span class="built_in">list</span>(<span class="built_in">set</span>(data[index_name]))</span><br><span class="line">        random.shuffle(keys) <span class="comment"># 随机打乱</span></span><br><span class="line">        validation_split_id = <span class="built_in">int</span>(<span class="built_in">len</span>(keys)*(<span class="number">1</span>-validation_split_percentage-test_split_percentage))</span><br><span class="line">        test_split_id = <span class="built_in">int</span>(<span class="built_in">len</span>(keys)*(<span class="number">1</span>-test_split_percentage))</span><br><span class="line">        train_keys = keys[:validation_split_id] <span class="comment"># 训练集索引</span></span><br><span class="line">        valid_keys = keys[validation_split_id:test_split_id] <span class="comment"># 验证集索引</span></span><br><span class="line">        test_keys = keys[test_split_id:] <span class="comment"># 测试集索引</span></span><br><span class="line">        train_data = data[data[index_name].isin(train_keys)]</span><br><span class="line">        valid_data = data[data[index_name].isin(valid_keys)]</span><br><span class="line">        test_data = data[data[index_name].isin(test_keys)]</span><br><span class="line">        </span><br><span class="line">        train_data.to_csv(join(save_path,<span class="string">&quot;train_shuffle_split.csv&quot;</span>), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        valid_data.to_csv(join(save_path,<span class="string">&quot;valid_shuffle_split.csv&quot;</span>), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        test_data.to_csv(join(save_path,<span class="string">&quot;test_shuffle_split.csv&quot;</span>), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;已经完成数据集生成！&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
 
-]]></content>
-  </entry>
-  <entry>
-    <title>python调用大模型测试自己的文件输入</title>
-    <url>/2023/12/20/python%E8%B0%83%E7%94%A8%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%B5%8B%E8%AF%95%E8%87%AA%E5%B7%B1%E7%9A%84%E6%96%87%E4%BB%B6%E8%BE%93%E5%85%A5/</url>
-    <content><![CDATA[<h1 id="通义千问"><a href="#通义千问" class="headerlink" title="通义千问"></a>通义千问</h1><p><a class="link"   href="https://dashscope.console.aliyun.com/model" >模型服务灵积 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>获取api_key即可</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># For prerequisites running the following sample, visit https://help.aliyun.com/document_detail/611472.html</span></span><br><span class="line"><span class="keyword">from</span> http <span class="keyword">import</span> HTTPStatus</span><br><span class="line"><span class="keyword">import</span> dashscope</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.path.append(<span class="string">&quot;..&quot;</span>)</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> http <span class="keyword">import</span> HTTPStatus</span><br><span class="line"><span class="keyword">from</span> dashscope <span class="keyword">import</span> Generation</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> load_csv <span class="keyword">import</span> load_csv_with_pandas, extract_column_data_with_pandas</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;模型用的是qwen_plus</span></span><br><span class="line"><span class="string">        qwen_v1 = &#x27;qwen-v1&#x27;</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;@deprecated, use qwen_plus instead&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        qwen_plus_v1 = &#x27;qwen-plus-v1&#x27;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        bailian_v1 = &#x27;bailian-v1&#x27;</span></span><br><span class="line"><span class="string">        dolly_12b_v2 = &#x27;dolly-12b-v2&#x27;</span></span><br><span class="line"><span class="string">        qwen_turbo = &#x27;qwen-turbo&#x27;</span></span><br><span class="line"><span class="string">        qwen_plus = &#x27;qwen-plus&#x27;</span></span><br><span class="line"><span class="string">        qwen_max = &#x27;qwen-max</span></span><br><span class="line"><span class="string">   </span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">call_with_stream</span>(<span class="params">prompt</span>):</span><br><span class="line">    dashscope.api_key = <span class="string">&#x27;sk-e8bca551027e8&#x27;</span></span><br><span class="line"></span><br><span class="line">    responses = Generation.call(</span><br><span class="line">        dashscope.Generation.Models.qwen_plus,</span><br><span class="line">        messages=[&#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: prompt&#125;],</span><br><span class="line">        stream=<span class="literal">False</span>,</span><br><span class="line">        result_format=<span class="string">&#x27;message&#x27;</span>,</span><br><span class="line">        temperature=<span class="number">0</span></span><br><span class="line">        <span class="comment">#incremental_output=True  # get streaming output incrementally</span></span><br><span class="line">    )</span><br><span class="line">    <span class="built_in">print</span>(responses)</span><br><span class="line">    content_value = responses[<span class="string">&#x27;output&#x27;</span>][<span class="string">&#x27;choices&#x27;</span>][<span class="number">0</span>][<span class="string">&#x27;message&#x27;</span>][<span class="string">&#x27;content&#x27;</span>]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> content_value</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    sys.setrecursionlimit(<span class="number">10</span> ** <span class="number">6</span>)</span><br><span class="line"></span><br><span class="line">    iteration = <span class="number">50</span>  <span class="comment"># How many questions do you want GPT to answer in CSV file.</span></span><br><span class="line">    file_path = <span class="string">&#x27;merge_all_res.csv&#x27;</span></span><br><span class="line">    column_name = <span class="string">&#x27;带prompt问题&#x27;</span></span><br><span class="line">    <span class="comment"># column_name = &#x27;原始问题&#x27;</span></span><br><span class="line">    response_name = <span class="string">&#x27;回答&#x27;</span></span><br><span class="line">    data = pd.read_csv(file_path)</span><br><span class="line">    data_copy = data.copy()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;iteration starts&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, iteration):</span><br><span class="line">        question = data_copy[column_name][i]</span><br><span class="line">        result = call_with_stream(question)</span><br><span class="line">        data_copy[response_name][i] = result</span><br><span class="line">        data_copy.to_csv(file_path, index=<span class="literal">False</span>)</span><br><span class="line">        <span class="built_in">print</span>(i)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;finished&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-<h1 id="文心一言"><a href="#文心一言" class="headerlink" title="文心一言"></a>文心一言</h1><p><a class="link"   href="https://console.bce.baidu.com/qianfan/modelcenter/model/buildIn/detail/9681" >千帆大模型平台 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p><a class="link"   href="https://console.bce.baidu.com/qianfan/ais/console/applicationConsole/application" >创建应用 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>获取API Key，Secret Key</p>
-<p>然后access_token，</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_access_token</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    使用 API Key，Secret Key 获取access_token，替换下列示例中的应用API Key、应用Secret Key</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">        </span><br><span class="line">    url = <span class="string">&quot;https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&amp;client_id=[应用API Key]&amp;client_secret=[应用Secret Key]&quot;</span></span><br><span class="line">    </span><br><span class="line">    payload = json.dumps(<span class="string">&quot;&quot;</span>)</span><br><span class="line">    headers = &#123;</span><br><span class="line">        <span class="string">&#x27;Content-Type&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;Accept&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    response = requests.request(<span class="string">&quot;POST&quot;</span>, url, headers=headers, data=payload)</span><br><span class="line">    <span class="keyword">return</span> response.json().get(<span class="string">&quot;access_token&quot;</span>)</span><br></pre></td></tr></table></figure></div>
-
-<p>然后替换下面的，下面的url选择模型</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># For prerequisites running the following sample, visit https://help.aliyun.com/document_detail/611472.html</span></span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line">sys.path.append(<span class="string">&quot;..&quot;</span>)</span><br><span class="line"><span class="keyword">from</span> load_csv <span class="keyword">import</span> load_csv_with_pandas, extract_column_data_with_pandas</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">call_with_stream</span>(<span class="params">prompt</span>):</span><br><span class="line">    url = <span class="string">&quot;https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/ernie_bot_8k?access_token=&quot;</span> + <span class="string">&quot;24.fd5c2c1ac5f.2592000.1705542561.282335-45212215&quot;</span></span><br><span class="line"></span><br><span class="line">    payload = json.dumps(&#123;</span><br><span class="line">        <span class="string">&quot;messages&quot;</span>: [</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>,</span><br><span class="line">                <span class="string">&quot;content&quot;</span>: prompt</span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;)</span><br><span class="line">    headers = &#123;</span><br><span class="line">        <span class="string">&#x27;Content-Type&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    response = requests.request(<span class="string">&quot;POST&quot;</span>, url, headers=headers, data=payload)</span><br><span class="line">    a = response.text</span><br><span class="line">    response_dict = json.loads(a)</span><br><span class="line">    result_value = response_dict[<span class="string">&#x27;result&#x27;</span>]</span><br><span class="line">    <span class="built_in">print</span>(result_value)</span><br><span class="line">    <span class="keyword">return</span> result_value</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    sys.setrecursionlimit(<span class="number">10</span> ** <span class="number">6</span>)</span><br><span class="line"></span><br><span class="line">    iteration = <span class="number">50</span>  <span class="comment"># How many questions do you want GPT to answer in CSV file.</span></span><br><span class="line">    file_path = <span class="string">&#x27;merge_all_res.csv&#x27;</span></span><br><span class="line">    column_name = <span class="string">&#x27;带prompt问题&#x27;</span></span><br><span class="line">    <span class="comment"># column_name = &#x27;原始问题&#x27;</span></span><br><span class="line">    response_name = <span class="string">&#x27;回答&#x27;</span></span><br><span class="line">    data = pd.read_csv(file_path)</span><br><span class="line">    data_copy = data.copy()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;iteration starts&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, iteration):</span><br><span class="line">        question = data_copy[column_name][i]</span><br><span class="line">        result = call_with_stream(question)</span><br><span class="line">        data_copy[response_name][i] = result</span><br><span class="line">        data_copy.to_csv(file_path, index=<span class="literal">False</span>)</span><br><span class="line">        <span class="built_in">print</span>(i)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;finished&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-<h1 id="星火认知大模型"><a href="#星火认知大模型" class="headerlink" title="星火认知大模型"></a>星火认知大模型</h1><p><a class="link"   href="https://xinghuo.xfyun.cn/sparkapi" >免费的目前 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>然后从<a class="link"   href="https://console.xfyun.cn/services/bm3" >这里 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>获取</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">以下密钥信息从控制台获取</span><br><span class="line">appid = <span class="string">&quot;9f24a&quot;</span>     <span class="comment">#填写控制台中获取的 APPID 信息</span></span><br><span class="line">api_secret = <span class="string">&quot;ZDU1OTTg1ZDE0YjBjNjQ1&quot;</span>   <span class="comment">#填写控制台中获取的 APISecret 信息</span></span><br><span class="line">api_key =<span class="string">&quot;4b11dfd3d6a405ef69c89&quot;</span>    <span class="comment">#填写控制台中获取的 APIKey 信息</span></span><br></pre></td></tr></table></figure></div>
-
-<p><a class="link"   href="https://xfyun-doc.cn-bj.ufileos.com/static%2F16974374635522820%2FSparkApi_Python.zip" >Python调用例子 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>如果报错  </p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">pip uninstall websocket</span><br><span class="line">pip install websocket-client</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-<h1 id="智谱AI大模型MaaS开放平台"><a href="#智谱AI大模型MaaS开放平台" class="headerlink" title="智谱AI大模型MaaS开放平台"></a>智谱AI大模型MaaS开放平台</h1><p><a class="link"   href="https://open.bigmodel.cn/usercenter/apikeys" >API <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p><a class="link"   href="https://open.bigmodel.cn/dev/api#auth" >写的非常详细 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>ChatGLM-Turbo</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> zhipuai</span><br><span class="line"></span><br><span class="line">zhipuai.api_key = <span class="string">&quot;your api key&quot;</span></span><br><span class="line">response = zhipuai.model_api.sse_invoke(</span><br><span class="line">    model=<span class="string">&quot;chatglm_turbo&quot;</span>,</span><br><span class="line">    prompt=[</span><br><span class="line">        &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;你好&quot;</span>&#125;,</span><br><span class="line">        &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;assistant&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;我是人工智能助手&quot;</span>&#125;,</span><br><span class="line">        &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;你叫什么名字&quot;</span>&#125;,</span><br><span class="line">        &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;assistant&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;我叫chatGLM&quot;</span>&#125;,</span><br><span class="line">        &#123;<span class="string">&quot;role&quot;</span>:<span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;你都可以做些什么事&quot;</span>&#125;,</span><br><span class="line">    ],</span><br><span class="line">    temperature=<span class="number">0.95</span>,</span><br><span class="line">    top_p=<span class="number">0.7</span>,</span><br><span class="line">    incremental=<span class="literal">True</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> event <span class="keyword">in</span> response.events():</span><br><span class="line">  <span class="keyword">if</span> event.event == <span class="string">&quot;add&quot;</span>:</span><br><span class="line">      <span class="built_in">print</span>(event.data)</span><br><span class="line">  <span class="keyword">elif</span> event.event == <span class="string">&quot;error&quot;</span> <span class="keyword">or</span> event.event == <span class="string">&quot;interrupted&quot;</span>:</span><br><span class="line">      <span class="built_in">print</span>(event.data)</span><br><span class="line">  <span class="keyword">elif</span> event.event == <span class="string">&quot;finish&quot;</span>:</span><br><span class="line">      <span class="built_in">print</span>(event.data)</span><br><span class="line">      <span class="built_in">print</span>(event.meta)</span><br><span class="line">  <span class="keyword">else</span>:</span><br><span class="line">      <span class="built_in">print</span>(event.data)</span><br></pre></td></tr></table></figure></div>
-
-<hr>
-<h1 id="盘古AI"><a href="#盘古AI" class="headerlink" title="盘古AI"></a>盘古AI</h1><p>研究研究先。。。</p>
 ]]></content>
   </entry>
   <entry>
@@ -1304,6 +1291,38 @@
 ]]></content>
   </entry>
   <entry>
+    <title>python调用大模型测试自己的文件输入</title>
+    <url>/2023/12/20/python%E8%B0%83%E7%94%A8%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%B5%8B%E8%AF%95%E8%87%AA%E5%B7%B1%E7%9A%84%E6%96%87%E4%BB%B6%E8%BE%93%E5%85%A5/</url>
+    <content><![CDATA[<h1 id="通义千问"><a href="#通义千问" class="headerlink" title="通义千问"></a>通义千问</h1><p><a class="link"   href="https://dashscope.console.aliyun.com/model" >模型服务灵积 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>获取api_key即可</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># For prerequisites running the following sample, visit https://help.aliyun.com/document_detail/611472.html</span></span><br><span class="line"><span class="keyword">from</span> http <span class="keyword">import</span> HTTPStatus</span><br><span class="line"><span class="keyword">import</span> dashscope</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.path.append(<span class="string">&quot;..&quot;</span>)</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> http <span class="keyword">import</span> HTTPStatus</span><br><span class="line"><span class="keyword">from</span> dashscope <span class="keyword">import</span> Generation</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> load_csv <span class="keyword">import</span> load_csv_with_pandas, extract_column_data_with_pandas</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;模型用的是qwen_plus</span></span><br><span class="line"><span class="string">        qwen_v1 = &#x27;qwen-v1&#x27;</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;@deprecated, use qwen_plus instead&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        qwen_plus_v1 = &#x27;qwen-plus-v1&#x27;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        bailian_v1 = &#x27;bailian-v1&#x27;</span></span><br><span class="line"><span class="string">        dolly_12b_v2 = &#x27;dolly-12b-v2&#x27;</span></span><br><span class="line"><span class="string">        qwen_turbo = &#x27;qwen-turbo&#x27;</span></span><br><span class="line"><span class="string">        qwen_plus = &#x27;qwen-plus&#x27;</span></span><br><span class="line"><span class="string">        qwen_max = &#x27;qwen-max</span></span><br><span class="line"><span class="string">   </span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">call_with_stream</span>(<span class="params">prompt</span>):</span><br><span class="line">    dashscope.api_key = <span class="string">&#x27;sk-e8bca551027e8&#x27;</span></span><br><span class="line"></span><br><span class="line">    responses = Generation.call(</span><br><span class="line">        dashscope.Generation.Models.qwen_plus,</span><br><span class="line">        messages=[&#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: prompt&#125;],</span><br><span class="line">        stream=<span class="literal">False</span>,</span><br><span class="line">        result_format=<span class="string">&#x27;message&#x27;</span>,</span><br><span class="line">        temperature=<span class="number">0</span></span><br><span class="line">        <span class="comment">#incremental_output=True  # get streaming output incrementally</span></span><br><span class="line">    )</span><br><span class="line">    <span class="built_in">print</span>(responses)</span><br><span class="line">    content_value = responses[<span class="string">&#x27;output&#x27;</span>][<span class="string">&#x27;choices&#x27;</span>][<span class="number">0</span>][<span class="string">&#x27;message&#x27;</span>][<span class="string">&#x27;content&#x27;</span>]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> content_value</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    sys.setrecursionlimit(<span class="number">10</span> ** <span class="number">6</span>)</span><br><span class="line"></span><br><span class="line">    iteration = <span class="number">50</span>  <span class="comment"># How many questions do you want GPT to answer in CSV file.</span></span><br><span class="line">    file_path = <span class="string">&#x27;merge_all_res.csv&#x27;</span></span><br><span class="line">    column_name = <span class="string">&#x27;带prompt问题&#x27;</span></span><br><span class="line">    <span class="comment"># column_name = &#x27;原始问题&#x27;</span></span><br><span class="line">    response_name = <span class="string">&#x27;回答&#x27;</span></span><br><span class="line">    data = pd.read_csv(file_path)</span><br><span class="line">    data_copy = data.copy()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;iteration starts&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, iteration):</span><br><span class="line">        question = data_copy[column_name][i]</span><br><span class="line">        result = call_with_stream(question)</span><br><span class="line">        data_copy[response_name][i] = result</span><br><span class="line">        data_copy.to_csv(file_path, index=<span class="literal">False</span>)</span><br><span class="line">        <span class="built_in">print</span>(i)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;finished&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<h1 id="文心一言"><a href="#文心一言" class="headerlink" title="文心一言"></a>文心一言</h1><p><a class="link"   href="https://console.bce.baidu.com/qianfan/modelcenter/model/buildIn/detail/9681" >千帆大模型平台 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><a class="link"   href="https://console.bce.baidu.com/qianfan/ais/console/applicationConsole/application" >创建应用 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>获取API Key，Secret Key</p>
+<p>然后access_token，</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_access_token</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    使用 API Key，Secret Key 获取access_token，替换下列示例中的应用API Key、应用Secret Key</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">        </span><br><span class="line">    url = <span class="string">&quot;https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&amp;client_id=[应用API Key]&amp;client_secret=[应用Secret Key]&quot;</span></span><br><span class="line">    </span><br><span class="line">    payload = json.dumps(<span class="string">&quot;&quot;</span>)</span><br><span class="line">    headers = &#123;</span><br><span class="line">        <span class="string">&#x27;Content-Type&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;Accept&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    response = requests.request(<span class="string">&quot;POST&quot;</span>, url, headers=headers, data=payload)</span><br><span class="line">    <span class="keyword">return</span> response.json().get(<span class="string">&quot;access_token&quot;</span>)</span><br></pre></td></tr></table></figure></div>
+
+<p>然后替换下面的，下面的url选择模型</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># For prerequisites running the following sample, visit https://help.aliyun.com/document_detail/611472.html</span></span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line">sys.path.append(<span class="string">&quot;..&quot;</span>)</span><br><span class="line"><span class="keyword">from</span> load_csv <span class="keyword">import</span> load_csv_with_pandas, extract_column_data_with_pandas</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">call_with_stream</span>(<span class="params">prompt</span>):</span><br><span class="line">    url = <span class="string">&quot;https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/ernie_bot_8k?access_token=&quot;</span> + <span class="string">&quot;24.fd5c2c1ac5f.2592000.1705542561.282335-45212215&quot;</span></span><br><span class="line"></span><br><span class="line">    payload = json.dumps(&#123;</span><br><span class="line">        <span class="string">&quot;messages&quot;</span>: [</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>,</span><br><span class="line">                <span class="string">&quot;content&quot;</span>: prompt</span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;)</span><br><span class="line">    headers = &#123;</span><br><span class="line">        <span class="string">&#x27;Content-Type&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    response = requests.request(<span class="string">&quot;POST&quot;</span>, url, headers=headers, data=payload)</span><br><span class="line">    a = response.text</span><br><span class="line">    response_dict = json.loads(a)</span><br><span class="line">    result_value = response_dict[<span class="string">&#x27;result&#x27;</span>]</span><br><span class="line">    <span class="built_in">print</span>(result_value)</span><br><span class="line">    <span class="keyword">return</span> result_value</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    sys.setrecursionlimit(<span class="number">10</span> ** <span class="number">6</span>)</span><br><span class="line"></span><br><span class="line">    iteration = <span class="number">50</span>  <span class="comment"># How many questions do you want GPT to answer in CSV file.</span></span><br><span class="line">    file_path = <span class="string">&#x27;merge_all_res.csv&#x27;</span></span><br><span class="line">    column_name = <span class="string">&#x27;带prompt问题&#x27;</span></span><br><span class="line">    <span class="comment"># column_name = &#x27;原始问题&#x27;</span></span><br><span class="line">    response_name = <span class="string">&#x27;回答&#x27;</span></span><br><span class="line">    data = pd.read_csv(file_path)</span><br><span class="line">    data_copy = data.copy()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;iteration starts&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, iteration):</span><br><span class="line">        question = data_copy[column_name][i]</span><br><span class="line">        result = call_with_stream(question)</span><br><span class="line">        data_copy[response_name][i] = result</span><br><span class="line">        data_copy.to_csv(file_path, index=<span class="literal">False</span>)</span><br><span class="line">        <span class="built_in">print</span>(i)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;finished&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<h1 id="星火认知大模型"><a href="#星火认知大模型" class="headerlink" title="星火认知大模型"></a>星火认知大模型</h1><p><a class="link"   href="https://xinghuo.xfyun.cn/sparkapi" >免费的目前 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>然后从<a class="link"   href="https://console.xfyun.cn/services/bm3" >这里 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>获取</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">以下密钥信息从控制台获取</span><br><span class="line">appid = <span class="string">&quot;9f24a&quot;</span>     <span class="comment">#填写控制台中获取的 APPID 信息</span></span><br><span class="line">api_secret = <span class="string">&quot;ZDU1OTTg1ZDE0YjBjNjQ1&quot;</span>   <span class="comment">#填写控制台中获取的 APISecret 信息</span></span><br><span class="line">api_key =<span class="string">&quot;4b11dfd3d6a405ef69c89&quot;</span>    <span class="comment">#填写控制台中获取的 APIKey 信息</span></span><br></pre></td></tr></table></figure></div>
+
+<p><a class="link"   href="https://xfyun-doc.cn-bj.ufileos.com/static%2F16974374635522820%2FSparkApi_Python.zip" >Python调用例子 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>如果报错  </p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">pip uninstall websocket</span><br><span class="line">pip install websocket-client</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<h1 id="智谱AI大模型MaaS开放平台"><a href="#智谱AI大模型MaaS开放平台" class="headerlink" title="智谱AI大模型MaaS开放平台"></a>智谱AI大模型MaaS开放平台</h1><p><a class="link"   href="https://open.bigmodel.cn/usercenter/apikeys" >API <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><a class="link"   href="https://open.bigmodel.cn/dev/api#auth" >写的非常详细 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>ChatGLM-Turbo</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> zhipuai</span><br><span class="line"></span><br><span class="line">zhipuai.api_key = <span class="string">&quot;your api key&quot;</span></span><br><span class="line">response = zhipuai.model_api.sse_invoke(</span><br><span class="line">    model=<span class="string">&quot;chatglm_turbo&quot;</span>,</span><br><span class="line">    prompt=[</span><br><span class="line">        &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;你好&quot;</span>&#125;,</span><br><span class="line">        &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;assistant&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;我是人工智能助手&quot;</span>&#125;,</span><br><span class="line">        &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;你叫什么名字&quot;</span>&#125;,</span><br><span class="line">        &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;assistant&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;我叫chatGLM&quot;</span>&#125;,</span><br><span class="line">        &#123;<span class="string">&quot;role&quot;</span>:<span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;你都可以做些什么事&quot;</span>&#125;,</span><br><span class="line">    ],</span><br><span class="line">    temperature=<span class="number">0.95</span>,</span><br><span class="line">    top_p=<span class="number">0.7</span>,</span><br><span class="line">    incremental=<span class="literal">True</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> event <span class="keyword">in</span> response.events():</span><br><span class="line">  <span class="keyword">if</span> event.event == <span class="string">&quot;add&quot;</span>:</span><br><span class="line">      <span class="built_in">print</span>(event.data)</span><br><span class="line">  <span class="keyword">elif</span> event.event == <span class="string">&quot;error&quot;</span> <span class="keyword">or</span> event.event == <span class="string">&quot;interrupted&quot;</span>:</span><br><span class="line">      <span class="built_in">print</span>(event.data)</span><br><span class="line">  <span class="keyword">elif</span> event.event == <span class="string">&quot;finish&quot;</span>:</span><br><span class="line">      <span class="built_in">print</span>(event.data)</span><br><span class="line">      <span class="built_in">print</span>(event.meta)</span><br><span class="line">  <span class="keyword">else</span>:</span><br><span class="line">      <span class="built_in">print</span>(event.data)</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h1 id="盘古AI"><a href="#盘古AI" class="headerlink" title="盘古AI"></a>盘古AI</h1><p>研究研究先。。。</p>
+]]></content>
+  </entry>
+  <entry>
     <title>「Prompt Engineering」提示词工程</title>
     <url>/2024/06/23/%E3%80%8CPrompt-Engineering%E3%80%8D%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B/</url>
     <content><![CDATA[<p>提示工程（Prompt Engingering），也被称为上下文提示（In-Context Prompting），指的是通过结构化文本等方式来完善提示词，引导LLM输出我们期望的结果。通过提示词工程可以在不更新模型权重的情况下，让LLM完成不同类型的任务。其主要依赖于经验，而且提示词工程方法的效果在不同的模型中可能会有很大的差异，因此需要大量的实验和探索。</p>
@@ -1401,6 +1420,33 @@
 <div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;path&quot;: &quot;能源互联网规划及配电网规划专业调考题库（2020版）-勘误更新版&quot;,</span><br><span class="line">    &quot;number&quot;: 1,</span><br><span class="line">    &quot;question&quot;: &quot;在装有热水的容器外涂上一薄层碳黑，则水凉的快，因为&quot;,</span><br><span class="line">    &quot;A&quot;: &quot;碳黑黑度大，辐射散热少&quot;,</span><br><span class="line">    &quot;B&quot;: &quot;碳黑黑度大，辐射散热少&quot;,</span><br><span class="line">    &quot;C&quot;: &quot;碳黑黑度小，辐射散热多&quot;,</span><br><span class="line">    &quot;D&quot;: &quot;碳黑黑度小，辐射散热少&quot;,</span><br><span class="line">    &quot;answer&quot;: &quot;B&quot;,</span><br><span class="line">    &quot;analysis&quot;: &quot;&quot;,</span><br><span class="line">    &quot;type&quot;: &quot;Singlechoice&quot;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure></div>
 
 ]]></content>
+  </entry>
+  <entry>
+    <title>transformer模型</title>
+    <url>/2024/07/17/transformer%E7%B3%BB%E5%88%97%E6%B1%87%E6%80%BB/</url>
+    <content><![CDATA[<h1 id="Attention"><a href="#Attention" class="headerlink" title="Attention"></a>Attention</h1><h2 id="1-attention，self-attention"><a href="#1-attention，self-attention" class="headerlink" title="1.attention，self-attention"></a>1.attention，self-attention</h2><p>Attention机制是一种在处理时序相关问题的时候常用的技术，主要用于处理序列数据。<br>核心思想是在处理序列数据时，<strong>网络应该更关注输入中的重要部分，而忽略不重要的部分，它通过学习不同部分的权重，将输入的序列中的重要部分显式地加权，从而使得模型可以更好地关注与输出有关的信息。</strong></p>
+<p>Attention机制的关键是引入一种机制来动态地计算输入序列中各个位置的权重，从而在每个时间步上，对输入序列的不同部分进行加权求和，得到当前时间步的输出。这样就实现了模型对输入中不同部分的关注度的自适应调整。</p>
+<p>self-attention是指在序列数据中，<strong>将当前位置与其他位置之间的关系建模</strong>。它通过计算每个位置与其他所有位置之间的相关性得分，从而为每个位置分配一个权重。这使得模型能够根据输入序列的不同部分的重要性，自适应地选择要关注的信息。</p>
+<h2 id="2-Attention的计算步骤是什么？"><a href="#2-Attention的计算步骤是什么？" class="headerlink" title="2.Attention的计算步骤是什么？"></a>2.Attention的计算步骤是什么？</h2><p>如下：</p>
+<ul>
+<li><p>计算查询（Query）：查询是当前时间步的输入，用于和序列中其他位置的信息进行比较。</p>
+</li>
+<li><p>计算键（Key）和值（Value）：键表示序列中其他位置的信息，值是对应位置的表示。键和值用来和查询进行比较。</p>
+</li>
+<li><p>计算注意力权重：：通过将查询和键进行内积运算，进<strong>行缩放，根号d，</strong>然后应用softmax函数，得到注意力权重。这些权重表示了在当前时间步，模型应该关注序列中其他位置的重要程度。</p>
+</li>
+<li><p>加权求和：根据注意力权重将值进行加权求和，得到当前时间步的输出</p>
+</li>
+</ul>
+<p>在Transformer中，Self-Attention 被称为”Scaled Dot-Product Attention”，其计算过程如下：</p>
+<ol>
+<li>对于输入序列中的每个位置，通过计算其与所有其他位置之间的相似度得分（通常通过点积计算）。</li>
+<li>对得分进<strong>行缩放处理</strong>，以防止梯度爆炸。</li>
+<li>将得分用softmax函数转换为注意力权重，以便计算每个位置的加权和。</li>
+<li>使用注意力权重对输入序列中的所有位置进行加权求和，得到每个位置的自注意输出。</li>
+</ol>
+<h1 id="layer-normalization"><a href="#layer-normalization" class="headerlink" title="layer_normalization"></a>layer_normalization</h1><h1 id="位置编码"><a href="#位置编码" class="headerlink" title="位置编码"></a>位置编码</h1><p>在多个block 前向传递的过程中position的信息不会丢失</p>
+<h1 id="分词器"><a href="#分词器" class="headerlink" title="分词器"></a>分词器</h1><h1 id="激活函数"><a href="#激活函数" class="headerlink" title="激活函数"></a>激活函数</h1>]]></content>
   </entry>
   <entry>
     <title>图神经网络</title>
@@ -1593,44 +1639,101 @@
 <h3 id="通过池化信息对GNN预测"><a href="#通过池化信息对GNN预测" class="headerlink" title="通过池化信息对GNN预测"></a>通过<a class="link"   href="https://so.csdn.net/so/search?q=%E6%B1%A0%E5%8C%96&spm=1001.2101.3001.7020" >池化 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>信息对GNN预测</h3>]]></content>
   </entry>
   <entry>
-    <title>大模型评测</title>
-    <url>/2024/06/22/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E8%AF%84%E6%B5%8B/</url>
-    <content><![CDATA[<h2 id="1-大模型怎么评测？"><a href="#1-大模型怎么评测？" class="headerlink" title="1. 大模型怎么评测？"></a>1. 大模型怎么评测？</h2><p><strong>自动评测和人工评测</strong>。</p>
-<p>自动评测方法基于计算机算法和自动生成的指标，能够快速且高效地评测模型的性能。比如ROUGE F1，acc</p>
-<p>而人工评测则侧重于人类专家的主观判断和质量评测，能够提供更深入、细致的分析和意见。了解和掌握这两种评测方法对准确评测和改进语言模型的能力十分重要。</p>
-<h3 id="如何衡量大模型水平"><a href="#如何衡量大模型水平" class="headerlink" title="如何衡量大模型水平"></a>如何衡量大模型水平</h3><p>在评测 LLMs 的性能时，选择合适的任务和领域对于展示大型语言模型的表现、优势和劣势至关重要。为了更清晰地展示 LLMs 的能力水平，文章将现有的任务划分为以下不同的类别：</p>
+    <title>差分隐私（二）</title>
+    <url>/2023/11/02/%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81%EF%BC%88%E4%BA%8C%EF%BC%89/</url>
+    <content><![CDATA[<p>阅读本章后，您将能够：</p>
 <ul>
-<li>自然语言处理：包括自然语言理解、推理、自然语言生成和多语言任务</li>
-<li>安全性：鲁棒性、伦理、偏见和真实性</li>
-<li>医学应用：包括医学问答、医学考试、医学教育和医学助手</li>
-<li>社会科学</li>
-<li>自然科学与工程：包括数学、通用科学和工程</li>
-<li>代码</li>
-<li>代理应用：将 LLMs 作为代理使用</li>
+<li>描述并实现梯度下降的基本算法</li>
+<li>使用高斯机制实现差分私有梯度下降</li>
+<li>裁剪梯度，为任意损失函数实施差分隐私</li>
+<li>描述噪声对训练过程的影响</li>
 </ul>
-<h3 id="大模型评估方法有哪些"><a href="#大模型评估方法有哪些" class="headerlink" title="大模型评估方法有哪些"></a>大模型评估方法有哪些</h3><ol>
-<li>首先是“直接评估指标”这一类别。这些是在人工智能领域长期以来广泛使用的传统指标。像准确率（accuracy）和F1得分（F1 score）等指标属于这个类别。通常情况下，这种方法涉及从模型中获取单一的输出，并将其与参考值进行比较，可以通过约束条件或提取所需信息的方式来实现评估。</li>
-<li>接下来是第二类方法，称为“间接或分解的启发式方法（indirect or decomposed heuristics）”。在这种方法中，我们利用较小的模型（smaller models）来评估主模型（the main model）生成的答案，这些较小的模型可以是微调过的模型或原始的分解模型（raw decompositions）。</li>
-<li>第三类评估方法被称为“基于模型的评估”。在这种方法中，模型本身提供最终的评估分数或评估结果。然而，这也引入了额外的可变因素。即使模型可以获取到ground truth信息，评估指标本身也可能在评分过程中产生随机因素或不确定因素。</li>
+<h3 id="梯度下降的单步"><a href="#梯度下降的单步" class="headerlink" title="梯度下降的单步"></a>梯度下降的单步</h3><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Prediction: take a model (theta) and a single example (xi) and return its predicted label</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">predict</span>(<span class="params">xi, theta, bias=<span class="number">0</span></span>):</span><br><span class="line">    label = np.sign(xi @ theta + bias)</span><br><span class="line">    <span class="keyword">return</span> label</span><br><span class="line"></span><br><span class="line"><span class="comment"># This is the gradient of the logistic loss</span></span><br><span class="line"><span class="comment"># The gradient is a vector that indicates the rate of change of the loss in each direction</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gradient</span>(<span class="params">theta, xi, yi</span>):</span><br><span class="line">    exponent = yi * (xi.dot(theta))</span><br><span class="line">    <span class="keyword">return</span> - (yi*xi) / (<span class="number">1</span>+np.exp(exponent))</span><br><span class="line">    </span><br><span class="line">theta = theta - gradient(theta, X_train[<span class="number">0</span>], y_train[<span class="number">0</span>])</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h3 id="梯度下降算法"><a href="#梯度下降算法" class="headerlink" title="梯度下降算法"></a>梯度下降算法</h3><p>首先，我们上面的单个步骤仅使用了训练数据中的一个示例;我们希望在更新模型时考虑<em>整个</em>训练集，以便改进<em>所有</em>示例的模型。其次，我们需要执行多次迭代，以尽可能接近最小化损失。</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">avg_grad</span>(<span class="params">theta, X, y</span>):</span><br><span class="line">    grads = [gradient(theta, xi, yi) <span class="keyword">for</span> xi, yi <span class="keyword">in</span> <span class="built_in">zip</span>(X, y)]</span><br><span class="line">    <span class="keyword">return</span> np.mean(grads, axis=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">avg_grad(theta, X_train, y_train)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gradient_descent</span>(<span class="params">iterations</span>):</span><br><span class="line">    <span class="comment"># Start by &quot;guessing&quot; what the model should be (all zeros)</span></span><br><span class="line">    theta = np.zeros(X_train.shape[<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Perform `iterations` steps of gradient descent using training data</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iterations):</span><br><span class="line">        theta = theta - avg_grad(theta, X_train, y_train)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> theta</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h1 id="具有差分隐私的梯度下降"><a href="#具有差分隐私的梯度下降" class="headerlink" title="具有差分隐私的梯度下降"></a>具有差分隐私的梯度下降</h1><p>使用训练数据的算法的唯一部分是梯度计算。使算法具有差分隐私的一种方法是在每次迭代之前向梯度本身添加噪声，然后再更新模型。这种方法通常称为噪声梯<em>度下降</em>，因为我们直接向梯度添加噪声。</p>
+<p>我们的梯度函数是一个向量值函数，因此我们可以用<em>gaussian_mech_vec</em>来向其输出添加噪声</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">noisy_gradient_descent</span>(<span class="params">iterations, epsilon, delta</span>):</span><br><span class="line">    theta = np.zeros(X_train.shape[<span class="number">1</span>])</span><br><span class="line">    sensitivity = <span class="string">&#x27;???&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iterations):</span><br><span class="line">        grad = avg_grad(theta, X_train, y_train)</span><br><span class="line">        noisy_grad = gaussian_mech_vec(grad, sensitivity, epsilon, delta)</span><br><span class="line">        theta = theta - noisy_grad</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> theta</span><br></pre></td></tr></table></figure></div>
+
+<p>梯度函数的敏感性是什么？回答这个问题是使算法成功运行的核心难点。</p>
+<p>首先，梯度是一个平均查询的结果 - 它是许多单个样本梯度的平均值。正如我们之前所看到的，最好将这类查询拆分为求和查询和计数查询。这并不难做到 - 我们可以计算<strong>每个单个样本梯度的带噪声的求和，而不是它们的平均值，然后稍后再除以一个嘈杂计数</strong>。其次，<strong>我们需要限定每个单个样本梯度的敏感性</strong>。</p>
+<p>有两种基本方法可以做到这一点：我们可以分析梯度函数本身（就像我们之前处理其他查询一样）以确定其最坏情况下的全局敏感性，或者我们可以通过截断梯度函数的输出来强制实施敏感性（就像我们在采样和聚合中所做的那样）。</p>
+<p>我们将从第二种方法开始 - 通常称为梯度剪切 - 因为在概念上更简单，而且在应用中更具通用性。</p>
+<h3 id="Gradient-Clipping"><a href="#Gradient-Clipping" class="headerlink" title="Gradient Clipping"></a>Gradient Clipping</h3><p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://s2.loli.net/2023/11/03/Nh9mJXlBAQb8vpV.png"
+                      alt="image.png"
+                > </p>
+<p>我们可以使用相同的技巧来限制梯度函数的 L2 敏感性。我们需要定义一个函数，用于将一个向量“剪裁”，使其具有所需范围内的 L2 范数。我们可以通过对向量进行按元素除以其 L2 范数来实现这一目标，这样得到的向量将具有 L2 范数为1。如果我们希望定位到特定的剪裁参数 b，我们可以将缩放后的向量乘以 b，以将其重新缩放为具有 L2 范数 b。我们希望避免修改那些已经具有 L2 范数小于 b 的向量；在这种情况下，我们只返回原始向量。我们可以使用 <code>np.linalg.norm</code> 函数，参数 <code>ord=2</code>，来计算一个向量的 L2 范数。</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">L2_clip</span>(<span class="params">v, b</span>):</span><br><span class="line">    norm = np.linalg.norm(v, <span class="built_in">ord</span>=<span class="number">2</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> norm &gt; b:</span><br><span class="line">        <span class="keyword">return</span> b * (v / norm)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> v</span><br></pre></td></tr></table></figure></div>
+
+<p>现在，我们可以继续计算剪切梯度的和，并根据我们通过剪切所强制实施的 L2 敏感性 b 来添加噪声。        </p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">gradient_sum</span>(<span class="params">theta, X, y, b</span>):</span><br><span class="line">    gradients = [L2_clip(gradient(theta, x_i, y_i), b) <span class="keyword">for</span> x_i, y_i <span class="keyword">in</span> <span class="built_in">zip</span>(X,y)]<span class="comment">#####L2_clip裁剪</span></span><br><span class="line"><span class="comment"># sum query</span></span><br><span class="line"><span class="comment"># L2 sensitivity is b (by clipping performed above)</span></span><br><span class="line"><span class="keyword">return</span> np.<span class="built_in">sum</span>(gradients, axis=<span class="number">0</span>)</span><br></pre></td></tr></table></figure></div>
+
+<p>现在，我们已准备好完成嘈杂梯度下降算法。要计算噪声平均梯度，我们需要：</p>
+<ol>
+<li>根据灵敏度b将噪声添加到梯度总和中</li>
+<li>计算训练样本数的噪声计数（<strong>灵敏度 1</strong>）</li>
+<li>将 （1） 的噪声总和除以 （2） 的噪声计数</li>
 </ol>
-<h3 id="大模型的-honest-原则是如何实现的？模型如何判断回答的知识是训练过的已知的知识，怎么训练这种能力？"><a href="#大模型的-honest-原则是如何实现的？模型如何判断回答的知识是训练过的已知的知识，怎么训练这种能力？" class="headerlink" title="大模型的 honest 原则是如何实现的？模型如何判断回答的知识是训练过的已知的知识，怎么训练这种能力？"></a>大模型的 honest 原则是如何实现的？模型如何判断回答的知识是训练过的已知的知识，怎么训练这种能力？</h3><p>大模型需要遵循的 helpful，honest， harmless 的原则。<br>可<strong>以有意构造如下的训练样本</strong>，以提升模型遵守 honest 原则，可以算 trick 了：微调时构造知识问答类训练集，给出不知道的不回答，加强 honest 原则；阅读理解题，读过的要回答，没读过的不回答，不要胡说八道。</p>
-<h2 id="2-幻视"><a href="#2-幻视" class="headerlink" title="2.幻视"></a>2.幻视</h2><h3 id="1-什么是大模型幻觉？"><a href="#1-什么是大模型幻觉？" class="headerlink" title="1.什么是大模型幻觉？"></a>1.什么是大模型幻觉？</h3><p>在语言模型的背景下，幻觉指的是一本正经的胡说八道：看似流畅自然的表述，实则不符合事实或者是错误的。</p>
-<p>幻觉影响了模型的可靠性和可信度，因此需要解决LLM的幻觉问题</p>
-<p>幻觉主要可以分为两类：即内在幻觉和外在幻觉。</p>
-<ul>
-<li>内在幻觉：生成的内容与源内容相矛盾。  </li>
-<li>外部幻觉：生成的内容不能从源内容中得到验证，既不受源内容支持也不受其反驳。</li>
-</ul>
-<h2 id="2-残生的原因"><a href="#2-残生的原因" class="headerlink" title="2.残生的原因"></a>2.残生的原因</h2><ul>
-<li><strong>训练与实际应用中的解码差异：</strong>在常见的训练方法中，我们鼓励模型基于真实数据预测下一个词汇。但在实际应用中，模型则是根据自己先前生成的内容进行预测。这种方法上的差异，尤其在处理长文本时，可能会导致模型的输出出现“幻觉”。</li>
-<li><strong>解码过程中的随机性</strong>：某些旨在增加输出多样性的解码策略，如top-k采样、top-p方法以及温度调节，有时会增加“幻觉”的产生。这往往是因为模型在选择输出词汇时引入了随机性，而没有始终选择最可能的词汇。 </li>
-<li><strong>训练数据中的偏见</strong></li>
-<li><strong>缺乏外部验证</strong></li>
-</ul>
-<h3 id="3-如何缓解："><a href="#3-如何缓解：" class="headerlink" title="3.如何缓解："></a>3.如何缓解：</h3><ul>
-<li>采样多个输出并检查其一致性</li>
-<li><strong>外部知识集成</strong>RAG</li>
-</ul>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">noisy_gradient_descent</span>(<span class="params">iterations, epsilon, delta</span>):</span><br><span class="line">    theta = np.zeros(X_train.shape[<span class="number">1</span>])</span><br><span class="line">    sensitivity = <span class="number">1.0</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">#Laplace</span></span><br><span class="line">    noisy_count = laplace_mech(X_train.shape[<span class="number">0</span>], <span class="number">1</span>, epsilon)  <span class="comment">####样本个数  灵敏度1</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iterations):</span><br><span class="line">        grad_sum        = gradient_sum(theta, X_train, y_train, sensitivity)</span><br><span class="line">        noisy_grad_sum  = gaussian_mech_vec(grad_sum, sensitivity, epsilon, delta)</span><br><span class="line">        noisy_avg_grad  = noisy_grad_sum / noisy_count</span><br><span class="line">        theta           = theta - noisy_avg_grad</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> theta	</span><br></pre></td></tr></table></figure></div>
+
+<p>该算法的每次迭代都满足 (ϵ, δ)-差分隐私，并且我们执行一次额外的查询来确定满足 ϵ-差分隐私的嘈杂计数。如果我们执行了 K 次迭代，那么根据序列组合，该算法满足 (kϵ, kδ)-差分隐私。我们还可以使用高级组合来分析总隐私成本；更好的是，我们可以将算法转化为 Rényi 差分隐私或零浓缩差分隐私，并获得有关组合的严格边界。</p>
+<h3 id="Sensitivity-of-the-Gradient"><a href="#Sensitivity-of-the-Gradient" class="headerlink" title="Sensitivity of the Gradient"></a>Sensitivity of the Gradient</h3><p>裁剪训练样本而不是梯度有两个优点。首先，估计训练数据的规模（从而选择一个好的裁剪参数）通常比估计训练期间计算的梯度的规模更容易。其次，它在计算效率更高：我们可以对训练样本进行一次裁剪，并在每次训练模型时重复使用裁剪后的训练数据;使用梯度裁剪时，我们需要在训练过程中裁剪每个梯度。此外，我们不再被迫计算每个样本的梯度，以便我们可以裁剪它们;相反，我们可以一次计算所有梯度，这可以非常有效地完成（这是机器学习中常用的技巧，但我们不会在这里讨论）</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://s2.loli.net/2023/11/03/ukLiGKXFNHDvjbO.png"
+                      alt="image.png"
+                ></p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">gradient_sum</span>(<span class="params">theta, X, y, b</span>):</span><br><span class="line">    gradients = [gradient(theta, x_i, y_i) <span class="keyword">for</span> x_i, y_i <span class="keyword">in</span> <span class="built_in">zip</span>(X,y)]   <span class="comment">#####不需要裁剪</span></span><br><span class="line">        </span><br><span class="line">    <span class="comment"># sum query</span></span><br><span class="line">    <span class="comment"># L2 sensitivity is b (by sensitivity of the gradient)</span></span><br><span class="line">    <span class="keyword">return</span> np.<span class="built_in">sum</span>(gradients, axis=<span class="number">0</span>)</span><br><span class="line">  </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">noisy_gradient_descent</span>(<span class="params">iterations, epsilon, delta</span>):</span><br><span class="line">    theta = np.zeros(X_train.shape[<span class="number">1</span>])</span><br><span class="line">    sensitivity = <span class="number">5.0</span></span><br><span class="line">    </span><br><span class="line">    noisy_count = laplace_mech(X_train.shape[<span class="number">0</span>], <span class="number">1</span>, epsilon)</span><br><span class="line">    clipped_X = [L2_clip(x_i, sensitivity) <span class="keyword">for</span> x_i <span class="keyword">in</span> X_train]    <span class="comment">#####裁剪样本</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iterations):</span><br><span class="line">        grad_sum        = gradient_sum(theta, clipped_X, y_train, sensitivity)</span><br><span class="line">        noisy_grad_sum  = gaussian_mech_vec(grad_sum, sensitivity, epsilon, delta)</span><br><span class="line">        noisy_avg_grad  = noisy_grad_sum / noisy_count   <span class="comment">####带噪声的总和除以带噪声的计数</span></span><br><span class="line">        theta           = theta - noisy_avg_grad</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> theta</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><h2 id="梯度裁剪"><a href="#梯度裁剪" class="headerlink" title="梯度裁剪"></a>梯度裁剪</h2><ol>
+<li>裁剪梯度，求和。</li>
+<li>根据灵敏度b来对和加噪          <em>noisy_grad_sum  &#x3D; gaussian_mech_vec(grad_sum, sensitivity, epsilon, delta)</em></li>
+<li>获取带噪声的数量<em>noisy_count &#x3D; laplace_mech(X_train.shape[0], 1, epsilon)</em>  </li>
+<li>差分隐私总和除以差分隐私计数，就是</li>
+</ol>
+<p>我们通过将查询拆分为两个查询来计算差分隐私均值：差分隐私总和（分子）和差分隐私计数（分母）。</p>
+<h2 id="裁剪训练样本"><a href="#裁剪训练样本" class="headerlink" title="裁剪训练样本"></a>裁剪训练样本</h2><ol>
+<li>首先，估计训练数据的规模（从而选择一个好的裁剪参数）通常比估计训练期间计算的梯度的规模更容易。</li>
+<li>其次，它在计算效率更高：我们可以对训练样本进行一次裁剪，并在每次训练模型时重复使用裁剪后的训练数据;使用梯度裁剪时，我们需要在训练过程中裁剪每个梯度。</li>
+<li>此外，我们不再被迫计算每个样本的梯度，以便我们可以裁剪它们;相反，我们可以一次计算所有梯度</li>
+</ol>
+<h2 id="Sensitivity-of-the-Gradient-1"><a href="#Sensitivity-of-the-Gradient-1" class="headerlink" title="Sensitivity of the Gradient"></a>Sensitivity of the Gradient</h2><p>样本的二范数小于b，那么那该样本的梯队也小于b，即灵敏度是   b</p>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>但是在一些代码中看到  ，裁剪的阀门是b，但是样本或者梯度的二范数可能是-b，灵敏度是2b？？？？？</p>
+<p>为什么这里这么写呢</p>
+<hr>
+<h1 id="本地化差分隐私"><a href="#本地化差分隐私" class="headerlink" title="本地化差分隐私"></a>本地化差分隐私</h1><p>与差分隐私的中心模型相对，另一种模型是差分隐私的本地模型，其中数据在离开数据主体的控制之前被使成差分隐私的状态。例如，您可以在将数据发送给数据管理员之前在您的设备上向数据添加噪声。在本地模型中，数据管理员不需要被信任，因为他们收集的数据已经满足差分隐私的要求。</p>
+<p>因此，本地模型相对于中心模型具有一个巨大的优势：数据主体不需要信任除了自己以外的任何人。这个优势使得它在实际部署中变得流行，包括谷歌和苹果等公司的应用。</p>
+<p>不幸的是，本地模型也有一个重要的缺点：在本地模型下，相同的隐私成本下，查询结果的准确性通常比中心差分隐私下的相同查询低几个数量级。这种巨大的准确性损失意味着只有少数查询类型适合本地差分隐私，即使对于这些查询类型，也需要大量的参与者。</p>
+<h2 id="Randomized-Response"><a href="#Randomized-Response" class="headerlink" title="Randomized Response"></a>Randomized Response</h2><p>随机响应（Randomized Response）是一种用于本地差分隐私的机制，最初由S. L. Warner于1965年提出。当时，这项技术旨在改进有关敏感问题的调查回答的偏见，最初并未提出作为差分隐私的机制（差分隐私在之后的40年才被发明）。之后，随着差分隐私的发展，统计学家们意识到这一现有技术已经满足了差分隐私的定义。</p>
+<p>Dwork和Roth提出了随机响应的一个变种，其中数据主体回答一个“是”或“否”的问题，方法如下：</p>
+<ol>
+<li>抛一枚硬币。</li>
+<li>如果硬币正面朝上，诚实回答问题。</li>
+<li>如果硬币是反面朝上，再抛一枚硬币。</li>
+<li>如果第二枚硬币正面朝上，回答“是”；如果是反面朝上，回答“否”。</li>
+</ol>
+<p>这种技术的核心思想是引入一定的不确定性，以便在不透露真实答案的情况下提供一定的信息。它在差分隐私的背景下被重新思考，并被认为是一种满足差分隐私定义的机制，用于保护数据主体的隐私。这种方法允许数据主体提供信息，同时保护其真实的、敏感的回答。</p>
+<p>这个算法中的随机性来自两次硬币抛掷。与所有其他差分隐私算法一样，这种随机性引入了对真实答案的不确定性，这是隐私的来源。</p>
+<p>事实证明，这个随机响应算法满足 <em>ϵ</em>-差分隐私，其中 <em>ϵ</em>&#x3D;log(3)&#x3D;1.09。   三种情况   取对数？</p>
+<p>让我们为一个简单的“是”或“否”的问题实现这个算法： “你的职业是‘销售’吗？” 在Python中，我们可以使用 <code>np.random.randint(0, 2)</code> 来抛掷硬币；结果要么是0，要么是1。</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">rand_resp_sales</span>(<span class="params">response</span>):</span><br><span class="line">    truthful_response = response == <span class="string">&#x27;Sales&#x27;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># first coin flip</span></span><br><span class="line">    <span class="keyword">if</span> np.random.randint(<span class="number">0</span>, <span class="number">2</span>) == <span class="number">0</span>:</span><br><span class="line">        <span class="comment"># answer truthfully</span></span><br><span class="line">        <span class="keyword">return</span> truthful_response</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="comment"># answer randomly (second coin flip)</span></span><br><span class="line">        <span class="keyword">return</span> np.random.randint(<span class="number">0</span>, <span class="number">2</span>) == <span class="number">0</span></span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#代码</span></span><br><span class="line">%matplotlib inline</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">plt.style.use(<span class="string">&#x27;seaborn-whitegrid&#x27;</span>)</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> defaultdict</span><br><span class="line"></span><br><span class="line"><span class="comment"># Some useful utilities</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">laplace_mech</span>(<span class="params">v, sensitivity, epsilon</span>):</span><br><span class="line">    <span class="keyword">return</span> v + np.random.laplace(loc=<span class="number">0</span>, scale=sensitivity / epsilon)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gaussian_mech</span>(<span class="params">v, sensitivity, epsilon, delta</span>):</span><br><span class="line">    <span class="keyword">return</span> v + np.random.normal(loc=<span class="number">0</span>, scale=sensitivity * np.sqrt(<span class="number">2</span>*np.log(<span class="number">1.25</span>/delta)) / epsilon)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gaussian_mech_vec</span>(<span class="params">v, sensitivity, epsilon, delta</span>):</span><br><span class="line">    <span class="keyword">return</span> v + np.random.normal(loc=<span class="number">0</span>, scale=sensitivity * np.sqrt(<span class="number">2</span>*np.log(<span class="number">1.25</span>/delta)) / epsilon, size=<span class="built_in">len</span>(v))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">pct_error</span>(<span class="params">orig, priv</span>):</span><br><span class="line">    <span class="keyword">return</span> np.<span class="built_in">abs</span>(orig - priv)/orig * <span class="number">100.0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">z_clip</span>(<span class="params">xs, b</span>):</span><br><span class="line">    <span class="keyword">return</span> [<span class="built_in">min</span>(x, b) <span class="keyword">for</span> x <span class="keyword">in</span> xs]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">g_clip</span>(<span class="params">v</span>):</span><br><span class="line">    n = np.linalg.norm(v, <span class="built_in">ord</span>=<span class="number">2</span>)</span><br><span class="line">    <span class="keyword">if</span> n &gt; <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> v / n</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> v</span><br><span class="line">    </span><br><span class="line">X = np.load(<span class="string">&#x27;./adult_processed_x.npy&#x27;</span>)</span><br><span class="line">y = np.load(<span class="string">&#x27;./adult_processed_y.npy&#x27;</span>)</span><br><span class="line">training_size = <span class="built_in">int</span>(X.shape[<span class="number">0</span>] * <span class="number">0.8</span>)</span><br><span class="line"></span><br><span class="line">X_train = X[:training_size]</span><br><span class="line">X_test = X[training_size:]</span><br><span class="line"></span><br><span class="line">y_train = y[:training_size]</span><br><span class="line">y_test = y[training_size:]</span><br><span class="line"></span><br><span class="line"><span class="comment"># The loss function measures how good our model is. The training goal is to minimize the loss.</span></span><br><span class="line"><span class="comment"># This is the logistic loss function.</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">loss</span>(<span class="params">theta, xi, yi</span>):</span><br><span class="line">    exponent = - yi * (xi.dot(theta))</span><br><span class="line">    <span class="keyword">return</span> np.log(<span class="number">1</span> + np.exp(exponent))</span><br><span class="line"></span><br><span class="line">theta = np.zeros(X_train.shape[<span class="number">1</span>])</span><br><span class="line">loss(theta, X_train[<span class="number">0</span>], y_train[<span class="number">0</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gradient</span>(<span class="params">theta, xi, yi</span>):</span><br><span class="line">    exponent = yi * (xi.dot(theta))</span><br><span class="line">    <span class="keyword">return</span> - (yi*xi) / (<span class="number">1</span>+np.exp(exponent))</span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#A Single Step of Gradient Descent</span></span><br><span class="line">theta = theta - gradient(theta, X_train[<span class="number">0</span>], y_train[<span class="number">0</span>])</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">accuracy</span>(<span class="params">theta</span>):</span><br><span class="line">    <span class="keyword">return</span> np.<span class="built_in">sum</span>(predict(X_test, theta) == y_test)/X_test.shape[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">accuracy(theta)</span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#A Gradient Descent Algorithm</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">avg_grad</span>(<span class="params">theta, X, y</span>):</span><br><span class="line">    grads = [gradient(theta, xi, yi) <span class="keyword">for</span> xi, yi <span class="keyword">in</span> <span class="built_in">zip</span>(X, y)]</span><br><span class="line">    <span class="keyword">return</span> np.mean(grads, axis=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">avg_grad(theta, X_train, y_train)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gradient_descent</span>(<span class="params">iterations</span>):</span><br><span class="line">    <span class="comment"># Start by &quot;guessing&quot; what the model should be (all zeros)</span></span><br><span class="line">    theta = np.zeros(X_train.shape[<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Perform `iterations` steps of gradient descent using training data</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iterations):</span><br><span class="line">        theta = theta - avg_grad(theta, X_train, y_train)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> theta</span><br><span class="line">theta = gradient_descent(<span class="number">10</span>)</span><br><span class="line">accuracy(theta)</span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#Gradient Descent with Differential Privacy</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;def noisy_gradient_descent(iterations, epsilon, delta):</span></span><br><span class="line"><span class="string">    theta = np.zeros(X_train.shape[1])</span></span><br><span class="line"><span class="string">    sensitivity = &#x27;???&#x27;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    for i in range(iterations):</span></span><br><span class="line"><span class="string">        grad = avg_grad(theta, X_train, y_train)</span></span><br><span class="line"><span class="string">        noisy_grad = gaussian_mech_vec(grad, sensitivity, epsilon, delta)</span></span><br><span class="line"><span class="string">        theta = theta - noisy_grad</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    return theta&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">##########Gradient Clipping</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">L2_clip</span>(<span class="params">v, b</span>):</span><br><span class="line">    norm = np.linalg.norm(v, <span class="built_in">ord</span>=<span class="number">2</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> norm &gt; b:</span><br><span class="line">        <span class="keyword">return</span> b * (v / norm)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> v</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gradient_sum</span>(<span class="params">theta, X, y, b</span>):</span><br><span class="line">    gradients = [L2_clip(gradient(theta, x_i, y_i), b) <span class="keyword">for</span> x_i, y_i <span class="keyword">in</span> <span class="built_in">zip</span>(X,y)]</span><br><span class="line">        </span><br><span class="line">    <span class="comment"># sum query</span></span><br><span class="line">    <span class="comment"># L2 sensitivity is b (by clipping performed above)</span></span><br><span class="line">    <span class="keyword">return</span> np.<span class="built_in">sum</span>(gradients, axis=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">noisy_gradient_descent</span>(<span class="params">iterations, epsilon, delta</span>):</span><br><span class="line">    theta = np.zeros(X_train.shape[<span class="number">1</span>])</span><br><span class="line">    sensitivity = <span class="number">5.0</span></span><br><span class="line">    </span><br><span class="line">    noisy_count = laplace_mech(X_train.shape[<span class="number">0</span>], <span class="number">1</span>, epsilon)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iterations):</span><br><span class="line">        grad_sum        = gradient_sum(theta, X_train, y_train, sensitivity)</span><br><span class="line">        noisy_grad_sum  = gaussian_mech_vec(grad_sum, sensitivity, epsilon, delta)</span><br><span class="line">        noisy_avg_grad  = noisy_grad_sum / noisy_count</span><br><span class="line">        theta           = theta - noisy_avg_grad</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> theta</span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#Sensitivity of the Gradient</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gradient_sum</span>(<span class="params">theta, X, y, b</span>):</span><br><span class="line">    gradients = [gradient(theta, x_i, y_i) <span class="keyword">for</span> x_i, y_i <span class="keyword">in</span> <span class="built_in">zip</span>(X,y)]</span><br><span class="line">        </span><br><span class="line">    <span class="comment"># sum query</span></span><br><span class="line">    <span class="comment"># L2 sensitivity is b (by sensitivity of the gradient)</span></span><br><span class="line">    <span class="keyword">return</span> np.<span class="built_in">sum</span>(gradients, axis=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">noisy_gradient_descent</span>(<span class="params">iterations, epsilon, delta</span>):</span><br><span class="line">    theta = np.zeros(X_train.shape[<span class="number">1</span>])</span><br><span class="line">    sensitivity = <span class="number">5.0</span></span><br><span class="line">    </span><br><span class="line">    noisy_count = laplace_mech(X_train.shape[<span class="number">0</span>], <span class="number">1</span>, epsilon)</span><br><span class="line">    clipped_X = [L2_clip(x_i, sensitivity) <span class="keyword">for</span> x_i <span class="keyword">in</span> X_train]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iterations):</span><br><span class="line">        grad_sum        = gradient_sum(theta, clipped_X, y_train, sensitivity)</span><br><span class="line">        noisy_grad_sum  = gaussian_mech_vec(grad_sum, sensitivity, epsilon, delta)</span><br><span class="line">        noisy_avg_grad  = noisy_grad_sum / noisy_count</span><br><span class="line">        theta           = theta - noisy_avg_grad</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> theta</span><br></pre></td></tr></table></figure></div>
+
+
+
 ]]></content>
   </entry>
   <entry>
@@ -1830,101 +1933,44 @@
 ]]></content>
   </entry>
   <entry>
-    <title>差分隐私（二）</title>
-    <url>/2023/11/02/%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81%EF%BC%88%E4%BA%8C%EF%BC%89/</url>
-    <content><![CDATA[<p>阅读本章后，您将能够：</p>
+    <title>大模型评测</title>
+    <url>/2024/06/22/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E8%AF%84%E6%B5%8B/</url>
+    <content><![CDATA[<h2 id="1-大模型怎么评测？"><a href="#1-大模型怎么评测？" class="headerlink" title="1. 大模型怎么评测？"></a>1. 大模型怎么评测？</h2><p><strong>自动评测和人工评测</strong>。</p>
+<p>自动评测方法基于计算机算法和自动生成的指标，能够快速且高效地评测模型的性能。比如ROUGE F1，acc</p>
+<p>而人工评测则侧重于人类专家的主观判断和质量评测，能够提供更深入、细致的分析和意见。了解和掌握这两种评测方法对准确评测和改进语言模型的能力十分重要。</p>
+<h3 id="如何衡量大模型水平"><a href="#如何衡量大模型水平" class="headerlink" title="如何衡量大模型水平"></a>如何衡量大模型水平</h3><p>在评测 LLMs 的性能时，选择合适的任务和领域对于展示大型语言模型的表现、优势和劣势至关重要。为了更清晰地展示 LLMs 的能力水平，文章将现有的任务划分为以下不同的类别：</p>
 <ul>
-<li>描述并实现梯度下降的基本算法</li>
-<li>使用高斯机制实现差分私有梯度下降</li>
-<li>裁剪梯度，为任意损失函数实施差分隐私</li>
-<li>描述噪声对训练过程的影响</li>
+<li>自然语言处理：包括自然语言理解、推理、自然语言生成和多语言任务</li>
+<li>安全性：鲁棒性、伦理、偏见和真实性</li>
+<li>医学应用：包括医学问答、医学考试、医学教育和医学助手</li>
+<li>社会科学</li>
+<li>自然科学与工程：包括数学、通用科学和工程</li>
+<li>代码</li>
+<li>代理应用：将 LLMs 作为代理使用</li>
 </ul>
-<h3 id="梯度下降的单步"><a href="#梯度下降的单步" class="headerlink" title="梯度下降的单步"></a>梯度下降的单步</h3><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Prediction: take a model (theta) and a single example (xi) and return its predicted label</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">predict</span>(<span class="params">xi, theta, bias=<span class="number">0</span></span>):</span><br><span class="line">    label = np.sign(xi @ theta + bias)</span><br><span class="line">    <span class="keyword">return</span> label</span><br><span class="line"></span><br><span class="line"><span class="comment"># This is the gradient of the logistic loss</span></span><br><span class="line"><span class="comment"># The gradient is a vector that indicates the rate of change of the loss in each direction</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gradient</span>(<span class="params">theta, xi, yi</span>):</span><br><span class="line">    exponent = yi * (xi.dot(theta))</span><br><span class="line">    <span class="keyword">return</span> - (yi*xi) / (<span class="number">1</span>+np.exp(exponent))</span><br><span class="line">    </span><br><span class="line">theta = theta - gradient(theta, X_train[<span class="number">0</span>], y_train[<span class="number">0</span>])</span><br></pre></td></tr></table></figure></div>
-
-
-
-<h3 id="梯度下降算法"><a href="#梯度下降算法" class="headerlink" title="梯度下降算法"></a>梯度下降算法</h3><p>首先，我们上面的单个步骤仅使用了训练数据中的一个示例;我们希望在更新模型时考虑<em>整个</em>训练集，以便改进<em>所有</em>示例的模型。其次，我们需要执行多次迭代，以尽可能接近最小化损失。</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">avg_grad</span>(<span class="params">theta, X, y</span>):</span><br><span class="line">    grads = [gradient(theta, xi, yi) <span class="keyword">for</span> xi, yi <span class="keyword">in</span> <span class="built_in">zip</span>(X, y)]</span><br><span class="line">    <span class="keyword">return</span> np.mean(grads, axis=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">avg_grad(theta, X_train, y_train)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gradient_descent</span>(<span class="params">iterations</span>):</span><br><span class="line">    <span class="comment"># Start by &quot;guessing&quot; what the model should be (all zeros)</span></span><br><span class="line">    theta = np.zeros(X_train.shape[<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Perform `iterations` steps of gradient descent using training data</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iterations):</span><br><span class="line">        theta = theta - avg_grad(theta, X_train, y_train)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> theta</span><br></pre></td></tr></table></figure></div>
-
-
-
-<h1 id="具有差分隐私的梯度下降"><a href="#具有差分隐私的梯度下降" class="headerlink" title="具有差分隐私的梯度下降"></a>具有差分隐私的梯度下降</h1><p>使用训练数据的算法的唯一部分是梯度计算。使算法具有差分隐私的一种方法是在每次迭代之前向梯度本身添加噪声，然后再更新模型。这种方法通常称为噪声梯<em>度下降</em>，因为我们直接向梯度添加噪声。</p>
-<p>我们的梯度函数是一个向量值函数，因此我们可以用<em>gaussian_mech_vec</em>来向其输出添加噪声</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">noisy_gradient_descent</span>(<span class="params">iterations, epsilon, delta</span>):</span><br><span class="line">    theta = np.zeros(X_train.shape[<span class="number">1</span>])</span><br><span class="line">    sensitivity = <span class="string">&#x27;???&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iterations):</span><br><span class="line">        grad = avg_grad(theta, X_train, y_train)</span><br><span class="line">        noisy_grad = gaussian_mech_vec(grad, sensitivity, epsilon, delta)</span><br><span class="line">        theta = theta - noisy_grad</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> theta</span><br></pre></td></tr></table></figure></div>
-
-<p>梯度函数的敏感性是什么？回答这个问题是使算法成功运行的核心难点。</p>
-<p>首先，梯度是一个平均查询的结果 - 它是许多单个样本梯度的平均值。正如我们之前所看到的，最好将这类查询拆分为求和查询和计数查询。这并不难做到 - 我们可以计算<strong>每个单个样本梯度的带噪声的求和，而不是它们的平均值，然后稍后再除以一个嘈杂计数</strong>。其次，<strong>我们需要限定每个单个样本梯度的敏感性</strong>。</p>
-<p>有两种基本方法可以做到这一点：我们可以分析梯度函数本身（就像我们之前处理其他查询一样）以确定其最坏情况下的全局敏感性，或者我们可以通过截断梯度函数的输出来强制实施敏感性（就像我们在采样和聚合中所做的那样）。</p>
-<p>我们将从第二种方法开始 - 通常称为梯度剪切 - 因为在概念上更简单，而且在应用中更具通用性。</p>
-<h3 id="Gradient-Clipping"><a href="#Gradient-Clipping" class="headerlink" title="Gradient Clipping"></a>Gradient Clipping</h3><p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://s2.loli.net/2023/11/03/Nh9mJXlBAQb8vpV.png"
-                      alt="image.png"
-                > </p>
-<p>我们可以使用相同的技巧来限制梯度函数的 L2 敏感性。我们需要定义一个函数，用于将一个向量“剪裁”，使其具有所需范围内的 L2 范数。我们可以通过对向量进行按元素除以其 L2 范数来实现这一目标，这样得到的向量将具有 L2 范数为1。如果我们希望定位到特定的剪裁参数 b，我们可以将缩放后的向量乘以 b，以将其重新缩放为具有 L2 范数 b。我们希望避免修改那些已经具有 L2 范数小于 b 的向量；在这种情况下，我们只返回原始向量。我们可以使用 <code>np.linalg.norm</code> 函数，参数 <code>ord=2</code>，来计算一个向量的 L2 范数。</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">L2_clip</span>(<span class="params">v, b</span>):</span><br><span class="line">    norm = np.linalg.norm(v, <span class="built_in">ord</span>=<span class="number">2</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> norm &gt; b:</span><br><span class="line">        <span class="keyword">return</span> b * (v / norm)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> v</span><br></pre></td></tr></table></figure></div>
-
-<p>现在，我们可以继续计算剪切梯度的和，并根据我们通过剪切所强制实施的 L2 敏感性 b 来添加噪声。        </p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">gradient_sum</span>(<span class="params">theta, X, y, b</span>):</span><br><span class="line">    gradients = [L2_clip(gradient(theta, x_i, y_i), b) <span class="keyword">for</span> x_i, y_i <span class="keyword">in</span> <span class="built_in">zip</span>(X,y)]<span class="comment">#####L2_clip裁剪</span></span><br><span class="line"><span class="comment"># sum query</span></span><br><span class="line"><span class="comment"># L2 sensitivity is b (by clipping performed above)</span></span><br><span class="line"><span class="keyword">return</span> np.<span class="built_in">sum</span>(gradients, axis=<span class="number">0</span>)</span><br></pre></td></tr></table></figure></div>
-
-<p>现在，我们已准备好完成嘈杂梯度下降算法。要计算噪声平均梯度，我们需要：</p>
-<ol>
-<li>根据灵敏度b将噪声添加到梯度总和中</li>
-<li>计算训练样本数的噪声计数（<strong>灵敏度 1</strong>）</li>
-<li>将 （1） 的噪声总和除以 （2） 的噪声计数</li>
+<h3 id="大模型评估方法有哪些"><a href="#大模型评估方法有哪些" class="headerlink" title="大模型评估方法有哪些"></a>大模型评估方法有哪些</h3><ol>
+<li>首先是“直接评估指标”这一类别。这些是在人工智能领域长期以来广泛使用的传统指标。像准确率（accuracy）和F1得分（F1 score）等指标属于这个类别。通常情况下，这种方法涉及从模型中获取单一的输出，并将其与参考值进行比较，可以通过约束条件或提取所需信息的方式来实现评估。</li>
+<li>接下来是第二类方法，称为“间接或分解的启发式方法（indirect or decomposed heuristics）”。在这种方法中，我们利用较小的模型（smaller models）来评估主模型（the main model）生成的答案，这些较小的模型可以是微调过的模型或原始的分解模型（raw decompositions）。</li>
+<li>第三类评估方法被称为“基于模型的评估”。在这种方法中，模型本身提供最终的评估分数或评估结果。然而，这也引入了额外的可变因素。即使模型可以获取到ground truth信息，评估指标本身也可能在评分过程中产生随机因素或不确定因素。</li>
 </ol>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">noisy_gradient_descent</span>(<span class="params">iterations, epsilon, delta</span>):</span><br><span class="line">    theta = np.zeros(X_train.shape[<span class="number">1</span>])</span><br><span class="line">    sensitivity = <span class="number">1.0</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">#Laplace</span></span><br><span class="line">    noisy_count = laplace_mech(X_train.shape[<span class="number">0</span>], <span class="number">1</span>, epsilon)  <span class="comment">####样本个数  灵敏度1</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iterations):</span><br><span class="line">        grad_sum        = gradient_sum(theta, X_train, y_train, sensitivity)</span><br><span class="line">        noisy_grad_sum  = gaussian_mech_vec(grad_sum, sensitivity, epsilon, delta)</span><br><span class="line">        noisy_avg_grad  = noisy_grad_sum / noisy_count</span><br><span class="line">        theta           = theta - noisy_avg_grad</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> theta	</span><br></pre></td></tr></table></figure></div>
-
-<p>该算法的每次迭代都满足 (ϵ, δ)-差分隐私，并且我们执行一次额外的查询来确定满足 ϵ-差分隐私的嘈杂计数。如果我们执行了 K 次迭代，那么根据序列组合，该算法满足 (kϵ, kδ)-差分隐私。我们还可以使用高级组合来分析总隐私成本；更好的是，我们可以将算法转化为 Rényi 差分隐私或零浓缩差分隐私，并获得有关组合的严格边界。</p>
-<h3 id="Sensitivity-of-the-Gradient"><a href="#Sensitivity-of-the-Gradient" class="headerlink" title="Sensitivity of the Gradient"></a>Sensitivity of the Gradient</h3><p>裁剪训练样本而不是梯度有两个优点。首先，估计训练数据的规模（从而选择一个好的裁剪参数）通常比估计训练期间计算的梯度的规模更容易。其次，它在计算效率更高：我们可以对训练样本进行一次裁剪，并在每次训练模型时重复使用裁剪后的训练数据;使用梯度裁剪时，我们需要在训练过程中裁剪每个梯度。此外，我们不再被迫计算每个样本的梯度，以便我们可以裁剪它们;相反，我们可以一次计算所有梯度，这可以非常有效地完成（这是机器学习中常用的技巧，但我们不会在这里讨论）</p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://s2.loli.net/2023/11/03/ukLiGKXFNHDvjbO.png"
-                      alt="image.png"
-                ></p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">gradient_sum</span>(<span class="params">theta, X, y, b</span>):</span><br><span class="line">    gradients = [gradient(theta, x_i, y_i) <span class="keyword">for</span> x_i, y_i <span class="keyword">in</span> <span class="built_in">zip</span>(X,y)]   <span class="comment">#####不需要裁剪</span></span><br><span class="line">        </span><br><span class="line">    <span class="comment"># sum query</span></span><br><span class="line">    <span class="comment"># L2 sensitivity is b (by sensitivity of the gradient)</span></span><br><span class="line">    <span class="keyword">return</span> np.<span class="built_in">sum</span>(gradients, axis=<span class="number">0</span>)</span><br><span class="line">  </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">noisy_gradient_descent</span>(<span class="params">iterations, epsilon, delta</span>):</span><br><span class="line">    theta = np.zeros(X_train.shape[<span class="number">1</span>])</span><br><span class="line">    sensitivity = <span class="number">5.0</span></span><br><span class="line">    </span><br><span class="line">    noisy_count = laplace_mech(X_train.shape[<span class="number">0</span>], <span class="number">1</span>, epsilon)</span><br><span class="line">    clipped_X = [L2_clip(x_i, sensitivity) <span class="keyword">for</span> x_i <span class="keyword">in</span> X_train]    <span class="comment">#####裁剪样本</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iterations):</span><br><span class="line">        grad_sum        = gradient_sum(theta, clipped_X, y_train, sensitivity)</span><br><span class="line">        noisy_grad_sum  = gaussian_mech_vec(grad_sum, sensitivity, epsilon, delta)</span><br><span class="line">        noisy_avg_grad  = noisy_grad_sum / noisy_count   <span class="comment">####带噪声的总和除以带噪声的计数</span></span><br><span class="line">        theta           = theta - noisy_avg_grad</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> theta</span><br></pre></td></tr></table></figure></div>
-
-<hr>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><h2 id="梯度裁剪"><a href="#梯度裁剪" class="headerlink" title="梯度裁剪"></a>梯度裁剪</h2><ol>
-<li>裁剪梯度，求和。</li>
-<li>根据灵敏度b来对和加噪          <em>noisy_grad_sum  &#x3D; gaussian_mech_vec(grad_sum, sensitivity, epsilon, delta)</em></li>
-<li>获取带噪声的数量<em>noisy_count &#x3D; laplace_mech(X_train.shape[0], 1, epsilon)</em>  </li>
-<li>差分隐私总和除以差分隐私计数，就是</li>
-</ol>
-<p>我们通过将查询拆分为两个查询来计算差分隐私均值：差分隐私总和（分子）和差分隐私计数（分母）。</p>
-<h2 id="裁剪训练样本"><a href="#裁剪训练样本" class="headerlink" title="裁剪训练样本"></a>裁剪训练样本</h2><ol>
-<li>首先，估计训练数据的规模（从而选择一个好的裁剪参数）通常比估计训练期间计算的梯度的规模更容易。</li>
-<li>其次，它在计算效率更高：我们可以对训练样本进行一次裁剪，并在每次训练模型时重复使用裁剪后的训练数据;使用梯度裁剪时，我们需要在训练过程中裁剪每个梯度。</li>
-<li>此外，我们不再被迫计算每个样本的梯度，以便我们可以裁剪它们;相反，我们可以一次计算所有梯度</li>
-</ol>
-<h2 id="Sensitivity-of-the-Gradient-1"><a href="#Sensitivity-of-the-Gradient-1" class="headerlink" title="Sensitivity of the Gradient"></a>Sensitivity of the Gradient</h2><p>样本的二范数小于b，那么那该样本的梯队也小于b，即灵敏度是   b</p>
-<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>但是在一些代码中看到  ，裁剪的阀门是b，但是样本或者梯度的二范数可能是-b，灵敏度是2b？？？？？</p>
-<p>为什么这里这么写呢</p>
-<hr>
-<h1 id="本地化差分隐私"><a href="#本地化差分隐私" class="headerlink" title="本地化差分隐私"></a>本地化差分隐私</h1><p>与差分隐私的中心模型相对，另一种模型是差分隐私的本地模型，其中数据在离开数据主体的控制之前被使成差分隐私的状态。例如，您可以在将数据发送给数据管理员之前在您的设备上向数据添加噪声。在本地模型中，数据管理员不需要被信任，因为他们收集的数据已经满足差分隐私的要求。</p>
-<p>因此，本地模型相对于中心模型具有一个巨大的优势：数据主体不需要信任除了自己以外的任何人。这个优势使得它在实际部署中变得流行，包括谷歌和苹果等公司的应用。</p>
-<p>不幸的是，本地模型也有一个重要的缺点：在本地模型下，相同的隐私成本下，查询结果的准确性通常比中心差分隐私下的相同查询低几个数量级。这种巨大的准确性损失意味着只有少数查询类型适合本地差分隐私，即使对于这些查询类型，也需要大量的参与者。</p>
-<h2 id="Randomized-Response"><a href="#Randomized-Response" class="headerlink" title="Randomized Response"></a>Randomized Response</h2><p>随机响应（Randomized Response）是一种用于本地差分隐私的机制，最初由S. L. Warner于1965年提出。当时，这项技术旨在改进有关敏感问题的调查回答的偏见，最初并未提出作为差分隐私的机制（差分隐私在之后的40年才被发明）。之后，随着差分隐私的发展，统计学家们意识到这一现有技术已经满足了差分隐私的定义。</p>
-<p>Dwork和Roth提出了随机响应的一个变种，其中数据主体回答一个“是”或“否”的问题，方法如下：</p>
-<ol>
-<li>抛一枚硬币。</li>
-<li>如果硬币正面朝上，诚实回答问题。</li>
-<li>如果硬币是反面朝上，再抛一枚硬币。</li>
-<li>如果第二枚硬币正面朝上，回答“是”；如果是反面朝上，回答“否”。</li>
-</ol>
-<p>这种技术的核心思想是引入一定的不确定性，以便在不透露真实答案的情况下提供一定的信息。它在差分隐私的背景下被重新思考，并被认为是一种满足差分隐私定义的机制，用于保护数据主体的隐私。这种方法允许数据主体提供信息，同时保护其真实的、敏感的回答。</p>
-<p>这个算法中的随机性来自两次硬币抛掷。与所有其他差分隐私算法一样，这种随机性引入了对真实答案的不确定性，这是隐私的来源。</p>
-<p>事实证明，这个随机响应算法满足 <em>ϵ</em>-差分隐私，其中 <em>ϵ</em>&#x3D;log(3)&#x3D;1.09。   三种情况   取对数？</p>
-<p>让我们为一个简单的“是”或“否”的问题实现这个算法： “你的职业是‘销售’吗？” 在Python中，我们可以使用 <code>np.random.randint(0, 2)</code> 来抛掷硬币；结果要么是0，要么是1。</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">rand_resp_sales</span>(<span class="params">response</span>):</span><br><span class="line">    truthful_response = response == <span class="string">&#x27;Sales&#x27;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># first coin flip</span></span><br><span class="line">    <span class="keyword">if</span> np.random.randint(<span class="number">0</span>, <span class="number">2</span>) == <span class="number">0</span>:</span><br><span class="line">        <span class="comment"># answer truthfully</span></span><br><span class="line">        <span class="keyword">return</span> truthful_response</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="comment"># answer randomly (second coin flip)</span></span><br><span class="line">        <span class="keyword">return</span> np.random.randint(<span class="number">0</span>, <span class="number">2</span>) == <span class="number">0</span></span><br></pre></td></tr></table></figure></div>
-
-<hr>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#代码</span></span><br><span class="line">%matplotlib inline</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">plt.style.use(<span class="string">&#x27;seaborn-whitegrid&#x27;</span>)</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> defaultdict</span><br><span class="line"></span><br><span class="line"><span class="comment"># Some useful utilities</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">laplace_mech</span>(<span class="params">v, sensitivity, epsilon</span>):</span><br><span class="line">    <span class="keyword">return</span> v + np.random.laplace(loc=<span class="number">0</span>, scale=sensitivity / epsilon)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gaussian_mech</span>(<span class="params">v, sensitivity, epsilon, delta</span>):</span><br><span class="line">    <span class="keyword">return</span> v + np.random.normal(loc=<span class="number">0</span>, scale=sensitivity * np.sqrt(<span class="number">2</span>*np.log(<span class="number">1.25</span>/delta)) / epsilon)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gaussian_mech_vec</span>(<span class="params">v, sensitivity, epsilon, delta</span>):</span><br><span class="line">    <span class="keyword">return</span> v + np.random.normal(loc=<span class="number">0</span>, scale=sensitivity * np.sqrt(<span class="number">2</span>*np.log(<span class="number">1.25</span>/delta)) / epsilon, size=<span class="built_in">len</span>(v))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">pct_error</span>(<span class="params">orig, priv</span>):</span><br><span class="line">    <span class="keyword">return</span> np.<span class="built_in">abs</span>(orig - priv)/orig * <span class="number">100.0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">z_clip</span>(<span class="params">xs, b</span>):</span><br><span class="line">    <span class="keyword">return</span> [<span class="built_in">min</span>(x, b) <span class="keyword">for</span> x <span class="keyword">in</span> xs]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">g_clip</span>(<span class="params">v</span>):</span><br><span class="line">    n = np.linalg.norm(v, <span class="built_in">ord</span>=<span class="number">2</span>)</span><br><span class="line">    <span class="keyword">if</span> n &gt; <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> v / n</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> v</span><br><span class="line">    </span><br><span class="line">X = np.load(<span class="string">&#x27;./adult_processed_x.npy&#x27;</span>)</span><br><span class="line">y = np.load(<span class="string">&#x27;./adult_processed_y.npy&#x27;</span>)</span><br><span class="line">training_size = <span class="built_in">int</span>(X.shape[<span class="number">0</span>] * <span class="number">0.8</span>)</span><br><span class="line"></span><br><span class="line">X_train = X[:training_size]</span><br><span class="line">X_test = X[training_size:]</span><br><span class="line"></span><br><span class="line">y_train = y[:training_size]</span><br><span class="line">y_test = y[training_size:]</span><br><span class="line"></span><br><span class="line"><span class="comment"># The loss function measures how good our model is. The training goal is to minimize the loss.</span></span><br><span class="line"><span class="comment"># This is the logistic loss function.</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">loss</span>(<span class="params">theta, xi, yi</span>):</span><br><span class="line">    exponent = - yi * (xi.dot(theta))</span><br><span class="line">    <span class="keyword">return</span> np.log(<span class="number">1</span> + np.exp(exponent))</span><br><span class="line"></span><br><span class="line">theta = np.zeros(X_train.shape[<span class="number">1</span>])</span><br><span class="line">loss(theta, X_train[<span class="number">0</span>], y_train[<span class="number">0</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gradient</span>(<span class="params">theta, xi, yi</span>):</span><br><span class="line">    exponent = yi * (xi.dot(theta))</span><br><span class="line">    <span class="keyword">return</span> - (yi*xi) / (<span class="number">1</span>+np.exp(exponent))</span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#A Single Step of Gradient Descent</span></span><br><span class="line">theta = theta - gradient(theta, X_train[<span class="number">0</span>], y_train[<span class="number">0</span>])</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">accuracy</span>(<span class="params">theta</span>):</span><br><span class="line">    <span class="keyword">return</span> np.<span class="built_in">sum</span>(predict(X_test, theta) == y_test)/X_test.shape[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">accuracy(theta)</span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#A Gradient Descent Algorithm</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">avg_grad</span>(<span class="params">theta, X, y</span>):</span><br><span class="line">    grads = [gradient(theta, xi, yi) <span class="keyword">for</span> xi, yi <span class="keyword">in</span> <span class="built_in">zip</span>(X, y)]</span><br><span class="line">    <span class="keyword">return</span> np.mean(grads, axis=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">avg_grad(theta, X_train, y_train)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gradient_descent</span>(<span class="params">iterations</span>):</span><br><span class="line">    <span class="comment"># Start by &quot;guessing&quot; what the model should be (all zeros)</span></span><br><span class="line">    theta = np.zeros(X_train.shape[<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Perform `iterations` steps of gradient descent using training data</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iterations):</span><br><span class="line">        theta = theta - avg_grad(theta, X_train, y_train)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> theta</span><br><span class="line">theta = gradient_descent(<span class="number">10</span>)</span><br><span class="line">accuracy(theta)</span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#Gradient Descent with Differential Privacy</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;def noisy_gradient_descent(iterations, epsilon, delta):</span></span><br><span class="line"><span class="string">    theta = np.zeros(X_train.shape[1])</span></span><br><span class="line"><span class="string">    sensitivity = &#x27;???&#x27;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    for i in range(iterations):</span></span><br><span class="line"><span class="string">        grad = avg_grad(theta, X_train, y_train)</span></span><br><span class="line"><span class="string">        noisy_grad = gaussian_mech_vec(grad, sensitivity, epsilon, delta)</span></span><br><span class="line"><span class="string">        theta = theta - noisy_grad</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    return theta&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">##########Gradient Clipping</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">L2_clip</span>(<span class="params">v, b</span>):</span><br><span class="line">    norm = np.linalg.norm(v, <span class="built_in">ord</span>=<span class="number">2</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> norm &gt; b:</span><br><span class="line">        <span class="keyword">return</span> b * (v / norm)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> v</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gradient_sum</span>(<span class="params">theta, X, y, b</span>):</span><br><span class="line">    gradients = [L2_clip(gradient(theta, x_i, y_i), b) <span class="keyword">for</span> x_i, y_i <span class="keyword">in</span> <span class="built_in">zip</span>(X,y)]</span><br><span class="line">        </span><br><span class="line">    <span class="comment"># sum query</span></span><br><span class="line">    <span class="comment"># L2 sensitivity is b (by clipping performed above)</span></span><br><span class="line">    <span class="keyword">return</span> np.<span class="built_in">sum</span>(gradients, axis=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">noisy_gradient_descent</span>(<span class="params">iterations, epsilon, delta</span>):</span><br><span class="line">    theta = np.zeros(X_train.shape[<span class="number">1</span>])</span><br><span class="line">    sensitivity = <span class="number">5.0</span></span><br><span class="line">    </span><br><span class="line">    noisy_count = laplace_mech(X_train.shape[<span class="number">0</span>], <span class="number">1</span>, epsilon)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iterations):</span><br><span class="line">        grad_sum        = gradient_sum(theta, X_train, y_train, sensitivity)</span><br><span class="line">        noisy_grad_sum  = gaussian_mech_vec(grad_sum, sensitivity, epsilon, delta)</span><br><span class="line">        noisy_avg_grad  = noisy_grad_sum / noisy_count</span><br><span class="line">        theta           = theta - noisy_avg_grad</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> theta</span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#Sensitivity of the Gradient</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gradient_sum</span>(<span class="params">theta, X, y, b</span>):</span><br><span class="line">    gradients = [gradient(theta, x_i, y_i) <span class="keyword">for</span> x_i, y_i <span class="keyword">in</span> <span class="built_in">zip</span>(X,y)]</span><br><span class="line">        </span><br><span class="line">    <span class="comment"># sum query</span></span><br><span class="line">    <span class="comment"># L2 sensitivity is b (by sensitivity of the gradient)</span></span><br><span class="line">    <span class="keyword">return</span> np.<span class="built_in">sum</span>(gradients, axis=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">noisy_gradient_descent</span>(<span class="params">iterations, epsilon, delta</span>):</span><br><span class="line">    theta = np.zeros(X_train.shape[<span class="number">1</span>])</span><br><span class="line">    sensitivity = <span class="number">5.0</span></span><br><span class="line">    </span><br><span class="line">    noisy_count = laplace_mech(X_train.shape[<span class="number">0</span>], <span class="number">1</span>, epsilon)</span><br><span class="line">    clipped_X = [L2_clip(x_i, sensitivity) <span class="keyword">for</span> x_i <span class="keyword">in</span> X_train]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iterations):</span><br><span class="line">        grad_sum        = gradient_sum(theta, clipped_X, y_train, sensitivity)</span><br><span class="line">        noisy_grad_sum  = gaussian_mech_vec(grad_sum, sensitivity, epsilon, delta)</span><br><span class="line">        noisy_avg_grad  = noisy_grad_sum / noisy_count</span><br><span class="line">        theta           = theta - noisy_avg_grad</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> theta</span><br></pre></td></tr></table></figure></div>
-
-
-
+<h3 id="大模型的-honest-原则是如何实现的？模型如何判断回答的知识是训练过的已知的知识，怎么训练这种能力？"><a href="#大模型的-honest-原则是如何实现的？模型如何判断回答的知识是训练过的已知的知识，怎么训练这种能力？" class="headerlink" title="大模型的 honest 原则是如何实现的？模型如何判断回答的知识是训练过的已知的知识，怎么训练这种能力？"></a>大模型的 honest 原则是如何实现的？模型如何判断回答的知识是训练过的已知的知识，怎么训练这种能力？</h3><p>大模型需要遵循的 helpful，honest， harmless 的原则。<br>可<strong>以有意构造如下的训练样本</strong>，以提升模型遵守 honest 原则，可以算 trick 了：微调时构造知识问答类训练集，给出不知道的不回答，加强 honest 原则；阅读理解题，读过的要回答，没读过的不回答，不要胡说八道。</p>
+<h2 id="2-幻视"><a href="#2-幻视" class="headerlink" title="2.幻视"></a>2.幻视</h2><h3 id="1-什么是大模型幻觉？"><a href="#1-什么是大模型幻觉？" class="headerlink" title="1.什么是大模型幻觉？"></a>1.什么是大模型幻觉？</h3><p>在语言模型的背景下，幻觉指的是一本正经的胡说八道：看似流畅自然的表述，实则不符合事实或者是错误的。</p>
+<p>幻觉影响了模型的可靠性和可信度，因此需要解决LLM的幻觉问题</p>
+<p>幻觉主要可以分为两类：即内在幻觉和外在幻觉。</p>
+<ul>
+<li>内在幻觉：生成的内容与源内容相矛盾。  </li>
+<li>外部幻觉：生成的内容不能从源内容中得到验证，既不受源内容支持也不受其反驳。</li>
+</ul>
+<h2 id="2-残生的原因"><a href="#2-残生的原因" class="headerlink" title="2.残生的原因"></a>2.残生的原因</h2><ul>
+<li><strong>训练与实际应用中的解码差异：</strong>在常见的训练方法中，我们鼓励模型基于真实数据预测下一个词汇。但在实际应用中，模型则是根据自己先前生成的内容进行预测。这种方法上的差异，尤其在处理长文本时，可能会导致模型的输出出现“幻觉”。</li>
+<li><strong>解码过程中的随机性</strong>：某些旨在增加输出多样性的解码策略，如top-k采样、top-p方法以及温度调节，有时会增加“幻觉”的产生。这往往是因为模型在选择输出词汇时引入了随机性，而没有始终选择最可能的词汇。 </li>
+<li><strong>训练数据中的偏见</strong></li>
+<li><strong>缺乏外部验证</strong></li>
+</ul>
+<h3 id="3-如何缓解："><a href="#3-如何缓解：" class="headerlink" title="3.如何缓解："></a>3.如何缓解：</h3><ul>
+<li>采样多个输出并检查其一致性</li>
+<li><strong>外部知识集成</strong>RAG</li>
+</ul>
 ]]></content>
   </entry>
   <entry>
@@ -2008,6 +2054,11 @@
                      
                 ></p>
 <h2 id="6-ColorJitter"><a href="#6-ColorJitter" class="headerlink" title="6. ColorJitter"></a>6. ColorJitter</h2>]]></content>
+  </entry>
+  <entry>
+    <title>强化学习基础</title>
+    <url>/2024/07/28/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>联邦学习实战</title>
@@ -2130,6 +2181,53 @@
 ]]></content>
   </entry>
   <entry>
+    <title>激活函数_LLM</title>
+    <url>/2024/07/18/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0-LLM/</url>
+    <content><![CDATA[<table>
+<thead>
+<tr>
+<th>model</th>
+<th><strong>训练数据</strong></th>
+<th>激活函数</th>
+<th>位置编码</th>
+<th><strong>layer norm</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BERT</td>
+<td></td>
+<td>Tanh</td>
+<td></td>
+<td>LayerNorm</td>
+</tr>
+<tr>
+<td>LLama3</td>
+<td>以英语为主的拉丁语系，不包含中日韩文</td>
+<td>SwiGLU</td>
+<td>RoPE</td>
+<td>Pre RMS Norm</td>
+</tr>
+<tr>
+<td>GPT2</td>
+<td></td>
+<td>GeLU</td>
+<td>RoPE</td>
+<td>Pre Layer Normalization**</td>
+</tr>
+<tr>
+<td>Chatglm</td>
+<td>中英双语，中英文比例为1:1</td>
+<td>GeGLU</td>
+<td>RoPE</td>
+<td>Post Deep Norm</td>
+</tr>
+</tbody></table>
+<p>GLU通过门控机制对输出进行把控，像Attention一样可看作是对重要特征的选择。其优势是不仅具有通用激活函数的非线性，而且<strong>反向传播梯度时具有线性通道</strong>，类似ResNet残差网络中的加和操作传递梯度，能够缓解梯度消失问题。</p>
+<p><strong>post layer norm</strong>。在原始的transformer中，layer normalization是放在残差连接之后的，称为post LN。使用Post LN的深层transformer模型容易出现训练不稳定的问题。如下图所示，post LN<strong>随着transformer层数的加深，梯度范数逐渐增大</strong>，导致了训练的不稳定性。</p>
+<p><strong>pre layer norm</strong>。改变layer normalization的位置，<strong>将其放在残差连接的过程中</strong>，self-attention或FFN块之前，称为“Pre LN”。如下图所示，Pre layer norm在每个transformer层的梯度范数近似相等，有利于提升训练稳定性。相比于post LN，使用pre LN的深层transformer训练更稳定，可以缓解训练不稳定问题。<strong>但缺点是pre LN可能会轻微影响transformer模型的性能</strong> 大语言模型的一个挑战就是如何<strong>提升训练的稳定性</strong>。为了提升训练稳定性，GPT3、PaLM、BLOOM、OPT等大语言模型都采用了pre layer norm。</p>
+]]></content>
+  </entry>
+  <entry>
     <title>论文笔记Towards Personalized Federated Learning</title>
     <url>/2023/10/25/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0Towards-Personalized-Federated-Learning/</url>
     <content><![CDATA[<h2 id="为什么需要联邦学习"><a href="#为什么需要联邦学习" class="headerlink" title="为什么需要联邦学习"></a>为什么需要联邦学习</h2><p>在这个数字时代，公司和机构正在使用大数据和人工智能(AI)来优化他们的流程和性能。虽然丰富的数据为人工智能应用提供了巨大的机会，但这些<strong>数据</strong>中的大多数本质上都是<strong>高度敏感</strong>的，它们以<strong>孤立</strong>的形式存在。这在医疗保健行业尤其如此，<strong>因为医疗数据高度敏感，而且它们通常被收集并驻留在不同的医疗机构</strong>。这种情况给人工智能的应用带来了巨大的挑战，因为传统的人工智能方法不能很好地解决数据隐私问题。随着最近出台的<strong>数据隐私保护法律</strong>，如通用数据保护条例(GDPR)，为了遵从法律需求，对隐私保护的人工智能的需求越来越大。</p>
@@ -2232,80 +2330,6 @@
 <blockquote>
 <p>\1) Regularized Local Loss<br>\2) Between Global and Local Model<br>\3) Between Historical Local Model Snapshots a) Meta-learning b) Transfer learning</p>
 </blockquote>
-]]></content>
-  </entry>
-  <entry>
-    <title>transformer模型</title>
-    <url>/2024/07/17/transformer%E7%B3%BB%E5%88%97%E6%B1%87%E6%80%BB/</url>
-    <content><![CDATA[<h1 id="Attention"><a href="#Attention" class="headerlink" title="Attention"></a>Attention</h1><h2 id="1-attention，self-attention"><a href="#1-attention，self-attention" class="headerlink" title="1.attention，self-attention"></a>1.attention，self-attention</h2><p>Attention机制是一种在处理时序相关问题的时候常用的技术，主要用于处理序列数据。<br>核心思想是在处理序列数据时，<strong>网络应该更关注输入中的重要部分，而忽略不重要的部分，它通过学习不同部分的权重，将输入的序列中的重要部分显式地加权，从而使得模型可以更好地关注与输出有关的信息。</strong></p>
-<p>Attention机制的关键是引入一种机制来动态地计算输入序列中各个位置的权重，从而在每个时间步上，对输入序列的不同部分进行加权求和，得到当前时间步的输出。这样就实现了模型对输入中不同部分的关注度的自适应调整。</p>
-<p>self-attention是指在序列数据中，<strong>将当前位置与其他位置之间的关系建模</strong>。它通过计算每个位置与其他所有位置之间的相关性得分，从而为每个位置分配一个权重。这使得模型能够根据输入序列的不同部分的重要性，自适应地选择要关注的信息。</p>
-<h2 id="2-Attention的计算步骤是什么？"><a href="#2-Attention的计算步骤是什么？" class="headerlink" title="2.Attention的计算步骤是什么？"></a>2.Attention的计算步骤是什么？</h2><p>如下：</p>
-<ul>
-<li><p>计算查询（Query）：查询是当前时间步的输入，用于和序列中其他位置的信息进行比较。</p>
-</li>
-<li><p>计算键（Key）和值（Value）：键表示序列中其他位置的信息，值是对应位置的表示。键和值用来和查询进行比较。</p>
-</li>
-<li><p>计算注意力权重：：通过将查询和键进行内积运算，进<strong>行缩放，根号d，</strong>然后应用softmax函数，得到注意力权重。这些权重表示了在当前时间步，模型应该关注序列中其他位置的重要程度。</p>
-</li>
-<li><p>加权求和：根据注意力权重将值进行加权求和，得到当前时间步的输出</p>
-</li>
-</ul>
-<p>在Transformer中，Self-Attention 被称为”Scaled Dot-Product Attention”，其计算过程如下：</p>
-<ol>
-<li>对于输入序列中的每个位置，通过计算其与所有其他位置之间的相似度得分（通常通过点积计算）。</li>
-<li>对得分进<strong>行缩放处理</strong>，以防止梯度爆炸。</li>
-<li>将得分用softmax函数转换为注意力权重，以便计算每个位置的加权和。</li>
-<li>使用注意力权重对输入序列中的所有位置进行加权求和，得到每个位置的自注意输出。</li>
-</ol>
-<h1 id="layer-normalization"><a href="#layer-normalization" class="headerlink" title="layer_normalization"></a>layer_normalization</h1><h1 id="位置编码"><a href="#位置编码" class="headerlink" title="位置编码"></a>位置编码</h1><p>在多个block 前向传递的过程中position的信息不会丢失</p>
-<h1 id="分词器"><a href="#分词器" class="headerlink" title="分词器"></a>分词器</h1><h1 id="激活函数"><a href="#激活函数" class="headerlink" title="激活函数"></a>激活函数</h1>]]></content>
-  </entry>
-  <entry>
-    <title>激活函数_LLM</title>
-    <url>/2024/07/18/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0-LLM/</url>
-    <content><![CDATA[<table>
-<thead>
-<tr>
-<th>model</th>
-<th><strong>训练数据</strong></th>
-<th>激活函数</th>
-<th>位置编码</th>
-<th><strong>layer norm</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>BERT</td>
-<td></td>
-<td>Tanh</td>
-<td></td>
-<td>LayerNorm</td>
-</tr>
-<tr>
-<td>LLama3</td>
-<td>以英语为主的拉丁语系，不包含中日韩文</td>
-<td>SwiGLU</td>
-<td>RoPE</td>
-<td>Pre RMS Norm</td>
-</tr>
-<tr>
-<td>GPT2</td>
-<td></td>
-<td>GeLU</td>
-<td>RoPE</td>
-<td>Pre Layer Normalization**</td>
-</tr>
-<tr>
-<td>Chatglm</td>
-<td>中英双语，中英文比例为1:1</td>
-<td>GeGLU</td>
-<td>RoPE</td>
-<td>Post Deep Norm</td>
-</tr>
-</tbody></table>
-<p>GLU通过门控机制对输出进行把控，像Attention一样可看作是对重要特征的选择。其优势是不仅具有通用激活函数的非线性，而且<strong>反向传播梯度时具有线性通道</strong>，类似ResNet残差网络中的加和操作传递梯度，能够缓解梯度消失问题。</p>
-<p><strong>post layer norm</strong>。在原始的transformer中，layer normalization是放在残差连接之后的，称为post LN。使用Post LN的深层transformer模型容易出现训练不稳定的问题。如下图所示，post LN<strong>随着transformer层数的加深，梯度范数逐渐增大</strong>，导致了训练的不稳定性。</p>
-<p><strong>pre layer norm</strong>。改变layer normalization的位置，<strong>将其放在残差连接的过程中</strong>，self-attention或FFN块之前，称为“Pre LN”。如下图所示，Pre layer norm在每个transformer层的梯度范数近似相等，有利于提升训练稳定性。相比于post LN，使用pre LN的深层transformer训练更稳定，可以缓解训练不稳定问题。<strong>但缺点是pre LN可能会轻微影响transformer模型的性能</strong> 大语言模型的一个挑战就是如何<strong>提升训练的稳定性</strong>。为了提升训练稳定性，GPT3、PaLM、BLOOM、OPT等大语言模型都采用了pre layer norm。</p>
 ]]></content>
   </entry>
 </search>
