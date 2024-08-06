@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="深情小小侯">
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="http://example.com/2024/08/03/peft库的微调实现/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+        <meta name="description" content="记录一下peft中微调实现 从他们的output我们可以看到拼接的深度 PrefixTuning - &gt; PrefixEncoder这种Prefix实际就是连续可微的Virtual Token（Soft Prompt） 为了防止直接更新Prefix的参数导致训练不稳定的情况，特在Prefix层前面加了MLP结构(相当于将Prefix分解为更小维度的Input与MLP的组合后输出的结果)，训练">
+<meta property="og:type" content="article">
+<meta property="og:title" content="peft库的微调实现">
+<meta property="og:url" content="http://example.com/2024/08/03/peft%E5%BA%93%E7%9A%84%E5%BE%AE%E8%B0%83%E5%AE%9E%E7%8E%B0/index.html">
+<meta property="og:site_name" content="深情小小侯的博客">
+<meta property="og:description" content="记录一下peft中微调实现 从他们的output我们可以看到拼接的深度 PrefixTuning - &gt; PrefixEncoder这种Prefix实际就是连续可微的Virtual Token（Soft Prompt） 为了防止直接更新Prefix的参数导致训练不稳定的情况，特在Prefix层前面加了MLP结构(相当于将Prefix分解为更小维度的Input与MLP的组合后输出的结果)，训练">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-08-03T12:26:52.000Z">
+<meta property="article:modified_time" content="2024-08-03T13:56:23.034Z">
+<meta property="article:author" content="深情小小侯">
+<meta name="twitter:card" content="summary">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/redefine-favicon.svg" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/redefine-favicon.svg">
+    <meta name="theme-color" content="#A31F34">
+    <link rel="shortcut icon" href="/images/redefine-favicon.svg">
+    <!--- Page Info-->
+    
+    <title>
+        
+            peft库的微调实现 -
+        
+        深情小小侯的博客
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/assets/build/styles.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/fonts.css">
+
+    
+<link rel="stylesheet" href="/fonts/Satoshi/satoshi.css">
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+
+    <!--- Inject Part-->
+    
+    <script id="hexo-configurations">
+    window.config = {"hostname":"example.com","root":"/","language":"zh-CN","path":"search.xml"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":true,"expand":true,"init_open":true},"copyright":true,"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"走得快走得慢不重要，走下去就是胜利","subtitle":{"text":[],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":false,"links":{"github":null,"instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.5.0","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"文档":{"path":"/archives","icon":"fa-regular fa-archive"},"相册":{"icon":"fa-solid fa-image","submenus":{"假日出行":"/masonry","小乖":"/gallery"}}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":"纸上得来终觉浅，绝知此事要躬行","links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"}}},"article_date_format":"auto","categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    window.data = {"masonry":true};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <span class="swup-progress-icon">
+            <i class="fa-solid fa-circle-notch fa-spin"></i>
+        </span>
+    
+</div>
+
+
+<main class="page-container" id="swup">
+
+    
+
+    <div class="main-content-container">
+
+
+        <div class="main-content-header">
+            <header class="navbar-container">
+    
+    <div class="navbar-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                
+                深情小小侯的博客
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="" 
+                                    href="/"  >
+                                    
+                                        
+                                            <i class="fa-regular fa-house"></i>
+                                        
+                                        首页
+                                    
+                                </a>
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="" 
+                                    href="/archives"  >
+                                    
+                                        
+                                            <i class="fa-regular fa-archive"></i>
+                                        
+                                        文档
+                                    
+                                </a>
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="has-dropdown" 
+                                    href="#" onClick="return false;">
+                                    
+                                        
+                                            <i class="fa-solid fa-image"></i>
+                                        
+                                        相册&nbsp;<i class="fa-solid fa-chevron-down"></i>
+                                    
+                                </a>
+                                <!-- Submenu -->
+                                
+                                    <ul class="sub-menu">
+                                    
+                                        <li>
+                                        <a href="/masonry">假日出行
+                                        </a>
+                                        </li>
+                                    
+                                        <li>
+                                        <a href="/gallery">小乖
+                                        </a>
+                                        </li>
+                                    
+                                    </ul>
+                                
+                            </li>
+                    
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile drawer -->
+    <div class="navbar-drawer w-full absolute top-0 left-0 bg-background-color">
+        <ul class="drawer-navbar-list flex flex-col justify-start items-center">
+            
+                
+                    <li class="drawer-navbar-item text-base my-1.5 flex justify-center items-center">
+                        <a class="rounded-3xl py-1.5 px-5 hover:border hover:!text-primary active:!text-primary group " 
+                        href="/"  >
+                             
+                                
+                                    <i class="fa-regular fa-house"></i>
+                                
+                                首页
+                            
+                        </a>
+                    </li>
+                    <!-- Submenu -->
+                    
+            
+                
+                    <li class="drawer-navbar-item text-base my-1.5 flex justify-center items-center">
+                        <a class="rounded-3xl py-1.5 px-5 hover:border hover:!text-primary active:!text-primary group " 
+                        href="/archives"  >
+                             
+                                
+                                    <i class="fa-regular fa-archive"></i>
+                                
+                                文档
+                            
+                        </a>
+                    </li>
+                    <!-- Submenu -->
+                    
+            
+                
+                    <li class="drawer-navbar-item text-base my-1.5 flex justify-center items-center">
+                        <a class="rounded-3xl py-1.5 px-5 hover:border hover:!text-primary active:!text-primary group has-dropdown" 
+                        href="#" onClick="return false;">
+                            
+                                
+                                    <i class="fa-solid fa-image"></i>
+                                
+                                相册&nbsp;<i class="group-hover:rotate-180 transition-transform fa-solid fa-chevron-down"></i>
+                            
+                        </a>
+                    </li>
+                    <!-- Submenu -->
+                              
+                        
+                            <li class="drawer-navbar-item text-base flex justify-center items-center hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                <a class="py-0.5" href="/masonry">假日出行</a>
+                            </li>
+                        
+                            <li class="drawer-navbar-item text-base flex justify-center items-center hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                <a class="py-0.5" href="/gallery">小乖</a>
+                            </li>
+                        
+                    
+            
+
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="main-content-body">
+
+            
+
+            <div class="main-content">
+
+                
+                    <div class="post-page-container">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            
+                <h1 class="article-title-regular">peft库的微调实现</h1>
+            
+            </div>
+            
+                    
+        
+        
+            <div class="article-header flex flex-row gap-2 items-center">
+                <div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+                    <img src="/images/redefine-avatar.svg">
+                </div>
+                <div class="info flex flex-col justify-between">
+                    <div class="author flex items-center">
+                        <span class="name text-default-text-color text-lg font-semibold">深情小小侯</span>
+                        
+                            <span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv3</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2024-08-03 20:26:52</span>
+        <span class="mobile">2024-08-03 20:26:52</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2024-08-03 21:56:23</span>
+            <span class="mobile">2024-08-03 21:56:23</span>
+            <span class="hover-info">更新</span>
+        </span>
+    
+
+    
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        
+
+
+        <div class="article-content markdown-body">
+            <p>记录一下peft中微调实现</p>
+<p>从他们的output我们可以看到拼接的深度</p>
+<h2 id="PrefixTuning-PrefixEncoder"><a href="#PrefixTuning-PrefixEncoder" class="headerlink" title="PrefixTuning - &gt; PrefixEncoder"></a>PrefixTuning - &gt; PrefixEncoder</h2><p>这种Prefix实际就是连续可微的Virtual Token（Soft Prompt）</p>
+<p>为了防止直接更新Prefix的参数导致训练不稳定的情况，特在Prefix层前面加了MLP结构(<em>相当于将Prefix分解为更小维度的Input与MLP的组合后输出的结果</em>)，训练完成后，只保留Prefix的参数</p>
+<p>因为需要拼接到 每层的KV矩阵中</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">	&gt;&gt;&gt; <span class="keyword">from</span> peft <span class="keyword">import</span> PrefixEncoder, PrefixTuningConfig</span><br><span class="line"></span><br><span class="line">    &gt;&gt;&gt; config = PrefixTuningConfig(</span><br><span class="line">    ...     peft_type=<span class="string">&quot;PREFIX_TUNING&quot;</span>,</span><br><span class="line">    ...     task_type=<span class="string">&quot;SEQ_2_SEQ_LM&quot;</span>,</span><br><span class="line">    ...     num_virtual_tokens=<span class="number">20</span>,</span><br><span class="line">    ...     token_dim=<span class="number">768</span>,</span><br><span class="line">    ...     num_transformer_submodules=<span class="number">1</span>, <span class="comment"># 这里指定了 Transformer 子模块的数量</span></span><br><span class="line">    ...     num_attention_heads=<span class="number">12</span>,</span><br><span class="line">    ...     num_layers=<span class="number">12</span>,</span><br><span class="line">    ...     encoder_hidden_size=<span class="number">768</span>,</span><br><span class="line">    ... )</span><br><span class="line">    &gt;&gt;&gt; prefix_encoder = PrefixEncoder(config)</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    embedding (torch.nn.Embedding) -- 前缀编码器的嵌入层。</span></span><br><span class="line"><span class="string">    transform (torch.nn.Sequential) -- 如果 prefix_projection 为 True，则用于转换前缀嵌入的两层MLP（多层感知器）。</span></span><br><span class="line"><span class="string">    prefix_projection (bool) -- 是否对前缀嵌入进行投影。</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    </span><br><span class="line"><span class="keyword">class</span> <span class="title class_">PrefixEncoder</span>(torch.nn.Module):</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, config</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.prefix_projection = config.prefix_projection</span><br><span class="line">        token_dim = config.token_dim</span><br><span class="line">        num_layers = config.num_layers</span><br><span class="line">        encoder_hidden_size = config.encoder_hidden_size</span><br><span class="line">        num_virtual_tokens = config.num_virtual_tokens</span><br><span class="line">        <span class="keyword">if</span> self.prefix_projection <span class="keyword">and</span> <span class="keyword">not</span> config.inference_mode:</span><br><span class="line">            <span class="comment"># Use a two-layer MLP to encode the prefix</span></span><br><span class="line">            self.embedding = torch.nn.Embedding(num_virtual_tokens, token_dim)</span><br><span class="line">            self.transform = torch.nn.Sequential(</span><br><span class="line">                torch.nn.Linear(token_dim, encoder_hidden_size),</span><br><span class="line">                torch.nn.Tanh(),</span><br><span class="line">                <span class="comment"># 因为需要拼接到 KV矩阵中</span></span><br><span class="line">                torch.nn.Linear(encoder_hidden_size, num_layers * <span class="number">2</span> * token_dim),</span><br><span class="line">            )</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.embedding = torch.nn.Embedding(num_virtual_tokens, num_layers * <span class="number">2</span> * token_dim) </span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, prefix: torch.Tensor</span>):</span><br><span class="line">        <span class="keyword">if</span> self.prefix_projection:</span><br><span class="line">            prefix_tokens = self.embedding(prefix)</span><br><span class="line">            past_key_values = self.transform(prefix_tokens)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            past_key_values = self.embedding(prefix)</span><br><span class="line">        <span class="keyword">return</span> past_key_values</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<h2 id="PROMPT-TUNING-PromptEmbedding"><a href="#PROMPT-TUNING-PromptEmbedding" class="headerlink" title="PROMPT_TUNING - &gt; PromptEmbedding"></a>PROMPT_TUNING - &gt; PromptEmbedding</h2><p>  输入增加可训练的嵌入向量提示，它给每个任务定义了自己的Prompt</p>
+<p>★模型规模足够大+简单加入Prompt tokens微调-&gt;很好的效果</p>
+<p>可以看成Prefix-Tuning的简化版本，只在输入层加入Prompt</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">PromptEmbedding</span>(torch.nn.Module):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    The model to encode virtual tokens into prompt embeddings.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        config ([`PromptTuningConfig`]): The configuration of the prompt embedding.</span></span><br><span class="line"><span class="string">        word_embeddings (`torch.nn.Module`): The word embeddings of the base transformer model.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    **Attributes**:</span></span><br><span class="line"><span class="string">        - **embedding** (`torch.nn.Embedding`) -- The embedding layer of the prompt embedding.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Example:</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    ```py</span></span><br><span class="line"><span class="string">    &gt;&gt;&gt; from peft import PromptEmbedding, PromptTuningConfig</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    &gt;&gt;&gt; config = PromptTuningConfig(</span></span><br><span class="line"><span class="string">    ...     peft_type=&quot;PROMPT_TUNING&quot;,</span></span><br><span class="line"><span class="string">    ...     task_type=&quot;SEQ_2_SEQ_LM&quot;,</span></span><br><span class="line"><span class="string">    ...     num_virtual_tokens=20,</span></span><br><span class="line"><span class="string">    ...     token_dim=768,</span></span><br><span class="line"><span class="string">    ...     num_transformer_submodules=1,  # 这里指定了 Transformer 子模块的数量</span></span><br><span class="line"><span class="string">    ...     num_attention_heads=12,</span></span><br><span class="line"><span class="string">    ...     num_layers=12,</span></span><br><span class="line"><span class="string">    ...     prompt_tuning_init=&quot;TEXT&quot;, </span></span><br><span class="line"><span class="string">    ...     prompt_tuning_init_text=&quot;Predict if sentiment of this review is positive, negative or neutral&quot;, # 初始化文本</span></span><br><span class="line"><span class="string">    ...     tokenizer_name_or_path=&quot;t5-base&quot;,</span></span><br><span class="line"><span class="string">    ... )</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    &gt;&gt;&gt; # t5_model.shared is the word embeddings of the base model</span></span><br><span class="line"><span class="string">    &gt;&gt;&gt; prompt_embedding = PromptEmbedding(config, t5_model.shared)</span></span><br><span class="line"><span class="string">    ```</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Input Shape: (`batch_size`, `total_virtual_tokens`)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Output Shape: (`batch_size`, `total_virtual_tokens`, `token_dim`)</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, config, word_embeddings</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line"></span><br><span class="line">        total_virtual_tokens = config.num_virtual_tokens * config.num_transformer_submodules</span><br><span class="line">        <span class="comment">#初始化 embedding层</span></span><br><span class="line">        self.embedding = torch.nn.Embedding(total_virtual_tokens, config.token_dim)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 如果使用文本进行初始化，执行如下逻辑，PromptTuningConfig 配置类需要传入初始化文本。</span></span><br><span class="line">        <span class="keyword">if</span> config.prompt_tuning_init == PromptTuningInit.TEXT <span class="keyword">and</span> <span class="keyword">not</span> config.inference_mode:</span><br><span class="line">            <span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer</span><br><span class="line"></span><br><span class="line">            tokenizer_kwargs = config.tokenizer_kwargs <span class="keyword">or</span> &#123;&#125;</span><br><span class="line">            tokenizer = AutoTokenizer.from_pretrained(config.tokenizer_name_or_path, **tokenizer_kwargs)</span><br><span class="line">            init_text = config.prompt_tuning_init_text</span><br><span class="line">            init_token_ids = tokenizer(init_text)[<span class="string">&quot;input_ids&quot;</span>]</span><br><span class="line">            <span class="comment"># Trim or iterate until num_text_tokens matches total_virtual_tokens</span></span><br><span class="line">            num_text_tokens = <span class="built_in">len</span>(init_token_ids)</span><br><span class="line">            <span class="keyword">if</span> num_text_tokens &gt; total_virtual_tokens:</span><br><span class="line">                init_token_ids = init_token_ids[:total_virtual_tokens]</span><br><span class="line">            <span class="keyword">elif</span> num_text_tokens &lt; total_virtual_tokens:</span><br><span class="line">                num_reps = math.ceil(total_virtual_tokens / num_text_tokens)</span><br><span class="line">                init_token_ids = init_token_ids * num_reps</span><br><span class="line">            init_token_ids = init_token_ids[:total_virtual_tokens]</span><br><span class="line">            init_token_ids = torch.LongTensor(init_token_ids).to(word_embeddings.weight.device)</span><br><span class="line">            <span class="keyword">with</span> gather_params_ctx(word_embeddings.parameters()):</span><br><span class="line">                word_embedding_weights = word_embeddings(init_token_ids).detach().clone()</span><br><span class="line">            word_embedding_weights = word_embedding_weights.to(torch.float32)</span><br><span class="line">            <span class="comment"># 初始化embedding权重</span></span><br><span class="line">            self.embedding.weight = torch.nn.Parameter(word_embedding_weights)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, indices</span>):</span><br><span class="line">        <span class="comment"># Just get embeddings</span></span><br><span class="line">        prompt_embeddings = self.embedding(indices)</span><br><span class="line">        <span class="keyword">return</span> prompt_embeddings</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<p>Prompt Tuning 模型类结构如下所示：</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">PeftModelForCausalLM(</span><br><span class="line">  (base_model): BloomForCausalLM(</span><br><span class="line">    (transformer): BloomModel(</span><br><span class="line">      (word_embeddings): Embedding(<span class="number">250880</span>, <span class="number">1024</span>)</span><br><span class="line">      (word_embeddings_layernorm): LayerNorm((<span class="number">1024</span>,), eps=<span class="number">1e-05</span>, elementwise_affine=<span class="literal">True</span>)</span><br><span class="line">      (h): ModuleList(</span><br><span class="line">        ...</span><br><span class="line">      )</span><br><span class="line">      (ln_f): LayerNorm((<span class="number">1024</span>,), eps=<span class="number">1e-05</span>, elementwise_affine=<span class="literal">True</span>)</span><br><span class="line">    )</span><br><span class="line">    (lm_head): Linear(in_features=<span class="number">1024</span>, out_features=<span class="number">250880</span>, bias=<span class="literal">False</span>)</span><br><span class="line">  )</span><br><span class="line">  </span><br><span class="line">  <span class="comment">#####################################################################</span></span><br><span class="line">  (prompt_encoder): ModuleDict(</span><br><span class="line">    (default): PromptEmbedding(</span><br><span class="line">      (embedding): Embedding(<span class="number">8</span>, <span class="number">1024</span>)</span><br><span class="line">    )</span><br><span class="line">  )</span><br><span class="line">  (word_embeddings): Embedding(<span class="number">250880</span>, <span class="number">1024</span>)</span><br><span class="line">)</span><br><span class="line"><span class="comment">#########################################################################</span></span><br></pre></td></tr></table></figure></div>
+
+<h2 id="P-TUNING-PromptEncoder"><a href="#P-TUNING-PromptEncoder" class="headerlink" title="P_TUNING - &gt; PromptEncoder"></a>P_TUNING - &gt; PromptEncoder</h2><p>其与prefix tuning类似：比如考虑到神经网络本质上是连续的，故离散提示可能不是最优的(<em>sinceneural networks are inherently continuous, discrete promptscan be sub-optimal</em> )，<strong>从而也采取连续的提示，该方法将 Prompt 转换为可以学习的 Embedding 层，并用MLP+LSTM的方式来对Prompt Embedding进行一层处理。</strong></p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">PromptEncoder</span>(torch.nn.Module):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    The prompt encoder network that is used to generate the virtual token embeddings for p-tuning.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        config ([`PromptEncoderConfig`]): The configuration of the prompt encoder.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Example:</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    ```py</span></span><br><span class="line"><span class="string">    &gt;&gt;&gt; from peft import PromptEncoder, PromptEncoderConfig</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    &gt;&gt;&gt; config = PromptEncoderConfig(</span></span><br><span class="line"><span class="string">    ...     peft_type=&quot;P_TUNING&quot;,</span></span><br><span class="line"><span class="string">    ...     task_type=&quot;SEQ_2_SEQ_LM&quot;,</span></span><br><span class="line"><span class="string">    ...     num_virtual_tokens=20,</span></span><br><span class="line"><span class="string">    ...     token_dim=768,</span></span><br><span class="line"><span class="string">    ...     num_transformer_submodules=1,</span></span><br><span class="line"><span class="string">    ...     num_attention_heads=12,</span></span><br><span class="line"><span class="string">    ...     num_layers=12,</span></span><br><span class="line"><span class="string">    ...     encoder_reparameterization_type=&quot;MLP&quot;,</span></span><br><span class="line"><span class="string">    ...     encoder_hidden_size=768,</span></span><br><span class="line"><span class="string">    ... )</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    &gt;&gt;&gt; prompt_encoder = PromptEncoder(config)</span></span><br><span class="line"><span class="string">    ```</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    **Attributes**:</span></span><br><span class="line"><span class="string">        - **embedding** (`torch.nn.Embedding`) -- The embedding layer of the prompt encoder.</span></span><br><span class="line"><span class="string">        - **mlp_head** (`torch.nn.Sequential`) -- The MLP head of the prompt encoder if `inference_mode=False`.</span></span><br><span class="line"><span class="string">        - **lstm_head** (`torch.nn.LSTM`) -- The LSTM head of the prompt encoder if `inference_mode=False` and</span></span><br><span class="line"><span class="string">        `encoder_reparameterization_type=&quot;LSTM&quot;`.</span></span><br><span class="line"><span class="string">        - **token_dim** (`int`) -- The hidden embedding dimension of the base transformer model.</span></span><br><span class="line"><span class="string">        - **input_size** (`int`) -- The input size of the prompt encoder.</span></span><br><span class="line"><span class="string">        - **output_size** (`int`) -- The output size of the prompt encoder.</span></span><br><span class="line"><span class="string">        - **hidden_size** (`int`) -- The hidden size of the prompt encoder.</span></span><br><span class="line"><span class="string">        - **total_virtual_tokens** (`int`): The total number of virtual tokens of the</span></span><br><span class="line"><span class="string">        prompt encoder.</span></span><br><span class="line"><span class="string">        - **encoder_type** (Union[[`PromptEncoderReparameterizationType`], `str`]): The encoder type of the prompt</span></span><br><span class="line"><span class="string">          encoder.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Input shape: (`batch_size`, `total_virtual_tokens`)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Output shape: (`batch_size`, `total_virtual_tokens`, `token_dim`)</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, config</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.token_dim = config.token_dim</span><br><span class="line">        self.input_size = self.token_dim</span><br><span class="line">        self.output_size = self.token_dim</span><br><span class="line">        self.hidden_size = config.encoder_hidden_size</span><br><span class="line">        self.total_virtual_tokens = config.num_virtual_tokens * config.num_transformer_submodules</span><br><span class="line">        self.encoder_type = config.encoder_reparameterization_type</span><br><span class="line"></span><br><span class="line">        <span class="comment"># embedding</span></span><br><span class="line">        self.embedding = torch.nn.Embedding(self.total_virtual_tokens, self.token_dim)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> config.inference_mode:</span><br><span class="line">            <span class="keyword">if</span> self.encoder_type == PromptEncoderReparameterizationType.LSTM:</span><br><span class="line">                lstm_dropout = config.encoder_dropout</span><br><span class="line">                num_layers = config.encoder_num_layers</span><br><span class="line">                <span class="comment"># LSTM</span></span><br><span class="line">                self.lstm_head = torch.nn.LSTM(</span><br><span class="line">                    input_size=self.input_size,</span><br><span class="line">                    hidden_size=self.hidden_size,</span><br><span class="line">                    num_layers=num_layers,</span><br><span class="line">                    dropout=lstm_dropout,</span><br><span class="line">                    bidirectional=<span class="literal">True</span>,</span><br><span class="line">                    batch_first=<span class="literal">True</span>,</span><br><span class="line">                )</span><br><span class="line"></span><br><span class="line">                self.mlp_head = torch.nn.Sequential(</span><br><span class="line">                    torch.nn.Linear(self.hidden_size * <span class="number">2</span>, self.hidden_size * <span class="number">2</span>),</span><br><span class="line">                    torch.nn.ReLU(),</span><br><span class="line">                    torch.nn.Linear(self.hidden_size * <span class="number">2</span>, self.output_size),</span><br><span class="line">                )</span><br><span class="line"></span><br><span class="line">            <span class="keyword">elif</span> self.encoder_type == PromptEncoderReparameterizationType.MLP:</span><br><span class="line">                encoder_num_layers_default = PromptEncoderConfig.encoder_num_layers</span><br><span class="line">                <span class="keyword">if</span> config.encoder_num_layers != encoder_num_layers_default:</span><br><span class="line">                    warnings.warn(</span><br><span class="line">                        <span class="string">f&quot;for <span class="subst">&#123;self.encoder_type.value&#125;</span>, the argument `encoder_num_layers` is ignored. &quot;</span></span><br><span class="line">                        <span class="string">f&quot;Exactly <span class="subst">&#123;encoder_num_layers_default&#125;</span> MLP layers are used.&quot;</span></span><br><span class="line">                    )</span><br><span class="line">                layers = [</span><br><span class="line">                    torch.nn.Linear(self.input_size, self.hidden_size),</span><br><span class="line">                    torch.nn.ReLU(),</span><br><span class="line">                    torch.nn.Linear(self.hidden_size, self.hidden_size),</span><br><span class="line">                    torch.nn.ReLU(),</span><br><span class="line">                    torch.nn.Linear(self.hidden_size, self.output_size),</span><br><span class="line">                ]</span><br><span class="line">                self.mlp_head = torch.nn.Sequential(*layers)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">raise</span> ValueError(<span class="string">&quot;Prompt encoder type not recognized. Please use one of MLP (recommended) or LSTM.&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, indices</span>):</span><br><span class="line">        input_embeds = self.embedding(indices)</span><br><span class="line">        <span class="keyword">if</span> self.encoder_type == PromptEncoderReparameterizationType.LSTM:</span><br><span class="line">            output_embeds = self.mlp_head(self.lstm_head(input_embeds)[<span class="number">0</span>])</span><br><span class="line">        <span class="keyword">elif</span> self.encoder_type == PromptEncoderReparameterizationType.MLP:</span><br><span class="line">            output_embeds = self.mlp_head(input_embeds)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;Prompt encoder type not recognized. Please use one of MLP (recommended) or LSTM.&quot;</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> output_embeds</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> peft库的微调实现</li>
+        <li><strong>作者:</strong> 深情小小侯</li>
+        <li><strong>创建于
+                :</strong> 2024-08-03 20:26:52</li>
+        
+            <li>
+                <strong>更新于
+                    :</strong> 2024-08-03 21:56:23
+            </li>
+        
+        <li>
+            <strong>链接:</strong> https://redefine.ohevan.com/2024/08/03/peft库的微调实现/
+        </li>
+        <li>
+            <strong>
+                版权声明:
+            </strong>
+            
+            本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0</a> 进行许可。
+            
+
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+
+        
+
+        
+            <div class="article-nav">
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                        rel="next"
+                        href="/2024/07/28/prompt-tuing%EF%BC%86p-tuning%EF%BC%86p-tuningV2/"
+                        >
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">大模型微调技术</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+
+        
+            <div class="comment-container">
+                <div class="comments-container pjax">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fa-solid fa-comments"></i>&nbsp;评论
+    </div>
+    
+
+        
+            
+ 
+    <div id="waline"></div>
+    <script type="module"  data-swup-reload-script>
+        import { init } from '/js/libs/waline.mjs';
+
+        function loadWaline() {
+            init({
+                el: '#waline',
+                serverURL: 'https://example.example.com',
+                lang: 'zh-CN',
+                dark: 'body[class~="dark-mode"]',
+                requiredMeta: ['nick','mail'], // cannot customize by theme config, change it yourself
+            });
+        }
+
+        if ('true') {
+            const loadWalineTimeout = setTimeout(() => {
+                loadWaline();
+                clearTimeout(loadWalineTimeout);
+            }, 1000);
+        } else {
+            window.addEventListener('DOMContentLoaded', loadWaline);
+        }
+        
+    </script>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+
+    
+        <div class="toc-content-container">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <div class="toc-title">此页目录</div>
+        <div class="page-title">peft库的微调实现</div>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#PrefixTuning-PrefixEncoder"><span class="nav-number">1.</span> <span class="nav-text">PrefixTuning - &gt; PrefixEncoder</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PROMPT-TUNING-PromptEmbedding"><span class="nav-number">2.</span> <span class="nav-text">PROMPT_TUNING - &gt; PromptEmbedding</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#P-TUNING-PromptEncoder"><span class="nav-number">3.</span> <span class="nav-text">P_TUNING - &gt; PromptEncoder</span></a></li></ol>
+
+    </div>
+</div>
+        </div>
+    
+</div>
+
+
+
+                
+
+            </div>
+
+            
+
+        </div>
+
+        <div class="main-content-footer">
+            <footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2022</span>
+              -
+            
+            2024&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">深情小小侯</a>
+        </div>
+        
+            <script data-swup-reload-script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">访问人数</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">总访问量</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a> 驱动</span>
+            <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.5.0</a></span>
+        </div>
+        
+        
+            <div>
+                博客已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="article-tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="right-bottom-tools page-aside-toggle">
+                <i class="fa-regular fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fa-regular fa-comments"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-side-tools-container">
+        <div class="side-tools-container">
+    <ul class="hidden-tools-list">
+        <li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-plus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-minus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+            <i class="fa-regular fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+            <i class="fa-regular fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="visible-tools-list">
+        <li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+            <i class="fa-regular fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+        
+    </ul>
+</div>
+
+    </div>
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+
+</main>
+
+
+    
+<script src="/js/libs/Swup.min.js"></script>
+
+<script src="/js/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+
+
+
+<script src="/js/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/utils.js" type="module"></script>
+
+<script src="/js/main.js" type="module"></script>
+
+<script src="/js/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/layouts/categoryList.js" type="module"></script>
+
+
+
+
+
+    
+<script src="/js/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/tools/runtime.js"></script>
+
+    
+<script src="/js/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+  
+<script src="/js/libs/Typed.min.js"></script>
+
+  
+<script src="/js/plugins/typed.js" type="module"></script>
+
+
+
+
+
+
+    
+<script src="/js/libs/minimasonry.min.js"></script>
+
+    
+<script src="/js/plugins/masonry.js" type="module"></script>
+
+
+
+
+<div class="post-scripts" data-swup-reload-script>
+    
+        
+<script src="/js/libs/anime.min.js"></script>
+
+        
+<script src="/js/tools/tocToggle.js" type="module"></script>
+
+<script src="/js/layouts/toc.js" type="module"></script>
+
+<script src="/js/plugins/tabs.js" type="module"></script>
+
+    
+</div>
+
+
+</body>
+</html>
