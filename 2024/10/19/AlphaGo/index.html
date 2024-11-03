@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="深情小小侯">
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="http://example.com/2024/10/19/alphago/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+        <meta name="description" content="Mastering the Game of Go with Deep Neural Networks and  Tree Search 2016 通过深度神经网络和树搜索掌握围棋 本文介绍了如何使用深度神经网络和蒙特卡洛树搜索算法来提升围棋游戏的智能水平，这算法把蒙特卡洛模拟和估值、策略网络结合在一起。首先，通过监督学习训练策略网络以预测人类专家的棋路，然后用强化学习进一步优化策略。此外，还训练了">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AlphaGo">
+<meta property="og:url" content="http://example.com/2024/10/19/AlphaGo/index.html">
+<meta property="og:site_name" content="深情小小侯的博客">
+<meta property="og:description" content="Mastering the Game of Go with Deep Neural Networks and  Tree Search 2016 通过深度神经网络和树搜索掌握围棋 本文介绍了如何使用深度神经网络和蒙特卡洛树搜索算法来提升围棋游戏的智能水平，这算法把蒙特卡洛模拟和估值、策略网络结合在一起。首先，通过监督学习训练策略网络以预测人类专家的棋路，然后用强化学习进一步优化策略。此外，还训练了">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="c:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241020220528994.png">
+<meta property="og:image" content="c:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241021002411361.png">
+<meta property="og:image" content="c:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241021003949839.png">
+<meta property="og:image" content="c:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241021004809787.png">
+<meta property="og:image" content="c:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241021010247442.png">
+<meta property="og:image" content="c:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241021145551579.png">
+<meta property="og:image" content="c:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241021164539462.png">
+<meta property="og:image" content="c:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241031233619769.png">
+<meta property="og:image" content="c:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241031234222749.png">
+<meta property="article:published_time" content="2024-10-19T14:01:04.000Z">
+<meta property="article:modified_time" content="2024-11-03T13:43:15.770Z">
+<meta property="article:author" content="深情小小侯">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="c:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241020220528994.png">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/redefine-favicon.svg" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/redefine-favicon.svg">
+    <meta name="theme-color" content="#A31F34">
+    <link rel="shortcut icon" href="/images/redefine-favicon.svg">
+    <!--- Page Info-->
+    
+    <title>
+        
+            AlphaGo -
+        
+        深情小小侯的博客
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/assets/build/styles.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/fonts.css">
+
+    
+<link rel="stylesheet" href="/fonts/Satoshi/satoshi.css">
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+
+    <!--- Inject Part-->
+    
+    <script id="hexo-configurations">
+    window.config = {"hostname":"example.com","root":"/","language":"zh-CN","path":"search.xml"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":true,"expand":true,"init_open":true},"copyright":true,"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"走得快走得慢不重要，走下去就是胜利","subtitle":{"text":[],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":false,"links":{"github":null,"instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.5.0","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"文档":{"path":"/archives","icon":"fa-regular fa-archive"},"相册":{"icon":"fa-solid fa-image","submenus":{"假日出行":"/masonry","小乖":"/gallery"}}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":"纸上得来终觉浅，绝知此事要躬行","links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"}}},"article_date_format":"auto","categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    window.data = {"masonry":true};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <span class="swup-progress-icon">
+            <i class="fa-solid fa-circle-notch fa-spin"></i>
+        </span>
+    
+</div>
+
+
+<main class="page-container" id="swup">
+
+    
+
+    <div class="main-content-container">
+
+
+        <div class="main-content-header">
+            <header class="navbar-container">
+    
+    <div class="navbar-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                
+                深情小小侯的博客
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="" 
+                                    href="/"  >
+                                    
+                                        
+                                            <i class="fa-regular fa-house"></i>
+                                        
+                                        首页
+                                    
+                                </a>
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="" 
+                                    href="/archives"  >
+                                    
+                                        
+                                            <i class="fa-regular fa-archive"></i>
+                                        
+                                        文档
+                                    
+                                </a>
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="has-dropdown" 
+                                    href="#" onClick="return false;">
+                                    
+                                        
+                                            <i class="fa-solid fa-image"></i>
+                                        
+                                        相册&nbsp;<i class="fa-solid fa-chevron-down"></i>
+                                    
+                                </a>
+                                <!-- Submenu -->
+                                
+                                    <ul class="sub-menu">
+                                    
+                                        <li>
+                                        <a href="/masonry">假日出行
+                                        </a>
+                                        </li>
+                                    
+                                        <li>
+                                        <a href="/gallery">小乖
+                                        </a>
+                                        </li>
+                                    
+                                    </ul>
+                                
+                            </li>
+                    
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile drawer -->
+    <div class="navbar-drawer w-full absolute top-0 left-0 bg-background-color">
+        <ul class="drawer-navbar-list flex flex-col justify-start items-center">
+            
+                
+                    <li class="drawer-navbar-item text-base my-1.5 flex justify-center items-center">
+                        <a class="rounded-3xl py-1.5 px-5 hover:border hover:!text-primary active:!text-primary group " 
+                        href="/"  >
+                             
+                                
+                                    <i class="fa-regular fa-house"></i>
+                                
+                                首页
+                            
+                        </a>
+                    </li>
+                    <!-- Submenu -->
+                    
+            
+                
+                    <li class="drawer-navbar-item text-base my-1.5 flex justify-center items-center">
+                        <a class="rounded-3xl py-1.5 px-5 hover:border hover:!text-primary active:!text-primary group " 
+                        href="/archives"  >
+                             
+                                
+                                    <i class="fa-regular fa-archive"></i>
+                                
+                                文档
+                            
+                        </a>
+                    </li>
+                    <!-- Submenu -->
+                    
+            
+                
+                    <li class="drawer-navbar-item text-base my-1.5 flex justify-center items-center">
+                        <a class="rounded-3xl py-1.5 px-5 hover:border hover:!text-primary active:!text-primary group has-dropdown" 
+                        href="#" onClick="return false;">
+                            
+                                
+                                    <i class="fa-solid fa-image"></i>
+                                
+                                相册&nbsp;<i class="group-hover:rotate-180 transition-transform fa-solid fa-chevron-down"></i>
+                            
+                        </a>
+                    </li>
+                    <!-- Submenu -->
+                              
+                        
+                            <li class="drawer-navbar-item text-base flex justify-center items-center hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                <a class="py-0.5" href="/masonry">假日出行</a>
+                            </li>
+                        
+                            <li class="drawer-navbar-item text-base flex justify-center items-center hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                <a class="py-0.5" href="/gallery">小乖</a>
+                            </li>
+                        
+                    
+            
+
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="main-content-body">
+
+            
+
+            <div class="main-content">
+
+                
+                    <div class="post-page-container">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            
+                <h1 class="article-title-regular">AlphaGo</h1>
+            
+            </div>
+            
+                    
+        
+        
+            <div class="article-header flex flex-row gap-2 items-center">
+                <div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+                    <img src="/images/redefine-avatar.svg">
+                </div>
+                <div class="info flex flex-col justify-between">
+                    <div class="author flex items-center">
+                        <span class="name text-default-text-color text-lg font-semibold">深情小小侯</span>
+                        
+                            <span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv4</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2024-10-19 22:01:04</span>
+        <span class="mobile">2024-10-19 22:01:04</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2024-11-03 21:43:15</span>
+            <span class="mobile">2024-11-03 21:43:15</span>
+            <span class="hover-info">更新</span>
+        </span>
+    
+
+    
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        
+
+
+        <div class="article-content markdown-body">
+            <h1 id="Mastering-the-Game-of-Go-with-Deep-Neural-Networks-and-Tree-Search-2016"><a href="#Mastering-the-Game-of-Go-with-Deep-Neural-Networks-and-Tree-Search-2016" class="headerlink" title="Mastering the Game of Go with Deep Neural Networks and  Tree Search 2016"></a>Mastering the Game of Go with Deep Neural Networks and  Tree Search 2016</h1><blockquote>
+<p>通过深度神经网络和树搜索掌握围棋</p>
+<p>本文介绍了如何使用深度神经网络和<strong>蒙特卡洛树搜索算法</strong>来提升围棋游戏的智能水平，这算法把蒙特卡洛模拟和估值、策略网络结合在一起。首先，通过监督学习训练策略网络以预测人类专家的棋路，然后用强化学习进一步优化策略。此外，还训练了一个价值网络来评估棋局位置。最后，通过结合策略和价值网络的蒙特卡洛搜索算法，实现了AlphaGo程序，它在与其他围棋程序的比赛中取得了99.8%的胜率，并战胜了人类欧洲冠军。</p>
+</blockquote>
+<p>问题：<br>蒙特卡洛树搜索算法是什么，为什么能提升</p>
+<p>其策略和价值网络是什么</p>
+<hr>
+<p>Mastering the Game of Go with Deep Neural Networks and  Tree Search 2016</p>
+<p>围棋长期以来被认为是人工智能最具挑战性的经典游戏，因为它拥有巨大的搜索空间以及评估棋盘位置和棋步的困难。</p>
+<p>我们介绍了一种新的计算机围棋方法，使用价值网络评估棋盘位置，使用策略网络选择棋步。这些深度神经网络通过<strong>一种新的方法进行训练</strong>，该方法结合了从人类专家棋局的监督学习和自我博弈中的强化学习。</p>
+<p>但有效搜索空间可以通过两个一般原则来减少：</p>
+<ol>
+<li><p>首先，可以通过位置评估减少搜索的深度：在状态 s 处截断搜索树，并用一个近似的值函数 v(s)≈v∗(s) 代替 s 之后的子树，该值函数预测从状态 s 开始的结果。</p>
+<blockquote>
+<p><strong>位置评估</strong>是指在特定时刻对游戏状态或决策场景进行判断，以估计当前状态的有利程度。对于博弈类游戏来说，这通常涉及判断当前局面对玩家是有利还是不利。通过评估当前局面，可以避免在搜索整个游戏树时需要过深的递归，因为可以在某个节点截断并替换为对该位置的评估值，从而加速决策过程。</p>
+<p>位置评估的核心在于不需要遍历整个游戏路径（如搜索到游戏结束），而是在中间状态预测最终的胜负或其他可能结果。</p>
+</blockquote>
+</li>
+<li><p>其次，可以通过从策略 $p(a∣s)$ 中采样动作来减少搜索的广度，该策略是位置 s 下可能棋步 a 的概率分布。</p>
+</li>
+</ol>
+<p>蒙特卡罗树搜索（MCTS）使用<strong>蒙特卡罗模拟来估计搜索树中每个状态的价值</strong>。随着更多模拟的执行，<strong>搜索树不断增大，相关的价值估计也变得更加准确</strong>。在搜索过程中用于选择动作的策略也会随着时间的推移得到改进，通过选择具有更高价值的子节点。渐近地，这种策略会收敛到最优的游戏策略，而评估值也会收敛到最优值函数。目前最强的围棋程序基于MCTS，并通过训练预测人类专家棋步的策略进行增强。这些策略用于将搜索范围缩小到高概率的动作束，并在模拟过程中采样动作。这种方法已经达到了强大的业余水平。然而，之前的研究局限于浅层策略或基于输入特征线性组合的值函数。</p>
+<blockquote>
+<p>问题：蒙特卡罗模拟来估计搜索树中每个状态的价值，如何估计？</p>
+<p>​	之前的研究局限于浅层策略或基于输入特征线性组合的值函数。所以是值函数变化么？</p>
+</blockquote>
+<p>我们将棋盘位置作为一个 19 × 19 的图像输入，并使用卷积层构建该位置的表示。我们使用这些神经网络来减少搜索树的有效深度和广度：通过<strong>值网络</strong>评估位置，通过<strong>策略网络</strong>采样动作。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241020220528994.png"
+                      alt="image-20241020220528994"
+                ></p>
+<blockquote>
+<p>a. 一个快速的模拟策略 pπ 和监督学习（SL）策略网络 pσ 被训练来预测数据集中位置的人类专家棋步。一个强化学习（RL）策略网络 pρ 被初始化为SL策略网络，然后通过<strong>策略梯度学习</strong>进行改进，以最大化与之前版本策略网络对弈的结果（即赢得更多的游戏）。通过使用RL策略网络进行自我博弈生成一个新的数据集。最后，通过回归训练一个值网络 vθ，用于预测来自自我博弈数据集中的位置的预期结果（即当前玩家是否获胜）。<br>b. AlphaGo中使用的神经网络架构的示意图。<strong>策略网络将棋盘位置 s 的表示作为输入，经过多个卷积层（具有参数 σ（SL策略网络）或 ρ（RL策略网络）），并输出一个表示合法棋步 a 的概率分布 pσ(a∣s)或 pρ(a∣s)，</strong>该分布通过棋盘上的概率图表示。值网络类似地使用多个卷积层（具有参数 θ，但输出一个标量值 vθ(s′)，该值预测在位置 s′ 中的预期结果。</p>
+</blockquote>
+<p>我们使用一个由多个机器学习阶段组成的流程来训练神经网络（如图1所示）。首先，我们通过从专家人类棋步直接训练一个<strong>监督学习（SL）策略网络 pσ</strong>。这为快速、高效的学习更新提供了即时反馈和高质量的梯度。与之前的研究类似，我们还训练了一个<strong>rollout策略 pπ</strong>，它可以在模拟过程中快速采样动作。接下来，我们训练一个强化学习（RL）策略网络 pρ，通过优化自我博弈的最终结果来改进监督学习策略网络。这一过程调整了策略，朝着正确的目标——赢得游戏——而非单纯最大化预测准确性前进。最后，我们训练了一个值网络 vθ，它预测由RL策略网络与自己对弈时的胜者。我们的程序AlphaGo有效地将策略网络和值网络与蒙特卡罗树搜索（MCTS）结合起来。</p>
+<h2 id="1-Supervised-Learning-of-Policy-Networks"><a href="#1-Supervised-Learning-of-Policy-Networks" class="headerlink" title="1 Supervised Learning of Policy Networks"></a>1 Supervised Learning of Policy Networks</h2><p>在训练流程的第一阶段，我们基于之前使用监督学习预测围棋游戏中专家动作的工作。</p>
+<p>SL策略网络 pσ(a∣s)在具有权重 σ 的卷积层和修正线性单元（ReLU）之间交替。最后的softmax层输出所有合法棋步 a 的概率分布。策略网络的输入 s 是棋盘状态的简单表示（见扩展数据表2）。该策略网络通过使用随机梯度上升法，针对随机采样的状态-动作对 (s,a) 进行训练，以最大化在状态 s 下选择人类棋步 aaa 的可能性。</p>
+<p>我们训练了一个13层的策略网络，称为SL策略网络，使用来自KGS围棋服务器的3000万个棋盘位置。该网络在一个保留的测试集上，以57.0%的准确率预测专家棋步（使用所有输入特征），而仅使用原始棋盘位置和棋步历史作为输入时，准确率为55.7%。相比之下，提交时其他研究组的最新成果为44.4%（完整结果见扩展数据表3）。<strong>准确率的微小提升导致了游戏强度的大幅提升</strong>（图2a）；更大的网络能够实现更好的准确率，但在搜索过程中评估速度较慢。我们还训练了一个更快但准确率较低的模拟策略 pπ(a∣s)，使用小型模式特征的线性softmax（见扩展数据表4），其权重为 π。该策略的准确率为24.2%，并且选择动作的时间仅<strong>为2微秒</strong>，而策略网络<strong>则需要3毫秒</strong>。</p>
+<blockquote>
+<p>SL策略网络 准确率为55.7%</p>
+<p>准确率较低的模拟策略 ,使用小型模式特征的线性softmax,准确率为24.2%</p>
+</blockquote>
+<p>图2：策略网络和值网络的强度和准确性<br>a. 图示了策略网络的游戏强度与其训练准确度之间的关系。使用每层128、192、256和384个卷积滤波器的策略网络在训练过程中定期进行评估；该图显示了<strong>AlphaGo在使用这些策略网络时与AlphaGo的比赛版本对弈的胜率。</strong><br>b. 比较了值网络与不同策略的模拟（rollouts）之间的评估准确性。位置和结果是从人类专家棋局中采样的。每个位置通过值网络 vθ 的一次前向传播进行评估，或者通过100次模拟的平均结果进行评估，这些模拟是通过均匀随机模拟、快速模拟策略 pπ、SL策略网络 pσ或 RL策略网络 pρ 执行的。图中显示了预测值与实际游戏结果之间的均方误差，并根据游戏阶段（在给定位置已进行的步数）进行绘制。</p>
+<h2 id="2-Reinforcement-Learning-of-Policy-Networks"><a href="#2-Reinforcement-Learning-of-Policy-Networks" class="headerlink" title="2 Reinforcement Learning of Policy Networks"></a>2 Reinforcement Learning of Policy Networks</h2><p>训练流程的第二阶段旨在通过<strong>策略梯度强化学习（RL）</strong>来<strong>改进</strong>策略网络。RL策略网络 pρ 在结构上与SL策略网络相同，其权重 ρ初始化为与 σ 相同的值，即 ρ&#x3D;σ。我们通过当前策略网络 pρ 和<strong>一个随机选择的之前版本的策略网络</strong>之间进行对弈来进行训练。从<strong>一组对手池中随机选择对</strong>手可以通过防止过拟合当前策略来稳定训练。我们使用一个奖励函数 r(s)，对于所有非终结时间步 t&lt;T，该函数值为零。终结奖励 zt&#x3D;±r(sT)是从当前玩家在时间步 t 视角看游戏结束时的奖励：胜利为+1，失败为-1。然后，通过随机梯度上升法，在每个时间步 t 更新权重，更新方向是最大化期望结果。</p>
+<blockquote>
+<p>The second stage of the training pipeline <strong>aims at improving the policy network</strong> by policy gradient  reinforcement learning.</p>
+<p>这里就是说基于SL policy networks的基础权重σ，继续训练，改进Policy Networks。</p>
+<p>之前版本的策略网络和对手池？</p>
+<p>r(s) &#x3D; 0 对于所有非终结时间步 t&lt;T ，</p>
+<p>zt&#x3D;±r(sT)， 胜利为+1，失败为-1</p>
+</blockquote>
+<p>我们评估了强化学习（RL）策略网络在游戏中的表现，通过从其输出的动作概率分布$ pρ(⋅∣st)$中<strong>采样每个动作</strong>。当进行对抗时，<strong>RL策略网络在与SL策略网络</strong>？？的对局中赢得了超过80%的游戏。我们还进行了与最强的开源围棋程序 Pachi 的测试，Pachi 是一个复杂的蒙特卡洛搜索程序，在 KGS 上排名为 2 段业余，执行每步棋 100,000 次模拟。<strong>在完全不使用搜索的情况下</strong>，RL策略网络在与 Pachi 的对局中赢得了85%的游戏。相比之下，之前的基于卷积网络的监督学习方法，在与 Pachi 的对局中仅赢得了 11% 的游戏，在与稍微弱一些的程序 Fuego 的对局中赢得了 12% 的游戏。</p>
+<blockquote>
+</blockquote>
+<h2 id="3-Reinforcement-Learning-of-Value-Networks"><a href="#3-Reinforcement-Learning-of-Value-Networks" class="headerlink" title="3 Reinforcement Learning of Value Networks"></a>3 Reinforcement Learning of Value Networks</h2><p>训练流程的最后阶段专注于位置评估，估计值函数 vp(s)，该函数预测在位置 s 上，使用策略 p 进行博弈时的结果。</p>
+<p>理想情况下，我们希望知道在完美博弈下的最优值函数 v∗(s)；然而在实际中，我们通过强化学习（RL）策略网络 pρ 来估计我们最强策略下的值函数vpρ(s)。我们使用一个值网络 vθ(s) 来近似该值函数，满足 vθ(s)≈vpρ(s)≈v∗(s)。这个神经网络的架构与策略网络类似，但输出的是一个单一的预测值，而不是一个概率分布。</p>
+<p>我们通过回归训练值网络的权重 θ，在状态-结果对 (s,z) 上进行回归，使用<strong>随机梯度下降（SGD）</strong>来最小化预测值 vθ(s) 和对应结果 z 之间的均方误差（MSE）。</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241021002411361.png"
+                      alt="image-20241021002411361" style="zoom:50%;" 
+                >
+
+<p><strong>通过使用完整游戏数据来预测游戏结果的简单方法会导致过拟合</strong>。问题在于，连续的位置之间存在强相关性，仅相差一颗棋子，但回归目标是整个游戏的结果。当以这种方式在 KGS 数据集上训练时，<strong>值网络记住了游戏结果，而不是对新位置进行泛化</strong>，在测试集上的最小均方误差（MSE）为 0.37，而在训练集上的 MSE 为 0.19。</p>
+<p><strong>为了解决这个问题，我们生成了一个新的自我对弈数据集，包含 3000 万个不同的位置</strong>，每个位置来自一场独立的游戏。每场游戏在强化学习（RL）策略网络与自身之间进行，直到游戏结束。使用这个数据集进行训练时，训练集和测试集上的 MSE 分别为 0.226 和 0.234，表明过拟合现象最小。</p>
+<p>图 2b 显示了值网络的局面评估准确性，并与使用the fast  rollout policy pπ 的蒙特卡洛rollouts进行了比较；值函数的准确性始终更高。单次评估 vθ(s) 的准确性也接近使用 RL 策略网络 pρ的蒙特卡洛rollout ，但计算量减少了 15,000 倍。</p>
+<h2 id="4-Searching-with-Policy-and-Value-Networks"><a href="#4-Searching-with-Policy-and-Value-Networks" class="headerlink" title="4 Searching with Policy and Value Networks"></a>4 Searching with Policy and Value Networks</h2><p>！！！！重点终于来了！！！！</p>
+<p>AlphaGo 将<strong>策略网络和值网络结合</strong>到蒙特卡洛树搜索（MCTS）算法中（图 3），该算法通过展望搜索来选择动作。搜索树的每条边 (s,a)存储了一个动作值 Q(s,a)、访问计数 N(s,a)和先验概率 P(s,a)。树的遍历通过模拟（即在没有回溯的情况下从根状态开始，在完整的游戏中沿树向下）来进行。在每次模拟的每个时间步 t 中，从状态 st 中选择一个动作 at。</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241021003949839.png"
+                      alt="image-20241021003949839" style="zoom: 50%;" 
+                >
+
+<p>so as to maximize action value plus a bonus u(s, a)，that is proportional to the prior  probability but decays with repeated visits to encourage exploration.</p>
+<p>这句话的意思是，为了最大化<strong>动作值</strong>并加上一个奖励项 u(s,a)，该奖励项与<strong>先验概率</strong>成正比，并且随着重复访问的增加而衰减，从而鼓励探索。</p>
+<p>当遍历到达步数为 L 的叶节点 sL 时，叶节点可能会被扩展。叶节点位置 sL只会被 <strong>监督学习（SL）策略网络</strong> pσ 处理一次。输出的概率被存储为每个合法动作 a 的先验概率 P(s,a)&#x3D;pσ(a∣s)。</p>
+<p>叶节点的评估有两种非常不同的方式：首先，通过值网络 vθ(sL)进行评估；其次，通过使用快速回合策略 pπ进行随机rollout模拟，直到终止步数 T 时得到的结果 zL。这两种评估结果通过一个混合参数 λ 结合，得出叶节点的最终评估值 V(sL)。</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241021004809787.png"
+                      alt="image-20241021004809787" style="zoom:50%;" 
+                >
+
+<p>在模拟 n 结束时，所有经过的边的动作值和访问计数都会被更新。每条边都会累积经过该边的所有模拟的访问计数和平均评估值。</p>
+<p>其中，s_i^L 是第 i 次模拟中的叶节点，1(s,a,i)表示在第 i 次模拟中是否遍历了边 (s,a)。一旦搜索完成，算法会从根位置选择访问次数最多的动作。</p>
+<p>在 AlphaGo 中，<strong>SL 策略网络</strong> pσ 的表现优于更强的 <strong>RL 策略网络</strong> pρ，这可能是因为人类在选择动作时会挑选一组多样的有前景的动作，而 <strong>RL</strong> 则是针对单一最佳动作进行优化。然而，基于更强的 <strong>RL 策略网络</strong> pρ得到的值函数 vθ(s)≈vpρ(s)在 AlphaGo 中的表现优于基于 <strong>SL 策略网络</strong> pσ得到的值函数 vθ(s)≈vpσ(s)。</p>
+<blockquote>
+<p>???   <strong>SL 策略网络</strong> pσ 的表现优于更强的 <strong>RL 策略网络</strong> pρ。</p>
+<p>基于更强的 <strong>RL 策略网络</strong> pρ得到的值函数 vθ(s)≈vpρ(s)在 AlphaGo 中的表现优于基于 <strong>SL 策略网络</strong> pσ得到的值函数 vθ(s)≈vpσ(s)。</p>
+</blockquote>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241021010247442.png"
+                      alt="image-20241021010247442" style="zoom:50%;" 
+                >
+
+<blockquote>
+<p>图 3：AlphaGo 中的蒙特卡洛树搜索（MCTS）。<br>a 每次模拟通过选择具有最大动作值 Q 的边，并加上一个依赖于该边存储的先验概率 P 的奖励项 u(P)来遍历树。<br>b 叶节点可以被扩展；新节点会被策略网络 pσ 处理一次，并将输出的概率存储为每个动作的先验概率 P。<br>c 在模拟结束时，叶节点通过两种方式进行评估：使用值网络 vθ；并通过使用the fast rollout policy $pπ$ 进行回合模拟直至游戏结束，然后使用函数 r 计算胜者。<br>d 动作值 Q 会被更新，以跟踪该动作下所有评估值$ r(⋅) 和 vθ(⋅)$的平均值，更新在该动作下的子树中。</p>
+</blockquote>
+<h2 id="5-Evaluating-the-Playing-Strength-of-AlphaGo"><a href="#5-Evaluating-the-Playing-Strength-of-AlphaGo" class="headerlink" title="5 Evaluating the Playing Strength of AlphaGo"></a>5 Evaluating the Playing Strength of AlphaGo</h2><p>所有这些程序都基于高性能MCTS算法</p>
+<h2 id="6-Discussion"><a href="#6-Discussion" class="headerlink" title="6 Discussion"></a>6 Discussion</h2><p>在这项工作中，我们开发了一个围棋程序，基于深度神经网络和树搜索的结合，可以达到最强人类棋手的水平，从而实现人工智能的“重大挑战”之一</p>
+<p>我们<strong>首次基于深度神经网络开发了围棋的有效走法选择和位置评估函数</strong>，该神经网络<strong>通过监督学习和强化学习的新颖组合进行训练</strong>。我们引入了一种<strong>新的搜索算法</strong>，该算法成功地将神经网络评估与蒙特卡洛推出结合起来。我们的程序 AlphaGo 将这些组件大规模地集成到一个高性能树搜索引擎中。</p>
+<p>AlphaGo 通过<strong>更智能地选择位置（使用策略网络）</strong>和更精确地评估这些位置（使用值网络）来弥补这一点——这种方法或许更接近人类的下棋方式。此外，深蓝依赖于手工设计的评估函数，而 AlphaGo 的神经网络则完全通过通用的监督学习和强化学习方法，从游戏对局中直接进行训练。</p>
+<p>具有挑战性的决策任务；<strong>棘手的搜索空间</strong>；<strong>最佳解决方案如此复杂</strong>，似乎无法直接使用策略或价值函数进行近似。计算机围棋之前的重大突破<strong>是蒙特卡罗树搜索</strong>的引入，导致了许多其他领域的相应进步：例如一般游戏、经典规划、部分观察规划、调度和约束满足。<strong>通过将树搜索与策略网络和价值网络相结合</strong>，AlphaGo 终于达到了围棋的职业水平，这让人们看到了在其他看似难以攻克的人工智能领域中也能实现人类水平表现的希望。</p>
+<h2 id="Methods"><a href="#Methods" class="headerlink" title="Methods"></a>Methods</h2><h3 id="Problem-setting"><a href="#Problem-setting" class="headerlink" title="Problem setting"></a>Problem setting</h3><h3 id="Prior-work"><a href="#Prior-work" class="headerlink" title="Prior work"></a>Prior work</h3><p>最优价值函数可以通过<strong>极小化极大算法</strong>（或等价的极大化极小算法）递归地计算。然而，大多数游戏的状态空间过于庞大，无法进行完整的极小化极大树搜索。因此，通常通过使用近似的价值函数 $v(s) \approx v^*(s)$来代替终局奖励，提前截断搜索。使用<strong>α-β剪枝的深度优先极小化极大搜索</strong>在国际象棋、跳棋和黑白棋中已经取得了超越人类的表现。然而，这种方法在围棋中并不有效。</p>
+<p><strong>强化学习</strong> 可以通过自对弈的游戏直接学习近似最优价值函数。此前的大部分工作都集中在使用线性组合 $v_\theta(s) &#x3D; \phi(s) \cdot \theta$，其中 $\phi(s)$ 是特征，θ 是权重。权重通常通过<strong>时序差分学习（temporal-difference learning）**在国际象棋、跳棋和围棋中进行训练，或者在黑白棋和拼字游戏中使用**线性回归**训练。时序差分学习还曾用于训练神经网络来近似最优价值函数，在</strong>西洋双陆棋<strong>中实现了超越人类的表现，并在</strong>小棋盘围棋**中使用卷积网络达到了弱业余水平（弱级位）。</p>
+<p>另一种替代极大极小搜索的方法是<strong>蒙特卡洛树搜索（MCTS）</strong>，它通过双重近似来估计内部节点的最优价值，$V_n(s) \approx v_{P_n}(s) \approx v^*(s)$。第一重近似 $V_n(s) \approx v_{P_n}(s)$ 使用 n 次蒙特卡洛模拟来估计模拟策略 Pn 的价值函数。第二重近似$v_{P_n}(s) \approx v^*(s)$ 则使用模拟策略 Pn 代替极大极小的最优动作。</p>
+<p>模拟策略通过搜索控制函数$\text{argmax}_a (Q_n(s, a) + u(s, a))$ 选择动作，类似于UCT算法，它选择具有较高动作值的子节点 $Q_n(s, a) &#x3D; -V_n(f(s, a))$，并加上一个鼓励探索的奖励 $u(s, a)$。如果在状态 s 没有搜索树，模拟策略会从快速回合策略 $p_\pi(a|s)$ 中抽取动作。</p>
+<p>随着更多的模拟被执行，搜索树变得更深，模拟策略基于越来越准确的统计信息。最终，两个近似都变得精确，并且MCTS（例如使用UCT）会收敛到最优值函数，即 $\lim_{n \to \infty} V_n(s) &#x3D; \lim_{n \to \infty} v_{P_n}(s) &#x3D; v^*(s)$。目前最强的围棋程序就是基于MCTS的。</p>
+<p>MCTS（蒙特卡洛树搜索）<strong>之前曾与策略结合使</strong>用<strong>，用于缩小搜索树的范围，聚焦于高概率的动作</strong>；或者将奖励项的偏置向高概率的动作倾斜。MCTS也曾与价值函数结合，价值函数用于初始化新扩展节点中的动作值，或将蒙特卡洛评估与极大极小评估混合使用。</p>
+<p>与此不同，AlphaGo 使用<strong>的价值函数基于截断的蒙特卡洛搜索算法</strong>，这些算法在游戏结束之前就终止回合，<strong>并使用价值函数代替终局奖励</strong>。AlphaGo 的位置评估结合了完整回合和截断回合，<strong>在某些方面类似于著名的时序差分学习算法 TD(λ)<strong>。AlphaGo 还与以往的工作不同，</strong>它使用了更慢但更强大的策略和价值函数表示</strong>；评估深度神经网络的速度比线性表示慢几个数量级，因此必须异步进行。</p>
+<p>MCTS 的表现在很大程度上取决<strong>于rollout 策略的质量</strong>。之前的研究集中在手工设计模式，或者通过监督学习、强化学习、模拟平衡或在线适应来学习rollout 策略；然而，已知基于rollout 的局势评估经常是不准确的。AlphaGo 使用了相对简单的rollout，并通过价值网络更直接地解决了position evaluation这一具有挑战性的问题。</p>
+<h3 id="Search-Algorithm"><a href="#Search-Algorithm" class="headerlink" title="Search Algorithm"></a>Search Algorithm</h3><p>为了有效地将大型神经网络集成到 AlphaGo 中，我们实现了一个异步策略和值的蒙特卡洛树搜索算法（APV-MCTS）。搜索树中的每个节点 s 都包含所有合法动作 $a \in A(s)$ 的边$ (s, a)$。每条边存储一组统计数据。</p>
+<p>${P(s,a),N_v(s,a),N_r(s,a),W_v(s,a),W_r(s,a),Q(s,a)}$</p>
+<p>**选择阶段 (Figure 4a)**。每次模拟的第一阶段（树内阶段）从搜索树的根节点开始，并在模拟到达叶节点的时间步 L 时结束。在每一个时间步 $t &lt; L$中，动作根据搜索树中的统计信息来选择，使用的公式为：</p>
+<p>$a_t&#x3D;argmax_a(Q(s_t,a)+u(s_t,a))$，其中$u(s_t,a)$</p>
+<p>其中，$c_{\text{puct}}$是一个决定探索程度的常数；这种搜索控制策略在初始阶段偏向那些具有高先验概率和低访问次数的动作，但随着模拟次数增多，逐渐偏向那些具有较高动作价值的动作。</p>
+<p><strong>评估（图4c）</strong>。叶节点位置 s_L 被加入到队列中，由价值网络 $v_\theta(s_L)$ 进行评估，除非它已经被评估过。每次模拟的第二阶段从叶节点 s_L 开始进行回合，并持续到游戏结束。在这些时间步中 $t \geq L$，双方玩家根据回合策略选择动作，$a_t \sim p_\pi(\cdot|s_t)$。当游戏到达终局状态时，通过最终得分计算出结果 $z_t &#x3D; \pm r(s_T)$。</p>
+<h1 id="Mastering-the-game-of-Go-without-human-knowledge"><a href="#Mastering-the-game-of-Go-without-human-knowledge" class="headerlink" title="Mastering the game of Go without  human knowledge"></a>Mastering the game of Go without  human knowledge</h1><p>人工智能的一个长期目标是开发一种算法，可以从零开始（tabula rasa）在具有挑战性的领域中学习并达到超人水平。最近，AlphaGo 成为第一个在围棋比赛中击败世界冠军的程序。AlphaGo 的树搜索通过深度神经网络评估棋盘状态并选择落子。这些神经网络通过学习人类专家的棋谱进行监督学习训练，并通过自我对弈进行强化学习。在此，<strong>我们介绍了一种完全基于强化学习的算法</strong>，不依赖任何人类数据、指导或除游戏规则外的领域知识。AlphaGo 成为自己的老师：神经网络被训练来预测 AlphaGo 自己的落子选择，并预测 AlphaGo 对局的胜者。<strong>这个神经网络提高了树搜索的强度</strong>，从而在下一次迭代中选择更高质量的落子，并增强了自我对弈的能力。从零开始，我们的新程序 AlphaGo Zero 达到了超人表现，并以 100 比 0 的战绩击败了之前发表的、曾战胜世界冠军的 AlphaGo。</p>
+<p>使用监督学习系统已经在人工智能方面取得了很大进展，这些系统经过训练可以复制人类专家的决策1-4。然而，专家数据集通常价格昂贵、不可靠或根本无法获得。即使有可靠的数据集，它们也可能会对以这种方式训练的系统的性能施加上限5。相比之下，强化学习系统是根据自己的经验进行训练的，原则上允许它们超越人类的能力，并在人类缺乏专业知识的领域中运行。最近，通过使用强化学习训练的深度神经网络，在实现这一目标方面取得了快速进展</p>
+<p>AlphaGo 是第一个在围棋领域实现超人表现的程序。发布的版本 12，我们称之为 AlphaGo Fan，AlphaGo Fan 使用了两个深度神经网络：<strong>输出走棋概率的策略网络</strong>和<strong>输出位置评估的价值网络</strong>。</p>
+<p><strong>策略网络最初通过监督学习进行训练，以准确预测人类专家的动作</strong>，随后通过<strong>策略梯度强化学习进行细化</strong>。<strong>价值网络经过训练，可以预测政策网络与其自身进行的游戏的获胜者</strong>。经过训练后，这些网络与蒙特卡罗树搜索相结合，以提供前瞻搜索，使用策略网络将搜索范围缩小到高概率移动，并使用价值网络（与蒙特卡罗推出相结合）使用快速推出策略）来评估树中的位置。</p>
+<p>AlphaGo Zero</p>
+<ul>
+<li>它仅通过自我强化学习进行训练，从随机游戏开始，没有任何监督或使用人类数据。</li>
+<li>其次，它仅使用棋盘上的黑色和白色棋子作为输入特征。</li>
+<li>第三，它使用单个神经网络，而不是单独的策略和价值网络。</li>
+<li>最后，它使用更简单的树搜索，依赖于这个单一的神经网络来评估位置和样本移动，<strong>而不执行任何蒙特卡洛推出。</strong></li>
+</ul>
+<p>为了实现这些结果，我们引入了一种新的强化学习算法，该算法在训练循环中结合了前瞻搜索，从而实现快速改进和精确稳定的学习。搜索算法、训练过程和网络架构方面的进一步技术差异在方法中描述。</p>
+<h2 id="AlphaGo-Zero-中的强化学习"><a href="#AlphaGo-Zero-中的强化学习" class="headerlink" title="AlphaGo Zero 中的强化学习"></a>AlphaGo Zero 中的强化学习</h2><p>我们的新方法使用了一个具有参数 θ 的深度神经网络 fθ。该神经网络以棋盘的原始表示 s 及其历史作为输入，并输出落子概率和一个数值结果，(p, v) &#x3D; fθ(s)。向量 p 代表每个动作 a（包括放弃）的选择概率，$pa &#x3D; Pr(a|s)$。数值 v 是一个标量评估，用来估计当前玩家从位置 s 获胜的概率。这个神经网络将策略网络和价值网络的功能结合在了一个单一的架构中。该神经网络由多个卷积层的残差块组成，并结合了批归一化和ReLU。</p>
+<p>AlphaGo Zero 的神经网络是通过自我对弈的游戏数据，利用一种新颖的强化学习算法进行训练的。在每一个位置 s 上，都会执行一次由神经网络 fθ 引导的蒙特卡洛树搜索（MCTS）。该搜索输出每个动作的概率 π。这些搜索概率通常会选择比神经网络 fθ(s) 的原始落子概率 p 更强的动作，因此可以将 MCTS 视为一种强大的策略改进操作器。通过搜索进行自我对弈——使用基于 MCTS 改进后的策略来选择每一步动作，然后将游戏赢家 z 作为价值的样本——可以被看作是一种强大的策略评估操作器。我们强化学习算法的核心思想是<strong>通过策略迭代过程多次使用这些搜索操作器</strong>：<strong>更新神经网络的参数</strong>，使得其落子概率和价值 (p,v)&#x3D;fθ(s) 更加接近改进后的搜索概率和自我对弈的赢家 (π,z))；这些新参数在下一次自我对弈中用于增强搜索能力。图 1 展示了自我对弈训练的流程。</p>
+<p>蒙特卡洛树搜索（MCTS）使用神经网络 fθ 来引导其模拟过程（见图2）。搜索树中的每条边 (s,a) 存储了先验概率 P(s,a)、访问次数 N(s,a) 和动作价值 Q(s,a)。每次模拟从根节点状态开始，反复选择能够最大化上置信界的动作 $Q(s,a)+U(s,a)$，其中 $U(s,a)∝P(s,a)1+N(s,a))$（参考文献12, 24），直到遇到叶节点 s′。**该叶节点仅由神经网络进行一次扩展和评估，生成先验概率和评估值 (P(s′,⋅),V(s′))&#x3D;fθ(s′)**。模拟过程中经过的每条边 (s,a) 都会更新其访问次数 N(s,a)，并更新其动作价值为这些模拟的平均评估值：$Q(s,a)&#x3D;1N(s,a)∑s,a→s′V(s′)$，其中 s,a→s′ 表示模拟在从位置 s 选择动作 a 后最终到达 s′。</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241021145551579.png"
+                      alt="image-20241021145551579" style="zoom:50%;" 
+                >
+
+<blockquote>
+<p>图2 | AlphaGo Zero 中的蒙特卡洛树搜索（MCTS）。<br>a. 每次模拟通过选择具有最大动作值 Q 加上依赖于该边的先验概率 P 和访问次数 N 的上置信界 U 来遍历树（当边被遍历时，访问次数 N 会递增）。<br>b. 叶节点被扩展，相关位置 s 通过神经网络进行评估，$(P(s,⋅),V(s))&#x3D;fθ(s)$；P 值的向量被存储在从 s 出发的边上。<br>c. 动作值 Q 被更新，以跟踪该动作下子树中所有评估值 V 的平均值。<br>d. 一旦搜索完成，搜索概率 $π $返回，并且与 $N1&#x2F;τ$ 成比例，其中 N 是从根状态出发的每个动作的访问次数，$τ$是控制温度的参数。</p>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>这与 AlphaGo的区别不就在于Expand and evaluate 是一个神经网络一次完成的？</p>
+<p>深挖更多的不同</p>
+</blockquote>
+</blockquote>
+<p>蒙特卡洛树搜索（MCTS）可以视为一种自我博弈算法，给定神经网络参数 θ 和根位置 s，计算出一组推荐可执行动作的搜索概率向量 $π&#x3D;αθ(s)$，该概率与每个动作的访问次数的指数值成正比，即 $πa∝N(s,a)1&#x2F;τ$，其中 $τ$ 是一个控制温度的参数。</p>
+<p>神经网络通过一个自我博弈的强化学习算法进行训练，该算法使用蒙特卡洛树搜索（MCTS）来决定每一步的落子。首先，神经网络会初始化为随机权重 θ0θ_0θ0。在每一次后续迭代 $i≥1$中，生成自我博弈的游戏（如图1a所示）。在每一个时间步 t，使用前一迭代的神经网络 $fθi−1$ 执行 MCTS 搜索 $π&#x3D;αθt−1(st)$，并通过从搜索概率 $πt$ 中采样选择落子。当双方都不再落子、搜索值低于放弃阈值或游戏超过最大长度时，游戏在第 T 步终止，随后根据最终结果得出一个奖励 $rT∈{−1,+1}$（详细信息见方法部分）。每个时间步 t 的数据存储为 $(st,πt,zt)$，其中 $zt&#x3D;±rT$表示第 t 步的当前玩家从游戏中获胜或失败的结果。</p>
+<p>同时（如图1b所示），新网络参数 $θ_i$ 从自我博弈最后一轮（或多轮）所有时间步中的数据 $(s,π,z)$ 中均匀采样进行训练。神经网络 $f_{θ_i}(s) &#x3D; (p, v)$被调整以最小化预测值 v 与自我博弈结果 z 之间的误差，并最大化神经网络的动作概率 p 与搜索概率 π 的相似性。具体来说，参数 θ 通过梯度下降优化一个损失函数 l，该损失函数对均方误差和交叉熵损失进行求和，分别对应于价值估计和动作概率的调整。</p>
+<p>$(p,v)&#x3D;f(s)$ and $ l &#x3D; (z - v)^2 - \log(p^\top \pi) + c $</p>
+<p>其中c是控制L2权重正则化水平的参数（以防止过度拟合）。</p>
+<h2 id="Empirical-analysis-of-AlphaGo-Zero-training"><a href="#Empirical-analysis-of-AlphaGo-Zero-training" class="headerlink" title="Empirical analysis of AlphaGo Zero training"></a>Empirical analysis of AlphaGo Zero training</h2><p>我们将我们的强化学习流程应用于训练程序 AlphaGo Zero。训练从完全随机的行为开始，并在没有人工干预的情况下持续了大约三天。</p>
+<p>在训练过程中，共生成了490万局自对弈，，对每个 MCTS 使用 1,600 次模拟，这相当于每步约0.4秒的思考时间。参数更新来自于70万个小批量数据，每批包含2048个位置。神经网络包含了20个残差块。</p>
+<p>图3a展示了AlphaGo Zero在自对弈强化学习过程中的表现，按照训练时间和Elo评分衡量。学习过程一直平稳进行，没有出现之前文献中提到的波动或灾难性遗忘。令人惊讶的是，AlphaGo Zero在训练仅<strong>几个小时后</strong>便超越了AlphaGo Lee。而相比之下，AlphaGo Lee的训练持续了几个月。72小时后，我们在与AlphaGo Lee的精确版本对战时进行了评估，该版本击败了李世石，比赛条件与首尔的人机对战相同，均使用2小时的时间控制和比赛规则（详细信息见方法部分）。AlphaGo Zero使用了一台配有4个张量处理单元（TPU）的机器，而AlphaGo Lee则分布在多台机器上，使用了48个TPU。最终，AlphaGo Zero以100比0战胜了AlphaGo Lee（参见扩展数据图1和补充信息）。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241021164539462.png"
+                      alt="image-20241021164539462"
+                ></p>
+<blockquote>
+<p>图3 | AlphaGo Zero的实证评估。<br>a、自对弈强化学习的表现。该图展示了在AlphaGo Zero的强化学习中，每次迭代i中MCTS玩家αθi的表现。Elo评分是通过不同玩家之间的评估对局计算得出，每步使用0.4秒的思考时间（详见方法部分）。作为对比，还展示了一个使用KGS数据集从人类数据进行监督学习训练的类似玩家的表现。<br>b、对人类职业棋手走棋的预测准确率。该图展示了在每次自对弈迭代i中，神经网络fθi预测GoKifu数据集中人类职业棋手走棋的准确率。准确率衡量的是神经网络在不同局面中，将最高概率分配给人类棋手走棋的百分比。图中还展示了一个通过监督学习训练的神经网络的预测准确率。<br>c、人类职业棋局结果的均方误差（MSE）。该图展示了在每次自对弈迭代i中，神经网络fθi预测GoKifu数据集中人类职业棋局结果的均方误差。MSE表示实际结果z ∈ {−1, +1}与神经网络输出的估值v之间的误差，经过缩放因子1&#x2F;4将其范围调整至0–1。图中还展示了通过监督学习训练的神经网络的MSE。</p>
+</blockquote>
+<p>为了评估自对弈强化学习相较于从人类数据中学习的优劣，我们训练了一个第二神经网络（使用相同的架构）来预测KGS服务器数据集中专家的走棋手法；相比之前的研究成果【12,30–33】（参见扩展数据表1和表2，分别展示当前和之前的结果），这一神经网络达到了最先进的预测准确率。监督学习在初期表现更好，并且在预测人类职业棋手的走棋方面具有更高的准确率（如图3所示）。值得注意的是，尽管监督学习在走棋预测准确率上更高，自我学习的棋手整体表现却要好得多，并在训练的前24小时内击败了通过人类数据训练的棋手。这表明AlphaGo Zero可能正在学习一种与人类走棋方式在本质上不同的策略。</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p>Silver D , Huang A , Maddison C J ,et al.Mastering the game of Go with deep neural networks and tree search[J].Nature[2024-10-29].DOI:10.1038&#x2F;nature16961.</p>
+<p>Silver D , Schrittwieser J , Simonyan K ,et al.Mastering the game of Go without human knowledge[J].Nature, 2017, 550(7676):354-359.DOI:10.1038&#x2F;nature24270.</p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1f3411a7zG/?share_source=copy_web&vd_source=be9adc4ce771bc6c2b07aaac45440a93" >Deepmind的人工智能alphaGo alphaZero算法详解 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1JD4y1Q7mV/?spm_id_from=333.337.search-card.all.click" >AI如何下棋？直观了解蒙特卡洛树搜索MCTS <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://www.cnblogs.com/dynmi/p/11919135.html" >AlphaGO的背后&#x2F;《mastering the game of GO wtth deep neural networks and tree search》研究解读 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/676418105" >AlphaGo Zero训练的基本原理和方法 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/673222935" >AlphaGo对弈的基本原理和方法 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/32089487" >AlphaZero实战：从零学下五子棋（附代码） <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h1 id="实验展示"><a href="#实验展示" class="headerlink" title="实验展示"></a>实验展示</h1><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">update_recursive</span>(<span class="params">self, leaf_value</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    回溯阶段，更新当前节点和祖先节点的访问次数和价值。</span></span><br><span class="line"><span class="string">    :param leaf_value: 从叶子节点返回的评估值（即模拟后的游戏结果）</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> self._parent:</span><br><span class="line">        self._parent.update_recursive(-leaf_value)</span><br><span class="line">    self._n_visits += <span class="number">1</span></span><br><span class="line">    self._Q += <span class="number">1.0</span> * (leaf_value - self._Q) / self._n_visits</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_value</span>(<span class="params">self, c_puct</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    计算并返回结点的价值</span></span><br><span class="line"><span class="string">    c_cupt:一个正实数，控制Q，P在节点得分上的相关影响</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    self._u = (c_puct * self._P * np.sqrt(self._parent._n_visits) / (<span class="number">1</span> + self._n_visits))</span><br><span class="line">    <span class="keyword">return</span> self._Q + self._u</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h1 id="汇报"><a href="#汇报" class="headerlink" title="汇报"></a>汇报</h1><h1 id="AlphaGo"><a href="#AlphaGo" class="headerlink" title="AlphaGo"></a>AlphaGo</h1><p>首先围棋对计算机对人工智能来说非有挑战性的，因为围棋搜索空间太大，及时缩减，对搜索空间裁剪也很难有效搜索，有效搜索就是策略的选择和局面审视。</p>
+<p>作者提出这样的方法，使用两个网络，价值和策略，用来辅助搜索过程。右边这个大纲就是论文当中大纲，我会和他一样的顺序，从网络的训练和</p>
+<h2 id="SLPolicy-Networks"><a href="#SLPolicy-Networks" class="headerlink" title="SLPolicy Networks"></a>SLPolicy Networks</h2><p>右边这个图就是他的一个训练过程，这个图上的P和V</p>
+<p>训练流程的第一阶段，使用监督学习训练两个策略网络，一个Psigma 一个是P_pai，Psigma的结构是一个13层的卷积网络，加一个softmax得到的概率分布，训练的方法就是，使用随机梯度上升来最大化人类在状态 s 中选择的移动 a 的可能性，输入是人工选择的当前棋局的特征，数据集来自KGS的3000万个棋局，精确度较高但是较慢。<br>p_pai是一个简单的softmax，快，为后面蒙特卡树搜做做准备</p>
+<p>从这个训练的过程看出，p_sigma和P_pai是一个，策略网络P_σ和P_π的功能目的就是用来，找到当前局面下可以选择的落子，模型对人类棋手选择动作的预测能力。更有潜力的点</p>
+<h2 id="RL-Policy-Networks"><a href="#RL-Policy-Networks" class="headerlink" title="RL Policy Networks"></a>RL Policy Networks</h2><p>训练流程的第二阶段，在策略网p_sigma基础上，通过策略梯度强化学习训练得到了策略p_rou。<br>训练方法是，我们在当前策略网络 pρ 和随机选择的先前版本的策略网络的先前迭代之间进行博弈。我们 使用的奖励每个动作都没有即时的奖励，直到游戏结束才结算。游戏结束就是我们每个动作之前都做一次搜索，</p>
+<p>首先我们的选择一个对手，当前策略网络 pρ 和随机选择的先前版本的策略网络的先前迭代之间进行博弈<br>然后在每个时间步 t 通过随机梯度上升，沿着最大化预期结果的方向来更新权重。<br>两个网络在自博弈，仅依靠外界的最终奖励来进行梯度更新，更新的方向就是朝着获胜的期望值增加的方向</p>
+<p>最后他的一个表现，对战初始的p_sigma胜率到达80%，但是我们在进行搜索的时候，选择了p_sigma作为我的策略网络，是因为<br>原论文中提到，我们进行搜索中拓展的时候，使用p_sigma作为策略网络的表现由于p_rou。</p>
+<p>我的理解是，从训练目的看出RL的输出相较于SL输出概率过于稀疏？把某一步概率过大？导致所搜的时候在每一步的选择上可能失去了丧失多样性么</p>
+<h2 id="Value"><a href="#Value" class="headerlink" title="Value"></a>Value</h2><p>使用随机梯度下降来最小化预测值<br>价值网络<strong>的作用用来评</strong>估我们策略的价值，理想情况下我们希望得到完美策略下的最优价值函数</p>
+<p>这三者之间有什么关系，</p>
+<p>我们通过对状态-结果对 (s,z) 的回归来训练价值网络的权重，使用随机梯度下降来最小化预测值 v_{\theta) 与对应结果 z 之间的均方误差（MSE）。</p>
+<p>图2b显示了价值网络的评估准确性，与使用快速回合策略 pπp_{\pi}pπ 进行的蒙特卡洛回合相比，价值函数的准确性更高。单次计算 vθ(s)v_{\theta}(s)vθ(s) 的评估精度也接近于使用RL策略网络 pρp_{\rho}pρ 的蒙特卡洛回合，但其计算量仅为后者的1&#x2F;15000。</p>
+<h2 id="search"><a href="#search" class="headerlink" title="search"></a>search</h2><p>AlphaGo 将策略网络和价值网络结合在 MCTS 算法中（图 3）每个节点要存储的信息，，初始化是0<br>通过先验搜索选择动作。搜索树的每条边（s，a）存储动作值Q（s，a）、访问计数N（s，a）和先验概率P（s，a）。</p>
+<p>a，选择就依据是，选择直到叶节点，该奖励与先验概率成正比，但会随着重复访问而衰减，以鼓励探索。当在步骤L遍历到达叶节点sL时，可以扩展该叶节点。保证树的宽度</p>
+<p>b，叶子位置 sL 仅由 SL 策略网络 pσ 处理一次。，<br>c，叶节点以两种截然不同的方式进行评估：首先，通过价值网络 vθ(sL)；其次，通过使用快速推出策略 pπ 直到终端步骤 T 进行的随机推出的结果 zL ；使用混合参数 λ 将这些评估组合成叶评估 V (sL)</p>
+<p>d，更新树中节点的值。<br>一旦搜索完成，算法就会从根位置选择访问次数最多的着法。</p>
+<blockquote>
+<p>利用已经验证的有效策略,频繁访问的动作通常表明更有潜力,当某个动作在模拟中获得了较高的胜率，它在搜索树中的访问次数自然会增加。</p>
+</blockquote>
+<h1 id="AlphaGo-Zero"><a href="#AlphaGo-Zero" class="headerlink" title="AlphaGo Zero"></a>AlphaGo Zero</h1><p>更强，89&#x2F;11打败AlphaGo ，先说不同之处</p>
+<p>简单说明</p>
+<h2 id="train"><a href="#train" class="headerlink" title="train"></a>train</h2><p>训练没有用到任何人类数据，只有最基本的游戏规则，而且只使用一个网络主体，两个头，即一个局面的输入，返回一个策略一个，训练分为两步分，两部又是同时交叉一起进行，</p>
+<p>初始化两个网络各自用搜索算法来对弈，直到游戏结束，更新这颗树上所有的值，选择每个动作之前使用 1,600 次 MCTS，那么一定相应的动作有一个概率pai，还有value，动作概率pai这就是我们策略网络要紧接的，交叉熵损失，value是价值网络要接近的，MSE，均方误差</p>
+<h2 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h2><p>a，选择直到叶节点，该奖励与先验概率成正比，但会随着重复访问而衰减，以鼓励探索。当在步骤L遍历到达叶节点sL时，可以扩展该叶节点。保证树的宽度</p>
+<p>b, 拓展和评估 ，直接根据网络</p>
+<p>c, back up</p>
+<p>d.play </p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241031233619769.png"
+                      alt="image-20241031233619769" style="zoom:50%;" 
+                >
+
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241031234222749.png"
+                      alt="image-20241031234222749" style="zoom:50%;" 
+                >
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> AlphaGo</li>
+        <li><strong>作者:</strong> 深情小小侯</li>
+        <li><strong>创建于
+                :</strong> 2024-10-19 22:01:04</li>
+        
+            <li>
+                <strong>更新于
+                    :</strong> 2024-11-03 21:43:15
+            </li>
+        
+        <li>
+            <strong>链接:</strong> https://redefine.ohevan.com/2024/10/19/AlphaGo/
+        </li>
+        <li>
+            <strong>
+                版权声明:
+            </strong>
+            
+            本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0</a> 进行许可。
+            
+
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                        rel="prev"
+                        href="/2024/11/03/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%A4%8D%E4%B9%A0/"
+                        >
+                            <span class="left arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">数据库复习</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                        rel="next"
+                        href="/2024/08/07/M3E-BGE-GTE%EF%BC%86%E5%90%91%E9%87%8F%E5%BA%93/"
+                        >
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">M3E,BGE,GTE＆向量库</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+
+        
+            <div class="comment-container">
+                <div class="comments-container pjax">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fa-solid fa-comments"></i>&nbsp;评论
+    </div>
+    
+
+        
+            
+ 
+    <div id="waline"></div>
+    <script type="module"  data-swup-reload-script>
+        import { init } from '/js/libs/waline.mjs';
+
+        function loadWaline() {
+            init({
+                el: '#waline',
+                serverURL: 'https://example.example.com',
+                lang: 'zh-CN',
+                dark: 'body[class~="dark-mode"]',
+                requiredMeta: ['nick','mail'], // cannot customize by theme config, change it yourself
+            });
+        }
+
+        if ('true') {
+            const loadWalineTimeout = setTimeout(() => {
+                loadWaline();
+                clearTimeout(loadWalineTimeout);
+            }, 1000);
+        } else {
+            window.addEventListener('DOMContentLoaded', loadWaline);
+        }
+        
+    </script>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+
+    
+        <div class="toc-content-container">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <div class="toc-title">此页目录</div>
+        <div class="page-title">AlphaGo</div>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Mastering-the-Game-of-Go-with-Deep-Neural-Networks-and-Tree-Search-2016"><span class="nav-number">1.</span> <span class="nav-text">Mastering the Game of Go with Deep Neural Networks and  Tree Search 2016</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Supervised-Learning-of-Policy-Networks"><span class="nav-number">1.1.</span> <span class="nav-text">1 Supervised Learning of Policy Networks</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Reinforcement-Learning-of-Policy-Networks"><span class="nav-number">1.2.</span> <span class="nav-text">2 Reinforcement Learning of Policy Networks</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Reinforcement-Learning-of-Value-Networks"><span class="nav-number">1.3.</span> <span class="nav-text">3 Reinforcement Learning of Value Networks</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Searching-with-Policy-and-Value-Networks"><span class="nav-number">1.4.</span> <span class="nav-text">4 Searching with Policy and Value Networks</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Evaluating-the-Playing-Strength-of-AlphaGo"><span class="nav-number">1.5.</span> <span class="nav-text">5 Evaluating the Playing Strength of AlphaGo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-Discussion"><span class="nav-number">1.6.</span> <span class="nav-text">6 Discussion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Methods"><span class="nav-number">1.7.</span> <span class="nav-text">Methods</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Problem-setting"><span class="nav-number">1.7.1.</span> <span class="nav-text">Problem setting</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Prior-work"><span class="nav-number">1.7.2.</span> <span class="nav-text">Prior work</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Search-Algorithm"><span class="nav-number">1.7.3.</span> <span class="nav-text">Search Algorithm</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Mastering-the-game-of-Go-without-human-knowledge"><span class="nav-number">2.</span> <span class="nav-text">Mastering the game of Go without  human knowledge</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#AlphaGo-Zero-%E4%B8%AD%E7%9A%84%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0"><span class="nav-number">2.1.</span> <span class="nav-text">AlphaGo Zero 中的强化学习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Empirical-analysis-of-AlphaGo-Zero-training"><span class="nav-number">2.2.</span> <span class="nav-text">Empirical analysis of AlphaGo Zero training</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">3.</span> <span class="nav-text">参考资料</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E5%B1%95%E7%A4%BA"><span class="nav-number">4.</span> <span class="nav-text">实验展示</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B1%87%E6%8A%A5"><span class="nav-number">5.</span> <span class="nav-text">汇报</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#AlphaGo"><span class="nav-number">6.</span> <span class="nav-text">AlphaGo</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#SLPolicy-Networks"><span class="nav-number">6.1.</span> <span class="nav-text">SLPolicy Networks</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RL-Policy-Networks"><span class="nav-number">6.2.</span> <span class="nav-text">RL Policy Networks</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Value"><span class="nav-number">6.3.</span> <span class="nav-text">Value</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#search"><span class="nav-number">6.4.</span> <span class="nav-text">search</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#AlphaGo-Zero"><span class="nav-number">7.</span> <span class="nav-text">AlphaGo Zero</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#train"><span class="nav-number">7.1.</span> <span class="nav-text">train</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%90%9C%E7%B4%A2"><span class="nav-number">7.2.</span> <span class="nav-text">搜索</span></a></li></ol></li></ol>
+
+    </div>
+</div>
+        </div>
+    
+</div>
+
+
+
+                
+
+            </div>
+
+            
+
+        </div>
+
+        <div class="main-content-footer">
+            <footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2022</span>
+              -
+            
+            2024&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">深情小小侯</a>
+        </div>
+        
+            <script data-swup-reload-script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">访问人数</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">总访问量</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a> 驱动</span>
+            <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.5.0</a></span>
+        </div>
+        
+        
+            <div>
+                博客已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="article-tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="right-bottom-tools page-aside-toggle">
+                <i class="fa-regular fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fa-regular fa-comments"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-side-tools-container">
+        <div class="side-tools-container">
+    <ul class="hidden-tools-list">
+        <li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-plus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-minus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+            <i class="fa-regular fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+            <i class="fa-regular fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="visible-tools-list">
+        <li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+            <i class="fa-regular fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+        
+    </ul>
+</div>
+
+    </div>
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+
+</main>
+
+
+    
+<script src="/js/libs/Swup.min.js"></script>
+
+<script src="/js/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+
+
+
+<script src="/js/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/utils.js" type="module"></script>
+
+<script src="/js/main.js" type="module"></script>
+
+<script src="/js/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/layouts/categoryList.js" type="module"></script>
+
+
+
+
+
+    
+<script src="/js/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/tools/runtime.js"></script>
+
+    
+<script src="/js/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+  
+<script src="/js/libs/Typed.min.js"></script>
+
+  
+<script src="/js/plugins/typed.js" type="module"></script>
+
+
+
+
+
+
+    
+<script src="/js/libs/minimasonry.min.js"></script>
+
+    
+<script src="/js/plugins/masonry.js" type="module"></script>
+
+
+
+
+<div class="post-scripts" data-swup-reload-script>
+    
+        
+<script src="/js/libs/anime.min.js"></script>
+
+        
+<script src="/js/tools/tocToggle.js" type="module"></script>
+
+<script src="/js/layouts/toc.js" type="module"></script>
+
+<script src="/js/plugins/tabs.js" type="module"></script>
+
+    
+</div>
+
+
+</body>
+</html>

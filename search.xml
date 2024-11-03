@@ -1,6 +1,472 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>AlphaGo</title>
+    <url>/2024/10/19/AlphaGo/</url>
+    <content><![CDATA[<h1 id="Mastering-the-Game-of-Go-with-Deep-Neural-Networks-and-Tree-Search-2016"><a href="#Mastering-the-Game-of-Go-with-Deep-Neural-Networks-and-Tree-Search-2016" class="headerlink" title="Mastering the Game of Go with Deep Neural Networks and  Tree Search 2016"></a>Mastering the Game of Go with Deep Neural Networks and  Tree Search 2016</h1><blockquote>
+<p>通过深度神经网络和树搜索掌握围棋</p>
+<p>本文介绍了如何使用深度神经网络和<strong>蒙特卡洛树搜索算法</strong>来提升围棋游戏的智能水平，这算法把蒙特卡洛模拟和估值、策略网络结合在一起。首先，通过监督学习训练策略网络以预测人类专家的棋路，然后用强化学习进一步优化策略。此外，还训练了一个价值网络来评估棋局位置。最后，通过结合策略和价值网络的蒙特卡洛搜索算法，实现了AlphaGo程序，它在与其他围棋程序的比赛中取得了99.8%的胜率，并战胜了人类欧洲冠军。</p>
+</blockquote>
+<p>问题：<br>蒙特卡洛树搜索算法是什么，为什么能提升</p>
+<p>其策略和价值网络是什么</p>
+<hr>
+<p>Mastering the Game of Go with Deep Neural Networks and  Tree Search 2016</p>
+<p>围棋长期以来被认为是人工智能最具挑战性的经典游戏，因为它拥有巨大的搜索空间以及评估棋盘位置和棋步的困难。</p>
+<p>我们介绍了一种新的计算机围棋方法，使用价值网络评估棋盘位置，使用策略网络选择棋步。这些深度神经网络通过<strong>一种新的方法进行训练</strong>，该方法结合了从人类专家棋局的监督学习和自我博弈中的强化学习。</p>
+<p>但有效搜索空间可以通过两个一般原则来减少：</p>
+<ol>
+<li><p>首先，可以通过位置评估减少搜索的深度：在状态 s 处截断搜索树，并用一个近似的值函数 v(s)≈v∗(s) 代替 s 之后的子树，该值函数预测从状态 s 开始的结果。</p>
+<blockquote>
+<p><strong>位置评估</strong>是指在特定时刻对游戏状态或决策场景进行判断，以估计当前状态的有利程度。对于博弈类游戏来说，这通常涉及判断当前局面对玩家是有利还是不利。通过评估当前局面，可以避免在搜索整个游戏树时需要过深的递归，因为可以在某个节点截断并替换为对该位置的评估值，从而加速决策过程。</p>
+<p>位置评估的核心在于不需要遍历整个游戏路径（如搜索到游戏结束），而是在中间状态预测最终的胜负或其他可能结果。</p>
+</blockquote>
+</li>
+<li><p>其次，可以通过从策略 $p(a∣s)$ 中采样动作来减少搜索的广度，该策略是位置 s 下可能棋步 a 的概率分布。</p>
+</li>
+</ol>
+<p>蒙特卡罗树搜索（MCTS）使用<strong>蒙特卡罗模拟来估计搜索树中每个状态的价值</strong>。随着更多模拟的执行，<strong>搜索树不断增大，相关的价值估计也变得更加准确</strong>。在搜索过程中用于选择动作的策略也会随着时间的推移得到改进，通过选择具有更高价值的子节点。渐近地，这种策略会收敛到最优的游戏策略，而评估值也会收敛到最优值函数。目前最强的围棋程序基于MCTS，并通过训练预测人类专家棋步的策略进行增强。这些策略用于将搜索范围缩小到高概率的动作束，并在模拟过程中采样动作。这种方法已经达到了强大的业余水平。然而，之前的研究局限于浅层策略或基于输入特征线性组合的值函数。</p>
+<blockquote>
+<p>问题：蒙特卡罗模拟来估计搜索树中每个状态的价值，如何估计？</p>
+<p>​	之前的研究局限于浅层策略或基于输入特征线性组合的值函数。所以是值函数变化么？</p>
+</blockquote>
+<p>我们将棋盘位置作为一个 19 × 19 的图像输入，并使用卷积层构建该位置的表示。我们使用这些神经网络来减少搜索树的有效深度和广度：通过<strong>值网络</strong>评估位置，通过<strong>策略网络</strong>采样动作。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241020220528994.png"
+                      alt="image-20241020220528994"
+                ></p>
+<blockquote>
+<p>a. 一个快速的模拟策略 pπ 和监督学习（SL）策略网络 pσ 被训练来预测数据集中位置的人类专家棋步。一个强化学习（RL）策略网络 pρ 被初始化为SL策略网络，然后通过<strong>策略梯度学习</strong>进行改进，以最大化与之前版本策略网络对弈的结果（即赢得更多的游戏）。通过使用RL策略网络进行自我博弈生成一个新的数据集。最后，通过回归训练一个值网络 vθ，用于预测来自自我博弈数据集中的位置的预期结果（即当前玩家是否获胜）。<br>b. AlphaGo中使用的神经网络架构的示意图。<strong>策略网络将棋盘位置 s 的表示作为输入，经过多个卷积层（具有参数 σ（SL策略网络）或 ρ（RL策略网络）），并输出一个表示合法棋步 a 的概率分布 pσ(a∣s)或 pρ(a∣s)，</strong>该分布通过棋盘上的概率图表示。值网络类似地使用多个卷积层（具有参数 θ，但输出一个标量值 vθ(s′)，该值预测在位置 s′ 中的预期结果。</p>
+</blockquote>
+<p>我们使用一个由多个机器学习阶段组成的流程来训练神经网络（如图1所示）。首先，我们通过从专家人类棋步直接训练一个<strong>监督学习（SL）策略网络 pσ</strong>。这为快速、高效的学习更新提供了即时反馈和高质量的梯度。与之前的研究类似，我们还训练了一个<strong>rollout策略 pπ</strong>，它可以在模拟过程中快速采样动作。接下来，我们训练一个强化学习（RL）策略网络 pρ，通过优化自我博弈的最终结果来改进监督学习策略网络。这一过程调整了策略，朝着正确的目标——赢得游戏——而非单纯最大化预测准确性前进。最后，我们训练了一个值网络 vθ，它预测由RL策略网络与自己对弈时的胜者。我们的程序AlphaGo有效地将策略网络和值网络与蒙特卡罗树搜索（MCTS）结合起来。</p>
+<h2 id="1-Supervised-Learning-of-Policy-Networks"><a href="#1-Supervised-Learning-of-Policy-Networks" class="headerlink" title="1 Supervised Learning of Policy Networks"></a>1 Supervised Learning of Policy Networks</h2><p>在训练流程的第一阶段，我们基于之前使用监督学习预测围棋游戏中专家动作的工作。</p>
+<p>SL策略网络 pσ(a∣s)在具有权重 σ 的卷积层和修正线性单元（ReLU）之间交替。最后的softmax层输出所有合法棋步 a 的概率分布。策略网络的输入 s 是棋盘状态的简单表示（见扩展数据表2）。该策略网络通过使用随机梯度上升法，针对随机采样的状态-动作对 (s,a) 进行训练，以最大化在状态 s 下选择人类棋步 aaa 的可能性。</p>
+<p>我们训练了一个13层的策略网络，称为SL策略网络，使用来自KGS围棋服务器的3000万个棋盘位置。该网络在一个保留的测试集上，以57.0%的准确率预测专家棋步（使用所有输入特征），而仅使用原始棋盘位置和棋步历史作为输入时，准确率为55.7%。相比之下，提交时其他研究组的最新成果为44.4%（完整结果见扩展数据表3）。<strong>准确率的微小提升导致了游戏强度的大幅提升</strong>（图2a）；更大的网络能够实现更好的准确率，但在搜索过程中评估速度较慢。我们还训练了一个更快但准确率较低的模拟策略 pπ(a∣s)，使用小型模式特征的线性softmax（见扩展数据表4），其权重为 π。该策略的准确率为24.2%，并且选择动作的时间仅<strong>为2微秒</strong>，而策略网络<strong>则需要3毫秒</strong>。</p>
+<blockquote>
+<p>SL策略网络 准确率为55.7%</p>
+<p>准确率较低的模拟策略 ,使用小型模式特征的线性softmax,准确率为24.2%</p>
+</blockquote>
+<p>图2：策略网络和值网络的强度和准确性<br>a. 图示了策略网络的游戏强度与其训练准确度之间的关系。使用每层128、192、256和384个卷积滤波器的策略网络在训练过程中定期进行评估；该图显示了<strong>AlphaGo在使用这些策略网络时与AlphaGo的比赛版本对弈的胜率。</strong><br>b. 比较了值网络与不同策略的模拟（rollouts）之间的评估准确性。位置和结果是从人类专家棋局中采样的。每个位置通过值网络 vθ 的一次前向传播进行评估，或者通过100次模拟的平均结果进行评估，这些模拟是通过均匀随机模拟、快速模拟策略 pπ、SL策略网络 pσ或 RL策略网络 pρ 执行的。图中显示了预测值与实际游戏结果之间的均方误差，并根据游戏阶段（在给定位置已进行的步数）进行绘制。</p>
+<h2 id="2-Reinforcement-Learning-of-Policy-Networks"><a href="#2-Reinforcement-Learning-of-Policy-Networks" class="headerlink" title="2 Reinforcement Learning of Policy Networks"></a>2 Reinforcement Learning of Policy Networks</h2><p>训练流程的第二阶段旨在通过<strong>策略梯度强化学习（RL）</strong>来<strong>改进</strong>策略网络。RL策略网络 pρ 在结构上与SL策略网络相同，其权重 ρ初始化为与 σ 相同的值，即 ρ&#x3D;σ。我们通过当前策略网络 pρ 和<strong>一个随机选择的之前版本的策略网络</strong>之间进行对弈来进行训练。从<strong>一组对手池中随机选择对</strong>手可以通过防止过拟合当前策略来稳定训练。我们使用一个奖励函数 r(s)，对于所有非终结时间步 t&lt;T，该函数值为零。终结奖励 zt&#x3D;±r(sT)是从当前玩家在时间步 t 视角看游戏结束时的奖励：胜利为+1，失败为-1。然后，通过随机梯度上升法，在每个时间步 t 更新权重，更新方向是最大化期望结果。</p>
+<blockquote>
+<p>The second stage of the training pipeline <strong>aims at improving the policy network</strong> by policy gradient  reinforcement learning.</p>
+<p>这里就是说基于SL policy networks的基础权重σ，继续训练，改进Policy Networks。</p>
+<p>之前版本的策略网络和对手池？</p>
+<p>r(s) &#x3D; 0 对于所有非终结时间步 t&lt;T ，</p>
+<p>zt&#x3D;±r(sT)， 胜利为+1，失败为-1</p>
+</blockquote>
+<p>我们评估了强化学习（RL）策略网络在游戏中的表现，通过从其输出的动作概率分布$ pρ(⋅∣st)$中<strong>采样每个动作</strong>。当进行对抗时，<strong>RL策略网络在与SL策略网络</strong>？？的对局中赢得了超过80%的游戏。我们还进行了与最强的开源围棋程序 Pachi 的测试，Pachi 是一个复杂的蒙特卡洛搜索程序，在 KGS 上排名为 2 段业余，执行每步棋 100,000 次模拟。<strong>在完全不使用搜索的情况下</strong>，RL策略网络在与 Pachi 的对局中赢得了85%的游戏。相比之下，之前的基于卷积网络的监督学习方法，在与 Pachi 的对局中仅赢得了 11% 的游戏，在与稍微弱一些的程序 Fuego 的对局中赢得了 12% 的游戏。</p>
+<blockquote>
+</blockquote>
+<h2 id="3-Reinforcement-Learning-of-Value-Networks"><a href="#3-Reinforcement-Learning-of-Value-Networks" class="headerlink" title="3 Reinforcement Learning of Value Networks"></a>3 Reinforcement Learning of Value Networks</h2><p>训练流程的最后阶段专注于位置评估，估计值函数 vp(s)，该函数预测在位置 s 上，使用策略 p 进行博弈时的结果。</p>
+<p>理想情况下，我们希望知道在完美博弈下的最优值函数 v∗(s)；然而在实际中，我们通过强化学习（RL）策略网络 pρ 来估计我们最强策略下的值函数vpρ(s)。我们使用一个值网络 vθ(s) 来近似该值函数，满足 vθ(s)≈vpρ(s)≈v∗(s)。这个神经网络的架构与策略网络类似，但输出的是一个单一的预测值，而不是一个概率分布。</p>
+<p>我们通过回归训练值网络的权重 θ，在状态-结果对 (s,z) 上进行回归，使用<strong>随机梯度下降（SGD）</strong>来最小化预测值 vθ(s) 和对应结果 z 之间的均方误差（MSE）。</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241021002411361.png"
+                      alt="image-20241021002411361" style="zoom:50%;" 
+                >
+
+<p><strong>通过使用完整游戏数据来预测游戏结果的简单方法会导致过拟合</strong>。问题在于，连续的位置之间存在强相关性，仅相差一颗棋子，但回归目标是整个游戏的结果。当以这种方式在 KGS 数据集上训练时，<strong>值网络记住了游戏结果，而不是对新位置进行泛化</strong>，在测试集上的最小均方误差（MSE）为 0.37，而在训练集上的 MSE 为 0.19。</p>
+<p><strong>为了解决这个问题，我们生成了一个新的自我对弈数据集，包含 3000 万个不同的位置</strong>，每个位置来自一场独立的游戏。每场游戏在强化学习（RL）策略网络与自身之间进行，直到游戏结束。使用这个数据集进行训练时，训练集和测试集上的 MSE 分别为 0.226 和 0.234，表明过拟合现象最小。</p>
+<p>图 2b 显示了值网络的局面评估准确性，并与使用the fast  rollout policy pπ 的蒙特卡洛rollouts进行了比较；值函数的准确性始终更高。单次评估 vθ(s) 的准确性也接近使用 RL 策略网络 pρ的蒙特卡洛rollout ，但计算量减少了 15,000 倍。</p>
+<h2 id="4-Searching-with-Policy-and-Value-Networks"><a href="#4-Searching-with-Policy-and-Value-Networks" class="headerlink" title="4 Searching with Policy and Value Networks"></a>4 Searching with Policy and Value Networks</h2><p>！！！！重点终于来了！！！！</p>
+<p>AlphaGo 将<strong>策略网络和值网络结合</strong>到蒙特卡洛树搜索（MCTS）算法中（图 3），该算法通过展望搜索来选择动作。搜索树的每条边 (s,a)存储了一个动作值 Q(s,a)、访问计数 N(s,a)和先验概率 P(s,a)。树的遍历通过模拟（即在没有回溯的情况下从根状态开始，在完整的游戏中沿树向下）来进行。在每次模拟的每个时间步 t 中，从状态 st 中选择一个动作 at。</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241021003949839.png"
+                      alt="image-20241021003949839" style="zoom: 50%;" 
+                >
+
+<p>so as to maximize action value plus a bonus u(s, a)，that is proportional to the prior  probability but decays with repeated visits to encourage exploration.</p>
+<p>这句话的意思是，为了最大化<strong>动作值</strong>并加上一个奖励项 u(s,a)，该奖励项与<strong>先验概率</strong>成正比，并且随着重复访问的增加而衰减，从而鼓励探索。</p>
+<p>当遍历到达步数为 L 的叶节点 sL 时，叶节点可能会被扩展。叶节点位置 sL只会被 <strong>监督学习（SL）策略网络</strong> pσ 处理一次。输出的概率被存储为每个合法动作 a 的先验概率 P(s,a)&#x3D;pσ(a∣s)。</p>
+<p>叶节点的评估有两种非常不同的方式：首先，通过值网络 vθ(sL)进行评估；其次，通过使用快速回合策略 pπ进行随机rollout模拟，直到终止步数 T 时得到的结果 zL。这两种评估结果通过一个混合参数 λ 结合，得出叶节点的最终评估值 V(sL)。</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241021004809787.png"
+                      alt="image-20241021004809787" style="zoom:50%;" 
+                >
+
+<p>在模拟 n 结束时，所有经过的边的动作值和访问计数都会被更新。每条边都会累积经过该边的所有模拟的访问计数和平均评估值。</p>
+<p>其中，s_i^L 是第 i 次模拟中的叶节点，1(s,a,i)表示在第 i 次模拟中是否遍历了边 (s,a)。一旦搜索完成，算法会从根位置选择访问次数最多的动作。</p>
+<p>在 AlphaGo 中，<strong>SL 策略网络</strong> pσ 的表现优于更强的 <strong>RL 策略网络</strong> pρ，这可能是因为人类在选择动作时会挑选一组多样的有前景的动作，而 <strong>RL</strong> 则是针对单一最佳动作进行优化。然而，基于更强的 <strong>RL 策略网络</strong> pρ得到的值函数 vθ(s)≈vpρ(s)在 AlphaGo 中的表现优于基于 <strong>SL 策略网络</strong> pσ得到的值函数 vθ(s)≈vpσ(s)。</p>
+<blockquote>
+<p>???   <strong>SL 策略网络</strong> pσ 的表现优于更强的 <strong>RL 策略网络</strong> pρ。</p>
+<p>基于更强的 <strong>RL 策略网络</strong> pρ得到的值函数 vθ(s)≈vpρ(s)在 AlphaGo 中的表现优于基于 <strong>SL 策略网络</strong> pσ得到的值函数 vθ(s)≈vpσ(s)。</p>
+</blockquote>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241021010247442.png"
+                      alt="image-20241021010247442" style="zoom:50%;" 
+                >
+
+<blockquote>
+<p>图 3：AlphaGo 中的蒙特卡洛树搜索（MCTS）。<br>a 每次模拟通过选择具有最大动作值 Q 的边，并加上一个依赖于该边存储的先验概率 P 的奖励项 u(P)来遍历树。<br>b 叶节点可以被扩展；新节点会被策略网络 pσ 处理一次，并将输出的概率存储为每个动作的先验概率 P。<br>c 在模拟结束时，叶节点通过两种方式进行评估：使用值网络 vθ；并通过使用the fast rollout policy $pπ$ 进行回合模拟直至游戏结束，然后使用函数 r 计算胜者。<br>d 动作值 Q 会被更新，以跟踪该动作下所有评估值$ r(⋅) 和 vθ(⋅)$的平均值，更新在该动作下的子树中。</p>
+</blockquote>
+<h2 id="5-Evaluating-the-Playing-Strength-of-AlphaGo"><a href="#5-Evaluating-the-Playing-Strength-of-AlphaGo" class="headerlink" title="5 Evaluating the Playing Strength of AlphaGo"></a>5 Evaluating the Playing Strength of AlphaGo</h2><p>所有这些程序都基于高性能MCTS算法</p>
+<h2 id="6-Discussion"><a href="#6-Discussion" class="headerlink" title="6 Discussion"></a>6 Discussion</h2><p>在这项工作中，我们开发了一个围棋程序，基于深度神经网络和树搜索的结合，可以达到最强人类棋手的水平，从而实现人工智能的“重大挑战”之一</p>
+<p>我们<strong>首次基于深度神经网络开发了围棋的有效走法选择和位置评估函数</strong>，该神经网络<strong>通过监督学习和强化学习的新颖组合进行训练</strong>。我们引入了一种<strong>新的搜索算法</strong>，该算法成功地将神经网络评估与蒙特卡洛推出结合起来。我们的程序 AlphaGo 将这些组件大规模地集成到一个高性能树搜索引擎中。</p>
+<p>AlphaGo 通过<strong>更智能地选择位置（使用策略网络）</strong>和更精确地评估这些位置（使用值网络）来弥补这一点——这种方法或许更接近人类的下棋方式。此外，深蓝依赖于手工设计的评估函数，而 AlphaGo 的神经网络则完全通过通用的监督学习和强化学习方法，从游戏对局中直接进行训练。</p>
+<p>具有挑战性的决策任务；<strong>棘手的搜索空间</strong>；<strong>最佳解决方案如此复杂</strong>，似乎无法直接使用策略或价值函数进行近似。计算机围棋之前的重大突破<strong>是蒙特卡罗树搜索</strong>的引入，导致了许多其他领域的相应进步：例如一般游戏、经典规划、部分观察规划、调度和约束满足。<strong>通过将树搜索与策略网络和价值网络相结合</strong>，AlphaGo 终于达到了围棋的职业水平，这让人们看到了在其他看似难以攻克的人工智能领域中也能实现人类水平表现的希望。</p>
+<h2 id="Methods"><a href="#Methods" class="headerlink" title="Methods"></a>Methods</h2><h3 id="Problem-setting"><a href="#Problem-setting" class="headerlink" title="Problem setting"></a>Problem setting</h3><h3 id="Prior-work"><a href="#Prior-work" class="headerlink" title="Prior work"></a>Prior work</h3><p>最优价值函数可以通过<strong>极小化极大算法</strong>（或等价的极大化极小算法）递归地计算。然而，大多数游戏的状态空间过于庞大，无法进行完整的极小化极大树搜索。因此，通常通过使用近似的价值函数 $v(s) \approx v^*(s)$来代替终局奖励，提前截断搜索。使用<strong>α-β剪枝的深度优先极小化极大搜索</strong>在国际象棋、跳棋和黑白棋中已经取得了超越人类的表现。然而，这种方法在围棋中并不有效。</p>
+<p><strong>强化学习</strong> 可以通过自对弈的游戏直接学习近似最优价值函数。此前的大部分工作都集中在使用线性组合 $v_\theta(s) &#x3D; \phi(s) \cdot \theta$，其中 $\phi(s)$ 是特征，θ 是权重。权重通常通过<strong>时序差分学习（temporal-difference learning）**在国际象棋、跳棋和围棋中进行训练，或者在黑白棋和拼字游戏中使用**线性回归**训练。时序差分学习还曾用于训练神经网络来近似最优价值函数，在</strong>西洋双陆棋<strong>中实现了超越人类的表现，并在</strong>小棋盘围棋**中使用卷积网络达到了弱业余水平（弱级位）。</p>
+<p>另一种替代极大极小搜索的方法是<strong>蒙特卡洛树搜索（MCTS）</strong>，它通过双重近似来估计内部节点的最优价值，$V_n(s) \approx v_{P_n}(s) \approx v^*(s)$。第一重近似 $V_n(s) \approx v_{P_n}(s)$ 使用 n 次蒙特卡洛模拟来估计模拟策略 Pn 的价值函数。第二重近似$v_{P_n}(s) \approx v^*(s)$ 则使用模拟策略 Pn 代替极大极小的最优动作。</p>
+<p>模拟策略通过搜索控制函数$\text{argmax}_a (Q_n(s, a) + u(s, a))$ 选择动作，类似于UCT算法，它选择具有较高动作值的子节点 $Q_n(s, a) &#x3D; -V_n(f(s, a))$，并加上一个鼓励探索的奖励 $u(s, a)$。如果在状态 s 没有搜索树，模拟策略会从快速回合策略 $p_\pi(a|s)$ 中抽取动作。</p>
+<p>随着更多的模拟被执行，搜索树变得更深，模拟策略基于越来越准确的统计信息。最终，两个近似都变得精确，并且MCTS（例如使用UCT）会收敛到最优值函数，即 $\lim_{n \to \infty} V_n(s) &#x3D; \lim_{n \to \infty} v_{P_n}(s) &#x3D; v^*(s)$。目前最强的围棋程序就是基于MCTS的。</p>
+<p>MCTS（蒙特卡洛树搜索）<strong>之前曾与策略结合使</strong>用<strong>，用于缩小搜索树的范围，聚焦于高概率的动作</strong>；或者将奖励项的偏置向高概率的动作倾斜。MCTS也曾与价值函数结合，价值函数用于初始化新扩展节点中的动作值，或将蒙特卡洛评估与极大极小评估混合使用。</p>
+<p>与此不同，AlphaGo 使用<strong>的价值函数基于截断的蒙特卡洛搜索算法</strong>，这些算法在游戏结束之前就终止回合，<strong>并使用价值函数代替终局奖励</strong>。AlphaGo 的位置评估结合了完整回合和截断回合，<strong>在某些方面类似于著名的时序差分学习算法 TD(λ)<strong>。AlphaGo 还与以往的工作不同，</strong>它使用了更慢但更强大的策略和价值函数表示</strong>；评估深度神经网络的速度比线性表示慢几个数量级，因此必须异步进行。</p>
+<p>MCTS 的表现在很大程度上取决<strong>于rollout 策略的质量</strong>。之前的研究集中在手工设计模式，或者通过监督学习、强化学习、模拟平衡或在线适应来学习rollout 策略；然而，已知基于rollout 的局势评估经常是不准确的。AlphaGo 使用了相对简单的rollout，并通过价值网络更直接地解决了position evaluation这一具有挑战性的问题。</p>
+<h3 id="Search-Algorithm"><a href="#Search-Algorithm" class="headerlink" title="Search Algorithm"></a>Search Algorithm</h3><p>为了有效地将大型神经网络集成到 AlphaGo 中，我们实现了一个异步策略和值的蒙特卡洛树搜索算法（APV-MCTS）。搜索树中的每个节点 s 都包含所有合法动作 $a \in A(s)$ 的边$ (s, a)$。每条边存储一组统计数据。</p>
+<p>${P(s,a),N_v(s,a),N_r(s,a),W_v(s,a),W_r(s,a),Q(s,a)}$</p>
+<p>**选择阶段 (Figure 4a)**。每次模拟的第一阶段（树内阶段）从搜索树的根节点开始，并在模拟到达叶节点的时间步 L 时结束。在每一个时间步 $t &lt; L$中，动作根据搜索树中的统计信息来选择，使用的公式为：</p>
+<p>$a_t&#x3D;argmax_a(Q(s_t,a)+u(s_t,a))$，其中$u(s_t,a)$</p>
+<p>其中，$c_{\text{puct}}$是一个决定探索程度的常数；这种搜索控制策略在初始阶段偏向那些具有高先验概率和低访问次数的动作，但随着模拟次数增多，逐渐偏向那些具有较高动作价值的动作。</p>
+<p><strong>评估（图4c）</strong>。叶节点位置 s_L 被加入到队列中，由价值网络 $v_\theta(s_L)$ 进行评估，除非它已经被评估过。每次模拟的第二阶段从叶节点 s_L 开始进行回合，并持续到游戏结束。在这些时间步中 $t \geq L$，双方玩家根据回合策略选择动作，$a_t \sim p_\pi(\cdot|s_t)$。当游戏到达终局状态时，通过最终得分计算出结果 $z_t &#x3D; \pm r(s_T)$。</p>
+<h1 id="Mastering-the-game-of-Go-without-human-knowledge"><a href="#Mastering-the-game-of-Go-without-human-knowledge" class="headerlink" title="Mastering the game of Go without  human knowledge"></a>Mastering the game of Go without  human knowledge</h1><p>人工智能的一个长期目标是开发一种算法，可以从零开始（tabula rasa）在具有挑战性的领域中学习并达到超人水平。最近，AlphaGo 成为第一个在围棋比赛中击败世界冠军的程序。AlphaGo 的树搜索通过深度神经网络评估棋盘状态并选择落子。这些神经网络通过学习人类专家的棋谱进行监督学习训练，并通过自我对弈进行强化学习。在此，<strong>我们介绍了一种完全基于强化学习的算法</strong>，不依赖任何人类数据、指导或除游戏规则外的领域知识。AlphaGo 成为自己的老师：神经网络被训练来预测 AlphaGo 自己的落子选择，并预测 AlphaGo 对局的胜者。<strong>这个神经网络提高了树搜索的强度</strong>，从而在下一次迭代中选择更高质量的落子，并增强了自我对弈的能力。从零开始，我们的新程序 AlphaGo Zero 达到了超人表现，并以 100 比 0 的战绩击败了之前发表的、曾战胜世界冠军的 AlphaGo。</p>
+<p>使用监督学习系统已经在人工智能方面取得了很大进展，这些系统经过训练可以复制人类专家的决策1-4。然而，专家数据集通常价格昂贵、不可靠或根本无法获得。即使有可靠的数据集，它们也可能会对以这种方式训练的系统的性能施加上限5。相比之下，强化学习系统是根据自己的经验进行训练的，原则上允许它们超越人类的能力，并在人类缺乏专业知识的领域中运行。最近，通过使用强化学习训练的深度神经网络，在实现这一目标方面取得了快速进展</p>
+<p>AlphaGo 是第一个在围棋领域实现超人表现的程序。发布的版本 12，我们称之为 AlphaGo Fan，AlphaGo Fan 使用了两个深度神经网络：<strong>输出走棋概率的策略网络</strong>和<strong>输出位置评估的价值网络</strong>。</p>
+<p><strong>策略网络最初通过监督学习进行训练，以准确预测人类专家的动作</strong>，随后通过<strong>策略梯度强化学习进行细化</strong>。<strong>价值网络经过训练，可以预测政策网络与其自身进行的游戏的获胜者</strong>。经过训练后，这些网络与蒙特卡罗树搜索相结合，以提供前瞻搜索，使用策略网络将搜索范围缩小到高概率移动，并使用价值网络（与蒙特卡罗推出相结合）使用快速推出策略）来评估树中的位置。</p>
+<p>AlphaGo Zero</p>
+<ul>
+<li>它仅通过自我强化学习进行训练，从随机游戏开始，没有任何监督或使用人类数据。</li>
+<li>其次，它仅使用棋盘上的黑色和白色棋子作为输入特征。</li>
+<li>第三，它使用单个神经网络，而不是单独的策略和价值网络。</li>
+<li>最后，它使用更简单的树搜索，依赖于这个单一的神经网络来评估位置和样本移动，<strong>而不执行任何蒙特卡洛推出。</strong></li>
+</ul>
+<p>为了实现这些结果，我们引入了一种新的强化学习算法，该算法在训练循环中结合了前瞻搜索，从而实现快速改进和精确稳定的学习。搜索算法、训练过程和网络架构方面的进一步技术差异在方法中描述。</p>
+<h2 id="AlphaGo-Zero-中的强化学习"><a href="#AlphaGo-Zero-中的强化学习" class="headerlink" title="AlphaGo Zero 中的强化学习"></a>AlphaGo Zero 中的强化学习</h2><p>我们的新方法使用了一个具有参数 θ 的深度神经网络 fθ。该神经网络以棋盘的原始表示 s 及其历史作为输入，并输出落子概率和一个数值结果，(p, v) &#x3D; fθ(s)。向量 p 代表每个动作 a（包括放弃）的选择概率，$pa &#x3D; Pr(a|s)$。数值 v 是一个标量评估，用来估计当前玩家从位置 s 获胜的概率。这个神经网络将策略网络和价值网络的功能结合在了一个单一的架构中。该神经网络由多个卷积层的残差块组成，并结合了批归一化和ReLU。</p>
+<p>AlphaGo Zero 的神经网络是通过自我对弈的游戏数据，利用一种新颖的强化学习算法进行训练的。在每一个位置 s 上，都会执行一次由神经网络 fθ 引导的蒙特卡洛树搜索（MCTS）。该搜索输出每个动作的概率 π。这些搜索概率通常会选择比神经网络 fθ(s) 的原始落子概率 p 更强的动作，因此可以将 MCTS 视为一种强大的策略改进操作器。通过搜索进行自我对弈——使用基于 MCTS 改进后的策略来选择每一步动作，然后将游戏赢家 z 作为价值的样本——可以被看作是一种强大的策略评估操作器。我们强化学习算法的核心思想是<strong>通过策略迭代过程多次使用这些搜索操作器</strong>：<strong>更新神经网络的参数</strong>，使得其落子概率和价值 (p,v)&#x3D;fθ(s) 更加接近改进后的搜索概率和自我对弈的赢家 (π,z))；这些新参数在下一次自我对弈中用于增强搜索能力。图 1 展示了自我对弈训练的流程。</p>
+<p>蒙特卡洛树搜索（MCTS）使用神经网络 fθ 来引导其模拟过程（见图2）。搜索树中的每条边 (s,a) 存储了先验概率 P(s,a)、访问次数 N(s,a) 和动作价值 Q(s,a)。每次模拟从根节点状态开始，反复选择能够最大化上置信界的动作 $Q(s,a)+U(s,a)$，其中 $U(s,a)∝P(s,a)1+N(s,a))$（参考文献12, 24），直到遇到叶节点 s′。**该叶节点仅由神经网络进行一次扩展和评估，生成先验概率和评估值 (P(s′,⋅),V(s′))&#x3D;fθ(s′)**。模拟过程中经过的每条边 (s,a) 都会更新其访问次数 N(s,a)，并更新其动作价值为这些模拟的平均评估值：$Q(s,a)&#x3D;1N(s,a)∑s,a→s′V(s′)$，其中 s,a→s′ 表示模拟在从位置 s 选择动作 a 后最终到达 s′。</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241021145551579.png"
+                      alt="image-20241021145551579" style="zoom:50%;" 
+                >
+
+<blockquote>
+<p>图2 | AlphaGo Zero 中的蒙特卡洛树搜索（MCTS）。<br>a. 每次模拟通过选择具有最大动作值 Q 加上依赖于该边的先验概率 P 和访问次数 N 的上置信界 U 来遍历树（当边被遍历时，访问次数 N 会递增）。<br>b. 叶节点被扩展，相关位置 s 通过神经网络进行评估，$(P(s,⋅),V(s))&#x3D;fθ(s)$；P 值的向量被存储在从 s 出发的边上。<br>c. 动作值 Q 被更新，以跟踪该动作下子树中所有评估值 V 的平均值。<br>d. 一旦搜索完成，搜索概率 $π $返回，并且与 $N1&#x2F;τ$ 成比例，其中 N 是从根状态出发的每个动作的访问次数，$τ$是控制温度的参数。</p>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>这与 AlphaGo的区别不就在于Expand and evaluate 是一个神经网络一次完成的？</p>
+<p>深挖更多的不同</p>
+</blockquote>
+</blockquote>
+<p>蒙特卡洛树搜索（MCTS）可以视为一种自我博弈算法，给定神经网络参数 θ 和根位置 s，计算出一组推荐可执行动作的搜索概率向量 $π&#x3D;αθ(s)$，该概率与每个动作的访问次数的指数值成正比，即 $πa∝N(s,a)1&#x2F;τ$，其中 $τ$ 是一个控制温度的参数。</p>
+<p>神经网络通过一个自我博弈的强化学习算法进行训练，该算法使用蒙特卡洛树搜索（MCTS）来决定每一步的落子。首先，神经网络会初始化为随机权重 θ0θ_0θ0。在每一次后续迭代 $i≥1$中，生成自我博弈的游戏（如图1a所示）。在每一个时间步 t，使用前一迭代的神经网络 $fθi−1$ 执行 MCTS 搜索 $π&#x3D;αθt−1(st)$，并通过从搜索概率 $πt$ 中采样选择落子。当双方都不再落子、搜索值低于放弃阈值或游戏超过最大长度时，游戏在第 T 步终止，随后根据最终结果得出一个奖励 $rT∈{−1,+1}$（详细信息见方法部分）。每个时间步 t 的数据存储为 $(st,πt,zt)$，其中 $zt&#x3D;±rT$表示第 t 步的当前玩家从游戏中获胜或失败的结果。</p>
+<p>同时（如图1b所示），新网络参数 $θ_i$ 从自我博弈最后一轮（或多轮）所有时间步中的数据 $(s,π,z)$ 中均匀采样进行训练。神经网络 $f_{θ_i}(s) &#x3D; (p, v)$被调整以最小化预测值 v 与自我博弈结果 z 之间的误差，并最大化神经网络的动作概率 p 与搜索概率 π 的相似性。具体来说，参数 θ 通过梯度下降优化一个损失函数 l，该损失函数对均方误差和交叉熵损失进行求和，分别对应于价值估计和动作概率的调整。</p>
+<p>$(p,v)&#x3D;f(s)$ and $ l &#x3D; (z - v)^2 - \log(p^\top \pi) + c $</p>
+<p>其中c是控制L2权重正则化水平的参数（以防止过度拟合）。</p>
+<h2 id="Empirical-analysis-of-AlphaGo-Zero-training"><a href="#Empirical-analysis-of-AlphaGo-Zero-training" class="headerlink" title="Empirical analysis of AlphaGo Zero training"></a>Empirical analysis of AlphaGo Zero training</h2><p>我们将我们的强化学习流程应用于训练程序 AlphaGo Zero。训练从完全随机的行为开始，并在没有人工干预的情况下持续了大约三天。</p>
+<p>在训练过程中，共生成了490万局自对弈，，对每个 MCTS 使用 1,600 次模拟，这相当于每步约0.4秒的思考时间。参数更新来自于70万个小批量数据，每批包含2048个位置。神经网络包含了20个残差块。</p>
+<p>图3a展示了AlphaGo Zero在自对弈强化学习过程中的表现，按照训练时间和Elo评分衡量。学习过程一直平稳进行，没有出现之前文献中提到的波动或灾难性遗忘。令人惊讶的是，AlphaGo Zero在训练仅<strong>几个小时后</strong>便超越了AlphaGo Lee。而相比之下，AlphaGo Lee的训练持续了几个月。72小时后，我们在与AlphaGo Lee的精确版本对战时进行了评估，该版本击败了李世石，比赛条件与首尔的人机对战相同，均使用2小时的时间控制和比赛规则（详细信息见方法部分）。AlphaGo Zero使用了一台配有4个张量处理单元（TPU）的机器，而AlphaGo Lee则分布在多台机器上，使用了48个TPU。最终，AlphaGo Zero以100比0战胜了AlphaGo Lee（参见扩展数据图1和补充信息）。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241021164539462.png"
+                      alt="image-20241021164539462"
+                ></p>
+<blockquote>
+<p>图3 | AlphaGo Zero的实证评估。<br>a、自对弈强化学习的表现。该图展示了在AlphaGo Zero的强化学习中，每次迭代i中MCTS玩家αθi的表现。Elo评分是通过不同玩家之间的评估对局计算得出，每步使用0.4秒的思考时间（详见方法部分）。作为对比，还展示了一个使用KGS数据集从人类数据进行监督学习训练的类似玩家的表现。<br>b、对人类职业棋手走棋的预测准确率。该图展示了在每次自对弈迭代i中，神经网络fθi预测GoKifu数据集中人类职业棋手走棋的准确率。准确率衡量的是神经网络在不同局面中，将最高概率分配给人类棋手走棋的百分比。图中还展示了一个通过监督学习训练的神经网络的预测准确率。<br>c、人类职业棋局结果的均方误差（MSE）。该图展示了在每次自对弈迭代i中，神经网络fθi预测GoKifu数据集中人类职业棋局结果的均方误差。MSE表示实际结果z ∈ {−1, +1}与神经网络输出的估值v之间的误差，经过缩放因子1&#x2F;4将其范围调整至0–1。图中还展示了通过监督学习训练的神经网络的MSE。</p>
+</blockquote>
+<p>为了评估自对弈强化学习相较于从人类数据中学习的优劣，我们训练了一个第二神经网络（使用相同的架构）来预测KGS服务器数据集中专家的走棋手法；相比之前的研究成果【12,30–33】（参见扩展数据表1和表2，分别展示当前和之前的结果），这一神经网络达到了最先进的预测准确率。监督学习在初期表现更好，并且在预测人类职业棋手的走棋方面具有更高的准确率（如图3所示）。值得注意的是，尽管监督学习在走棋预测准确率上更高，自我学习的棋手整体表现却要好得多，并在训练的前24小时内击败了通过人类数据训练的棋手。这表明AlphaGo Zero可能正在学习一种与人类走棋方式在本质上不同的策略。</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p>Silver D , Huang A , Maddison C J ,et al.Mastering the game of Go with deep neural networks and tree search[J].Nature[2024-10-29].DOI:10.1038&#x2F;nature16961.</p>
+<p>Silver D , Schrittwieser J , Simonyan K ,et al.Mastering the game of Go without human knowledge[J].Nature, 2017, 550(7676):354-359.DOI:10.1038&#x2F;nature24270.</p>
+<p><a class="link"   href="https://www.bilibili.com/video/BV1f3411a7zG/?share_source=copy_web&vd_source=be9adc4ce771bc6c2b07aaac45440a93" >Deepmind的人工智能alphaGo alphaZero算法详解 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><a class="link"   href="https://www.bilibili.com/video/BV1JD4y1Q7mV/?spm_id_from=333.337.search-card.all.click" >AI如何下棋？直观了解蒙特卡洛树搜索MCTS <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><a class="link"   href="https://www.cnblogs.com/dynmi/p/11919135.html" >AlphaGO的背后&#x2F;《mastering the game of GO wtth deep neural networks and tree search》研究解读 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><a class="link"   href="https://zhuanlan.zhihu.com/p/676418105" >AlphaGo Zero训练的基本原理和方法 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><a class="link"   href="https://zhuanlan.zhihu.com/p/673222935" >AlphaGo对弈的基本原理和方法 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><a class="link"   href="https://zhuanlan.zhihu.com/p/32089487" >AlphaZero实战：从零学下五子棋（附代码） <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h1 id="实验展示"><a href="#实验展示" class="headerlink" title="实验展示"></a>实验展示</h1><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">update_recursive</span>(<span class="params">self, leaf_value</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    回溯阶段，更新当前节点和祖先节点的访问次数和价值。</span></span><br><span class="line"><span class="string">    :param leaf_value: 从叶子节点返回的评估值（即模拟后的游戏结果）</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> self._parent:</span><br><span class="line">        self._parent.update_recursive(-leaf_value)</span><br><span class="line">    self._n_visits += <span class="number">1</span></span><br><span class="line">    self._Q += <span class="number">1.0</span> * (leaf_value - self._Q) / self._n_visits</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_value</span>(<span class="params">self, c_puct</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    计算并返回结点的价值</span></span><br><span class="line"><span class="string">    c_cupt:一个正实数，控制Q，P在节点得分上的相关影响</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    self._u = (c_puct * self._P * np.sqrt(self._parent._n_visits) / (<span class="number">1</span> + self._n_visits))</span><br><span class="line">    <span class="keyword">return</span> self._Q + self._u</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h1 id="汇报"><a href="#汇报" class="headerlink" title="汇报"></a>汇报</h1><h1 id="AlphaGo"><a href="#AlphaGo" class="headerlink" title="AlphaGo"></a>AlphaGo</h1><p>首先围棋对计算机对人工智能来说非有挑战性的，因为围棋搜索空间太大，及时缩减，对搜索空间裁剪也很难有效搜索，有效搜索就是策略的选择和局面审视。</p>
+<p>作者提出这样的方法，使用两个网络，价值和策略，用来辅助搜索过程。右边这个大纲就是论文当中大纲，我会和他一样的顺序，从网络的训练和</p>
+<h2 id="SLPolicy-Networks"><a href="#SLPolicy-Networks" class="headerlink" title="SLPolicy Networks"></a>SLPolicy Networks</h2><p>右边这个图就是他的一个训练过程，这个图上的P和V</p>
+<p>训练流程的第一阶段，使用监督学习训练两个策略网络，一个Psigma 一个是P_pai，Psigma的结构是一个13层的卷积网络，加一个softmax得到的概率分布，训练的方法就是，使用随机梯度上升来最大化人类在状态 s 中选择的移动 a 的可能性，输入是人工选择的当前棋局的特征，数据集来自KGS的3000万个棋局，精确度较高但是较慢。<br>p_pai是一个简单的softmax，快，为后面蒙特卡树搜做做准备</p>
+<p>从这个训练的过程看出，p_sigma和P_pai是一个，策略网络P_σ和P_π的功能目的就是用来，找到当前局面下可以选择的落子，模型对人类棋手选择动作的预测能力。更有潜力的点</p>
+<h2 id="RL-Policy-Networks"><a href="#RL-Policy-Networks" class="headerlink" title="RL Policy Networks"></a>RL Policy Networks</h2><p>训练流程的第二阶段，在策略网p_sigma基础上，通过策略梯度强化学习训练得到了策略p_rou。<br>训练方法是，我们在当前策略网络 pρ 和随机选择的先前版本的策略网络的先前迭代之间进行博弈。我们 使用的奖励每个动作都没有即时的奖励，直到游戏结束才结算。游戏结束就是我们每个动作之前都做一次搜索，</p>
+<p>首先我们的选择一个对手，当前策略网络 pρ 和随机选择的先前版本的策略网络的先前迭代之间进行博弈<br>然后在每个时间步 t 通过随机梯度上升，沿着最大化预期结果的方向来更新权重。<br>两个网络在自博弈，仅依靠外界的最终奖励来进行梯度更新，更新的方向就是朝着获胜的期望值增加的方向</p>
+<p>最后他的一个表现，对战初始的p_sigma胜率到达80%，但是我们在进行搜索的时候，选择了p_sigma作为我的策略网络，是因为<br>原论文中提到，我们进行搜索中拓展的时候，使用p_sigma作为策略网络的表现由于p_rou。</p>
+<p>我的理解是，从训练目的看出RL的输出相较于SL输出概率过于稀疏？把某一步概率过大？导致所搜的时候在每一步的选择上可能失去了丧失多样性么</p>
+<h2 id="Value"><a href="#Value" class="headerlink" title="Value"></a>Value</h2><p>使用随机梯度下降来最小化预测值<br>价值网络<strong>的作用用来评</strong>估我们策略的价值，理想情况下我们希望得到完美策略下的最优价值函数</p>
+<p>这三者之间有什么关系，</p>
+<p>我们通过对状态-结果对 (s,z) 的回归来训练价值网络的权重，使用随机梯度下降来最小化预测值 v_{\theta) 与对应结果 z 之间的均方误差（MSE）。</p>
+<p>图2b显示了价值网络的评估准确性，与使用快速回合策略 pπp_{\pi}pπ 进行的蒙特卡洛回合相比，价值函数的准确性更高。单次计算 vθ(s)v_{\theta}(s)vθ(s) 的评估精度也接近于使用RL策略网络 pρp_{\rho}pρ 的蒙特卡洛回合，但其计算量仅为后者的1&#x2F;15000。</p>
+<h2 id="search"><a href="#search" class="headerlink" title="search"></a>search</h2><p>AlphaGo 将策略网络和价值网络结合在 MCTS 算法中（图 3）每个节点要存储的信息，，初始化是0<br>通过先验搜索选择动作。搜索树的每条边（s，a）存储动作值Q（s，a）、访问计数N（s，a）和先验概率P（s，a）。</p>
+<p>a，选择就依据是，选择直到叶节点，该奖励与先验概率成正比，但会随着重复访问而衰减，以鼓励探索。当在步骤L遍历到达叶节点sL时，可以扩展该叶节点。保证树的宽度</p>
+<p>b，叶子位置 sL 仅由 SL 策略网络 pσ 处理一次。，<br>c，叶节点以两种截然不同的方式进行评估：首先，通过价值网络 vθ(sL)；其次，通过使用快速推出策略 pπ 直到终端步骤 T 进行的随机推出的结果 zL ；使用混合参数 λ 将这些评估组合成叶评估 V (sL)</p>
+<p>d，更新树中节点的值。<br>一旦搜索完成，算法就会从根位置选择访问次数最多的着法。</p>
+<blockquote>
+<p>利用已经验证的有效策略,频繁访问的动作通常表明更有潜力,当某个动作在模拟中获得了较高的胜率，它在搜索树中的访问次数自然会增加。</p>
+</blockquote>
+<h1 id="AlphaGo-Zero"><a href="#AlphaGo-Zero" class="headerlink" title="AlphaGo Zero"></a>AlphaGo Zero</h1><p>更强，89&#x2F;11打败AlphaGo ，先说不同之处</p>
+<p>简单说明</p>
+<h2 id="train"><a href="#train" class="headerlink" title="train"></a>train</h2><p>训练没有用到任何人类数据，只有最基本的游戏规则，而且只使用一个网络主体，两个头，即一个局面的输入，返回一个策略一个，训练分为两步分，两部又是同时交叉一起进行，</p>
+<p>初始化两个网络各自用搜索算法来对弈，直到游戏结束，更新这颗树上所有的值，选择每个动作之前使用 1,600 次 MCTS，那么一定相应的动作有一个概率pai，还有value，动作概率pai这就是我们策略网络要紧接的，交叉熵损失，value是价值网络要接近的，MSE，均方误差</p>
+<h2 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h2><p>a，选择直到叶节点，该奖励与先验概率成正比，但会随着重复访问而衰减，以鼓励探索。当在步骤L遍历到达叶节点sL时，可以扩展该叶节点。保证树的宽度</p>
+<p>b, 拓展和评估 ，直接根据网络</p>
+<p>c, back up</p>
+<p>d.play </p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241031233619769.png"
+                      alt="image-20241031233619769" style="zoom:50%;" 
+                >
+
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20241031234222749.png"
+                      alt="image-20241031234222749" style="zoom:50%;" 
+                >
+
+
+
+
+
+
+
+
+
+
+
+
+
+]]></content>
+  </entry>
+  <entry>
+    <title>LLama_架构</title>
+    <url>/2024/06/22/LLama-%E6%9E%B6%E6%9E%84/</url>
+    <content><![CDATA[<p>LLaMA 所采用的 Transformer 结构和细节，与标准的 Transformer 架构不同的地方包括采用了<strong>前置层归一化（Pre-normalization</strong>）并使用 RMSNorm 归一化函数 （Normalizing Function）、<strong>激活函数更换为 SwiGLU</strong>，并使用了旋转位置嵌入（RoP），整体 Transformer 架构与 GPT-2 类似。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\xhou\blog_pic\79ee1b168c08439eb0e1d9851254dc4c.png"
+                      alt="微信图片_20240622163724"
+                ></p>
+<h2 id="1-LLama结构"><a href="#1-LLama结构" class="headerlink" title="1. LLama结构"></a>1. LLama结构</h2><ul>
+<li>Embeding</li>
+<li>RMS Norm</li>
+</ul>
+<p>​	其中，残差连接 （Residual Connection）将输入与该层的输出相加，实现了信息在不同层的跳跃传 递，从而缓解梯度爆炸和消失的问题</p>
+<p>​		<strong>为了使得模型训练过程更加稳定</strong>，GPT-2 相较于 GPT 就引入了<strong>前置层归一化方法</strong>，将<strong>第一个层归一化移动到多头自注意力层之前</strong>，第二个层归一化也移动到了全连接层之前，同时残差连接的位置也调整到了多头自注意力层与全连接层之后。层归一化中也采用了 RMSNorm 归一化函数。 针对输入向量 aRMSNorm 函数计算公式如下：</p>
+<ul>
+<li>RoPE （注意是只对QK做旋转偏移，而且是在计算完QK之后）</li>
+<li>Group Attention</li>
+<li>RMS Norm</li>
+<li>FFN()</li>
+</ul>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\xhou\blog_pic\1.png"
+                     
+                ></p>
+<ul>
+<li>RMSNorm</li>
+<li>linear</li>
+</ul>
+<h2 id="2-Group-Attention"><a href="#2-Group-Attention" class="headerlink" title="2.Group Attention"></a>2.Group Attention</h2><p>我们不仅优化算法执行的操作，而且优化最小化内存访问次数，以及算法执行的内存传输，因为与计算机比，io更慢</p>
+<h2 id="3-FFN"><a href="#3-FFN" class="headerlink" title="3. FFN"></a>3. FFN</h2><p>transformer：FFN（Feed-Forward Network）块是Transformer模型中的一个重要组成部分，接受自注意力子层的输出作为输入，并通过一个带有 Relu 激活函数的两层全连接网络对输入进行更加复杂的非线性变换。实验证明，这一非线性变换会对模型最终的性能产生十分 重要的影响。<br>FFN由两个全连接层（即前馈神经网络）和一个激活函数组成。下面是FFN块的计算公式：<br>$$<br>\operatorname{FFN}(\boldsymbol{x})&#x3D;\operatorname{Relu}\left(\boldsymbol{x} \boldsymbol{W}<em>{1}+\boldsymbol{b}</em>{1}\right) \boldsymbol{W}<em>{2}+\boldsymbol{b}</em>{2}<br>$$</p>
+<ol>
+<li>第一层全连接层（线性变换）：$z &#x3D; xW1 + b1$    其中，W1 是第一层全连接层的权重矩阵，b1 是偏置向量。</li>
+<li>激活函数：$a &#x3D; g(z)$    其中，g() 是激活函数，常用的激活函数有ReLU（Rectified Linear Unit）等。</li>
+<li>第二层全连接层（线性变换）：$，$其中，W2 是第二层全连接层的权重矩阵，b2 是偏置向量。</li>
+</ol>
+<p><strong>增大前馈子层隐状态的维度有利于提 升最终翻译结果的质量，因此，前馈子层隐状态的维度一般比自注意力子层要大。h-&gt;4h</strong><br>需要注意的是，上述公式中的 W1、b1、W2、b2 是FFN块的可学习参数，它们会通过训练过程进行学习和更新。</p>
+<h2 id="4-激活函数"><a href="#4-激活函数" class="headerlink" title="4. 激活函数"></a>4. 激活函数</h2><h3 id="GeLU"><a href="#GeLU" class="headerlink" title="GeLU"></a>GeLU</h3><p>GeLU（Gaussian Error Linear Unit）是一种激活函数，常用于神经网络中的非线性变换。它在Transformer模型中广泛应用于FFN（Feed-Forward Network）块。下面是GeLU的计算公式：<br>假设输入是一个标量 x，GeLU的计算公式如下：</p>
+<p>$$<br>GeLU(x) &#x3D; 0.5 \times x \times (1 + tanh(\sqrt{\frac{2}{\pi}} \times (x + 0.044715 \times x^3)))<br>$$<br>其中，<code>tanh() </code>是双曲正切函数，<code>sqrt()</code> 是平方根函数，π是圆周率。</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line"></span><br><span class="line">def GELU(x):</span><br><span class="line">    return 0.5 * x * (1 + np.tanh(np.sqrt(2 / np.pi) * (x + 0.044715 * np.power(x, 3))))</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\xhou\blog_pic\image.png"
+                      alt="image" style="zoom:25%;" 
+                >
+
+<p>相对于 Sigmoid 和 Tanh 激活函数，<strong>ReLU 和 GeLU 更为准确和高效，因为它们在神经网络中的梯度消失问题上表现更好。而 ReLU 和 GeLU 几乎没有梯度消失的现象，可以更好地支持深层神经网络的训练和优化</strong>。<br>而 ReLU 和 GeLU 的区别在于形状和计算效率。ReLU 是一个非常简单的函数，仅仅是输入为负数时返回0，而输入为正数时返回自身，从而仅包含了一次分段线性变换。<strong>但是，ReLU 函数存在一个问题，就是在输入为负数时，输出恒为0，这个问题可能会导致神经元死亡，从而降低模型的表达能力</strong>。GeLU 函数则是一个连续的 S 形曲线，介于 Sigmoid 和 ReLU 之间，<strong>形状比 ReLU 更为平滑，可以在一定程度上缓解神经元死亡的问题。不过，由于 GeLU 函数中包含了指数运算等复杂计算，所以在实际应用中通常比 ReLU 慢。</strong></p>
+<h3 id="Swish"><a href="#Swish" class="headerlink" title="Swish"></a>Swish</h3><p>Swish是一种激活函数，它在深度学习中常用于神经网络的非线性变换。Swish函数的计算公式如下：<br>$$<br>Swish(x) &#x3D; x \times sigmoid(\beta * x)<br>$$<br>其中，$sigmoid()$是Sigmoid函数，$x$ 是输入，$\beta$ 是一个可调节的超参数。</p>
+<p>我们使用参数 β&#x3D;1 的 Swish 函数。这种情况下，它被称为 Sigmoid 线性单元（SiLU）函数。</p>
+<p><strong>SiLU 是 Swish 的特例</strong>：当 β&#x3D;1 时，Swish 函数退化为 SiLU，即标准的 Swish 函数</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="C:\xhou\blog_pic\image_1.png"
+                      alt="image_1" style="zoom: 50%;" 
+                >
+
+<p>Swish函数的特点是在接近零的区域表现得类似于线性函数，而在远离零的区域则表现出非线性的特性。<strong>相比于其他常用的激活函数（如ReLU、tanh等），Swish函数在某些情况下能够提供更好的性能和更快的收敛速度。</strong></p>
+<p>Swish函数的设计灵感来自于自动搜索算法，它通过引入一个可调节的超参数来增加非线性程度。当beta为0时，Swish函数退化为线性函数；当beta趋近于无穷大时，Swish函数趋近于ReLU函数。<br>需要注意的是，Swish函数<strong>相对于其他激活函数来说计算开销较大，因为它需要进行Sigmoid运</strong>算。因此，在实际应用中，也可以根据具体情况选择其他的激活函数来代替Swish函数。</p>
+<p><strong>平滑的激活</strong>：SiLU 比 ReLU（Rectified Linear Unit）等函数更加平滑，避免了 ReLU 的“死区”问题，即当输入为负时，ReLU 输出恒为 0，导致神经元可能不会被激活。</p>
+<p><strong>梯度优化</strong>：SiLU 的平滑性使得其梯度在训练过程中更加稳定，避免了梯度爆炸或消失的问题，有助于提高模型训练的效果。</p>
+<p><strong>增强非线性能力</strong>：通过 Sigmoid 函数的非线性特性，SiLU 可以更好地捕捉输入与输出之间的复杂关系，从而增强模型的非线性表达能力。</p>
+<h3 id="SwishGLU"><a href="#SwishGLU" class="headerlink" title="SwishGLU"></a><strong>SwishGLU</strong></h3><p>GLU</p>
+<p>GLU通过门控机制对输出进行把控，像Attention一样可看作是对重要特征的选择。其优势是不仅具有通用激活函数的非线性，而且<strong>反向传播梯度时具有线性通道</strong>，类似ResNet残差网络中的加和操作传递梯度，能够缓解梯度消失问题。<br>$$<br>GLU(x)&#x3D;(XW)⊗σ(XV)<br>$$</p>
+<ul>
+<li>X 是输入矩阵。</li>
+<li>W 和 V 是可训练的权重矩阵。</li>
+<li>⊗ 表示逐元素乘积。</li>
+<li>σ 是激活函数，通常选择Sigmoid函数。</li>
+</ul>
+<p>GLU（Gated Linear Unit）是一种特殊的激活单元，通过引入一个门控机制来对输入进行过滤。GLU块通常用于增强神经网络的表达能力。使用不同的激活函数可以形成不同的GLU变种，如使用GeLU（Gaussian Error Linear Unit）和SwiGLU（使用Swish函数）。</p>
+<p>使用 Swish 的 GLU 块 计算公式如下<br>$$<br>GLU(x) &#x3D; x * sigmoid(W_1 * x) \<br>FFN_{SwiGLU} &#x3D; (Swish_1(xW)*xV)W_2<br>$$<br>其中，$sigmoid()$ 是Sigmoid函数，$W_1$ 是一个可学习的权重矩阵。</p>
+<ul>
+<li>第二条路径(xV)经过线性变换后，直接用于门控机制。门控值由另一组权重和偏置计算得出，用于控制第一条路径的输出信息流。</li>
+</ul>
+<p>在公式中，首先将输入向量 x 通过一个全连接层（线性变换）得到一个与 x 维度相同的向量，然后将该向量通过Sigmoid函数进行激活。这个Sigmoid函数的输出称为门控向量，用来控制输入向量 x 的元素是否被激活。最后，将门控向量与输入向量 x 逐元素相乘，得到最终的输出向量。</p>
+<p>.Swish引入了一个参数化的非线性变换，通过对输入的平滑激活，可以产生更加复杂的映射效果。</p>
+<h3 id="使用-GLU-线性门控单元的-FFN-块-计算公式"><a href="#使用-GLU-线性门控单元的-FFN-块-计算公式" class="headerlink" title="使用 GLU 线性门控单元的 FFN 块 计算公式"></a>使用 GLU 线性门控单元的 FFN 块 计算公式</h3><p>使用GLU（Gated Linear Unit）线性门控单元的FFN（Feed-Forward Network）块是Transformer模型中常用的结构之一。它通过引入门控机制来增强模型的非线性能力。下面是使用GLU线性门控单元的FFN块的计算公式：</p>
+<p>$$<br>GLU(x)&#x3D;(XW)⊗σ(XV)<br>$$</p>
+<ul>
+<li>X 是输入矩阵。</li>
+<li>W 和 VV 是可训练的权重矩阵。</li>
+<li>⊗ 表示逐元素乘积。</li>
+<li>σ 是激活函数，通常选择Sigmoid函数。</li>
+</ul>
+]]></content>
+  </entry>
+  <entry>
+    <title>LLM推理加速技术</title>
+    <url>/2024/06/22/LLM%E6%8E%A8%E7%90%86%E5%8A%A0%E9%80%9F%E6%8A%80%E6%9C%AF/</url>
+    <content><![CDATA[<p>一个常规的LLM推理过程通常分为两个阶段：<strong>prefill和decode</strong>。通常会使用KV cache技术加速推理。</p>
+<p><strong>预填充阶段（prefill）。</strong>在这个阶段中，我们<strong>把整段prompt喂给模型做forward计算</strong>。如果<strong>采用KV cache技术，在这个阶段中我们会把prompt过</strong> 𝑊𝑘,𝑊𝑣 <strong>后得到的</strong> 𝑋𝑘,𝑋𝑣 <strong>保存在cache_k和cache_v中</strong>。这样在对后面的token计算attention时，我们就不需要对前面的token重复计算 𝑋𝑘,𝑋𝑣 了，可以帮助我们节省推理时间。</p>
+<p><strong>生成response的阶段</strong>decode。在这个阶段中，<strong>我们根据prompt的prefill结果，一个token一个token地生成response</strong>。<br>同样，如果采用了KV cache，则每走完一个decode过程，我们就把对应response token的KV值存入cache中，以便能加速计算。例如对于图中的t4，它与cache中t0~t3的KV值计算完attention后，就把自己的KV值也装进cache中。对t6也是同理。<br><strong>由于Decode阶段的是逐一生成token的，因此它不能像prefill阶段那样能做大段prompt的并行计算，所以在LLM推理过程中，Decode阶段的耗时一般是更大的</strong>。</p>
+<p>从上述过程中，我们可以发现使用KV cache做推理时的一些特点：</p>
+<ul>
+<li><strong>随着prompt数量变多和序列变长，KV cache也变大，对gpu显存造成压力</strong></li>
+<li><strong>由于输出的序列长度无法预先知道，所以我们很难提前为KV cache量身定制存储空间</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>分布式（Distribution）</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td>量化（Quantization）</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><strong>剪枝（Pruning）</strong></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>知识蒸馏</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>算子融合</td>
+<td></td>
+</tr>
+</tbody></table>
+<p><strong>模型压缩</strong>:</p>
+<ul>
+<li><p>网络剪枝：结构化非结构化剪枝</p>
+</li>
+<li><p>知识蒸馏</p>
+</li>
+<li><p><strong>模型量化</strong></p>
+</li>
+<li><p>低秩分解</p>
+</li>
+</ul>
+<p><strong>大模型引擎调度</strong></p>
+<ul>
+<li>VLLM，TensorRT-LLM，Orca，llama.cpp</li>
+</ul>
+<h2 id="1-VLLM"><a href="#1-VLLM" class="headerlink" title="1. VLLM"></a>1. VLLM</h2><p>vLLM 主要特性：</p>
+<ol>
+<li>先进的服务吞吐量</li>
+<li>通过 PagedAttention 对注意力 key 和 value 进行内存管理</li>
+<li>对传入请求的批处理</li>
+</ol>
+<p>总结,减少显存、提高吞吐量。如何优化KV cache，节省显存，提高推理吞吐量，就成了LLM推理框架需要解决的重点问题</p>
+<p><strong>实现原理：</strong></p>
+<p>通过 PagedAttention 对注意力 key 和 value 进行内存管理，降低显存，提高推理速度</p>
+<p>pagedAttention 实现原理</p>
+<ol>
+<li>内存中保存Key、value 值，允许内存空间不需要连续。不必浪费大量显存。方法：内存中序列的逻辑通过块表映射到物理内存中，保证其逻辑性。</li>
+<li>内存中可以共享内存，使prompt 计算可以共享。</li>
+</ol>
+<p>通过 PagedAttention 对注意力 key 和 value 进行内存管理,PagedAttention 还有一个关键优势：高效的内存共享。例如，在<em>并行采样</em>中，同一个提示会生成多个输出序列。在这种情况下，输出序列之间可以共享提示的计算和内存。</p>
+<hr>
+<ul>
+<li><strong>Parallel Sampling</strong>：我给模型发送一个请求，希望它对prompt做续写，并给出三种不同的回答。我们管这个场景叫parallel sampling。在这个场景中，我们可以将prompt复制3次后拼接成1个batch喂给模型，让它做推理。但我们也需注意到，这种方式会产生prompt部分KV cache的重复存储。</li>
+<li><strong>Beam Search</strong>：束搜索，这是LLM常用的deocde策略之一，即在每个decode阶段，我不是只产生1个token，而是产生top k个token（这里k也被称为束宽）。top k个token必然对应着此刻的top k个序列。我把这top k个序列喂给模型，假设词表的大小为|V|，那么在下一时刻，我就要在k*|V|个候选者中再选出top k，以此类推。不难想象每一时刻我把top k序列喂给模型时，它们的前置token中有大量的KV cache是重复的。</li>
+<li><strong>Shared prefix：</strong>在某些大模型中，所有请求可能都会共享一个前置信息（比如system message: “假设你是一个有帮助的AI助手….”），这些前置信息没有必要重复存储KV cache</li>
+</ul>
+<h3 id="为什么Cache只存储K、V，而不存储Q？"><a href="#为什么Cache只存储K、V，而不存储Q？" class="headerlink" title="为什么Cache只存储K、V，而不存储Q？"></a>为什么Cache只存储K、V，而不存储Q？</h3><p>在Transformer架构的注意力机制中，Q（Query）代表当前输入Token的查询信息，它需要与所有先前和当前的K（Key）进行匹配来决定注意力的分配。因为Q是专门针对当前正在处理的Token的，所以它每次都是独一无二的，即便在没有Cache的情况下，对于序列中的每个新Token，Q都会改变。<br>相反，K（Key）和V（Value）通常与序列中已经处理过的Token相关，它们可以被缓存起来供后续的Token查询使用。存储K和V使得模型可以重用之前Token的信息，而不必重新计算它们，这样可以大大节省计算资源。如果存储Q值，对于每个新的Token，我们仍然需要重新计算整个Q与所有K的匹配度，这不会减少计算量。因此，只缓存KV值而不缓存Q值，是为了优化计算效率。</p>
+<h3 id="Parallel-Sampling"><a href="#Parallel-Sampling" class="headerlink" title="Parallel Sampling"></a>Parallel Sampling</h3><p><strong>（1）首先，Prefill阶段，vLLM拿到Sample A1和Sample A2，根据其中的文字内容，为其分配逻辑块和物理块。</strong></p>
+<ul>
+<li><strong>分配逻辑块：</strong>对于A1，vLLM为其分配逻辑块block0和block1；对于A2，vLLM为其分配逻辑块block0和block1。<strong>需要注意的是，A1的逻辑块和A2的逻辑块是独立的（尽管它们都叫block0和block1）</strong>，你可以将A1和A2视作操作系统中两个独立运行的进程。</li>
+<li><strong>分配物理块</strong>：对于A1和A2，虽然逻辑块独立，但因为它们的文字完全相同，所以可以<strong>在物理内存上共享相同的空间</strong>。所以A1的逻辑块block0&#x2F;1分别指向物理块block7&#x2F;1；A2的逻辑块block0&#x2F;1分别指向物理块block7&#x2F;1。我们设每个物理块下映射的逻辑块数量为<code>ref count</code>，所以对物理块block7&#x2F;1来说，它们的ref count都为2。</li>
+</ul>
+<p><strong>（2）然后，进入decode阶段，A1和A2各自做推理，得到第一个token，分别为<code>fathers</code>和<code>mothers</code>。</strong></p>
+<ul>
+<li><strong>将生成的token装入逻辑块</strong>：对于A1和A2来说，将其生成的token装入各自的逻辑块block1。</li>
+<li><strong>触发物理块copy-on-write机制</strong>：由于fathers&#x2F;mothers是两个完全不同的token，因此对物理块block1触发复制机制，即在物理内存上新开辟一块空间。此时物理块block1只和A2的逻辑块block1映射，将其ref count减去1；物理块block3只和A1的逻辑块block1映射，将其ref count设为1。</li>
+</ul>
+<h3 id="Beam-Search"><a href="#Beam-Search" class="headerlink" title="Beam Search"></a>Beam Search</h3><p>在并行采样中，从相同的提示生成多个输出序列。在这种情况下，可以在输出序列之间共享提示的计算和内存。通过其块表，PagedAttention能够自然地实现内存共享。类似于进程共享物理页，PagedAttention中的不同序列可以通过将它们的逻辑块映射到相同的物理块来共享块。为确保安全共享，PagedAttention跟踪物理块的引用计数并实现 Copy-on-Write 机制。</p>
+<p>通过PagedAttention的内存共享机制，极大地降低了复杂采样算法（如ParallelSampling和BeamSearch）的内存开销，使其内存使用量下降了高达55%。这项优化可以直接带来最多2.2倍的吞吐量提升，从而使得LLM服务中使用这些采样方法变得更加实用。</p>
+<h2 id="2-LLama-cpp"><a href="#2-LLama-cpp" class="headerlink" title="2. LLama.cpp"></a>2. LLama.cpp</h2><p>Llama.cpp 是一个轻量级、高效的 C++ 实现，用于运行大型语言模型（如 Meta 的 LLaMA 系列）。它允许在相对较低的硬件资源下（例如消费级 CPU 和少量内存）运行和推理大型语言模型。Llama.cpp 特别注重内存和计算资源的优化，使得在没有 GPU 的情况下也能进行模型推理。</p>
+<h2 id="3-Flash-attention"><a href="#3-Flash-attention" class="headerlink" title="3. Flash-attention"></a>3. Flash-attention</h2><h4 id="FlashAttention-的改进"><a href="#FlashAttention-的改进" class="headerlink" title="FlashAttention 的改进"></a>FlashAttention 的改进</h4><p>FlashAttention 通过以下步骤优化了注意力计算：</p>
+<ol>
+<li><strong>分块处理</strong>：<ul>
+<li>将输入矩阵分成较小的块，以减少内存占用并提高计算效率。</li>
+<li>每个块独立进行计算，利用现代 GPU 的并行计算能力。</li>
+</ul>
+</li>
+<li><strong>逐块计算注意力权重和应用</strong>：<ul>
+<li>在每个块内，计算注意力权重和应用注意力权重的操作都在局部进行，避免了大规模矩阵的全局计算。</li>
+<li>每个块内的计算顺序被设计为避免内存瓶颈和数据传输的开销。</li>
+</ul>
+</li>
+<li><strong>优化的内存访问</strong>：<ul>
+<li>通过优化内存访问模式，使得计算过程中需要的数据能够高效地被加载到 GPU 的高速缓存中。</li>
+<li>减少了内存访问延迟和数据传输开销。</li>
+</ul>
+</li>
+</ol>
+<h2 id="DeepSpeed"><a href="#DeepSpeed" class="headerlink" title="DeepSpeed"></a>DeepSpeed</h2><p>：将显存优化进行到底</p>
+<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><ul>
+<li><p>数据并行（data parallelism, DP）：假设有 𝑁 张卡，每张卡都保存一个模型，每一次迭代（iteration&#x2F;step）都将batch数据分割成 𝑁 个等大小的micro-batch，每张卡根据拿到的micro-batch数据独立计算梯度，然后调用AllReduce计算梯度均值，每张卡再独立进行参数更新。</p>
+<p>加速的，不会减少所用内存。有通信开销</p>
+</li>
+</ul>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 假设模型有三层：L0, L1, L2</span><br><span class="line"># 每层有两个神经元</span><br><span class="line"># 两张卡</span><br><span class="line"></span><br><span class="line">GPU0: </span><br><span class="line">L0 | L1 | L2</span><br><span class="line">---|----|---</span><br><span class="line">a0 | b0 | c0</span><br><span class="line">a1 | b1 | c1</span><br><span class="line"></span><br><span class="line">GPU1:</span><br><span class="line">L0 | L1 | L2</span><br><span class="line">---|----|---</span><br><span class="line">a0 | b0 | c0</span><br><span class="line">a1 | b1 | c1</span><br></pre></td></tr></table></figure></div>
+
+<ul>
+<li>模型并行（model parallelism&#x2F;tensor parallelism, MP&#x2F;TP）：有的tensor&#x2F;layer很大，一张卡放不下，将tensor分割成多块，一张卡存一块。</li>
+</ul>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 假设模型有三层：L0, L1, L2</span><br><span class="line"># 每层有两个神经元</span><br><span class="line"># 两张卡</span><br><span class="line"></span><br><span class="line">GPU0:</span><br><span class="line">L0 | L1 | L2</span><br><span class="line">---|----|---</span><br><span class="line">a0 | b0 | c0</span><br><span class="line"></span><br><span class="line">GPU1:</span><br><span class="line">L0 | L1 | L2</span><br><span class="line">---|----|---</span><br><span class="line">a1 | b1 | c1</span><br></pre></td></tr></table></figure></div>
+
+<ul>
+<li><p>流水并行（pipeline parallelism, PP）：将网络按层切分，划分成多组，一张卡存一组。</p>
+<p>Pipeline并行的支持是通过PyTorch中的torch.distributed.pipeline.sync.Pipe类实现的。然而，这个类有两个主要限制：(1) 仅在模型实现为torch.nn.Sequential模块时有效，(2) 它要求每个模块的输入和输出必须是单个张量或张量元组。</p>
+</li>
+</ul>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 假设模型有8层</span><br><span class="line"># 两张卡</span><br><span class="line"></span><br><span class="line">======================  =====================</span><br><span class="line">|  L0 | L1 | L2 | L3 |  | L4 | L5 | L6 | L7 |</span><br><span class="line">======================  =====================</span><br><span class="line">        GPU0                 GPU1</span><br><span class="line"></span><br><span class="line"># 设想一下，当GPU0在进行（前向/后向）计算时，GPU1在干嘛？闲着</span><br><span class="line"># 当GPU1在进行（前向/后向)计算时，GPU0在干嘛？闲着</span><br><span class="line"># 为了防止”一卡工作，众卡围观“，实践中PP也会把batch数据分割成</span><br><span class="line"># 多个micro-batch，流水线执行</span><br></pre></td></tr></table></figure></div>
+]]></content>
+  </entry>
+  <entry>
     <title>LLM_base</title>
     <url>/2024/06/20/LLM-base/</url>
     <content><![CDATA[<h2 id="基本知识"><a href="#基本知识" class="headerlink" title="基本知识"></a>基本知识</h2><h2 id="Attention"><a href="#Attention" class="headerlink" title="Attention"></a>Attention</h2><p>Self-Attention的核心是用文本中的其它词来增强目标词的语义表示，从而更好的利用上下文的信息。</p>
@@ -347,133 +813,9 @@
 <h2 id="Leetcode-题"><a href="#Leetcode-题" class="headerlink" title="Leetcode 题"></a><strong>Leetcode 题</strong></h2>]]></content>
   </entry>
   <entry>
-    <title>LLM推理加速技术</title>
-    <url>/2024/06/22/LLM%E6%8E%A8%E7%90%86%E5%8A%A0%E9%80%9F%E6%8A%80%E6%9C%AF/</url>
-    <content><![CDATA[<p>一个常规的LLM推理过程通常分为两个阶段：<strong>prefill和decode</strong>。通常会使用KV cache技术加速推理。</p>
-<p><strong>预填充阶段（prefill）。</strong>在这个阶段中，我们<strong>把整段prompt喂给模型做forward计算</strong>。如果<strong>采用KV cache技术，在这个阶段中我们会把prompt过</strong> 𝑊𝑘,𝑊𝑣 <strong>后得到的</strong> 𝑋𝑘,𝑋𝑣 <strong>保存在cache_k和cache_v中</strong>。这样在对后面的token计算attention时，我们就不需要对前面的token重复计算 𝑋𝑘,𝑋𝑣 了，可以帮助我们节省推理时间。</p>
-<p><strong>生成response的阶段</strong>decode。在这个阶段中，<strong>我们根据prompt的prefill结果，一个token一个token地生成response</strong>。<br>同样，如果采用了KV cache，则每走完一个decode过程，我们就把对应response token的KV值存入cache中，以便能加速计算。例如对于图中的t4，它与cache中t0~t3的KV值计算完attention后，就把自己的KV值也装进cache中。对t6也是同理。<br><strong>由于Decode阶段的是逐一生成token的，因此它不能像prefill阶段那样能做大段prompt的并行计算，所以在LLM推理过程中，Decode阶段的耗时一般是更大的</strong>。</p>
-<p>从上述过程中，我们可以发现使用KV cache做推理时的一些特点：</p>
-<ul>
-<li><strong>随着prompt数量变多和序列变长，KV cache也变大，对gpu显存造成压力</strong></li>
-<li><strong>由于输出的序列长度无法预先知道，所以我们很难提前为KV cache量身定制存储空间</strong></li>
-</ul>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>分布式（Distribution）</th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td></td>
-<td>量化（Quantization）</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td><strong>剪枝（Pruning）</strong></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>知识蒸馏</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>算子融合</td>
-<td></td>
-</tr>
-</tbody></table>
-<p><strong>模型压缩</strong>:</p>
-<ul>
-<li><p>网络剪枝：结构化非结构化剪枝</p>
-</li>
-<li><p>知识蒸馏</p>
-</li>
-<li><p><strong>模型量化</strong></p>
-</li>
-<li><p>低秩分解</p>
-</li>
-</ul>
-<p><strong>大模型引擎调度</strong></p>
-<ul>
-<li>VLLM，TensorRT-LLM，Orca，llama.cpp</li>
-</ul>
-<h2 id="1-VLLM"><a href="#1-VLLM" class="headerlink" title="1. VLLM"></a>1. VLLM</h2><p>vLLM 主要特性：</p>
-<ol>
-<li>先进的服务吞吐量</li>
-<li>通过 PagedAttention 对注意力 key 和 value 进行内存管理</li>
-<li>对传入请求的批处理</li>
-</ol>
-<p>总结,减少显存、提高吞吐量。如何优化KV cache，节省显存，提高推理吞吐量，就成了LLM推理框架需要解决的重点问题</p>
-<p><strong>实现原理：</strong></p>
-<p>通过 PagedAttention 对注意力 key 和 value 进行内存管理，降低显存，提高推理速度</p>
-<p>pagedAttention 实现原理</p>
-<ol>
-<li>内存中保存Key、value 值，允许内存空间不需要连续。不必浪费大量显存。方法：内存中序列的逻辑通过块表映射到物理内存中，保证其逻辑性。</li>
-<li>内存中可以共享内存，使prompt 计算可以共享。</li>
-</ol>
-<p>通过 PagedAttention 对注意力 key 和 value 进行内存管理,PagedAttention 还有一个关键优势：高效的内存共享。例如，在<em>并行采样</em>中，同一个提示会生成多个输出序列。在这种情况下，输出序列之间可以共享提示的计算和内存。</p>
-<hr>
-<ul>
-<li><strong>Parallel Sampling</strong>：我给模型发送一个请求，希望它对prompt做续写，并给出三种不同的回答。我们管这个场景叫parallel sampling。在这个场景中，我们可以将prompt复制3次后拼接成1个batch喂给模型，让它做推理。但我们也需注意到，这种方式会产生prompt部分KV cache的重复存储。</li>
-<li><strong>Beam Search</strong>：束搜索，这是LLM常用的deocde策略之一，即在每个decode阶段，我不是只产生1个token，而是产生top k个token（这里k也被称为束宽）。top k个token必然对应着此刻的top k个序列。我把这top k个序列喂给模型，假设词表的大小为|V|，那么在下一时刻，我就要在k*|V|个候选者中再选出top k，以此类推。不难想象每一时刻我把top k序列喂给模型时，它们的前置token中有大量的KV cache是重复的。</li>
-<li><strong>Shared prefix：</strong>在某些大模型中，所有请求可能都会共享一个前置信息（比如system message: “假设你是一个有帮助的AI助手….”），这些前置信息没有必要重复存储KV cache</li>
-</ul>
-<h3 id="为什么Cache只存储K、V，而不存储Q？"><a href="#为什么Cache只存储K、V，而不存储Q？" class="headerlink" title="为什么Cache只存储K、V，而不存储Q？"></a>为什么Cache只存储K、V，而不存储Q？</h3><p>在Transformer架构的注意力机制中，Q（Query）代表当前输入Token的查询信息，它需要与所有先前和当前的K（Key）进行匹配来决定注意力的分配。因为Q是专门针对当前正在处理的Token的，所以它每次都是独一无二的，即便在没有Cache的情况下，对于序列中的每个新Token，Q都会改变。<br>相反，K（Key）和V（Value）通常与序列中已经处理过的Token相关，它们可以被缓存起来供后续的Token查询使用。存储K和V使得模型可以重用之前Token的信息，而不必重新计算它们，这样可以大大节省计算资源。如果存储Q值，对于每个新的Token，我们仍然需要重新计算整个Q与所有K的匹配度，这不会减少计算量。因此，只缓存KV值而不缓存Q值，是为了优化计算效率。</p>
-<h3 id="Parallel-Sampling"><a href="#Parallel-Sampling" class="headerlink" title="Parallel Sampling"></a>Parallel Sampling</h3><p><strong>（1）首先，Prefill阶段，vLLM拿到Sample A1和Sample A2，根据其中的文字内容，为其分配逻辑块和物理块。</strong></p>
-<ul>
-<li><strong>分配逻辑块：</strong>对于A1，vLLM为其分配逻辑块block0和block1；对于A2，vLLM为其分配逻辑块block0和block1。<strong>需要注意的是，A1的逻辑块和A2的逻辑块是独立的（尽管它们都叫block0和block1）</strong>，你可以将A1和A2视作操作系统中两个独立运行的进程。</li>
-<li><strong>分配物理块</strong>：对于A1和A2，虽然逻辑块独立，但因为它们的文字完全相同，所以可以<strong>在物理内存上共享相同的空间</strong>。所以A1的逻辑块block0&#x2F;1分别指向物理块block7&#x2F;1；A2的逻辑块block0&#x2F;1分别指向物理块block7&#x2F;1。我们设每个物理块下映射的逻辑块数量为<code>ref count</code>，所以对物理块block7&#x2F;1来说，它们的ref count都为2。</li>
-</ul>
-<p><strong>（2）然后，进入decode阶段，A1和A2各自做推理，得到第一个token，分别为<code>fathers</code>和<code>mothers</code>。</strong></p>
-<ul>
-<li><strong>将生成的token装入逻辑块</strong>：对于A1和A2来说，将其生成的token装入各自的逻辑块block1。</li>
-<li><strong>触发物理块copy-on-write机制</strong>：由于fathers&#x2F;mothers是两个完全不同的token，因此对物理块block1触发复制机制，即在物理内存上新开辟一块空间。此时物理块block1只和A2的逻辑块block1映射，将其ref count减去1；物理块block3只和A1的逻辑块block1映射，将其ref count设为1。</li>
-</ul>
-<h3 id="Beam-Search"><a href="#Beam-Search" class="headerlink" title="Beam Search"></a>Beam Search</h3><p>在并行采样中，从相同的提示生成多个输出序列。在这种情况下，可以在输出序列之间共享提示的计算和内存。通过其块表，PagedAttention能够自然地实现内存共享。类似于进程共享物理页，PagedAttention中的不同序列可以通过将它们的逻辑块映射到相同的物理块来共享块。为确保安全共享，PagedAttention跟踪物理块的引用计数并实现 Copy-on-Write 机制。</p>
-<p>通过PagedAttention的内存共享机制，极大地降低了复杂采样算法（如ParallelSampling和BeamSearch）的内存开销，使其内存使用量下降了高达55%。这项优化可以直接带来最多2.2倍的吞吐量提升，从而使得LLM服务中使用这些采样方法变得更加实用。</p>
-<h2 id="2-LLama-cpp"><a href="#2-LLama-cpp" class="headerlink" title="2. LLama.cpp"></a>2. LLama.cpp</h2><p>Llama.cpp 是一个轻量级、高效的 C++ 实现，用于运行大型语言模型（如 Meta 的 LLaMA 系列）。它允许在相对较低的硬件资源下（例如消费级 CPU 和少量内存）运行和推理大型语言模型。Llama.cpp 特别注重内存和计算资源的优化，使得在没有 GPU 的情况下也能进行模型推理。</p>
-<h2 id="3-Flash-attention"><a href="#3-Flash-attention" class="headerlink" title="3. Flash-attention"></a>3. Flash-attention</h2><h4 id="FlashAttention-的改进"><a href="#FlashAttention-的改进" class="headerlink" title="FlashAttention 的改进"></a>FlashAttention 的改进</h4><p>FlashAttention 通过以下步骤优化了注意力计算：</p>
-<ol>
-<li><strong>分块处理</strong>：<ul>
-<li>将输入矩阵分成较小的块，以减少内存占用并提高计算效率。</li>
-<li>每个块独立进行计算，利用现代 GPU 的并行计算能力。</li>
-</ul>
-</li>
-<li><strong>逐块计算注意力权重和应用</strong>：<ul>
-<li>在每个块内，计算注意力权重和应用注意力权重的操作都在局部进行，避免了大规模矩阵的全局计算。</li>
-<li>每个块内的计算顺序被设计为避免内存瓶颈和数据传输的开销。</li>
-</ul>
-</li>
-<li><strong>优化的内存访问</strong>：<ul>
-<li>通过优化内存访问模式，使得计算过程中需要的数据能够高效地被加载到 GPU 的高速缓存中。</li>
-<li>减少了内存访问延迟和数据传输开销。</li>
-</ul>
-</li>
-</ol>
-<h2 id="DeepSpeed"><a href="#DeepSpeed" class="headerlink" title="DeepSpeed"></a>DeepSpeed</h2><p>：将显存优化进行到底</p>
-<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><ul>
-<li><p>数据并行（data parallelism, DP）：假设有 𝑁 张卡，每张卡都保存一个模型，每一次迭代（iteration&#x2F;step）都将batch数据分割成 𝑁 个等大小的micro-batch，每张卡根据拿到的micro-batch数据独立计算梯度，然后调用AllReduce计算梯度均值，每张卡再独立进行参数更新。</p>
-<p>加速的，不会减少所用内存。有通信开销</p>
-</li>
-</ul>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 假设模型有三层：L0, L1, L2</span><br><span class="line"># 每层有两个神经元</span><br><span class="line"># 两张卡</span><br><span class="line"></span><br><span class="line">GPU0: </span><br><span class="line">L0 | L1 | L2</span><br><span class="line">---|----|---</span><br><span class="line">a0 | b0 | c0</span><br><span class="line">a1 | b1 | c1</span><br><span class="line"></span><br><span class="line">GPU1:</span><br><span class="line">L0 | L1 | L2</span><br><span class="line">---|----|---</span><br><span class="line">a0 | b0 | c0</span><br><span class="line">a1 | b1 | c1</span><br></pre></td></tr></table></figure></div>
-
-<ul>
-<li>模型并行（model parallelism&#x2F;tensor parallelism, MP&#x2F;TP）：有的tensor&#x2F;layer很大，一张卡放不下，将tensor分割成多块，一张卡存一块。</li>
-</ul>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 假设模型有三层：L0, L1, L2</span><br><span class="line"># 每层有两个神经元</span><br><span class="line"># 两张卡</span><br><span class="line"></span><br><span class="line">GPU0:</span><br><span class="line">L0 | L1 | L2</span><br><span class="line">---|----|---</span><br><span class="line">a0 | b0 | c0</span><br><span class="line"></span><br><span class="line">GPU1:</span><br><span class="line">L0 | L1 | L2</span><br><span class="line">---|----|---</span><br><span class="line">a1 | b1 | c1</span><br></pre></td></tr></table></figure></div>
-
-<ul>
-<li><p>流水并行（pipeline parallelism, PP）：将网络按层切分，划分成多组，一张卡存一组。</p>
-<p>Pipeline并行的支持是通过PyTorch中的torch.distributed.pipeline.sync.Pipe类实现的。然而，这个类有两个主要限制：(1) 仅在模型实现为torch.nn.Sequential模块时有效，(2) 它要求每个模块的输入和输出必须是单个张量或张量元组。</p>
-</li>
-</ul>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 假设模型有8层</span><br><span class="line"># 两张卡</span><br><span class="line"></span><br><span class="line">======================  =====================</span><br><span class="line">|  L0 | L1 | L2 | L3 |  | L4 | L5 | L6 | L7 |</span><br><span class="line">======================  =====================</span><br><span class="line">        GPU0                 GPU1</span><br><span class="line"></span><br><span class="line"># 设想一下，当GPU0在进行（前向/后向）计算时，GPU1在干嘛？闲着</span><br><span class="line"># 当GPU1在进行（前向/后向)计算时，GPU0在干嘛？闲着</span><br><span class="line"># 为了防止”一卡工作，众卡围观“，实践中PP也会把batch数据分割成</span><br><span class="line"># 多个micro-batch，流水线执行</span><br></pre></td></tr></table></figure></div>
-]]></content>
+    <title>M3E,BGE,GTE＆向量库</title>
+    <url>/2024/08/07/M3E-BGE-GTE%EF%BC%86%E5%90%91%E9%87%8F%E5%BA%93/</url>
+    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>LayerNorm等</title>
@@ -554,103 +896,6 @@
 </tr>
 </tbody></table>
 ]]></content>
-  </entry>
-  <entry>
-    <title>LLama_架构</title>
-    <url>/2024/06/22/LLama-%E6%9E%B6%E6%9E%84/</url>
-    <content><![CDATA[<p>LLaMA 所采用的 Transformer 结构和细节，与标准的 Transformer 架构不同的地方包括采用了<strong>前置层归一化（Pre-normalization</strong>）并使用 RMSNorm 归一化函数 （Normalizing Function）、<strong>激活函数更换为 SwiGLU</strong>，并使用了旋转位置嵌入（RoP），整体 Transformer 架构与 GPT-2 类似。</p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="C:\xhou\blog_pic\79ee1b168c08439eb0e1d9851254dc4c.png"
-                      alt="微信图片_20240622163724"
-                ></p>
-<h2 id="1-LLama结构"><a href="#1-LLama结构" class="headerlink" title="1. LLama结构"></a>1. LLama结构</h2><ul>
-<li>Embeding</li>
-<li>RMS Norm</li>
-</ul>
-<p>​	其中，残差连接 （Residual Connection）将输入与该层的输出相加，实现了信息在不同层的跳跃传 递，从而缓解梯度爆炸和消失的问题</p>
-<p>​		<strong>为了使得模型训练过程更加稳定</strong>，GPT-2 相较于 GPT 就引入了<strong>前置层归一化方法</strong>，将<strong>第一个层归一化移动到多头自注意力层之前</strong>，第二个层归一化也移动到了全连接层之前，同时残差连接的位置也调整到了多头自注意力层与全连接层之后。层归一化中也采用了 RMSNorm 归一化函数。 针对输入向量 aRMSNorm 函数计算公式如下：</p>
-<ul>
-<li>RoPE （注意是只对QK做旋转偏移，而且是在计算完QK之后）</li>
-<li>Group Attention</li>
-<li>RMS Norm</li>
-<li>FFN()</li>
-</ul>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="C:\xhou\blog_pic\1.png"
-                     
-                ></p>
-<ul>
-<li>RMSNorm</li>
-<li>linear</li>
-</ul>
-<h2 id="2-Group-Attention"><a href="#2-Group-Attention" class="headerlink" title="2.Group Attention"></a>2.Group Attention</h2><p>我们不仅优化算法执行的操作，而且优化最小化内存访问次数，以及算法执行的内存传输，因为与计算机比，io更慢</p>
-<h2 id="3-FFN"><a href="#3-FFN" class="headerlink" title="3. FFN"></a>3. FFN</h2><p>transformer：FFN（Feed-Forward Network）块是Transformer模型中的一个重要组成部分，接受自注意力子层的输出作为输入，并通过一个带有 Relu 激活函数的两层全连接网络对输入进行更加复杂的非线性变换。实验证明，这一非线性变换会对模型最终的性能产生十分 重要的影响。<br>FFN由两个全连接层（即前馈神经网络）和一个激活函数组成。下面是FFN块的计算公式：<br>$$<br>\operatorname{FFN}(\boldsymbol{x})&#x3D;\operatorname{Relu}\left(\boldsymbol{x} \boldsymbol{W}<em>{1}+\boldsymbol{b}</em>{1}\right) \boldsymbol{W}<em>{2}+\boldsymbol{b}</em>{2}<br>$$</p>
-<ol>
-<li>第一层全连接层（线性变换）：$z &#x3D; xW1 + b1$    其中，W1 是第一层全连接层的权重矩阵，b1 是偏置向量。</li>
-<li>激活函数：$a &#x3D; g(z)$    其中，g() 是激活函数，常用的激活函数有ReLU（Rectified Linear Unit）等。</li>
-<li>第二层全连接层（线性变换）：$，$其中，W2 是第二层全连接层的权重矩阵，b2 是偏置向量。</li>
-</ol>
-<p><strong>增大前馈子层隐状态的维度有利于提 升最终翻译结果的质量，因此，前馈子层隐状态的维度一般比自注意力子层要大。h-&gt;4h</strong><br>需要注意的是，上述公式中的 W1、b1、W2、b2 是FFN块的可学习参数，它们会通过训练过程进行学习和更新。</p>
-<h2 id="4-激活函数"><a href="#4-激活函数" class="headerlink" title="4. 激活函数"></a>4. 激活函数</h2><h3 id="GeLU"><a href="#GeLU" class="headerlink" title="GeLU"></a>GeLU</h3><p>GeLU（Gaussian Error Linear Unit）是一种激活函数，常用于神经网络中的非线性变换。它在Transformer模型中广泛应用于FFN（Feed-Forward Network）块。下面是GeLU的计算公式：<br>假设输入是一个标量 x，GeLU的计算公式如下：</p>
-<p>$$<br>GeLU(x) &#x3D; 0.5 \times x \times (1 + tanh(\sqrt{\frac{2}{\pi}} \times (x + 0.044715 \times x^3)))<br>$$<br>其中，<code>tanh() </code>是双曲正切函数，<code>sqrt()</code> 是平方根函数，π是圆周率。</p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line"></span><br><span class="line">def GELU(x):</span><br><span class="line">    return 0.5 * x * (1 + np.tanh(np.sqrt(2 / np.pi) * (x + 0.044715 * np.power(x, 3))))</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="C:\xhou\blog_pic\image.png"
-                      alt="image" style="zoom:25%;" 
-                >
-
-<p>相对于 Sigmoid 和 Tanh 激活函数，<strong>ReLU 和 GeLU 更为准确和高效，因为它们在神经网络中的梯度消失问题上表现更好。而 ReLU 和 GeLU 几乎没有梯度消失的现象，可以更好地支持深层神经网络的训练和优化</strong>。<br>而 ReLU 和 GeLU 的区别在于形状和计算效率。ReLU 是一个非常简单的函数，仅仅是输入为负数时返回0，而输入为正数时返回自身，从而仅包含了一次分段线性变换。<strong>但是，ReLU 函数存在一个问题，就是在输入为负数时，输出恒为0，这个问题可能会导致神经元死亡，从而降低模型的表达能力</strong>。GeLU 函数则是一个连续的 S 形曲线，介于 Sigmoid 和 ReLU 之间，<strong>形状比 ReLU 更为平滑，可以在一定程度上缓解神经元死亡的问题。不过，由于 GeLU 函数中包含了指数运算等复杂计算，所以在实际应用中通常比 ReLU 慢。</strong></p>
-<h3 id="Swish"><a href="#Swish" class="headerlink" title="Swish"></a>Swish</h3><p>Swish是一种激活函数，它在深度学习中常用于神经网络的非线性变换。Swish函数的计算公式如下：<br>$$<br>Swish(x) &#x3D; x \times sigmoid(\beta * x)<br>$$<br>其中，$sigmoid()$是Sigmoid函数，$x$ 是输入，$\beta$ 是一个可调节的超参数。</p>
-<p>我们使用参数 β&#x3D;1 的 Swish 函数。这种情况下，它被称为 Sigmoid 线性单元（SiLU）函数。</p>
-<p><strong>SiLU 是 Swish 的特例</strong>：当 β&#x3D;1 时，Swish 函数退化为 SiLU，即标准的 Swish 函数</p>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="C:\xhou\blog_pic\image_1.png"
-                      alt="image_1" style="zoom: 50%;" 
-                >
-
-<p>Swish函数的特点是在接近零的区域表现得类似于线性函数，而在远离零的区域则表现出非线性的特性。<strong>相比于其他常用的激活函数（如ReLU、tanh等），Swish函数在某些情况下能够提供更好的性能和更快的收敛速度。</strong></p>
-<p>Swish函数的设计灵感来自于自动搜索算法，它通过引入一个可调节的超参数来增加非线性程度。当beta为0时，Swish函数退化为线性函数；当beta趋近于无穷大时，Swish函数趋近于ReLU函数。<br>需要注意的是，Swish函数<strong>相对于其他激活函数来说计算开销较大，因为它需要进行Sigmoid运</strong>算。因此，在实际应用中，也可以根据具体情况选择其他的激活函数来代替Swish函数。</p>
-<p><strong>平滑的激活</strong>：SiLU 比 ReLU（Rectified Linear Unit）等函数更加平滑，避免了 ReLU 的“死区”问题，即当输入为负时，ReLU 输出恒为 0，导致神经元可能不会被激活。</p>
-<p><strong>梯度优化</strong>：SiLU 的平滑性使得其梯度在训练过程中更加稳定，避免了梯度爆炸或消失的问题，有助于提高模型训练的效果。</p>
-<p><strong>增强非线性能力</strong>：通过 Sigmoid 函数的非线性特性，SiLU 可以更好地捕捉输入与输出之间的复杂关系，从而增强模型的非线性表达能力。</p>
-<h3 id="SwishGLU"><a href="#SwishGLU" class="headerlink" title="SwishGLU"></a><strong>SwishGLU</strong></h3><p>GLU</p>
-<p>GLU通过门控机制对输出进行把控，像Attention一样可看作是对重要特征的选择。其优势是不仅具有通用激活函数的非线性，而且<strong>反向传播梯度时具有线性通道</strong>，类似ResNet残差网络中的加和操作传递梯度，能够缓解梯度消失问题。<br>$$<br>GLU(x)&#x3D;(XW)⊗σ(XV)<br>$$</p>
-<ul>
-<li>X 是输入矩阵。</li>
-<li>W 和 V 是可训练的权重矩阵。</li>
-<li>⊗ 表示逐元素乘积。</li>
-<li>σ 是激活函数，通常选择Sigmoid函数。</li>
-</ul>
-<p>GLU（Gated Linear Unit）是一种特殊的激活单元，通过引入一个门控机制来对输入进行过滤。GLU块通常用于增强神经网络的表达能力。使用不同的激活函数可以形成不同的GLU变种，如使用GeLU（Gaussian Error Linear Unit）和SwiGLU（使用Swish函数）。</p>
-<p>使用 Swish 的 GLU 块 计算公式如下<br>$$<br>GLU(x) &#x3D; x * sigmoid(W_1 * x) \<br>FFN_{SwiGLU} &#x3D; (Swish_1(xW)*xV)W_2<br>$$<br>其中，$sigmoid()$ 是Sigmoid函数，$W_1$ 是一个可学习的权重矩阵。</p>
-<ul>
-<li>第二条路径(xV)经过线性变换后，直接用于门控机制。门控值由另一组权重和偏置计算得出，用于控制第一条路径的输出信息流。</li>
-</ul>
-<p>在公式中，首先将输入向量 x 通过一个全连接层（线性变换）得到一个与 x 维度相同的向量，然后将该向量通过Sigmoid函数进行激活。这个Sigmoid函数的输出称为门控向量，用来控制输入向量 x 的元素是否被激活。最后，将门控向量与输入向量 x 逐元素相乘，得到最终的输出向量。</p>
-<p>.Swish引入了一个参数化的非线性变换，通过对输入的平滑激活，可以产生更加复杂的映射效果。</p>
-<h3 id="使用-GLU-线性门控单元的-FFN-块-计算公式"><a href="#使用-GLU-线性门控单元的-FFN-块-计算公式" class="headerlink" title="使用 GLU 线性门控单元的 FFN 块 计算公式"></a>使用 GLU 线性门控单元的 FFN 块 计算公式</h3><p>使用GLU（Gated Linear Unit）线性门控单元的FFN（Feed-Forward Network）块是Transformer模型中常用的结构之一。它通过引入门控机制来增强模型的非线性能力。下面是使用GLU线性门控单元的FFN块的计算公式：</p>
-<p>$$<br>GLU(x)&#x3D;(XW)⊗σ(XV)<br>$$</p>
-<ul>
-<li>X 是输入矩阵。</li>
-<li>W 和 VV 是可训练的权重矩阵。</li>
-<li>⊗ 表示逐元素乘积。</li>
-<li>σ 是激活函数，通常选择Sigmoid函数。</li>
-</ul>
-]]></content>
-  </entry>
-  <entry>
-    <title>M3E,BGE,GTE＆向量库</title>
-    <url>/2024/08/07/M3E-BGE-GTE%EF%BC%86%E5%90%91%E9%87%8F%E5%BA%93/</url>
-    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>Pytorch优化器全总结（一）SGD、ASGD、Rprop、Adagrad</title>
@@ -962,6 +1207,82 @@
     <content><![CDATA[]]></content>
   </entry>
   <entry>
+    <title>my_first_blog</title>
+    <url>/2023/10/16/my-first-blog/</url>
+    <content><![CDATA[<h1 id="写在前面的话："><a href="#写在前面的话：" class="headerlink" title="写在前面的话："></a>写在前面的话：</h1><p>记录一下，第一次写博客，希望每天可以进步一点点，要把之前学过整理出来，以后的学习要做一个记录。走得快走得慢不重要，走下去就是胜利。</p>
+<hr>
+<p>刚开始不熟练，记录markdown的一些用法。</p>
+<h2 id="标题用-加空格"><a href="#标题用-加空格" class="headerlink" title="标题用# !加空格"></a>标题用# !加空格</h2><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">*斜体文本*</span><br><span class="line">_斜体文本_</span><br><span class="line">**粗体文本**</span><br><span class="line">__粗体文本__</span><br><span class="line">***粗斜体文本***</span><br><span class="line">___粗斜体文本___</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+
+
+<h2 id="分隔线"><a href="#分隔线" class="headerlink" title="分隔线"></a>分隔线</h2><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">***</span><br><span class="line"></span><br><span class="line">----------</span><br><span class="line"></span><br><span class="line">_ _ _</span><br></pre></td></tr></table></figure></div>
+
+
+
+<hr>
+<hr>
+<hr>
+<h2 id="删除线和下划线"><a href="#删除线和下划线" class="headerlink" title="删除线和下划线"></a>删除线和下划线</h2><p><del>文本</del></p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;u&gt;这是一个有下划线的文本&lt;/u&gt;</span><br><span class="line">~~文本~~</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h2><h3 id="有序列表"><a href="#有序列表" class="headerlink" title="有序列表"></a>有序列表</h3><ul>
+<li>1</li>
+</ul>
+<ul>
+<li>1</li>
+</ul>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">* 空格第一项</span><br><span class="line">* 第二项</span><br><span class="line">* 第三项</span><br><span class="line"></span><br><span class="line">+ 第一项</span><br><span class="line">+ 第二项</span><br><span class="line">+ 第三项</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">- 第一项</span><br><span class="line">- 第二项</span><br><span class="line">- 第三项</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="有序列表-1"><a href="#有序列表-1" class="headerlink" title="有序列表"></a>有序列表</h3><p>有序列表其实很简单，就是数字加上<code>.</code></p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. 空格第一项</span><br><span class="line">2. 第二项</span><br><span class="line">3. 第三项</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="列表嵌套"><a href="#列表嵌套" class="headerlink" title="列表嵌套"></a>列表嵌套</h3><p>有序和无序可以一起使用，只需要在子列表的选项添加四个空格</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. 第一项：</span><br><span class="line">    - 子列表1</span><br><span class="line">    - 子列表2</span><br><span class="line">2. 第二项：</span><br><span class="line">    - 子列表1</span><br><span class="line">    - 子列表2</span><br></pre></td></tr></table></figure></div>
+
+<ol>
+<li>第一项</li>
+</ol>
+<p>​    - 子列表1 </p>
+<ol>
+<li>​    - 子列表1</li>
+</ol>
+<h2 id="区块"><a href="#区块" class="headerlink" title="区块"></a>区块</h2><p>区块是用来引用的，比如链接或者一段文本</p>
+<p>在段落的开头使用<code>&gt;</code>符号，使用空格，隔开文本</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt; 引用的内容</span><br><span class="line">&gt;</span><br><span class="line">&gt; 第二段引用的内容</span><br></pre></td></tr></table></figure></div>
+
+<blockquote>
+<p>引用的内容</p>
+<p>第二段引用的内容</p>
+</blockquote>
+<h3 id="区块嵌套"><a href="#区块嵌套" class="headerlink" title="区块嵌套"></a>区块嵌套</h3><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt; 引用</span><br><span class="line">&gt;&gt; 2</span><br><span class="line">&gt;&gt;</span><br><span class="line">&gt;&gt;&gt;3</span><br></pre></td></tr></table></figure></div>
+
+<blockquote>
+<p>引用</p>
+<blockquote>
+<p>2</p>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>3</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<h2 id="图片"><a href="#图片" class="headerlink" title="图片"></a>图片</h2><p>在一个文章里面插入图片是必不可少的，本地的文章可以使用本地图片，在你上传博客之后，也必须上传本地图片，但这样会有弊端。</p>
+<p>使用本地图片会严重拖慢博客速度，我们需要使用超链接进行插入图片，也就是把图片上传的某个服务器上面，然后获取图片在服务器上面的地址。</p>
+<p>但是我们也可以使用免费的托管或者图床，上传我们的图片，本篇教程不教图床的使用，下篇文章将会提到。</p>
+<p>插入图片的语法：</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">![图片描述](图片的链接)</span><br></pre></td></tr></table></figure></div>
+
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/%E5%9B%BE%E7%89%87%E7%9A%84%E9%93%BE%E6%8E%A5"
+                      alt="图片描述"
+                ></p>
+]]></content>
+  </entry>
+  <entry>
     <title>bert基础</title>
     <url>/2024/06/15/bert%E5%9F%BA%E7%A1%80/</url>
     <content><![CDATA[<h1 id="bert"><a href="#bert" class="headerlink" title="bert"></a>bert</h1><ul>
@@ -1050,99 +1371,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>my_first_blog</title>
-    <url>/2023/10/16/my-first-blog/</url>
-    <content><![CDATA[<h1 id="写在前面的话："><a href="#写在前面的话：" class="headerlink" title="写在前面的话："></a>写在前面的话：</h1><p>记录一下，第一次写博客，希望每天可以进步一点点，要把之前学过整理出来，以后的学习要做一个记录。走得快走得慢不重要，走下去就是胜利。</p>
-<hr>
-<p>刚开始不熟练，记录markdown的一些用法。</p>
-<h2 id="标题用-加空格"><a href="#标题用-加空格" class="headerlink" title="标题用# !加空格"></a>标题用# !加空格</h2><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">*斜体文本*</span><br><span class="line">_斜体文本_</span><br><span class="line">**粗体文本**</span><br><span class="line">__粗体文本__</span><br><span class="line">***粗斜体文本***</span><br><span class="line">___粗斜体文本___</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-
-
-<h2 id="分隔线"><a href="#分隔线" class="headerlink" title="分隔线"></a>分隔线</h2><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">***</span><br><span class="line"></span><br><span class="line">----------</span><br><span class="line"></span><br><span class="line">_ _ _</span><br></pre></td></tr></table></figure></div>
-
-
-
-<hr>
-<hr>
-<hr>
-<h2 id="删除线和下划线"><a href="#删除线和下划线" class="headerlink" title="删除线和下划线"></a>删除线和下划线</h2><p><del>文本</del></p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;u&gt;这是一个有下划线的文本&lt;/u&gt;</span><br><span class="line">~~文本~~</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h2><h3 id="有序列表"><a href="#有序列表" class="headerlink" title="有序列表"></a>有序列表</h3><ul>
-<li>1</li>
-</ul>
-<ul>
-<li>1</li>
-</ul>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">* 空格第一项</span><br><span class="line">* 第二项</span><br><span class="line">* 第三项</span><br><span class="line"></span><br><span class="line">+ 第一项</span><br><span class="line">+ 第二项</span><br><span class="line">+ 第三项</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">- 第一项</span><br><span class="line">- 第二项</span><br><span class="line">- 第三项</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="有序列表-1"><a href="#有序列表-1" class="headerlink" title="有序列表"></a>有序列表</h3><p>有序列表其实很简单，就是数字加上<code>.</code></p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. 空格第一项</span><br><span class="line">2. 第二项</span><br><span class="line">3. 第三项</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="列表嵌套"><a href="#列表嵌套" class="headerlink" title="列表嵌套"></a>列表嵌套</h3><p>有序和无序可以一起使用，只需要在子列表的选项添加四个空格</p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. 第一项：</span><br><span class="line">    - 子列表1</span><br><span class="line">    - 子列表2</span><br><span class="line">2. 第二项：</span><br><span class="line">    - 子列表1</span><br><span class="line">    - 子列表2</span><br></pre></td></tr></table></figure></div>
-
-<ol>
-<li>第一项</li>
-</ol>
-<p>​    - 子列表1 </p>
-<ol>
-<li>​    - 子列表1</li>
-</ol>
-<h2 id="区块"><a href="#区块" class="headerlink" title="区块"></a>区块</h2><p>区块是用来引用的，比如链接或者一段文本</p>
-<p>在段落的开头使用<code>&gt;</code>符号，使用空格，隔开文本</p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt; 引用的内容</span><br><span class="line">&gt;</span><br><span class="line">&gt; 第二段引用的内容</span><br></pre></td></tr></table></figure></div>
-
-<blockquote>
-<p>引用的内容</p>
-<p>第二段引用的内容</p>
-</blockquote>
-<h3 id="区块嵌套"><a href="#区块嵌套" class="headerlink" title="区块嵌套"></a>区块嵌套</h3><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt; 引用</span><br><span class="line">&gt;&gt; 2</span><br><span class="line">&gt;&gt;</span><br><span class="line">&gt;&gt;&gt;3</span><br></pre></td></tr></table></figure></div>
-
-<blockquote>
-<p>引用</p>
-<blockquote>
-<p>2</p>
-</blockquote>
-<blockquote>
-<blockquote>
-<p>3</p>
-</blockquote>
-</blockquote>
-</blockquote>
-<h2 id="图片"><a href="#图片" class="headerlink" title="图片"></a>图片</h2><p>在一个文章里面插入图片是必不可少的，本地的文章可以使用本地图片，在你上传博客之后，也必须上传本地图片，但这样会有弊端。</p>
-<p>使用本地图片会严重拖慢博客速度，我们需要使用超链接进行插入图片，也就是把图片上传的某个服务器上面，然后获取图片在服务器上面的地址。</p>
-<p>但是我们也可以使用免费的托管或者图床，上传我们的图片，本篇教程不教图床的使用，下篇文章将会提到。</p>
-<p>插入图片的语法：</p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">![图片描述](图片的链接)</span><br></pre></td></tr></table></figure></div>
-
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/%E5%9B%BE%E7%89%87%E7%9A%84%E9%93%BE%E6%8E%A5"
-                      alt="图片描述"
-                ></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>pandas数据分析数据预处理</title>
-    <url>/2023/12/15/pandas%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86/</url>
-    <content><![CDATA[<p>Pandas的数据结构为，DataFrame，一个表格型的数据结构，它含有一组有序的列，每列可以是不同的值类型（数值、字符串、布尔型值）。DataFrame 既有行索引也有列索引，它可以被看做由 Series 组成的字典（共同用一个索引）。而Series则 类似表格中的一个列（column），类似于一维数组，可以保存任何数据类型。我们把一个.csv文件读取进来就是一个DataFrame对象。DataFrame 构造方法如下</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">pandas.DataFrame( data, index, columns, dtype, copy)</span><br></pre></td></tr></table></figure></div>
-
-<p>data：一组数据(ndarray、series, map, lists, dict 等类型)。<br>index：索引值，或者可以称为行标签。<br>columns：列标签，默认为 RangeIndex (0, 1, 2, …, n) 。<br>dtype：数据类型。<br>copy：拷贝数据，默认为 False。</p>
-<h2 id="合并拆分"><a href="#合并拆分" class="headerlink" title="合并拆分"></a>合并拆分</h2><h3 id="合并"><a href="#合并" class="headerlink" title="合并"></a>合并</h3><p>例如，在<code>./MELD</code>路径下存在如下三个文件</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">dev_sent_emo.csv</span><br><span class="line">test_sent_emo.csv</span><br><span class="line">train_sent_emo.csv</span><br></pre></td></tr></table></figure></div>
-
-<p>代码如下</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> os.path <span class="keyword">import</span> join</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">combine_csv_files</span>(<span class="params">re_encode_path, save_name, files, save_in</span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;combine_csv_files</span></span><br><span class="line"><span class="string">    将指定路径下的所有csv文件合并为一个csv文件</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    使用示例：</span></span><br><span class="line"><span class="string">    file_names = os.listdir(&quot;./MELD/&quot;)</span></span><br><span class="line"><span class="string">    combine_csv_files(re_encode_path=&quot;./MELD/&quot;, </span></span><br><span class="line"><span class="string">                      save_name=&quot;MELD_total_text&quot;, </span></span><br><span class="line"><span class="string">                      files=file_names, </span></span><br><span class="line"><span class="string">                      save_in=&quot;./MELD/&quot;)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> os.path.isfile(join(save_in, <span class="string">&quot;%s.csv&quot;</span>) % save_name): </span><br><span class="line">        <span class="comment"># 如果已经存在合并后的文件，则直接return 0</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            main_list = []</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(files)):</span><br><span class="line">                content = pd.read_csv(join(re_encode_path, files[i]), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>)</span><br><span class="line">                <span class="keyword">if</span> i == <span class="number">0</span>:</span><br><span class="line">                    main_list.extend([<span class="built_in">list</span>(content.keys())])</span><br><span class="line">                main_list.extend(content.values.tolist())</span><br><span class="line"></span><br><span class="line">            main_dict = &#123;&#125;</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">list</span>(<span class="built_in">zip</span>(*main_list)):</span><br><span class="line">                main_dict[i[<span class="number">0</span>]] = <span class="built_in">list</span>(i[<span class="number">1</span>:])</span><br><span class="line">            data_df = pd.DataFrame(main_dict)</span><br><span class="line">            data_df.to_csv(join(save_in, <span class="string">&quot;%s.csv&quot;</span>) % save_name, encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        <span class="keyword">except</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;合并[%s]时发生错误&quot;</span> % save_name)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-<h3 id="拆分"><a href="#拆分" class="headerlink" title="拆分"></a>拆分</h3><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> os.path <span class="keyword">import</span> join</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">shuffle_total_data</span>(<span class="params">data_path=<span class="string">&quot;./MELD/MELD_total_text.csv&quot;</span>, </span></span><br><span class="line"><span class="params">                       save_path=<span class="string">&quot;./MELD/&quot;</span>, </span></span><br><span class="line"><span class="params">                       index_name=<span class="string">&quot;Dialogue_ID&quot;</span>,</span></span><br><span class="line"><span class="params">                       validation_split_percentage=<span class="number">0.1</span>, </span></span><br><span class="line"><span class="params">                       test_split_percentage=<span class="number">0.1</span>, </span></span><br><span class="line"><span class="params">                       regen=<span class="literal">False</span></span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;shuffle_total_data</span></span><br><span class="line"><span class="string">    将一个.csv文件(例如：CPED_total_text.csv)随机打乱，拆分为训练集、验证集、测试集，分别保存</span></span><br><span class="line"><span class="string">    使用示例：</span></span><br><span class="line"><span class="string">    shuffle_total_data(data_path=&quot;./MELD/MELD_total_text.csv&quot;, </span></span><br><span class="line"><span class="string">                       save_path=&quot;./MELD&quot;, </span></span><br><span class="line"><span class="string">                       index_name=&quot;Dialogue_ID&quot;,</span></span><br><span class="line"><span class="string">                       validation_split_percentage=0.1, </span></span><br><span class="line"><span class="string">                       test_split_percentage=0.1, </span></span><br><span class="line"><span class="string">                       regen=False)</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> regen==<span class="literal">False</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;不进行重复生成！&quot;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Read dataset from &quot;</span>, data_path)</span><br><span class="line">        data = pd.read_csv(data_path, encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>)</span><br><span class="line">                        </span><br><span class="line">        <span class="comment"># 划分为训练集、测试集</span></span><br><span class="line">        keys = <span class="built_in">list</span>(<span class="built_in">set</span>(data[index_name]))</span><br><span class="line">        random.shuffle(keys) <span class="comment"># 随机打乱</span></span><br><span class="line">        validation_split_id = <span class="built_in">int</span>(<span class="built_in">len</span>(keys)*(<span class="number">1</span>-validation_split_percentage-test_split_percentage))</span><br><span class="line">        test_split_id = <span class="built_in">int</span>(<span class="built_in">len</span>(keys)*(<span class="number">1</span>-test_split_percentage))</span><br><span class="line">        train_keys = keys[:validation_split_id] <span class="comment"># 训练集索引</span></span><br><span class="line">        valid_keys = keys[validation_split_id:test_split_id] <span class="comment"># 验证集索引</span></span><br><span class="line">        test_keys = keys[test_split_id:] <span class="comment"># 测试集索引</span></span><br><span class="line">        train_data = data[data[index_name].isin(train_keys)]</span><br><span class="line">        valid_data = data[data[index_name].isin(valid_keys)]</span><br><span class="line">        test_data = data[data[index_name].isin(test_keys)]</span><br><span class="line">        </span><br><span class="line">        train_data.to_csv(join(save_path,<span class="string">&quot;train_shuffle_split.csv&quot;</span>), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        valid_data.to_csv(join(save_path,<span class="string">&quot;valid_shuffle_split.csv&quot;</span>), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        test_data.to_csv(join(save_path,<span class="string">&quot;test_shuffle_split.csv&quot;</span>), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;已经完成数据集生成！&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-]]></content>
-  </entry>
-  <entry>
     <title>peft库的微调实现</title>
     <url>/2024/08/03/peft%E5%BA%93%E7%9A%84%E5%BE%AE%E8%B0%83%E5%AE%9E%E7%8E%B0/</url>
     <content><![CDATA[<p>记录一下peft中微调实现</p>
@@ -1200,6 +1428,23 @@
 
 <p>P-tuning-V2与prefix-tuning区别在于</p>
 <div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># prefix-tuning的peft_model.prompt_encoder</span></span><br><span class="line"></span><br><span class="line">ModuleDict(</span><br><span class="line">  (default): PrefixEncoder(</span><br><span class="line">    (embedding): Embedding(<span class="number">20</span>, <span class="number">1024</span>)</span><br><span class="line">    (transform): Sequential(</span><br><span class="line">      (<span class="number">0</span>): Linear(in_features=<span class="number">1024</span>, out_features=<span class="number">768</span>, bias=<span class="literal">True</span>)</span><br><span class="line">      (<span class="number">1</span>): Tanh()</span><br><span class="line">      (<span class="number">2</span>): Linear(in_features=<span class="number">768</span>, out_features=<span class="number">20480</span>, bias=<span class="literal">True</span>)</span><br><span class="line">    )</span><br><span class="line">  )</span><br><span class="line">)</span><br><span class="line"><span class="comment"># P-tuning-V2的peft_model.prompt_encoder</span></span><br><span class="line"></span><br><span class="line">ModuleDict(</span><br><span class="line">  (default): PrefixEncoder(</span><br><span class="line">    (embedding): Embedding(<span class="number">20</span>, <span class="number">2560</span>)</span><br><span class="line">  )</span><br><span class="line">)</span><br></pre></td></tr></table></figure></div>
+
+]]></content>
+  </entry>
+  <entry>
+    <title>pandas数据分析数据预处理</title>
+    <url>/2023/12/15/pandas%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86/</url>
+    <content><![CDATA[<p>Pandas的数据结构为，DataFrame，一个表格型的数据结构，它含有一组有序的列，每列可以是不同的值类型（数值、字符串、布尔型值）。DataFrame 既有行索引也有列索引，它可以被看做由 Series 组成的字典（共同用一个索引）。而Series则 类似表格中的一个列（column），类似于一维数组，可以保存任何数据类型。我们把一个.csv文件读取进来就是一个DataFrame对象。DataFrame 构造方法如下</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">pandas.DataFrame( data, index, columns, dtype, copy)</span><br></pre></td></tr></table></figure></div>
+
+<p>data：一组数据(ndarray、series, map, lists, dict 等类型)。<br>index：索引值，或者可以称为行标签。<br>columns：列标签，默认为 RangeIndex (0, 1, 2, …, n) 。<br>dtype：数据类型。<br>copy：拷贝数据，默认为 False。</p>
+<h2 id="合并拆分"><a href="#合并拆分" class="headerlink" title="合并拆分"></a>合并拆分</h2><h3 id="合并"><a href="#合并" class="headerlink" title="合并"></a>合并</h3><p>例如，在<code>./MELD</code>路径下存在如下三个文件</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">dev_sent_emo.csv</span><br><span class="line">test_sent_emo.csv</span><br><span class="line">train_sent_emo.csv</span><br></pre></td></tr></table></figure></div>
+
+<p>代码如下</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> os.path <span class="keyword">import</span> join</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">combine_csv_files</span>(<span class="params">re_encode_path, save_name, files, save_in</span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;combine_csv_files</span></span><br><span class="line"><span class="string">    将指定路径下的所有csv文件合并为一个csv文件</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    使用示例：</span></span><br><span class="line"><span class="string">    file_names = os.listdir(&quot;./MELD/&quot;)</span></span><br><span class="line"><span class="string">    combine_csv_files(re_encode_path=&quot;./MELD/&quot;, </span></span><br><span class="line"><span class="string">                      save_name=&quot;MELD_total_text&quot;, </span></span><br><span class="line"><span class="string">                      files=file_names, </span></span><br><span class="line"><span class="string">                      save_in=&quot;./MELD/&quot;)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> os.path.isfile(join(save_in, <span class="string">&quot;%s.csv&quot;</span>) % save_name): </span><br><span class="line">        <span class="comment"># 如果已经存在合并后的文件，则直接return 0</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            main_list = []</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(files)):</span><br><span class="line">                content = pd.read_csv(join(re_encode_path, files[i]), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>)</span><br><span class="line">                <span class="keyword">if</span> i == <span class="number">0</span>:</span><br><span class="line">                    main_list.extend([<span class="built_in">list</span>(content.keys())])</span><br><span class="line">                main_list.extend(content.values.tolist())</span><br><span class="line"></span><br><span class="line">            main_dict = &#123;&#125;</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">list</span>(<span class="built_in">zip</span>(*main_list)):</span><br><span class="line">                main_dict[i[<span class="number">0</span>]] = <span class="built_in">list</span>(i[<span class="number">1</span>:])</span><br><span class="line">            data_df = pd.DataFrame(main_dict)</span><br><span class="line">            data_df.to_csv(join(save_in, <span class="string">&quot;%s.csv&quot;</span>) % save_name, encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        <span class="keyword">except</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;合并[%s]时发生错误&quot;</span> % save_name)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="拆分"><a href="#拆分" class="headerlink" title="拆分"></a>拆分</h3><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> os.path <span class="keyword">import</span> join</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">shuffle_total_data</span>(<span class="params">data_path=<span class="string">&quot;./MELD/MELD_total_text.csv&quot;</span>, </span></span><br><span class="line"><span class="params">                       save_path=<span class="string">&quot;./MELD/&quot;</span>, </span></span><br><span class="line"><span class="params">                       index_name=<span class="string">&quot;Dialogue_ID&quot;</span>,</span></span><br><span class="line"><span class="params">                       validation_split_percentage=<span class="number">0.1</span>, </span></span><br><span class="line"><span class="params">                       test_split_percentage=<span class="number">0.1</span>, </span></span><br><span class="line"><span class="params">                       regen=<span class="literal">False</span></span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;shuffle_total_data</span></span><br><span class="line"><span class="string">    将一个.csv文件(例如：CPED_total_text.csv)随机打乱，拆分为训练集、验证集、测试集，分别保存</span></span><br><span class="line"><span class="string">    使用示例：</span></span><br><span class="line"><span class="string">    shuffle_total_data(data_path=&quot;./MELD/MELD_total_text.csv&quot;, </span></span><br><span class="line"><span class="string">                       save_path=&quot;./MELD&quot;, </span></span><br><span class="line"><span class="string">                       index_name=&quot;Dialogue_ID&quot;,</span></span><br><span class="line"><span class="string">                       validation_split_percentage=0.1, </span></span><br><span class="line"><span class="string">                       test_split_percentage=0.1, </span></span><br><span class="line"><span class="string">                       regen=False)</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> regen==<span class="literal">False</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;不进行重复生成！&quot;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Read dataset from &quot;</span>, data_path)</span><br><span class="line">        data = pd.read_csv(data_path, encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>)</span><br><span class="line">                        </span><br><span class="line">        <span class="comment"># 划分为训练集、测试集</span></span><br><span class="line">        keys = <span class="built_in">list</span>(<span class="built_in">set</span>(data[index_name]))</span><br><span class="line">        random.shuffle(keys) <span class="comment"># 随机打乱</span></span><br><span class="line">        validation_split_id = <span class="built_in">int</span>(<span class="built_in">len</span>(keys)*(<span class="number">1</span>-validation_split_percentage-test_split_percentage))</span><br><span class="line">        test_split_id = <span class="built_in">int</span>(<span class="built_in">len</span>(keys)*(<span class="number">1</span>-test_split_percentage))</span><br><span class="line">        train_keys = keys[:validation_split_id] <span class="comment"># 训练集索引</span></span><br><span class="line">        valid_keys = keys[validation_split_id:test_split_id] <span class="comment"># 验证集索引</span></span><br><span class="line">        test_keys = keys[test_split_id:] <span class="comment"># 测试集索引</span></span><br><span class="line">        train_data = data[data[index_name].isin(train_keys)]</span><br><span class="line">        valid_data = data[data[index_name].isin(valid_keys)]</span><br><span class="line">        test_data = data[data[index_name].isin(test_keys)]</span><br><span class="line">        </span><br><span class="line">        train_data.to_csv(join(save_path,<span class="string">&quot;train_shuffle_split.csv&quot;</span>), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        valid_data.to_csv(join(save_path,<span class="string">&quot;valid_shuffle_split.csv&quot;</span>), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        test_data.to_csv(join(save_path,<span class="string">&quot;test_shuffle_split.csv&quot;</span>), encoding=<span class="string">&quot;UTF-8-SIG&quot;</span>, index=<span class="literal">False</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;已经完成数据集生成！&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
 
 ]]></content>
   </entry>
@@ -1516,6 +1761,64 @@
 ]]></content>
   </entry>
   <entry>
+    <title>python调用大模型测试自己的文件输入</title>
+    <url>/2023/12/20/python%E8%B0%83%E7%94%A8%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%B5%8B%E8%AF%95%E8%87%AA%E5%B7%B1%E7%9A%84%E6%96%87%E4%BB%B6%E8%BE%93%E5%85%A5/</url>
+    <content><![CDATA[<h1 id="通义千问"><a href="#通义千问" class="headerlink" title="通义千问"></a>通义千问</h1><p><a class="link"   href="https://dashscope.console.aliyun.com/model" >模型服务灵积 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>获取api_key即可</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># For prerequisites running the following sample, visit https://help.aliyun.com/document_detail/611472.html</span></span><br><span class="line"><span class="keyword">from</span> http <span class="keyword">import</span> HTTPStatus</span><br><span class="line"><span class="keyword">import</span> dashscope</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.path.append(<span class="string">&quot;..&quot;</span>)</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> http <span class="keyword">import</span> HTTPStatus</span><br><span class="line"><span class="keyword">from</span> dashscope <span class="keyword">import</span> Generation</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> load_csv <span class="keyword">import</span> load_csv_with_pandas, extract_column_data_with_pandas</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;模型用的是qwen_plus</span></span><br><span class="line"><span class="string">        qwen_v1 = &#x27;qwen-v1&#x27;</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;@deprecated, use qwen_plus instead&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        qwen_plus_v1 = &#x27;qwen-plus-v1&#x27;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        bailian_v1 = &#x27;bailian-v1&#x27;</span></span><br><span class="line"><span class="string">        dolly_12b_v2 = &#x27;dolly-12b-v2&#x27;</span></span><br><span class="line"><span class="string">        qwen_turbo = &#x27;qwen-turbo&#x27;</span></span><br><span class="line"><span class="string">        qwen_plus = &#x27;qwen-plus&#x27;</span></span><br><span class="line"><span class="string">        qwen_max = &#x27;qwen-max</span></span><br><span class="line"><span class="string">   </span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">call_with_stream</span>(<span class="params">prompt</span>):</span><br><span class="line">    dashscope.api_key = <span class="string">&#x27;sk-e8bca551027e8&#x27;</span></span><br><span class="line"></span><br><span class="line">    responses = Generation.call(</span><br><span class="line">        dashscope.Generation.Models.qwen_plus,</span><br><span class="line">        messages=[&#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: prompt&#125;],</span><br><span class="line">        stream=<span class="literal">False</span>,</span><br><span class="line">        result_format=<span class="string">&#x27;message&#x27;</span>,</span><br><span class="line">        temperature=<span class="number">0</span></span><br><span class="line">        <span class="comment">#incremental_output=True  # get streaming output incrementally</span></span><br><span class="line">    )</span><br><span class="line">    <span class="built_in">print</span>(responses)</span><br><span class="line">    content_value = responses[<span class="string">&#x27;output&#x27;</span>][<span class="string">&#x27;choices&#x27;</span>][<span class="number">0</span>][<span class="string">&#x27;message&#x27;</span>][<span class="string">&#x27;content&#x27;</span>]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> content_value</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    sys.setrecursionlimit(<span class="number">10</span> ** <span class="number">6</span>)</span><br><span class="line"></span><br><span class="line">    iteration = <span class="number">50</span>  <span class="comment"># How many questions do you want GPT to answer in CSV file.</span></span><br><span class="line">    file_path = <span class="string">&#x27;merge_all_res.csv&#x27;</span></span><br><span class="line">    column_name = <span class="string">&#x27;带prompt问题&#x27;</span></span><br><span class="line">    <span class="comment"># column_name = &#x27;原始问题&#x27;</span></span><br><span class="line">    response_name = <span class="string">&#x27;回答&#x27;</span></span><br><span class="line">    data = pd.read_csv(file_path)</span><br><span class="line">    data_copy = data.copy()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;iteration starts&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, iteration):</span><br><span class="line">        question = data_copy[column_name][i]</span><br><span class="line">        result = call_with_stream(question)</span><br><span class="line">        data_copy[response_name][i] = result</span><br><span class="line">        data_copy.to_csv(file_path, index=<span class="literal">False</span>)</span><br><span class="line">        <span class="built_in">print</span>(i)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;finished&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<h1 id="文心一言"><a href="#文心一言" class="headerlink" title="文心一言"></a>文心一言</h1><p><a class="link"   href="https://console.bce.baidu.com/qianfan/modelcenter/model/buildIn/detail/9681" >千帆大模型平台 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><a class="link"   href="https://console.bce.baidu.com/qianfan/ais/console/applicationConsole/application" >创建应用 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>获取API Key，Secret Key</p>
+<p>然后access_token，</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_access_token</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    使用 API Key，Secret Key 获取access_token，替换下列示例中的应用API Key、应用Secret Key</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">        </span><br><span class="line">    url = <span class="string">&quot;https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&amp;client_id=[应用API Key]&amp;client_secret=[应用Secret Key]&quot;</span></span><br><span class="line">    </span><br><span class="line">    payload = json.dumps(<span class="string">&quot;&quot;</span>)</span><br><span class="line">    headers = &#123;</span><br><span class="line">        <span class="string">&#x27;Content-Type&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;Accept&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    response = requests.request(<span class="string">&quot;POST&quot;</span>, url, headers=headers, data=payload)</span><br><span class="line">    <span class="keyword">return</span> response.json().get(<span class="string">&quot;access_token&quot;</span>)</span><br></pre></td></tr></table></figure></div>
+
+<p>然后替换下面的，下面的url选择模型</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># For prerequisites running the following sample, visit https://help.aliyun.com/document_detail/611472.html</span></span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line">sys.path.append(<span class="string">&quot;..&quot;</span>)</span><br><span class="line"><span class="keyword">from</span> load_csv <span class="keyword">import</span> load_csv_with_pandas, extract_column_data_with_pandas</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">call_with_stream</span>(<span class="params">prompt</span>):</span><br><span class="line">    url = <span class="string">&quot;https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/ernie_bot_8k?access_token=&quot;</span> + <span class="string">&quot;24.fd5c2c1ac5f.2592000.1705542561.282335-45212215&quot;</span></span><br><span class="line"></span><br><span class="line">    payload = json.dumps(&#123;</span><br><span class="line">        <span class="string">&quot;messages&quot;</span>: [</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>,</span><br><span class="line">                <span class="string">&quot;content&quot;</span>: prompt</span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;)</span><br><span class="line">    headers = &#123;</span><br><span class="line">        <span class="string">&#x27;Content-Type&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    response = requests.request(<span class="string">&quot;POST&quot;</span>, url, headers=headers, data=payload)</span><br><span class="line">    a = response.text</span><br><span class="line">    response_dict = json.loads(a)</span><br><span class="line">    result_value = response_dict[<span class="string">&#x27;result&#x27;</span>]</span><br><span class="line">    <span class="built_in">print</span>(result_value)</span><br><span class="line">    <span class="keyword">return</span> result_value</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    sys.setrecursionlimit(<span class="number">10</span> ** <span class="number">6</span>)</span><br><span class="line"></span><br><span class="line">    iteration = <span class="number">50</span>  <span class="comment"># How many questions do you want GPT to answer in CSV file.</span></span><br><span class="line">    file_path = <span class="string">&#x27;merge_all_res.csv&#x27;</span></span><br><span class="line">    column_name = <span class="string">&#x27;带prompt问题&#x27;</span></span><br><span class="line">    <span class="comment"># column_name = &#x27;原始问题&#x27;</span></span><br><span class="line">    response_name = <span class="string">&#x27;回答&#x27;</span></span><br><span class="line">    data = pd.read_csv(file_path)</span><br><span class="line">    data_copy = data.copy()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;iteration starts&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, iteration):</span><br><span class="line">        question = data_copy[column_name][i]</span><br><span class="line">        result = call_with_stream(question)</span><br><span class="line">        data_copy[response_name][i] = result</span><br><span class="line">        data_copy.to_csv(file_path, index=<span class="literal">False</span>)</span><br><span class="line">        <span class="built_in">print</span>(i)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;finished&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<h1 id="星火认知大模型"><a href="#星火认知大模型" class="headerlink" title="星火认知大模型"></a>星火认知大模型</h1><p><a class="link"   href="https://xinghuo.xfyun.cn/sparkapi" >免费的目前 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>然后从<a class="link"   href="https://console.xfyun.cn/services/bm3" >这里 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>获取</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">以下密钥信息从控制台获取</span><br><span class="line">appid = <span class="string">&quot;9f24a&quot;</span>     <span class="comment">#填写控制台中获取的 APPID 信息</span></span><br><span class="line">api_secret = <span class="string">&quot;ZDU1OTTg1ZDE0YjBjNjQ1&quot;</span>   <span class="comment">#填写控制台中获取的 APISecret 信息</span></span><br><span class="line">api_key =<span class="string">&quot;4b11dfd3d6a405ef69c89&quot;</span>    <span class="comment">#填写控制台中获取的 APIKey 信息</span></span><br></pre></td></tr></table></figure></div>
+
+<p><a class="link"   href="https://xfyun-doc.cn-bj.ufileos.com/static%2F16974374635522820%2FSparkApi_Python.zip" >Python调用例子 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>如果报错  </p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">pip uninstall websocket</span><br><span class="line">pip install websocket-client</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<h1 id="智谱AI大模型MaaS开放平台"><a href="#智谱AI大模型MaaS开放平台" class="headerlink" title="智谱AI大模型MaaS开放平台"></a>智谱AI大模型MaaS开放平台</h1><p><a class="link"   href="https://open.bigmodel.cn/usercenter/apikeys" >API <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><a class="link"   href="https://open.bigmodel.cn/dev/api#auth" >写的非常详细 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>ChatGLM-Turbo</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> zhipuai</span><br><span class="line"></span><br><span class="line">zhipuai.api_key = <span class="string">&quot;your api key&quot;</span></span><br><span class="line">response = zhipuai.model_api.sse_invoke(</span><br><span class="line">    model=<span class="string">&quot;chatglm_turbo&quot;</span>,</span><br><span class="line">    prompt=[</span><br><span class="line">        &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;你好&quot;</span>&#125;,</span><br><span class="line">        &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;assistant&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;我是人工智能助手&quot;</span>&#125;,</span><br><span class="line">        &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;你叫什么名字&quot;</span>&#125;,</span><br><span class="line">        &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;assistant&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;我叫chatGLM&quot;</span>&#125;,</span><br><span class="line">        &#123;<span class="string">&quot;role&quot;</span>:<span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;你都可以做些什么事&quot;</span>&#125;,</span><br><span class="line">    ],</span><br><span class="line">    temperature=<span class="number">0.95</span>,</span><br><span class="line">    top_p=<span class="number">0.7</span>,</span><br><span class="line">    incremental=<span class="literal">True</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> event <span class="keyword">in</span> response.events():</span><br><span class="line">  <span class="keyword">if</span> event.event == <span class="string">&quot;add&quot;</span>:</span><br><span class="line">      <span class="built_in">print</span>(event.data)</span><br><span class="line">  <span class="keyword">elif</span> event.event == <span class="string">&quot;error&quot;</span> <span class="keyword">or</span> event.event == <span class="string">&quot;interrupted&quot;</span>:</span><br><span class="line">      <span class="built_in">print</span>(event.data)</span><br><span class="line">  <span class="keyword">elif</span> event.event == <span class="string">&quot;finish&quot;</span>:</span><br><span class="line">      <span class="built_in">print</span>(event.data)</span><br><span class="line">      <span class="built_in">print</span>(event.meta)</span><br><span class="line">  <span class="keyword">else</span>:</span><br><span class="line">      <span class="built_in">print</span>(event.data)</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h1 id="盘古AI"><a href="#盘古AI" class="headerlink" title="盘古AI"></a>盘古AI</h1><p>研究研究先。。。</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>“基础模型pytorch学习笔记”</title>
+    <url>/2023/12/25/%E2%80%9C%E6%9D%8E%E6%B2%90%E8%8A%B1%E4%B9%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E2%80%9D/</url>
+    <content><![CDATA[<h1 id="Resnet"><a href="#Resnet" class="headerlink" title="Resnet"></a>Resnet</h1><p><strong>问题：随着神经网络的不断加深，一定会带来好处吗？</strong></p>
+<p>蓝色五角星表示最优值<br>标有Fi的闭合区域表示函数，闭合区域的面积代表函数的复杂程度，在这个区域中能够找到一个最优的模型（可以用区域中的一个点来表示，该点到最优值的距离可以用来衡量模型的好坏）<br>从上图中可以看出，随着函数的复杂度的不断增加，虽然函数的区域面积增大了，但是在该区域中所能找到的最优模型（该区域内的某一点）离最优值的距离可能会越来越远（也就是模型所在的区域随着函数复杂度的增加，逐渐偏离了原来的区域，离最优值越来越远）（非嵌套函数（non-nested function））<br>解决上述问题（模型走偏）的方法：每一次增加函数复杂度之后函数所覆盖的区域会包含原来函数所在的区域（嵌套函数（nested function）），只有当较复杂的函数类包含复杂度较小的函数类时，才能确保提高它的性能，如下图所示 </p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://i0.hdslb.com/bfs/note/c2e5b2e4475660b29a5166856b0c224e2ce52faf.png@1014w_!web-note.avif"
+                      alt="残差块"
+                ></p>
+<p>之前增加模型深度的方法都是层层堆叠的方法，ResNet的思想是在堆叠层数的同时不会增加模型的复杂度<br>上图中左侧表示一个正常块，右侧表示一个残差块<br>x：原始输入<br>f(x)：理想映射（也是激活函数的输入）<br>对于正常块中来说，虚线框中的部分需要直接拟合出理想映射 f(x)；而对于残差块来说，同样的虚线框中的部分需要拟合出残差映射 f(x) - x<br>残差映射在现实中往往更容易优化<br>如果以恒等映射 f(x) &#x3D; x 作为所想要学出的理想映射 f(x)，则只需要将残差块中虚线框内加权运算的权重和偏置参数设置为 0，f(x) 就变成恒等映射了<br>在实际中，当理想映射 f(x) 极接近于恒等映射时，残差映射易于捕捉恒等映射的细微波动<br>在残差块中，输入可以通过跨层数据线路更快地向前传播  </p>
+<p>残差块使得很深的网络更加容易训练（不管网络有多深，因为有跨层数据通路连接的存在，使得始终能够包含小的网络，因为跳转连接的存在，所以会先将下层的小型网络训练好再去训练更深层次的网络），甚至可以训练一千层的网络（只要内存足够，优化算法就能够实现）<br>学习嵌套函数是神经网络的理想情况，在深层神经网络中，学习另一层作为恒等映射比较容易<br>残差映射可以更容易地学习同一函数，例如将权重层中的参数近似为零<br>利用残差块可以训练出一个有效的深层神经网络：输入可以通过层间的残余连接更快地向前传播<br>残差网络对随后的深层神经网络的设计产生了深远影响，无论是卷积类网络还是全连接类网络，几乎现在所有的网络都会用到，因为只有这样才能够让网络搭建的更深</p>
+<hr>
+<p>残差块:</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">from</span> torch.nn <span class="keyword">import</span> functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> d2l <span class="keyword">import</span> torch <span class="keyword">as</span> d2l</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Residual</span>(nn.Module):  </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, input_channels, num_channels,</span></span><br><span class="line"><span class="params">                 use_1x1conv=<span class="literal">False</span>, strides=<span class="number">1</span></span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(input_channels, num_channels,</span><br><span class="line">                               kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>, stride=strides)</span><br><span class="line">        self.conv2 = nn.Conv2d(num_channels, num_channels,</span><br><span class="line">                               kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">if</span> use_1x1conv:</span><br><span class="line">            self.conv3 = nn.Conv2d(input_channels, num_channels,</span><br><span class="line">                                   kernel_size=<span class="number">1</span>, stride=strides)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.conv3 = <span class="literal">None</span></span><br><span class="line">        self.bn1 = nn.BatchNorm2d(num_channels)</span><br><span class="line">        self.bn2 = nn.BatchNorm2d(num_channels)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, X</span>):</span><br><span class="line">        Y = F.relu(self.bn1(self.conv1(X)))</span><br><span class="line">        Y = self.bn2(self.conv2(Y))</span><br><span class="line">        <span class="keyword">if</span> self.conv3:</span><br><span class="line">            X = self.conv3(X)</span><br><span class="line">        Y += X</span><br><span class="line">        <span class="keyword">return</span> F.relu(Y)</span><br></pre></td></tr></table></figure></div>
+
+<p>通俗的说就是如果加了conv3的效果好，loss小了  就用，不然就不用</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://zh-v2.d2l.ai/_images/resnet-block.svg"
+                      alt="包含以及不包含 1×1 卷积层的残差块"
+                ></p>
+]]></content>
+  </entry>
+  <entry>
     <title>transformer-注意力机制</title>
     <url>/2023/10/23/transformer-%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/</url>
     <content><![CDATA[<h2 id="1-Attention"><a href="#1-Attention" class="headerlink" title="1.Attention"></a>1.Attention</h2><h3 id="1-1-讲讲对Attention的理解？"><a href="#1-1-讲讲对Attention的理解？" class="headerlink" title="1.1 讲讲对Attention的理解？"></a>1.1 讲讲对Attention的理解？</h3><p>Attention机制是一种在处理时序相关问题的时候常用的技术，主要用于处理序列数据。<br>核心思想是在处理序列数据时，<strong>网络应该更关注输入中的重要部分，而忽略不重要的部分，它通过学习不同部分的权重，将输入的序列中的重要部分显式地加权，从而使得模型可以更好地关注与输出有关的信息。</strong></p>
@@ -1629,91 +1932,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>python调用大模型测试自己的文件输入</title>
-    <url>/2023/12/20/python%E8%B0%83%E7%94%A8%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%B5%8B%E8%AF%95%E8%87%AA%E5%B7%B1%E7%9A%84%E6%96%87%E4%BB%B6%E8%BE%93%E5%85%A5/</url>
-    <content><![CDATA[<h1 id="通义千问"><a href="#通义千问" class="headerlink" title="通义千问"></a>通义千问</h1><p><a class="link"   href="https://dashscope.console.aliyun.com/model" >模型服务灵积 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>获取api_key即可</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># For prerequisites running the following sample, visit https://help.aliyun.com/document_detail/611472.html</span></span><br><span class="line"><span class="keyword">from</span> http <span class="keyword">import</span> HTTPStatus</span><br><span class="line"><span class="keyword">import</span> dashscope</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.path.append(<span class="string">&quot;..&quot;</span>)</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> http <span class="keyword">import</span> HTTPStatus</span><br><span class="line"><span class="keyword">from</span> dashscope <span class="keyword">import</span> Generation</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> load_csv <span class="keyword">import</span> load_csv_with_pandas, extract_column_data_with_pandas</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;模型用的是qwen_plus</span></span><br><span class="line"><span class="string">        qwen_v1 = &#x27;qwen-v1&#x27;</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;@deprecated, use qwen_plus instead&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        qwen_plus_v1 = &#x27;qwen-plus-v1&#x27;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        bailian_v1 = &#x27;bailian-v1&#x27;</span></span><br><span class="line"><span class="string">        dolly_12b_v2 = &#x27;dolly-12b-v2&#x27;</span></span><br><span class="line"><span class="string">        qwen_turbo = &#x27;qwen-turbo&#x27;</span></span><br><span class="line"><span class="string">        qwen_plus = &#x27;qwen-plus&#x27;</span></span><br><span class="line"><span class="string">        qwen_max = &#x27;qwen-max</span></span><br><span class="line"><span class="string">   </span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">call_with_stream</span>(<span class="params">prompt</span>):</span><br><span class="line">    dashscope.api_key = <span class="string">&#x27;sk-e8bca551027e8&#x27;</span></span><br><span class="line"></span><br><span class="line">    responses = Generation.call(</span><br><span class="line">        dashscope.Generation.Models.qwen_plus,</span><br><span class="line">        messages=[&#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: prompt&#125;],</span><br><span class="line">        stream=<span class="literal">False</span>,</span><br><span class="line">        result_format=<span class="string">&#x27;message&#x27;</span>,</span><br><span class="line">        temperature=<span class="number">0</span></span><br><span class="line">        <span class="comment">#incremental_output=True  # get streaming output incrementally</span></span><br><span class="line">    )</span><br><span class="line">    <span class="built_in">print</span>(responses)</span><br><span class="line">    content_value = responses[<span class="string">&#x27;output&#x27;</span>][<span class="string">&#x27;choices&#x27;</span>][<span class="number">0</span>][<span class="string">&#x27;message&#x27;</span>][<span class="string">&#x27;content&#x27;</span>]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> content_value</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    sys.setrecursionlimit(<span class="number">10</span> ** <span class="number">6</span>)</span><br><span class="line"></span><br><span class="line">    iteration = <span class="number">50</span>  <span class="comment"># How many questions do you want GPT to answer in CSV file.</span></span><br><span class="line">    file_path = <span class="string">&#x27;merge_all_res.csv&#x27;</span></span><br><span class="line">    column_name = <span class="string">&#x27;带prompt问题&#x27;</span></span><br><span class="line">    <span class="comment"># column_name = &#x27;原始问题&#x27;</span></span><br><span class="line">    response_name = <span class="string">&#x27;回答&#x27;</span></span><br><span class="line">    data = pd.read_csv(file_path)</span><br><span class="line">    data_copy = data.copy()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;iteration starts&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, iteration):</span><br><span class="line">        question = data_copy[column_name][i]</span><br><span class="line">        result = call_with_stream(question)</span><br><span class="line">        data_copy[response_name][i] = result</span><br><span class="line">        data_copy.to_csv(file_path, index=<span class="literal">False</span>)</span><br><span class="line">        <span class="built_in">print</span>(i)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;finished&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-<h1 id="文心一言"><a href="#文心一言" class="headerlink" title="文心一言"></a>文心一言</h1><p><a class="link"   href="https://console.bce.baidu.com/qianfan/modelcenter/model/buildIn/detail/9681" >千帆大模型平台 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p><a class="link"   href="https://console.bce.baidu.com/qianfan/ais/console/applicationConsole/application" >创建应用 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>获取API Key，Secret Key</p>
-<p>然后access_token，</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_access_token</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    使用 API Key，Secret Key 获取access_token，替换下列示例中的应用API Key、应用Secret Key</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">        </span><br><span class="line">    url = <span class="string">&quot;https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&amp;client_id=[应用API Key]&amp;client_secret=[应用Secret Key]&quot;</span></span><br><span class="line">    </span><br><span class="line">    payload = json.dumps(<span class="string">&quot;&quot;</span>)</span><br><span class="line">    headers = &#123;</span><br><span class="line">        <span class="string">&#x27;Content-Type&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;Accept&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    response = requests.request(<span class="string">&quot;POST&quot;</span>, url, headers=headers, data=payload)</span><br><span class="line">    <span class="keyword">return</span> response.json().get(<span class="string">&quot;access_token&quot;</span>)</span><br></pre></td></tr></table></figure></div>
-
-<p>然后替换下面的，下面的url选择模型</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># For prerequisites running the following sample, visit https://help.aliyun.com/document_detail/611472.html</span></span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line">sys.path.append(<span class="string">&quot;..&quot;</span>)</span><br><span class="line"><span class="keyword">from</span> load_csv <span class="keyword">import</span> load_csv_with_pandas, extract_column_data_with_pandas</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">call_with_stream</span>(<span class="params">prompt</span>):</span><br><span class="line">    url = <span class="string">&quot;https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/ernie_bot_8k?access_token=&quot;</span> + <span class="string">&quot;24.fd5c2c1ac5f.2592000.1705542561.282335-45212215&quot;</span></span><br><span class="line"></span><br><span class="line">    payload = json.dumps(&#123;</span><br><span class="line">        <span class="string">&quot;messages&quot;</span>: [</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>,</span><br><span class="line">                <span class="string">&quot;content&quot;</span>: prompt</span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;)</span><br><span class="line">    headers = &#123;</span><br><span class="line">        <span class="string">&#x27;Content-Type&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    response = requests.request(<span class="string">&quot;POST&quot;</span>, url, headers=headers, data=payload)</span><br><span class="line">    a = response.text</span><br><span class="line">    response_dict = json.loads(a)</span><br><span class="line">    result_value = response_dict[<span class="string">&#x27;result&#x27;</span>]</span><br><span class="line">    <span class="built_in">print</span>(result_value)</span><br><span class="line">    <span class="keyword">return</span> result_value</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    sys.setrecursionlimit(<span class="number">10</span> ** <span class="number">6</span>)</span><br><span class="line"></span><br><span class="line">    iteration = <span class="number">50</span>  <span class="comment"># How many questions do you want GPT to answer in CSV file.</span></span><br><span class="line">    file_path = <span class="string">&#x27;merge_all_res.csv&#x27;</span></span><br><span class="line">    column_name = <span class="string">&#x27;带prompt问题&#x27;</span></span><br><span class="line">    <span class="comment"># column_name = &#x27;原始问题&#x27;</span></span><br><span class="line">    response_name = <span class="string">&#x27;回答&#x27;</span></span><br><span class="line">    data = pd.read_csv(file_path)</span><br><span class="line">    data_copy = data.copy()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;iteration starts&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, iteration):</span><br><span class="line">        question = data_copy[column_name][i]</span><br><span class="line">        result = call_with_stream(question)</span><br><span class="line">        data_copy[response_name][i] = result</span><br><span class="line">        data_copy.to_csv(file_path, index=<span class="literal">False</span>)</span><br><span class="line">        <span class="built_in">print</span>(i)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;finished&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-<h1 id="星火认知大模型"><a href="#星火认知大模型" class="headerlink" title="星火认知大模型"></a>星火认知大模型</h1><p><a class="link"   href="https://xinghuo.xfyun.cn/sparkapi" >免费的目前 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>然后从<a class="link"   href="https://console.xfyun.cn/services/bm3" >这里 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>获取</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">以下密钥信息从控制台获取</span><br><span class="line">appid = <span class="string">&quot;9f24a&quot;</span>     <span class="comment">#填写控制台中获取的 APPID 信息</span></span><br><span class="line">api_secret = <span class="string">&quot;ZDU1OTTg1ZDE0YjBjNjQ1&quot;</span>   <span class="comment">#填写控制台中获取的 APISecret 信息</span></span><br><span class="line">api_key =<span class="string">&quot;4b11dfd3d6a405ef69c89&quot;</span>    <span class="comment">#填写控制台中获取的 APIKey 信息</span></span><br></pre></td></tr></table></figure></div>
-
-<p><a class="link"   href="https://xfyun-doc.cn-bj.ufileos.com/static%2F16974374635522820%2FSparkApi_Python.zip" >Python调用例子 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>如果报错  </p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">pip uninstall websocket</span><br><span class="line">pip install websocket-client</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-<h1 id="智谱AI大模型MaaS开放平台"><a href="#智谱AI大模型MaaS开放平台" class="headerlink" title="智谱AI大模型MaaS开放平台"></a>智谱AI大模型MaaS开放平台</h1><p><a class="link"   href="https://open.bigmodel.cn/usercenter/apikeys" >API <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p><a class="link"   href="https://open.bigmodel.cn/dev/api#auth" >写的非常详细 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>ChatGLM-Turbo</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> zhipuai</span><br><span class="line"></span><br><span class="line">zhipuai.api_key = <span class="string">&quot;your api key&quot;</span></span><br><span class="line">response = zhipuai.model_api.sse_invoke(</span><br><span class="line">    model=<span class="string">&quot;chatglm_turbo&quot;</span>,</span><br><span class="line">    prompt=[</span><br><span class="line">        &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;你好&quot;</span>&#125;,</span><br><span class="line">        &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;assistant&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;我是人工智能助手&quot;</span>&#125;,</span><br><span class="line">        &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;你叫什么名字&quot;</span>&#125;,</span><br><span class="line">        &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;assistant&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;我叫chatGLM&quot;</span>&#125;,</span><br><span class="line">        &#123;<span class="string">&quot;role&quot;</span>:<span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;你都可以做些什么事&quot;</span>&#125;,</span><br><span class="line">    ],</span><br><span class="line">    temperature=<span class="number">0.95</span>,</span><br><span class="line">    top_p=<span class="number">0.7</span>,</span><br><span class="line">    incremental=<span class="literal">True</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> event <span class="keyword">in</span> response.events():</span><br><span class="line">  <span class="keyword">if</span> event.event == <span class="string">&quot;add&quot;</span>:</span><br><span class="line">      <span class="built_in">print</span>(event.data)</span><br><span class="line">  <span class="keyword">elif</span> event.event == <span class="string">&quot;error&quot;</span> <span class="keyword">or</span> event.event == <span class="string">&quot;interrupted&quot;</span>:</span><br><span class="line">      <span class="built_in">print</span>(event.data)</span><br><span class="line">  <span class="keyword">elif</span> event.event == <span class="string">&quot;finish&quot;</span>:</span><br><span class="line">      <span class="built_in">print</span>(event.data)</span><br><span class="line">      <span class="built_in">print</span>(event.meta)</span><br><span class="line">  <span class="keyword">else</span>:</span><br><span class="line">      <span class="built_in">print</span>(event.data)</span><br></pre></td></tr></table></figure></div>
-
-<hr>
-<h1 id="盘古AI"><a href="#盘古AI" class="headerlink" title="盘古AI"></a>盘古AI</h1><p>研究研究先。。。</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>transformer模型</title>
-    <url>/2024/07/17/transformer%E7%B3%BB%E5%88%97%E6%B1%87%E6%80%BB/</url>
-    <content><![CDATA[<h1 id="Attention"><a href="#Attention" class="headerlink" title="Attention"></a>Attention</h1><h2 id="1-attention，self-attention"><a href="#1-attention，self-attention" class="headerlink" title="1.attention，self-attention"></a>1.attention，self-attention</h2><p>Attention机制是一种在处理时序相关问题的时候常用的技术，主要用于处理序列数据。<br>核心思想是在处理序列数据时，<strong>网络应该更关注输入中的重要部分，而忽略不重要的部分，它通过学习不同部分的权重，将输入的序列中的重要部分显式地加权，从而使得模型可以更好地关注与输出有关的信息。</strong></p>
-<p>Attention机制的关键是引入一种机制来动态地计算输入序列中各个位置的权重，从而在每个时间步上，对输入序列的不同部分进行加权求和，得到当前时间步的输出。这样就实现了模型对输入中不同部分的关注度的自适应调整。</p>
-<p>self-attention是指在序列数据中，<strong>将当前位置与其他位置之间的关系建模</strong>。它通过计算每个位置与其他所有位置之间的相关性得分，从而为每个位置分配一个权重。这使得模型能够根据输入序列的不同部分的重要性，自适应地选择要关注的信息。</p>
-<h2 id="2-Attention的计算步骤是什么？"><a href="#2-Attention的计算步骤是什么？" class="headerlink" title="2.Attention的计算步骤是什么？"></a>2.Attention的计算步骤是什么？</h2><p>如下：</p>
-<ul>
-<li><p>计算查询（Query）：查询是当前时间步的输入，用于和序列中其他位置的信息进行比较。</p>
-</li>
-<li><p>计算键（Key）和值（Value）：键表示序列中其他位置的信息，值是对应位置的表示。键和值用来和查询进行比较。</p>
-</li>
-<li><p>计算注意力权重：：通过将查询和键进行内积运算，进<strong>行缩放，根号d，</strong>然后应用softmax函数，得到注意力权重。这些权重表示了在当前时间步，模型应该关注序列中其他位置的重要程度。</p>
-</li>
-<li><p>加权求和：根据注意力权重将值进行加权求和，得到当前时间步的输出</p>
-</li>
-</ul>
-<p>在Transformer中，Self-Attention 被称为”Scaled Dot-Product Attention”，其计算过程如下：</p>
-<ol>
-<li>对于输入序列中的每个位置，通过计算其与所有其他位置之间的相似度得分（通常通过点积计算）。</li>
-<li>对得分进<strong>行缩放处理</strong>，以防止梯度爆炸。</li>
-<li>将得分用softmax函数转换为注意力权重，以便计算每个位置的加权和。</li>
-<li>使用注意力权重对输入序列中的所有位置进行加权求和，得到每个位置的自注意输出。</li>
-</ol>
-<h1 id="layer-normalization"><a href="#layer-normalization" class="headerlink" title="layer_normalization"></a>layer_normalization</h1><h1 id="位置编码"><a href="#位置编码" class="headerlink" title="位置编码"></a>位置编码</h1><p>在多个block 前向传递的过程中position的信息不会丢失</p>
-<h1 id="分词器"><a href="#分词器" class="headerlink" title="分词器"></a>分词器</h1><h1 id="激活函数"><a href="#激活函数" class="headerlink" title="激活函数"></a>激活函数</h1>]]></content>
-  </entry>
-  <entry>
-    <title>“基础模型pytorch学习笔记”</title>
-    <url>/2023/12/25/%E2%80%9C%E6%9D%8E%E6%B2%90%E8%8A%B1%E4%B9%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E2%80%9D/</url>
-    <content><![CDATA[<h1 id="Resnet"><a href="#Resnet" class="headerlink" title="Resnet"></a>Resnet</h1><p><strong>问题：随着神经网络的不断加深，一定会带来好处吗？</strong></p>
-<p>蓝色五角星表示最优值<br>标有Fi的闭合区域表示函数，闭合区域的面积代表函数的复杂程度，在这个区域中能够找到一个最优的模型（可以用区域中的一个点来表示，该点到最优值的距离可以用来衡量模型的好坏）<br>从上图中可以看出，随着函数的复杂度的不断增加，虽然函数的区域面积增大了，但是在该区域中所能找到的最优模型（该区域内的某一点）离最优值的距离可能会越来越远（也就是模型所在的区域随着函数复杂度的增加，逐渐偏离了原来的区域，离最优值越来越远）（非嵌套函数（non-nested function））<br>解决上述问题（模型走偏）的方法：每一次增加函数复杂度之后函数所覆盖的区域会包含原来函数所在的区域（嵌套函数（nested function）），只有当较复杂的函数类包含复杂度较小的函数类时，才能确保提高它的性能，如下图所示 </p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://i0.hdslb.com/bfs/note/c2e5b2e4475660b29a5166856b0c224e2ce52faf.png@1014w_!web-note.avif"
-                      alt="残差块"
-                ></p>
-<p>之前增加模型深度的方法都是层层堆叠的方法，ResNet的思想是在堆叠层数的同时不会增加模型的复杂度<br>上图中左侧表示一个正常块，右侧表示一个残差块<br>x：原始输入<br>f(x)：理想映射（也是激活函数的输入）<br>对于正常块中来说，虚线框中的部分需要直接拟合出理想映射 f(x)；而对于残差块来说，同样的虚线框中的部分需要拟合出残差映射 f(x) - x<br>残差映射在现实中往往更容易优化<br>如果以恒等映射 f(x) &#x3D; x 作为所想要学出的理想映射 f(x)，则只需要将残差块中虚线框内加权运算的权重和偏置参数设置为 0，f(x) 就变成恒等映射了<br>在实际中，当理想映射 f(x) 极接近于恒等映射时，残差映射易于捕捉恒等映射的细微波动<br>在残差块中，输入可以通过跨层数据线路更快地向前传播  </p>
-<p>残差块使得很深的网络更加容易训练（不管网络有多深，因为有跨层数据通路连接的存在，使得始终能够包含小的网络，因为跳转连接的存在，所以会先将下层的小型网络训练好再去训练更深层次的网络），甚至可以训练一千层的网络（只要内存足够，优化算法就能够实现）<br>学习嵌套函数是神经网络的理想情况，在深层神经网络中，学习另一层作为恒等映射比较容易<br>残差映射可以更容易地学习同一函数，例如将权重层中的参数近似为零<br>利用残差块可以训练出一个有效的深层神经网络：输入可以通过层间的残余连接更快地向前传播<br>残差网络对随后的深层神经网络的设计产生了深远影响，无论是卷积类网络还是全连接类网络，几乎现在所有的网络都会用到，因为只有这样才能够让网络搭建的更深</p>
-<hr>
-<p>残差块:</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">from</span> torch.nn <span class="keyword">import</span> functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> d2l <span class="keyword">import</span> torch <span class="keyword">as</span> d2l</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Residual</span>(nn.Module):  </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, input_channels, num_channels,</span></span><br><span class="line"><span class="params">                 use_1x1conv=<span class="literal">False</span>, strides=<span class="number">1</span></span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(input_channels, num_channels,</span><br><span class="line">                               kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>, stride=strides)</span><br><span class="line">        self.conv2 = nn.Conv2d(num_channels, num_channels,</span><br><span class="line">                               kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">if</span> use_1x1conv:</span><br><span class="line">            self.conv3 = nn.Conv2d(input_channels, num_channels,</span><br><span class="line">                                   kernel_size=<span class="number">1</span>, stride=strides)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.conv3 = <span class="literal">None</span></span><br><span class="line">        self.bn1 = nn.BatchNorm2d(num_channels)</span><br><span class="line">        self.bn2 = nn.BatchNorm2d(num_channels)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, X</span>):</span><br><span class="line">        Y = F.relu(self.bn1(self.conv1(X)))</span><br><span class="line">        Y = self.bn2(self.conv2(Y))</span><br><span class="line">        <span class="keyword">if</span> self.conv3:</span><br><span class="line">            X = self.conv3(X)</span><br><span class="line">        Y += X</span><br><span class="line">        <span class="keyword">return</span> F.relu(Y)</span><br></pre></td></tr></table></figure></div>
-
-<p>通俗的说就是如果加了conv3的效果好，loss小了  就用，不然就不用</p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://zh-v2.d2l.ai/_images/resnet-block.svg"
-                      alt="包含以及不包含 1×1 卷积层的残差块"
-                ></p>
-]]></content>
-  </entry>
-  <entry>
     <title>「Prompt Engineering」提示词工程</title>
     <url>/2024/06/23/%E3%80%8CPrompt-Engineering%E3%80%8D%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B/</url>
     <content><![CDATA[<p>提示工程（Prompt Engingering），也被称为上下文提示（In-Context Prompting），指的是通过结构化文本等方式来完善提示词，引导LLM输出我们期望的结果。通过提示词工程可以在不更新模型权重的情况下，让LLM完成不同类型的任务。其主要依赖于经验，而且提示词工程方法的效果在不同的模型中可能会有很大的差异，因此需要大量的实验和探索。</p>
@@ -1759,63 +1977,31 @@
 ]]></content>
   </entry>
   <entry>
-    <title>图神经网络实战</title>
-    <url>/2023/10/23/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%AE%9E%E6%88%98/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
-    <title></title>
-    <url>/2024/03/15/%E5%8F%91%E7%A5%A8%E8%AE%B0%E5%BD%95/</url>
-    <content><![CDATA[<p>发票记录</p>
-<table>
-<thead>
-<tr>
-<th align="center">厂商</th>
-<th align="center">金额</th>
-<th align="center">发票类型</th>
-<th align="center">说明</th>
-<th align="center">时间</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">百度</td>
-<td align="center">66.26</td>
-<td align="center">企业类普票&#x2F;增值税普通发票</td>
-<td align="center">tokens资源包</td>
-<td align="center">2024-03-15 10:34:01</td>
-</tr>
-<tr>
-<td align="center">百度</td>
-<td align="center">80.22</td>
-<td align="center">企业类普票&#x2F;增值税普通发票</td>
-<td align="center">tokens资源包</td>
-<td align="center">2024-03-15 10:25:19</td>
-</tr>
-<tr>
-<td align="center">讯飞</td>
-<td align="center">1500</td>
-<td align="center">企业类普票&#x2F;增值税普通发票</td>
-<td align="center">tokens资源包</td>
-<td align="center">2024-03-15 11:01:38</td>
-</tr>
-<tr>
-<td align="center">智普</td>
-<td align="center">165.3087 (未开)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr>
-<td align="center">阿里</td>
-<td align="center">54.58(未开)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-</tbody></table>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;path&quot;: &quot;能源互联网规划及配电网规划专业调考题库（2020版）-勘误更新版&quot;,</span><br><span class="line">    &quot;number&quot;: 1,</span><br><span class="line">    &quot;question&quot;: &quot;在装有热水的容器外涂上一薄层碳黑，则水凉的快，因为&quot;,</span><br><span class="line">    &quot;A&quot;: &quot;碳黑黑度大，辐射散热少&quot;,</span><br><span class="line">    &quot;B&quot;: &quot;碳黑黑度大，辐射散热少&quot;,</span><br><span class="line">    &quot;C&quot;: &quot;碳黑黑度小，辐射散热多&quot;,</span><br><span class="line">    &quot;D&quot;: &quot;碳黑黑度小，辐射散热少&quot;,</span><br><span class="line">    &quot;answer&quot;: &quot;B&quot;,</span><br><span class="line">    &quot;analysis&quot;: &quot;&quot;,</span><br><span class="line">    &quot;type&quot;: &quot;Singlechoice&quot;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure></div>
-
-]]></content>
+    <title>transformer模型</title>
+    <url>/2024/07/17/transformer%E7%B3%BB%E5%88%97%E6%B1%87%E6%80%BB/</url>
+    <content><![CDATA[<h1 id="Attention"><a href="#Attention" class="headerlink" title="Attention"></a>Attention</h1><h2 id="1-attention，self-attention"><a href="#1-attention，self-attention" class="headerlink" title="1.attention，self-attention"></a>1.attention，self-attention</h2><p>Attention机制是一种在处理时序相关问题的时候常用的技术，主要用于处理序列数据。<br>核心思想是在处理序列数据时，<strong>网络应该更关注输入中的重要部分，而忽略不重要的部分，它通过学习不同部分的权重，将输入的序列中的重要部分显式地加权，从而使得模型可以更好地关注与输出有关的信息。</strong></p>
+<p>Attention机制的关键是引入一种机制来动态地计算输入序列中各个位置的权重，从而在每个时间步上，对输入序列的不同部分进行加权求和，得到当前时间步的输出。这样就实现了模型对输入中不同部分的关注度的自适应调整。</p>
+<p>self-attention是指在序列数据中，<strong>将当前位置与其他位置之间的关系建模</strong>。它通过计算每个位置与其他所有位置之间的相关性得分，从而为每个位置分配一个权重。这使得模型能够根据输入序列的不同部分的重要性，自适应地选择要关注的信息。</p>
+<h2 id="2-Attention的计算步骤是什么？"><a href="#2-Attention的计算步骤是什么？" class="headerlink" title="2.Attention的计算步骤是什么？"></a>2.Attention的计算步骤是什么？</h2><p>如下：</p>
+<ul>
+<li><p>计算查询（Query）：查询是当前时间步的输入，用于和序列中其他位置的信息进行比较。</p>
+</li>
+<li><p>计算键（Key）和值（Value）：键表示序列中其他位置的信息，值是对应位置的表示。键和值用来和查询进行比较。</p>
+</li>
+<li><p>计算注意力权重：：通过将查询和键进行内积运算，进<strong>行缩放，根号d，</strong>然后应用softmax函数，得到注意力权重。这些权重表示了在当前时间步，模型应该关注序列中其他位置的重要程度。</p>
+</li>
+<li><p>加权求和：根据注意力权重将值进行加权求和，得到当前时间步的输出</p>
+</li>
+</ul>
+<p>在Transformer中，Self-Attention 被称为”Scaled Dot-Product Attention”，其计算过程如下：</p>
+<ol>
+<li>对于输入序列中的每个位置，通过计算其与所有其他位置之间的相似度得分（通常通过点积计算）。</li>
+<li>对得分进<strong>行缩放处理</strong>，以防止梯度爆炸。</li>
+<li>将得分用softmax函数转换为注意力权重，以便计算每个位置的加权和。</li>
+<li>使用注意力权重对输入序列中的所有位置进行加权求和，得到每个位置的自注意输出。</li>
+</ol>
+<h1 id="layer-normalization"><a href="#layer-normalization" class="headerlink" title="layer_normalization"></a>layer_normalization</h1><h1 id="位置编码"><a href="#位置编码" class="headerlink" title="位置编码"></a>位置编码</h1><p>在多个block 前向传递的过程中position的信息不会丢失</p>
+<h1 id="分词器"><a href="#分词器" class="headerlink" title="分词器"></a>分词器</h1><h1 id="激活函数"><a href="#激活函数" class="headerlink" title="激活函数"></a>激活函数</h1>]]></content>
   </entry>
   <entry>
     <title>图神经网络</title>
@@ -1898,6 +2084,65 @@
 <div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">from</span> torch_geometric.datasets <span class="keyword">import</span> Planetoid</span><br><span class="line"><span class="keyword">from</span> torch_geometric.nn <span class="keyword">import</span> GCNConv</span><br><span class="line"></span><br><span class="line"><span class="comment"># 判断是否有可用的GPU，如果有就使用GPU，否则使用CPU</span></span><br><span class="line">device = torch.device(<span class="string">&#x27;cuda&#x27;</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">&#x27;cpu&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载Cora数据集</span></span><br><span class="line">dataset = Planetoid(root=<span class="string">&#x27;data/Cora&#x27;</span>, name=<span class="string">&#x27;Cora&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义一个GCN模型</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">GCN</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, input_dim, hidden_dim, output_dim</span>):</span><br><span class="line">        <span class="built_in">super</span>(GCN, self).__init__()</span><br><span class="line">        <span class="comment"># 第一个图卷积层</span></span><br><span class="line">        self.conv1 = GCNConv(input_dim, hidden_dim)</span><br><span class="line">        <span class="comment"># 第二个图卷积层</span></span><br><span class="line">        self.conv2 = GCNConv(hidden_dim, output_dim)</span><br><span class="line">        <span class="comment"># 全连接层</span></span><br><span class="line">        self.fc = nn.Linear(output_dim, dataset.num_classes)</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x, edge_index</span>):</span><br><span class="line">        <span class="comment"># 第一次图卷积，使用ReLU激活函数</span></span><br><span class="line">        x = F.relu(self.conv1(x, edge_index))</span><br><span class="line">        <span class="comment"># 第二次图卷积</span></span><br><span class="line">        x = self.conv2(x, edge_index))</span><br><span class="line">        <span class="comment"># Dropout操作，防止过拟合</span></span><br><span class="line">        x = F.dropout(x, training=self.training)</span><br><span class="line">        <span class="comment"># 全连接层</span></span><br><span class="line">        x = self.fc(x)</span><br><span class="line">        <span class="comment"># 使用log_softmax进行分类</span></span><br><span class="line">        <span class="keyword">return</span> F.log_softmax(x, dim=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建GCN模型实例，并将模型移动到设备上（GPU或CPU）</span></span><br><span class="line">model = GCN(dataset.num_features, <span class="number">16</span>, dataset.num_classes).to(device)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义优化器和损失函数</span></span><br><span class="line">optimizer = optim.Adam(model.parameters(), lr=<span class="number">0.01</span>)</span><br><span class="line">criterion = nn.NLLLoss()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义训练函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">train</span>(<span class="params">model, optimizer, criterion, data</span>):</span><br><span class="line">    model.train()</span><br><span class="line">    optimizer.zero_grad()</span><br><span class="line">    out = model(data.x.to(device), data.edge_index.to(device))</span><br><span class="line">    loss = criterion(out[data.train_mask], data.y[data.train_mask].to(device))</span><br><span class="line">    loss.backward()</span><br><span class="line">    optimizer.step()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义测试函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test</span>(<span class="params">model, data</span>):</span><br><span class="line">    model.<span class="built_in">eval</span>()</span><br><span class="line">    out = model(data.x.to(device), data.edge_index.to(device))</span><br><span class="line">    pred = out.argmax(dim=<span class="number">1</span>)</span><br><span class="line">    acc = pred[data.test_mask].eq(data.y[data.test_mask].to(device)).<span class="built_in">sum</span>().item() / data.test_mask.<span class="built_in">sum</span>().item()</span><br><span class="line">    <span class="keyword">return</span> acc</span><br><span class="line"></span><br><span class="line"><span class="comment"># 进行模型训练和测试，并输出测试集准确率</span></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">200</span>):</span><br><span class="line">    train(model, optimizer, criterion, dataset[<span class="number">0</span>])</span><br><span class="line">    test_acc = test(model, dataset[<span class="number">0</span>])</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;Epoch: &#123;:03d&#125;, Test Acc: &#123;:.4f&#125;&#x27;</span>.<span class="built_in">format</span>(epoch, test_acc))</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
 
 ]]></content>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/2024/03/15/%E5%8F%91%E7%A5%A8%E8%AE%B0%E5%BD%95/</url>
+    <content><![CDATA[<p>发票记录</p>
+<table>
+<thead>
+<tr>
+<th align="center">厂商</th>
+<th align="center">金额</th>
+<th align="center">发票类型</th>
+<th align="center">说明</th>
+<th align="center">时间</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">百度</td>
+<td align="center">66.26</td>
+<td align="center">企业类普票&#x2F;增值税普通发票</td>
+<td align="center">tokens资源包</td>
+<td align="center">2024-03-15 10:34:01</td>
+</tr>
+<tr>
+<td align="center">百度</td>
+<td align="center">80.22</td>
+<td align="center">企业类普票&#x2F;增值税普通发票</td>
+<td align="center">tokens资源包</td>
+<td align="center">2024-03-15 10:25:19</td>
+</tr>
+<tr>
+<td align="center">讯飞</td>
+<td align="center">1500</td>
+<td align="center">企业类普票&#x2F;增值税普通发票</td>
+<td align="center">tokens资源包</td>
+<td align="center">2024-03-15 11:01:38</td>
+</tr>
+<tr>
+<td align="center">智普</td>
+<td align="center">165.3087 (未开)</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">阿里</td>
+<td align="center">54.58(未开)</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+</tbody></table>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;path&quot;: &quot;能源互联网规划及配电网规划专业调考题库（2020版）-勘误更新版&quot;,</span><br><span class="line">    &quot;number&quot;: 1,</span><br><span class="line">    &quot;question&quot;: &quot;在装有热水的容器外涂上一薄层碳黑，则水凉的快，因为&quot;,</span><br><span class="line">    &quot;A&quot;: &quot;碳黑黑度大，辐射散热少&quot;,</span><br><span class="line">    &quot;B&quot;: &quot;碳黑黑度大，辐射散热少&quot;,</span><br><span class="line">    &quot;C&quot;: &quot;碳黑黑度小，辐射散热多&quot;,</span><br><span class="line">    &quot;D&quot;: &quot;碳黑黑度小，辐射散热少&quot;,</span><br><span class="line">    &quot;answer&quot;: &quot;B&quot;,</span><br><span class="line">    &quot;analysis&quot;: &quot;&quot;,</span><br><span class="line">    &quot;type&quot;: &quot;Singlechoice&quot;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure></div>
+
+]]></content>
+  </entry>
+  <entry>
+    <title>图神经网络实战</title>
+    <url>/2023/10/23/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%AE%9E%E6%88%98/</url>
+    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>图神经网络(二)</title>
@@ -2042,11 +2287,6 @@
 <li><strong>外部知识集成</strong>RAG</li>
 </ul>
 ]]></content>
-  </entry>
-  <entry>
-    <title>强化学习基础</title>
-    <url>/2024/07/28/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/</url>
-    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>差分隐私（一）</title>
@@ -2343,135 +2583,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>数据的读取与处理</title>
-    <url>/2023/10/18/%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA/</url>
-    <content><![CDATA[<h1 id="数据预处理、数据增强"><a href="#数据预处理、数据增强" class="headerlink" title="数据预处理、数据增强"></a>数据预处理、数据增强</h1><h2 id="1-数据增强"><a href="#1-数据增强" class="headerlink" title="1. 数据增强"></a>1. 数据增强</h2><p>数据增强可以增加训练集的样本数量，缓解过拟合，并提高模型的泛化能力，从而有效提升算法的性能。</p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://p.ipic.vip/a161sy.png"
-                      alt="数据增强"
-                ></p>
-<h2 id="2-数据预处理"><a href="#2-数据预处理" class="headerlink" title="2. 数据预处理"></a>2. 数据预处理</h2><p>1）将图像转换成 tensor 的数据格式</p>
-<p>2）将图像的 像素值范围 由 0～255 转换到 0～1</p>
-<p>3）(height, width, channel) &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&gt;&gt;&gt; (channel, height, width)</p>
-<p>4）归一化图像</p>
-<h2 id="3-使用节点"><a href="#3-使用节点" class="headerlink" title="3. 使用节点"></a>3. 使用节点</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">trans = transforms.Compose([transforms.RandomResizedCrop((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.RandomHorizontalFlip(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ColorJitter(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
-
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://p.ipic.vip/iiqcob.png"
-                     
-                ></p>
-<h1 id="torchvision-transforms-的使用"><a href="#torchvision-transforms-的使用" class="headerlink" title="torchvision.transforms 的使用"></a>torchvision.transforms 的使用</h1><p>官方文档地址： <a class="link"   href="https://pytorch.org/vision/stable/transforms.html" >https://pytorch.org/vision/stable/transforms.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<h2 id="1-torchvision-transforms-ToTensor"><a href="#1-torchvision-transforms-ToTensor" class="headerlink" title="1. torchvision.transforms.ToTensor()"></a>1. torchvision.transforms.ToTensor()</h2><p><code>torchvision.transforms.ToTensor()</code> 做了三件事：</p>
-<p> 1）将图像的数据格式由 nump.ndarray 或 PIL.Image 转为 tensor，数据类型为 torch.FloatTensor</p>
-<p> 2）将像素值范围从 0-255 转换到 0-1之间， 处理方式 ：直接除以255</p>
-<p> 3）将 shape&#x3D;(H,W, C) 转换为 shape&#x3D; (C, H, W)</p>
-<p>🌼原始的data的shape为（5，5，3），则其表示有5个（5 ， 3）的二维数组，即我们把最外层的[]去掉就得到了5个五行三列的数据。</p>
-<p>🌼同样的，变换后data的shape为（3，5，5），则其表示有3个（5 ， 5）的二维数组，即我们把最外层的[]去掉就得到了3个五行五列的数据。</p>
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://p.ipic.vip/xksmgr.png"
-                     
-                ></p>
-<h2 id="2-torchvision-transforms-Normalize"><a href="#2-torchvision-transforms-Normalize" class="headerlink" title="2. torchvision.transforms.Normalize()"></a>2. torchvision.transforms.Normalize()</h2><p>作用：用均值和标准差对张量图像进行归一化，一般在 <code>torchvision.transforms.ToTensor()</code> 之后使用</p>
-<p>在使用 <code>torchvision.transforms.ToTensor()</code> 之后，像素值取值范围会被转换到 [0, 1]之间，再使用 <code>transforms.Normalize(mean, std)</code> 进行归一化后，原像素值就被分布到了 [-1, 1] 之间：</p>
-<p>公式：</p>
-<ul>
-<li>原来的 0~1 最小值 0 则变成 (0 - mean) &#x2F; std &#x3D; -1</li>
-</ul>
-<ul>
-<li>最大值1则变成 (1 - mean) &#x2F; std &#x3D; 1</li>
-</ul>
-<p>一般 mean 和 std 会分别指定3个值，代表图像3个通道的均值和方差，比如<code>torchvision.transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])</code></p>
-<p>如果是<strong>单通道的灰度图</strong>，均值为0.5，方差为0.5，可以写成 <code>transforms.Normalize(mean=[0.5], std=[0.5])</code></p>
-<p>因为 ImageNet数据集 是一个大型数据集，由一个大型数据集统计出来的均值和方差，基本符合所有数据集的像素值分布，所以，一般直接使用 <code>mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]</code></p>
-<h2 id="3-transforms-Compose"><a href="#3-transforms-Compose" class="headerlink" title="3.transforms.Compose()"></a>3.transforms.Compose()</h2><p><strong>训练阶段</strong></p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">trans = transforms.Compose([transforms.RandomResizedCrop((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.RandomHorizontalFlip(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ColorJitter(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
-
-
-
-<p><strong>推理阶段(test)</strong></p>
-<p>推理阶段不会再对数据进行增强，只会做基础的预处理，比如：将尺寸处理到固定尺寸 ；使用 ToTensor 处理数据； Normalize 归一化</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">trans = transforms.Compose([transforms.RE((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
-
-
-
-<h2 id="4-transforms-RandomResizedCrop随机尺寸裁剪"><a href="#4-transforms-RandomResizedCrop随机尺寸裁剪" class="headerlink" title="4.transforms.RandomResizedCrop随机尺寸裁剪"></a>4.transforms.RandomResizedCrop随机尺寸裁剪</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">resized_crop = transforms.RandomResizedCrop(size=(<span class="number">224</span>, <span class="number">224</span>),</span><br><span class="line">                                            scale=(<span class="number">0.08</span>, <span class="number">1.0</span>), </span><br><span class="line">                                            ratio=(<span class="number">0.75</span>, <span class="number">1.3333333333333333</span>), </span><br><span class="line">                                            interpolation=transforms.InterpolationMode.BILINEAR)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">上方代码解释：</span></span><br><span class="line"><span class="string"> 1、将图像进行随机裁剪，裁剪满足以下条件:</span></span><br><span class="line"><span class="string"> 裁剪后的图像 面积 与原图像的面积的比例 在 0.08 ～ 1</span></span><br><span class="line"><span class="string"> 裁剪后的图像高宽比范围在 0.75 ～ 1.33之间</span></span><br><span class="line"><span class="string"> 2、按照指定的插值方式， 将图像尺寸缩放到 （224， 224）</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure></div>
-
-<p>参数：</p>
-<ul>
-<li>size：期望的输出图像尺寸， 可以是 int值，也可可以是元组（H, W）</li>
-<li>scale ：在调整大小之前指定裁剪的随机区域的下界和上界。尺度是根据原始图像的面积来定义的。</li>
-<li>ratio：在调整大小之前，裁剪的随机纵横比的下限和上限。</li>
-<li>InterpolationMode ： 插值方式<ul>
-<li>InterpolationMode.NEAREST：最近邻插值。</li>
-<li>InterpolationMode.BILINEAR：双线性插值 (默认)</li>
-<li>InterpolationMode.BICUBIC：双三次插值。</li>
-</ul>
-</li>
-</ul>
-<h2 id="5-水平翻转与垂直翻转"><a href="#5-水平翻转与垂直翻转" class="headerlink" title="5.水平翻转与垂直翻转"></a>5.水平翻转与垂直翻转</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">horizontal_flip = transforms. RandomHorizontalFlip(<span class="number">0.5</span>)</span><br><span class="line">vertical_flip = transforms. RandomVerticalFlip(<span class="number">0.5</span>)</span><br></pre></td></tr></table></figure></div>
-
-<p><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="https://p.ipic.vip/wh6b5i.png"
-                     
-                ></p>
-<h2 id="6-ColorJitter"><a href="#6-ColorJitter" class="headerlink" title="6. ColorJitter"></a>6. ColorJitter</h2>]]></content>
-  </entry>
-  <entry>
-    <title>激活函数_LLM</title>
-    <url>/2024/07/18/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0-LLM/</url>
-    <content><![CDATA[<table>
-<thead>
-<tr>
-<th>model</th>
-<th><strong>训练数据</strong></th>
-<th>激活函数</th>
-<th>位置编码</th>
-<th><strong>layer norm</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>BERT</td>
-<td></td>
-<td>Tanh</td>
-<td></td>
-<td>LayerNorm</td>
-</tr>
-<tr>
-<td>LLama3</td>
-<td>以英语为主的拉丁语系，不包含中日韩文</td>
-<td>SwiGLU</td>
-<td>RoPE</td>
-<td>Pre RMS Norm</td>
-</tr>
-<tr>
-<td>GPT2</td>
-<td></td>
-<td>GeLU</td>
-<td>RoPE</td>
-<td>Pre Layer Normalization**</td>
-</tr>
-<tr>
-<td>Chatglm</td>
-<td>中英双语，中英文比例为1:1</td>
-<td>GeGLU</td>
-<td>RoPE</td>
-<td>Post Deep Norm</td>
-</tr>
-</tbody></table>
-<p>GLU通过门控机制对输出进行把控，像Attention一样可看作是对重要特征的选择。其优势是不仅具有通用激活函数的非线性，而且<strong>反向传播梯度时具有线性通道</strong>，类似ResNet残差网络中的加和操作传递梯度，能够缓解梯度消失问题。</p>
-<p><strong>post layer norm</strong>。在原始的transformer中，layer normalization是放在残差连接之后的，称为post LN。使用Post LN的深层transformer模型容易出现训练不稳定的问题。如下图所示，post LN<strong>随着transformer层数的加深，梯度范数逐渐增大</strong>，导致了训练的不稳定性。</p>
-<p><strong>pre layer norm</strong>。改变layer normalization的位置，<strong>将其放在残差连接的过程中</strong>，self-attention或FFN块之前，称为“Pre LN”。如下图所示，Pre layer norm在每个transformer层的梯度范数近似相等，有利于提升训练稳定性。相比于post LN，使用pre LN的深层transformer训练更稳定，可以缓解训练不稳定问题。<strong>但缺点是pre LN可能会轻微影响transformer模型的性能</strong> 大语言模型的一个挑战就是如何<strong>提升训练的稳定性</strong>。为了提升训练稳定性，GPT3、PaLM、BLOOM、OPT等大语言模型都采用了pre layer norm。</p>
-]]></content>
-  </entry>
-  <entry>
     <title>数据库复习</title>
     <url>/2024/11/03/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%A4%8D%E4%B9%A0/</url>
     <content><![CDATA[<h1 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h1><h2 id="数据库基本概念"><a href="#数据库基本概念" class="headerlink" title="数据库基本概念"></a>数据库基本概念</h2><p>信息&#x3D;  数据+数据处理</p>
@@ -2658,6 +2769,140 @@
 </tr>
 </tbody></table>
 <p>这些数据模型适合不同的应用场景，选择合适的数据模型可以提高系统的效率和灵活性。</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>强化学习基础</title>
+    <url>/2024/07/28/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>数据的读取与处理</title>
+    <url>/2023/10/18/%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA/</url>
+    <content><![CDATA[<h1 id="数据预处理、数据增强"><a href="#数据预处理、数据增强" class="headerlink" title="数据预处理、数据增强"></a>数据预处理、数据增强</h1><h2 id="1-数据增强"><a href="#1-数据增强" class="headerlink" title="1. 数据增强"></a>1. 数据增强</h2><p>数据增强可以增加训练集的样本数量，缓解过拟合，并提高模型的泛化能力，从而有效提升算法的性能。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://p.ipic.vip/a161sy.png"
+                      alt="数据增强"
+                ></p>
+<h2 id="2-数据预处理"><a href="#2-数据预处理" class="headerlink" title="2. 数据预处理"></a>2. 数据预处理</h2><p>1）将图像转换成 tensor 的数据格式</p>
+<p>2）将图像的 像素值范围 由 0～255 转换到 0～1</p>
+<p>3）(height, width, channel) &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&gt;&gt;&gt; (channel, height, width)</p>
+<p>4）归一化图像</p>
+<h2 id="3-使用节点"><a href="#3-使用节点" class="headerlink" title="3. 使用节点"></a>3. 使用节点</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">trans = transforms.Compose([transforms.RandomResizedCrop((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.RandomHorizontalFlip(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ColorJitter(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
+
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://p.ipic.vip/iiqcob.png"
+                     
+                ></p>
+<h1 id="torchvision-transforms-的使用"><a href="#torchvision-transforms-的使用" class="headerlink" title="torchvision.transforms 的使用"></a>torchvision.transforms 的使用</h1><p>官方文档地址： <a class="link"   href="https://pytorch.org/vision/stable/transforms.html" >https://pytorch.org/vision/stable/transforms.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h2 id="1-torchvision-transforms-ToTensor"><a href="#1-torchvision-transforms-ToTensor" class="headerlink" title="1. torchvision.transforms.ToTensor()"></a>1. torchvision.transforms.ToTensor()</h2><p><code>torchvision.transforms.ToTensor()</code> 做了三件事：</p>
+<p> 1）将图像的数据格式由 nump.ndarray 或 PIL.Image 转为 tensor，数据类型为 torch.FloatTensor</p>
+<p> 2）将像素值范围从 0-255 转换到 0-1之间， 处理方式 ：直接除以255</p>
+<p> 3）将 shape&#x3D;(H,W, C) 转换为 shape&#x3D; (C, H, W)</p>
+<p>🌼原始的data的shape为（5，5，3），则其表示有5个（5 ， 3）的二维数组，即我们把最外层的[]去掉就得到了5个五行三列的数据。</p>
+<p>🌼同样的，变换后data的shape为（3，5，5），则其表示有3个（5 ， 5）的二维数组，即我们把最外层的[]去掉就得到了3个五行五列的数据。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://p.ipic.vip/xksmgr.png"
+                     
+                ></p>
+<h2 id="2-torchvision-transforms-Normalize"><a href="#2-torchvision-transforms-Normalize" class="headerlink" title="2. torchvision.transforms.Normalize()"></a>2. torchvision.transforms.Normalize()</h2><p>作用：用均值和标准差对张量图像进行归一化，一般在 <code>torchvision.transforms.ToTensor()</code> 之后使用</p>
+<p>在使用 <code>torchvision.transforms.ToTensor()</code> 之后，像素值取值范围会被转换到 [0, 1]之间，再使用 <code>transforms.Normalize(mean, std)</code> 进行归一化后，原像素值就被分布到了 [-1, 1] 之间：</p>
+<p>公式：</p>
+<ul>
+<li>原来的 0~1 最小值 0 则变成 (0 - mean) &#x2F; std &#x3D; -1</li>
+</ul>
+<ul>
+<li>最大值1则变成 (1 - mean) &#x2F; std &#x3D; 1</li>
+</ul>
+<p>一般 mean 和 std 会分别指定3个值，代表图像3个通道的均值和方差，比如<code>torchvision.transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])</code></p>
+<p>如果是<strong>单通道的灰度图</strong>，均值为0.5，方差为0.5，可以写成 <code>transforms.Normalize(mean=[0.5], std=[0.5])</code></p>
+<p>因为 ImageNet数据集 是一个大型数据集，由一个大型数据集统计出来的均值和方差，基本符合所有数据集的像素值分布，所以，一般直接使用 <code>mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]</code></p>
+<h2 id="3-transforms-Compose"><a href="#3-transforms-Compose" class="headerlink" title="3.transforms.Compose()"></a>3.transforms.Compose()</h2><p><strong>训练阶段</strong></p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">trans = transforms.Compose([transforms.RandomResizedCrop((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.RandomHorizontalFlip(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ColorJitter(<span class="number">0.5</span>),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
+
+
+
+<p><strong>推理阶段(test)</strong></p>
+<p>推理阶段不会再对数据进行增强，只会做基础的预处理，比如：将尺寸处理到固定尺寸 ；使用 ToTensor 处理数据； Normalize 归一化</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">trans = transforms.Compose([transforms.RE((<span class="number">640</span>, <span class="number">640</span>)),</span><br><span class="line">                            transforms.ToTensor(),</span><br><span class="line">                            transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h2 id="4-transforms-RandomResizedCrop随机尺寸裁剪"><a href="#4-transforms-RandomResizedCrop随机尺寸裁剪" class="headerlink" title="4.transforms.RandomResizedCrop随机尺寸裁剪"></a>4.transforms.RandomResizedCrop随机尺寸裁剪</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">resized_crop = transforms.RandomResizedCrop(size=(<span class="number">224</span>, <span class="number">224</span>),</span><br><span class="line">                                            scale=(<span class="number">0.08</span>, <span class="number">1.0</span>), </span><br><span class="line">                                            ratio=(<span class="number">0.75</span>, <span class="number">1.3333333333333333</span>), </span><br><span class="line">                                            interpolation=transforms.InterpolationMode.BILINEAR)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">上方代码解释：</span></span><br><span class="line"><span class="string"> 1、将图像进行随机裁剪，裁剪满足以下条件:</span></span><br><span class="line"><span class="string"> 裁剪后的图像 面积 与原图像的面积的比例 在 0.08 ～ 1</span></span><br><span class="line"><span class="string"> 裁剪后的图像高宽比范围在 0.75 ～ 1.33之间</span></span><br><span class="line"><span class="string"> 2、按照指定的插值方式， 将图像尺寸缩放到 （224， 224）</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure></div>
+
+<p>参数：</p>
+<ul>
+<li>size：期望的输出图像尺寸， 可以是 int值，也可可以是元组（H, W）</li>
+<li>scale ：在调整大小之前指定裁剪的随机区域的下界和上界。尺度是根据原始图像的面积来定义的。</li>
+<li>ratio：在调整大小之前，裁剪的随机纵横比的下限和上限。</li>
+<li>InterpolationMode ： 插值方式<ul>
+<li>InterpolationMode.NEAREST：最近邻插值。</li>
+<li>InterpolationMode.BILINEAR：双线性插值 (默认)</li>
+<li>InterpolationMode.BICUBIC：双三次插值。</li>
+</ul>
+</li>
+</ul>
+<h2 id="5-水平翻转与垂直翻转"><a href="#5-水平翻转与垂直翻转" class="headerlink" title="5.水平翻转与垂直翻转"></a>5.水平翻转与垂直翻转</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">horizontal_flip = transforms. RandomHorizontalFlip(<span class="number">0.5</span>)</span><br><span class="line">vertical_flip = transforms. RandomVerticalFlip(<span class="number">0.5</span>)</span><br></pre></td></tr></table></figure></div>
+
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://p.ipic.vip/wh6b5i.png"
+                     
+                ></p>
+<h2 id="6-ColorJitter"><a href="#6-ColorJitter" class="headerlink" title="6. ColorJitter"></a>6. ColorJitter</h2>]]></content>
+  </entry>
+  <entry>
+    <title>激活函数_LLM</title>
+    <url>/2024/07/18/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0-LLM/</url>
+    <content><![CDATA[<table>
+<thead>
+<tr>
+<th>model</th>
+<th><strong>训练数据</strong></th>
+<th>激活函数</th>
+<th>位置编码</th>
+<th><strong>layer norm</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BERT</td>
+<td></td>
+<td>Tanh</td>
+<td></td>
+<td>LayerNorm</td>
+</tr>
+<tr>
+<td>LLama3</td>
+<td>以英语为主的拉丁语系，不包含中日韩文</td>
+<td>SwiGLU</td>
+<td>RoPE</td>
+<td>Pre RMS Norm</td>
+</tr>
+<tr>
+<td>GPT2</td>
+<td></td>
+<td>GeLU</td>
+<td>RoPE</td>
+<td>Pre Layer Normalization**</td>
+</tr>
+<tr>
+<td>Chatglm</td>
+<td>中英双语，中英文比例为1:1</td>
+<td>GeGLU</td>
+<td>RoPE</td>
+<td>Post Deep Norm</td>
+</tr>
+</tbody></table>
+<p>GLU通过门控机制对输出进行把控，像Attention一样可看作是对重要特征的选择。其优势是不仅具有通用激活函数的非线性，而且<strong>反向传播梯度时具有线性通道</strong>，类似ResNet残差网络中的加和操作传递梯度，能够缓解梯度消失问题。</p>
+<p><strong>post layer norm</strong>。在原始的transformer中，layer normalization是放在残差连接之后的，称为post LN。使用Post LN的深层transformer模型容易出现训练不稳定的问题。如下图所示，post LN<strong>随着transformer层数的加深，梯度范数逐渐增大</strong>，导致了训练的不稳定性。</p>
+<p><strong>pre layer norm</strong>。改变layer normalization的位置，<strong>将其放在残差连接的过程中</strong>，self-attention或FFN块之前，称为“Pre LN”。如下图所示，Pre layer norm在每个transformer层的梯度范数近似相等，有利于提升训练稳定性。相比于post LN，使用pre LN的深层transformer训练更稳定，可以缓解训练不稳定问题。<strong>但缺点是pre LN可能会轻微影响transformer模型的性能</strong> 大语言模型的一个挑战就是如何<strong>提升训练的稳定性</strong>。为了提升训练稳定性，GPT3、PaLM、BLOOM、OPT等大语言模型都采用了pre layer norm。</p>
 ]]></content>
   </entry>
   <entry>
